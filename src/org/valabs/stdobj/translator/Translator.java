@@ -11,32 +11,32 @@ import java.util.logging.Logger;
 
 import org.valabs.odisp.common.Resource;
 
-/** Класс-транслятор строк
+/** Класс-транслятор строк (i8n).
  *
  * @author <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
  * @author (C) 2004 НПП "Новел-ИЛ"
- * @version $Id: Translator.java,v 1.14 2004/09/11 13:35:45 dron Exp $
+ * @version $Id: Translator.java,v 1.15 2004/11/13 16:49:25 dron Exp $
  */
 public class Translator extends Properties implements Resource {
-  /** Путь к корневой папке транляций */
+  /** Путь к корневой папке транляций. */
   public static final String LanguageRootDir 	= "LanguageRootDir";
-  /** Идентификатор языка */
+  /** Идентификатор языка. */
   public static final String LanguageId 			= "LanguageId";
-  /** Автозагрузка */
+  /** Автозагрузка. */
   public static final String AutoLoad  				= "Autoload";
-  /** Путь к корневой папке транляций по-умолчанию */
+  /** Путь к корневой папке транляций по-умолчанию. */
   private final String DefaultLanguageDir = "resources/language";
-  /** Идентификатор языка по-умолчанию */
+  /** Идентификатор языка по-умолчанию. */
   private final String DefaultLanguageId = "en";
-  /** Корневой каталог для трансляций */
+  /** Корневой каталог для трансляций. */
   private String rootDir = null;
-  /** Идентификатор языка */
+  /** Идентификатор языка. */
   private String langId = null;
   
-  /** Логгер! */
+  /** Логгер. */
   private static final Logger logger = Logger.getLogger(Translator.class.getName()); 
   
-  /** Конструктор транслятора
+  /** Конструктор транслятора.
    */
   public Translator() {
     /* empty constructor */
@@ -111,15 +111,15 @@ public class Translator extends Properties implements Resource {
     return tmp;
   }
   
-  /** Очистка ресурса
+  /** Очистка ресурса.
    *
-   * @param type Код выхода
+   * @param type Код выхода.
    */
   public int cleanUp(int type) {
     return 0;
   }
   
-  /** Комментарии в интерфейсе
+  /** Комментарии в интерфейсе.
    */
   public int getMaxReferenceCount() {
     return 0;
@@ -144,7 +144,7 @@ public class Translator extends Properties implements Resource {
   
   /** Установка конфигурации ресурса.
    * 
-   * @param cfg конфигурация
+   * @param cfg конфигурация.
    */
   public void setConfiguration(final Map cfg) {
     rootDir = DefaultLanguageDir;
@@ -162,7 +162,6 @@ public class Translator extends Properties implements Resource {
     
     if (!autoLoad) return;
     
-    logger.info("i'm here!");
     File f = new File(rootDir + File.separator + langId);
     if (f.canRead() && f.isDirectory()) {
       String[] files = f.list(new FilenameFilter() {
