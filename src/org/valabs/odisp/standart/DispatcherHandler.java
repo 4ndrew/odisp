@@ -24,7 +24,7 @@ import com.novel.stdmsg.ODShutdownMessage;
 
 /** Обработчик сообщений диспетчера ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: DispatcherHandler.java,v 1.19 2004/06/09 14:13:31 valeks Exp $
+ * @version $Id: DispatcherHandler.java,v 1.20 2004/06/09 18:55:57 valeks Exp $
  */
 
 public class StandartDispatcherHandler extends StandartODObject {
@@ -144,8 +144,9 @@ public class StandartDispatcherHandler extends StandartODObject {
       });
     addHandler(ODGetProvidingMessage.NAME, new MessageHandler() {
 	public final void messageReceived(final Message msg) {
-	  ODGetProvidingReplyMessage m = new ODGetProvidingReplyMessage(msg.getOrigin(), msg.getId());
-	  m.setProvidingList(oman.getProviding());
+	  Message m = dispatcher.getNewMessage();
+	  ODGetProvidingReplyMessage.setup(m, msg.getOrigin(), msg.getId());
+	  ODGetProvidingReplyMessage.setProvidingList(m, oman.getProviding());
 	  dispatcher.send(m);
 	}
       });
