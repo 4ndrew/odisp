@@ -12,12 +12,45 @@ import com.novel.odisp.common.*;
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.6 2003/10/12 14:27:50 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.7 2003/10/12 20:01:12 valeks Exp $
  */
 public class StandartDispatcher implements Dispatcher {
+	
 	Map objects = new HashMap();
-	List messages = new ArrayList();
+	Map resources = new HashMap();
+	DefferedMessages messages = new DefferedMessages();
 	int obj_count = 0;
+	/** Динамическая загрузка ресурсных объектов
+	    @param className имя загружаемого класса
+	    @param mult количество загружаемых объектов
+	    @return void
+	*/
+	private void loadResource(String className, int mult){
+	    System.err.print("\tloading resource "+className);
+	    try {
+		for(int i = 0; i < mult; i++){
+		    resources.put(className+":"+i, Class.forName(className).newInstance());
+		    System.out.print("+");
+		}
+		System.out.println(" ok.");
+	    } catch(ClassNotFoundException e){
+		System.err.println(" failed: "+e);
+	    } catch(InstantiationException e){
+	        System.err.println(" failed: "+e);
+	    } catch(IllegalAccessException e){
+	        System.err.println(" failed: "+e);
+	    }	    
+	}
+	/** Выгрузка ресурсного объекта
+	    
+	*/
+	private void unloadResource(String roName, int code){
+	    if(resources.containsKey(roName)){
+		Resource res = (Resource)resources.get(roName);
+		res.cleanUp(code);
+		resources.remove(roName);
+	    }
+	}
 	/** Динамическая загрузка объекта
 	 * @param className имя загружаемого класса
 	 * @return void
@@ -35,7 +68,7 @@ public class StandartDispatcher implements Dispatcher {
 		load.start();
 		load.addMessage(m);
 		synchronized (objects){
-		    objects.put(load.getObjectName(),load);
+		    objects.put(load.getObjectName(),new ObjectEntry(className, false, load));
 		}
 		System.err.println(" ok. loaded="+load.getObjectName());
 	    } catch(InvocationTargetException e){
@@ -59,13 +92,14 @@ public class StandartDispatcher implements Dispatcher {
 	 */
 	private void unloadObject(String objectName, int code){
 	    if(objects.containsKey(objectName)){
-		ODObject obj = (ODObject)objects.get(objectName);
+		ObjectEntry oe = (ObjectEntry)objects.get(objectName);
+		ODObject obj = oe.object;
 		Message m = getNewMessage("od_cleanup", objectName, "stddispatcher", 0);
 		m.addField(new Integer(code));
 		sendMessage(m);
 		obj.interrupt();
+		objects.remove(oe);
 		System.out.println("\tobject "+objectName+" unloaded");
-		/* объект все еще может существовать, но сообщения ему доставлятся уже не будут */
 	    }
 	}
 	/** Интерфейс для объектов ядра для отсылки сообщений.
@@ -74,61 +108,24 @@ public class StandartDispatcher implements Dispatcher {
 	 * @return void
 	 */
 	public void sendMessage(Message message){
-	    Iterator it = objects.keySet().iterator();
-	    while(it.hasNext()){
-		String cl_n = (String)it.next();
-		ODObject cl_send = (ODObject)objects.get(cl_n);
-		cl_send.addMessage(message);
-		System.out.println("[D] sending "+message+" to "+cl_n);
-		synchronized(cl_send){cl_send.notify();}
+	    if(message.getAction().length() == 0)
+		return;
+	    synchronized(objects){
+		Iterator it = objects.keySet().iterator();
+		while(it.hasNext()){
+		    String cl_n = (String)it.next();
+		    ObjectEntry oe = (ObjectEntry)objects.get(cl_n);
+		    if(oe.blockedState){
+			System.out.println("[d] message deffered for "+cl_n);
+			messages.addMessage(cl_n, message);
+			continue;
+		    }
+		    System.out.println("[d] message sent for "+cl_n);		
+		    ODObject cl_send = oe.object;
+		    cl_send.addMessage(message);
+		    synchronized(cl_send){cl_send.notify();}
+		}
 	    }
-//	    if(message.getDestination().equals(".*") || message.getDestination().equals("stddispatcher"))
-//		handleMessage(message);
-	}
-	private class StandartDispatcherHandler extends CallbackODObject {
-		public String name = "stddispatcher";
-		protected void registerHandlers(){
-		    addHandler("unload_object", new MessageHandler(){
-			public void messageReceived(Message msg){
-			    if(msg.getFieldsCount() != 1)
-				return;
-			    String name = (String)msg.getField(0);
-			    unloadObject(name, 1);
-			    objects.remove(name);
-			}
-		    });
-		    addHandler("od_shutdown", new MessageHandler(){
-			public void messageReceived(Message msg){
-			    System.out.println("[i] "+toString()+" shutting down...");	    
-			    Iterator it = objects.keySet().iterator();
-			    while(it.hasNext())
-			    unloadObject((String)it.next(), 0);
-			    objects.clear();
-			}
-		    });
-		}
-		public int cleanUp(int type){
-		    return 0;
-		}
-		public StandartDispatcherHandler(Integer id){
-		    super("stddispatcher");
-		}
-	
-	}
-	/** Конструктор загружающий первоначальный набор объектов
-	 * на основе списка
-	 * @param objs список объектов для загрузки
-	 */
-	public StandartDispatcher(List objs){
-	    System.err.println("[i] "+toString()+" starting up...");
-	    Iterator it = objs.iterator();
-	    while(it.hasNext()){
-		String cl_n = (String)it.next();
-		loadObject(cl_n);
-	    }
-	    StandartDispatcherHandler stdh = new StandartDispatcherHandler(new Integer(0));
-	    stdh.start();
-	    objects.put("stddispatcher", stdh);
 	}
 	/** Интерфейс создания нового сообщения для сокрытия конкретной реализации
 	 * сообщений.
@@ -140,6 +137,50 @@ public class StandartDispatcher implements Dispatcher {
 	 */
 	public Message getNewMessage(String action, String destination, String origin, int inReplyTo){
 	    return new StandartMessage(action, destination, origin, inReplyTo);
+	}
+	/** Установка статуса блокировки объекта по ресурсу */
+	private void setBlockedState(String objName, boolean state){
+	    if(!objects.containsKey(objName))
+		return;
+	    ((ObjectEntry)objects.get(objName)).blockedState = state;
+	}
+	/** Сброс записанных сообщений при снятии блокировки с объекта */
+	private void flushDefferedMessages(String cl_n){
+	    System.out.println("[D] flushing messages for "+cl_n);
+	    if(!objects.containsKey(cl_n))
+		return;
+	    ObjectEntry oe = (ObjectEntry)objects.get(cl_n);
+	    ODObject cl_send = oe.object;
+	    cl_send.addMessages(messages.flush(cl_n));
+	    synchronized(cl_send){cl_send.notify();}
+	}
+	/** Конструктор загружающий первоначальный набор объектов
+	 * на основе списка
+	 * @param objs список объектов для загрузки
+	 */
+	public StandartDispatcher(List objs){
+	    System.err.println("[i] "+toString()+" starting up...");
+	    StandartDispatcherHandler stdh = new StandartDispatcherHandler(new Integer(0));
+	    stdh.start();
+	    objects.put("stddispatcher", new ObjectEntry(getClass().getName(), false, stdh));
+	    Iterator it = objs.iterator();
+
+	    Pattern p = Pattern.compile("(o:|(r:)(\\d+:)?)(.+)");	    
+	    while(it.hasNext()){
+		int mult = 1;
+		String cl_n = (String)it.next();
+		Matcher m = p.matcher(cl_n);
+		m.find();
+		if(m.groupCount() == 4){
+		    if(m.group(1).equals("o:"))
+			loadObject(m.group(4));
+		    if(m.group(1).startsWith("r:")){
+			if(m.group(3) != null)
+			    mult = new Integer(m.group(3).substring(0,m.group(3).length()-1)).intValue();
+			loadResource(m.group(4), mult);
+		    }
+		}
+	    }
 	}
 	/** Выводит сообщение об ошибке в случае некорректных параметров
 	 */
@@ -168,5 +209,104 @@ public class StandartDispatcher implements Dispatcher {
 		    System.err.println("[e] unable to read configuration file.");
 		}
 	    }
+	}
+
+	/** Запись об объекте в таблице объектов */
+	private class ObjectEntry {
+	    public String className;
+	    public boolean blockedState;
+	    public ODObject object;
+	    ObjectEntry(String cn, boolean bs, ODObject od){
+		className = cn;
+		blockedState = bs;
+		object = od;
+	    }
+	}
+	/** Коллекция отложенных сообщений */
+	private class DefferedMessages {
+	    Map queues = new HashMap();
+	    public void addMessage(String objName, Message m){
+		if(!queues.containsKey(objName)){
+		    List messages = new ArrayList();
+		    messages.add(m);
+		    queues.put(objName, messages);
+		} else 
+		    ((List)queues.get(objName)).add(m);
+	    }
+	    public List flush(String objectName){
+		if(queues.containsKey(objectName)){
+		    List res = new ArrayList((List)queues.get(objectName));
+		    queues.remove(objectName);
+		    return res;
+		} else
+		    return new ArrayList();
+	    }
+	}
+	/** Обработчик сообщений диспетчера */
+	private class StandartDispatcherHandler extends CallbackODObject {
+		public String name = "stddispatcher";
+		protected void registerHandlers(){
+		    addHandler("unload_object", new MessageHandler(){
+			public void messageReceived(Message msg){
+			    if(msg.getFieldsCount() != 1)
+				return;
+			    String name = (String)msg.getField(0);
+			    unloadObject(name, 1);
+			    objects.remove(name);
+			}
+		    });
+		    addHandler("od_shutdown", new MessageHandler(){
+			public void messageReceived(Message msg){
+			    System.out.println("[i] "+toString()+" shutting down...");	    
+			    Iterator it = objects.keySet().iterator();
+			    while(it.hasNext())
+			    unloadObject((String)it.next(), 0);
+			    objects.clear();
+			}
+		    });
+		    addHandler("od_acquire", new MessageHandler(){
+			public void messageReceived(Message msg){
+			    if(msg.getFieldsCount()>0){
+				String cl_n = (String)msg.getField(0);
+				boolean willBlockState = false;
+				if(msg.getFieldsCount() == 2)
+				    willBlockState = ((Boolean)msg.getField(1)).booleanValue();
+				Iterator it = resources.keySet().iterator();
+				while(it.hasNext()){ // first hit
+				    String cur_cl_n = (String)it.next();
+				    if(Pattern.matches(cl_n+":\\d+",cur_cl_n)){
+					System.out.println("[D] od_acquire of resource "+cur_cl_n+" by "+msg.getOrigin());
+					Message m = getNewMessage("resource_acquired", msg.getOrigin(), "stddispatcher", msg.getId());
+					m.addField(cur_cl_n);
+					m.addField(resources.get(cur_cl_n));
+					resources.remove(cur_cl_n);
+					sendMessage(m);
+					setBlockedState(msg.getOrigin(), willBlockState);
+					break;
+				    }
+				}
+			    }
+			}
+		    });
+		    addHandler("od_release", new MessageHandler(){
+			public void messageReceived(Message msg){
+			    if(msg.getFieldsCount() != 2)
+				return;
+			    String cl_n = (String)msg.getField(0);
+			    Resource res = (Resource)msg.getField(1);
+			    resources.put(cl_n, res);
+			    flushDefferedMessages(msg.getOrigin());
+			    setBlockedState(msg.getOrigin(), false);
+			    System.out.println("[D] od_release of resource "+cl_n+" by "+msg.getOrigin());
+			}
+		    });
+		}
+		public int cleanUp(int type){
+		    return 0;
+		}
+		public StandartDispatcherHandler(Integer id){
+		    super("stddispatcher");
+		}
+	
 	}
 }
