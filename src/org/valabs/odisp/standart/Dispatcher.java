@@ -24,17 +24,15 @@ import com.novel.stdmsg.StandartMessage;
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.41 2004/05/18 13:45:51 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.42 2004/05/28 00:16:12 valeks Exp $
  */
 public class StandartDispatcher implements Dispatcher {
   /** Журнал. */
-  private static Logger log = Logger.getLogger("com.novel.odisp");
+  private static Logger log = Logger.getLogger("com.novel.odisp.StandartDispatcher");
   /** Менеджер ресурсов. */
   private ResourceManager rman = new StandartResourceManager(this);
   /** Менеджер объектов. */
   private ObjectManager oman = new StandartObjectManager(this);
-  /** Кол-во объектов системы. */
-  private int objCount = 0;
 
   /** Доступ к менеджеру объектов. 
    * @return ссылка на менеджер объектов
@@ -48,23 +46,6 @@ public class StandartDispatcher implements Dispatcher {
    */
   public final ResourceManager getResourceManager() {
     return rman;
-  }
-
-  /** Интерфейс для объектов ядра для отсылки сообщений.
-   * Реализует multicast рассылку сообщений
-   * @param message сообщение для отсылки
-   * @deprecated необходимо использовать send(Message)
-   */
-  public final void sendMessage(final Message message) {
-    send(message);
-  }
-
-  /** Интерфейс для объектов ядра для отсылки сообщений.
-   * @param messageList список сообщений для отсылки
-   * @deprecated необходимо использовать send(Message[])
-   */
-  public final void sendMessages(final Message[] messageList) {
-    send(messageList);
   }
 
   /** Интерфейс для объектов ядра для отсылки сообщений.
@@ -148,23 +129,8 @@ public class StandartDispatcher implements Dispatcher {
    */
   public StandartDispatcher(final Tag docTag) {
     log.info(toString() + " starting up...");
-    oman.loadObject(StandartDispatcherHandler.class.getName(), null);
-    oman.loadPending();
-    Message runthr = getNewMessage("od_set_run_thread", "dispatcher", "G0D", 0);
-    Thread t = new Thread("alive thread") {
-	public final void run() {
-	  try {
-	    synchronized (this) {
-	      wait();
-	    }
-	  } catch (InterruptedException e) {
-	  }
-	}
-      };
-    t.start();
-    runthr.addField("0", t);
-    oman.send(runthr);
     Iterator it = docTag.getChild().iterator();
+    oman.loadObject(StandartDispatcherHandler.class.getName(), null);
     while (it.hasNext()) {
       Tag curt = (Tag) it.next();
       if (curt.getName().equalsIgnoreCase("object")) {
@@ -195,6 +161,20 @@ public class StandartDispatcher implements Dispatcher {
       }
     }
     oman.loadPending();
+    Message runthr = getNewMessage("od_set_run_thread", "dispatcher", "G0D", 0);
+    Thread t = new Thread("alive thread") {
+	public final void run() {
+	  try {
+	    synchronized (this) {
+	      wait();
+	    }
+	  } catch (InterruptedException e) {
+	  }
+	}
+      };
+    t.start();
+    runthr.addField("0", t);
+    oman.send(runthr);
     try {
       t.join();
     } catch (InterruptedException e) {
