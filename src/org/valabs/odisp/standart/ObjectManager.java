@@ -17,7 +17,7 @@ import java.lang.reflect.InvocationTargetException;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@valeks.novel.local">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.4 2004/02/13 22:22:50 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.5 2004/02/15 21:55:56 valeks Exp $
  */
 
 public class StandartObjectManager implements ObjectManager {
@@ -194,7 +194,7 @@ public class StandartObjectManager implements ObjectManager {
       String className = (String) it.next();
       ObjectEntry oe = (ObjectEntry) localObjects.get(className);
       if (oe.isBlockedState() || !oe.isLoaded()) {
-	log.finer("deffered message for " + className
+	log.finest("deffered message for " + className
 		  + " (loaded=" + oe.isLoaded() + ")");
 	messages.addMessage(className, message);
 	continue;
@@ -225,9 +225,7 @@ public class StandartObjectManager implements ObjectManager {
    * @return значения уровня блокировки
    */
   public final int getBlockedState(final String objName) {
-    if (!objects.containsKey(objName)) {
-      return 0;
-    }
+    assert !objects.containsKey(objName);
     return ((ObjectEntry) objects.get(objName)).getBlockedState();
   }
   /** Сброс записанных сообщений при снятии блокировки с объекта.

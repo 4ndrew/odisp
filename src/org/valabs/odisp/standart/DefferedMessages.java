@@ -8,7 +8,7 @@ import java.util.ArrayList;
 /**
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: DefferedMessages.java,v 1.1 2004/02/13 00:11:29 valeks Exp $
+ * @version $Id: DefferedMessages.java,v 1.2 2004/02/15 21:55:56 valeks Exp $
  */
 /** Коллекция отложенных сообщений. */
 public class DefferedMessages {
@@ -19,13 +19,14 @@ public class DefferedMessages {
    * @param m сообщение для добавления
    */
   public final void addMessage(final String objName, final Message m) {
+    List lmessages;
     if (!queues.containsKey(objName)) {
-      List lmessages = new ArrayList();
-      lmessages.add(m);
+      lmessages = new ArrayList();
       queues.put(objName, lmessages);
     } else {
-      ((List) queues.get(objName)).add(m);
+      lmessages = (List) queues.get(objName);
     }
+    lmessages.add(m);
   }
   /** Возвращает список сохраненных для объекта сообщений.
    * @param objectName имя объекта (очереди)
