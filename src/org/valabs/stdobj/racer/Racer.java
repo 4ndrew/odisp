@@ -15,7 +15,7 @@ import com.novel.stdobj.simpleconfig.SimpleConfig;
  * 
  * @author (C) 2004 <a href="valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author <a href="dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: Racer.java,v 1.12 2004/06/09 19:44:43 valeks Exp $
+ * @version $Id: Racer.java,v 1.13 2004/06/21 16:30:23 valeks Exp $
  */
 public class Racer extends StandartODObject {
   /** Счётчик запросов */
@@ -30,9 +30,7 @@ public class Racer extends StandartODObject {
   public final void handleMessage(final Message msg) {
     if (ODObjectLoadedMessage.equals(msg)) {
       Message m = dispatcher.getNewMessage();
-      m.setOrigin(getObjectName());
-      m.setReplyTo(msg.getId());
-      ODAcquireMessage.setup(m);
+      ODAcquireMessage.setup(m, getObjectName(), msg.getId());
       ODAcquireMessage.setResourceName(m, SimpleConfig.class.getName());
 
       synchronized (requested) {
@@ -71,9 +69,7 @@ public class Racer extends StandartODObject {
       } catch (Exception e) {}
 
       Message m1 = dispatcher.getNewMessage();
-      m1.setOrigin(getObjectName());
-      m1.setReplyTo(msg.getId());
-      ODAcquireMessage.setup(m1);
+      ODAcquireMessage.setup(m1, getObjectName(), msg.getId());
       ODAcquireMessage.setResourceName(m1, SimpleConfig.class.getName());
       synchronized (requested) {
         requested = new Boolean(true);
