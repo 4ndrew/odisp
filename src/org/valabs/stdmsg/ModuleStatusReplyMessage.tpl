@@ -1,0 +1,17 @@
+$Id: ModuleStatusReplyMessage.tpl,v 1.1 2004/08/17 08:18:15 valeks Exp $
+NAME com.novel.nms.messages ModuleStatusReplyMessage module_status_reply
+AUTHOR <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
+DESC Ответ на запрос о статусе модуля.
+DESC Каждый из списков содержит строковые описания заданий (текущих,
+DESC выполненных, ошибочных). Каждое описание может содержать краткое
+DESC описание самого задания, стадию выполнения и, возможно, возникшие проблемы.
+DEFROUTABLE 1
+IMPORT java.util.List
+FIELD RunningState String
+FDESC RunningState Текущее состояние опрашиваемого модуля.
+FIELD RunningTasks List
+FDESC RunningTasks Список строк описывающих текущее состояние задач выполняемых модулем.
+FIELD CompletedTasks List
+FDESC CompletedTasks Список успешно выполненных заданий.
+FIELD FailedTasks List
+FDESC FailedTasks Список не выполненных задач.
