@@ -24,7 +24,7 @@ import com.novel.stdmsg.ODShutdownMessage;
 
 /** Обработчик сообщений диспетчера ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: DispatcherHandler.java,v 1.23 2004/07/21 08:05:42 valeks Exp $
+ * @version $Id: DispatcherHandler.java,v 1.24 2004/07/30 11:10:46 valeks Exp $
  */
 
 public class DispatcherHandler extends StandartODObject {
@@ -56,6 +56,13 @@ public class DispatcherHandler extends StandartODObject {
   }
   /** Зарегистрировать обработчики сообщений. */
   protected final void registerHandlers() {
+      Runtime.getRuntime().addShutdownHook(new Thread(){
+          public void run() {
+              System.err.println("Running shutdown hook.");
+              oman.unloadObject(getObjectName(), -1);
+              runThread.interrupt();
+          }
+          });
     addHandler("od_unload_object", new MessageHandler() {
 	public final void messageReceived(final Message msg) {
 	  if (msg.getFieldsCount() != 1) {
