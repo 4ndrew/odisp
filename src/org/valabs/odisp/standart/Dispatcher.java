@@ -25,7 +25,7 @@ import org.valabs.stdmsg.StandartMessage;
  * и управление ресурсными объектами.
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: Dispatcher.java,v 1.52 2004/08/26 11:12:23 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.53 2004/10/28 22:10:27 valeks Exp $
  */
 public class Dispatcher implements org.valabs.odisp.common.Dispatcher, ExceptionHandler {
   /** Журнал. */
@@ -151,6 +151,8 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
     tmp.put("runthr", t);
     oman.loadObject(DispatcherHandler.class.getName(), tmp);
     oman.loadPending();
+    Map resources = new HashMap();
+    Map objects = new HashMap();
     while (it.hasNext()) {
       Tag curt = (Tag) it.next();
       if (curt.getName().equalsIgnoreCase("object")) {
@@ -160,35 +162,32 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
           continue;
         }
         Map params = getParamsForTag(curt);
-        oman.loadObject(className, params);
+        objects.put(className, params);
       } else if (curt.getName().equalsIgnoreCase("resource")) {
-        int mult = 1;
         String className = (String) curt.getAttributes().get("name");
         if (className == null) {
           log.warning("resource tag has no name attribute. ignoring.");
           continue;
         }
-        String smult = (String) curt.getAttributes().get("mult");
-        if (smult != null) {
-          try {
-            mult = new Integer(smult).intValue();
-          } catch (NumberFormatException e) {
-            log.warning("resource tag attribute mult has non-integer value. ignoring.");
-          }
-        }
         Map params = getParamsForTag(curt);
-        rman.loadResource(className, mult, params);
-        try {
-        	Thread.sleep(100);
-        } catch (InterruptedException e) {
-        	
-        }
+        resources.put(className, params);
       }
     }
-    try {
-    	Thread.sleep(10);
-    } catch (InterruptedException e) {
-    	
+
+    it = resources.keySet().iterator();
+    while (it.hasNext()) {
+      String className = (String) it.next();
+      int mult = -1;
+      if (resources.get(className) != null && ((Map) resources.get(className)).get("mult") != null) {
+        mult = new Integer((String) ((Map) resources.get(className)).get("mult")).intValue();
+        
+      }
+      rman.loadResource(className, mult, (Map) resources.get(className));
+    }
+    it = objects.keySet().iterator();
+    while (it.hasNext()) {
+      String className = (String) it.next();
+      oman.loadObject(className, (Map) objects.get(className));
     }
     oman.loadPending();
     t.start();
