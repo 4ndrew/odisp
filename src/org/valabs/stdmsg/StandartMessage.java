@@ -12,7 +12,7 @@ import com.novel.odisp.common.Message;
 /** Реализация стандартного сообщения для стандартного диспетчера ODISP.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: StandartMessage.java,v 1.14 2004/04/02 10:15:48 valeks Exp $
+ * @version $Id: StandartMessage.java,v 1.15 2004/05/21 11:15:46 valeks Exp $
  */
 public class StandartMessage implements Message, Serializable {
   /** Флаг маршрутизации. */
@@ -266,5 +266,9 @@ public class StandartMessage implements Message, Serializable {
 
   public Object getField(final String name) {
     return fields.get(name);
+  }
+  
+  public Object clone() {
+  	 return new StandartMessage(this);
   }
 }

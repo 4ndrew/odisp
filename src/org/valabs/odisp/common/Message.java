@@ -5,9 +5,9 @@ import java.util.Map;
 /** Интерфейс сообщения ядра ODISP системы.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Message.java,v 1.9 2004/03/31 13:18:52 dron Exp $
+ * @version $Id: Message.java,v 1.10 2004/05/21 11:15:46 valeks Exp $
  */
-public interface Message {
+public interface Message extends Cloneable {
 
   /** Выбор поля по имени.
    * @param name имя поля
