@@ -7,10 +7,10 @@ import javax.swing.*;
 
 /** Объект, реализующие функции GUI-менеджера, то есть основного окна (?)
 * программы (тестовая версия).
-* @author Andrew A. Porohin
+* @author Андрей А. Порохин
 * @author Валентин А. Алексеев
 * @author (C) 2003 НПП "Новел-ИЛ"
-* @version $Id: TestGUI.java,v 1.3 2003/10/14 09:53:23 valeks Exp $
+* @version $Id: TestGUI.java,v 1.4 2003/10/14 13:59:07 dron Exp $
 */
 public class TestGUI extends CallbackODObject {
    private JTextField txt1 = new JTextField(20);
@@ -38,7 +38,11 @@ public class TestGUI extends CallbackODObject {
    */
    public int cleanUp(int type) {
       mainFrame.hide();
-      // wait(1000);
+      try {
+      	 wait(1000);
+      } catch(InterruptedException e) {
+      	 System.err.println("Exception: "+e);
+      }
       mainFrame.dispose();
       return 0;
    }
