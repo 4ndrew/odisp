@@ -7,7 +7,7 @@ import com.novel.odisp.common.Message;
 /** Запрос на динамическое изменение списка сервисов.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2004, НПП "Новел-ИЛ"
- * @version $Id: ODGetProvidingReplyMessage.java,v 1.6 2004/07/20 11:55:24 valeks Exp $
+ * @version $Id: ODGetProvidingReplyMessage.java,v 1.7 2004/07/21 08:03:21 valeks Exp $
  */
 
 public final class ODGetProvidingReplyMessage {
@@ -34,7 +34,7 @@ public final class ODGetProvidingReplyMessage {
     return (List) msg.getField(PROVIDINGLIST_IDX);
   }
   /** Установка имени сервиса. */
-  public final void setProvidingList(final Message msg, final List newProvidingList) {
+  public static final void setProvidingList(final Message msg, final List newProvidingList) {
     msg.addField(PROVIDINGLIST_IDX, newProvidingList);
   }
 
