@@ -18,7 +18,7 @@ import java.lang.reflect.InvocationTargetException;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@valeks.novel.local">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.13 2004/03/31 07:23:30 dron Exp $
+ * @version $Id: ObjectManager.java,v 1.14 2004/03/31 10:16:26 dron Exp $
  */
 
 public class StandartObjectManager implements ObjectManager {
@@ -263,11 +263,7 @@ public class StandartObjectManager implements ObjectManager {
       }
       objToSendTo = oe.getObject();
     }
-    // синхронно для объекта
-    synchronized (objToSendTo) {
-      objToSendTo.addMessage(message);
-      objToSendTo.notify();
-    }
+    objToSendTo.addMessage(message);
   }
 
   /** Посылка сообщения всем объектам менеджера.
@@ -287,7 +283,7 @@ public class StandartObjectManager implements ObjectManager {
     // в случае если получатель смахивает на имя сервиса
     // -- разослать только провайдерам, а не всем подряд
     if (hasProviders(message.getDestination())) {
-      List providers = getProviders(message.getDestination());
+      List providers = new ArrayList(getProviders(message.getDestination()));
       if (providers != null) {
 	recipients = providers;
       }
