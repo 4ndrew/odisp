@@ -1,6 +1,7 @@
 package org.valabs.odisp.standart;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -21,7 +22,7 @@ import org.valabs.stdmsg.StandartMessage;
  * и управление ресурсными объектами.
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: Dispatcher.java,v 1.59 2005/01/27 14:15:43 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.60 2005/01/27 20:50:06 valeks Exp $
  */
 public class Dispatcher implements org.valabs.odisp.common.Dispatcher, ExceptionHandler {
   /** Журнал. */
@@ -162,14 +163,14 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
    * @param args по 0 должно содержать имя файла с перечислением классов,
    * которые необходимо загрузить
    */
-  /*public static void main(final String[] args) {
+  public static void main(final String[] args) {
     log.setLevel(java.util.logging.Level.ALL);
     if (args.length != 1) {
 		usage();
     } else {
-      new Dispatcher(args);
+      new Dispatcher(Arrays.asList(args));
     }
-  }*/
+  }
   
   /* (non-Javadoc)
    * @see org.valabs.odisp.common.Dispatcher#addSecurityManager(org.valabs.odisp.common.SecurityManager)
