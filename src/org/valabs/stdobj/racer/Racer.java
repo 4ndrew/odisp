@@ -14,7 +14,7 @@ import com.novel.stdmsg.ODResourceAcquiredMessage;
  * 
  * @author (C) 2004 <a href="valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author <a href="dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: Racer.java,v 1.8 2004/05/30 12:05:13 dron Exp $
+ * @version $Id: Racer.java,v 1.9 2004/06/09 00:28:48 valeks Exp $
  */
 public class Racer extends StandartODObject {
   /** Счётчик запросов */
@@ -27,7 +27,7 @@ public class Racer extends StandartODObject {
   }
 
   public final void handleMessage(final Message msg) {
-    if (msg instanceof ODObjectLoadedMessage) {
+    if (ODObjectLoadedMessage.equals(msg)) {
       ODAcquireMessage m = new ODAcquireMessage(getObjectName(), msg.getId());
       m.setResourceName("com.novel.stdobj.simpleconfig.SimpleConfig");
 

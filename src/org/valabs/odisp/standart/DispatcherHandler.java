@@ -12,7 +12,6 @@ import com.novel.odisp.common.Message;
 import com.novel.odisp.common.MessageHandler;
 import com.novel.odisp.common.ObjectManager;
 import com.novel.odisp.common.ResourceManager;
-import com.novel.stdmsg.ODObjectLoadedMessage;
 import com.novel.stdmsg.ODAcquireMessage;
 import com.novel.stdmsg.ODAddProviderMessage;
 import com.novel.stdmsg.ODGetProvidingMessage;
@@ -24,7 +23,7 @@ import com.novel.stdmsg.ODShutdownMessage;
 
 /** Обработчик сообщений диспетчера ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: DispatcherHandler.java,v 1.17 2004/05/30 12:19:26 valeks Exp $
+ * @version $Id: DispatcherHandler.java,v 1.18 2004/06/09 00:28:48 valeks Exp $
  */
 
 public class StandartDispatcherHandler extends StandartODObject {
