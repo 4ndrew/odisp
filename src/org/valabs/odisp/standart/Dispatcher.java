@@ -27,7 +27,8 @@ import com.novel.odisp.common.MessageHandler; // --''--
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.17 2003/11/23 00:06:36 valeks Exp $
+ * @fixme в случае если на одиночный ресурс поступает одновременно два запроса -- будет отработан только один, в то время как второй будет просто игнорирован
+ * @version $Id: Dispatcher.java,v 1.18 2003/11/27 00:26:51 valeks Exp $
  */
 public class StandartDispatcher implements Dispatcher {
   /** Интерфейс к службе сообщений*/
