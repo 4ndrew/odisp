@@ -28,7 +28,7 @@ import com.novel.stdmsg.*;
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.22 2003/12/10 09:49:05 dron Exp $
+ * @version $Id: Dispatcher.java,v 1.23 2003/12/15 13:01:04 valeks Exp $
  */
 public class StandartDispatcher implements Dispatcher {
   /** Интерфейс к службе сообщений*/
@@ -235,7 +235,7 @@ public class StandartDispatcher implements Dispatcher {
    * @param message сообщение для отсылки
    */
   public void sendMessage(Message message) {
-    if (message.getAction().length() == 0) {
+    if (message.getAction().length() == 0 || !message.isCorrect()) {
       return;
     }
     synchronized (objects) {
@@ -266,26 +266,7 @@ public class StandartDispatcher implements Dispatcher {
     }
     for (int i = 0; i < messageList.length; i++) {
       Message message = messageList[i];
-      if (message.getAction().length() == 0) {
-	continue;
-      }
-      synchronized (objects) {
-	Iterator it = objects.keySet().iterator();
-	while (it.hasNext()) {
-	  String className = (String) it.next();
-	  ObjectEntry oe = (ObjectEntry) objects.get(className);
-	  if (oe.isBlockedState() || !oe.loaded) {
-	    log.finer("deffered message for " + className + " (loaded=" + oe.loaded + ")");
-	    messages.addMessage(className, message);
-	    continue;
-	  }
-	  ODObject objToSendTo = oe.object;
-	  objToSendTo.addMessage(message);
-	  synchronized (objToSendTo) {
-	    objToSendTo.notify();
-	  }
-	}
-      }
+      sendMessage(message);
     }
   }
   /** Интерфейс создания нового сообщения для сокрытия конкретной реализации
