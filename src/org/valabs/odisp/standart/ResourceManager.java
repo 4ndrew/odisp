@@ -18,7 +18,7 @@ import org.valabs.stdmsg.ODResourceAcquiredMessage;
 
 /** Менеджер ресурсных объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceManager.java,v 1.30 2004/11/05 14:11:29 valeks Exp $
+ * @version $Id: ResourceManager.java,v 1.31 2004/11/11 16:59:18 valeks Exp $
  */
 class ResourceManager implements org.valabs.odisp.common.ResourceManager {
   /** Ссылка на диспетчер объектов. */
@@ -39,8 +39,37 @@ class ResourceManager implements org.valabs.odisp.common.ResourceManager {
    * @param className имя загружаемого класса
    * @param mult количество загружаемых объектов
    */
-  public final void loadResource(final String className, final int mult, final Map config) {
-    dataThread.addRequest(new LoadResourceRequest(className, mult, config));
+  public final void loadResource(final String className, int mult, final Map config) {
+    String logMessage = mult + " loading resource ";
+    ResourceEntry re = new ResourceEntry(className);
+    re.setMaxUsage(mult);
+    if (mult == ResourceEntry.MULT_SHARE) {
+      logMessage += "shared ";
+      mult = 1;
+    }
+    logMessage += className;
+    for (int i = 0; i < mult; i++) {
+      try {
+        Resource r = (Resource) Class.forName(className).newInstance();
+        r.setConfiguration(config);
+        re.addResource(r);
+        logMessage += "+";
+      } catch (ClassNotFoundException e) {
+        log.warning(" failed: " + e);
+        return;
+      } catch (InstantiationException e) {
+        log.warning(" failed: " + e);
+        return;
+      } catch (IllegalAccessException e) {
+        log.warning(" failed: " + e);
+        return;
+      }
+    }
+    synchronized (dataThread) {
+      dataThread.getResources().put(className, re);
+    }
+    logMessage += " ok";
+    log.config(logMessage);
   }
 
   /** Выгрузка ресурсного объекта.
@@ -191,65 +220,6 @@ class ResourceManager implements org.valabs.odisp.common.ResourceManager {
       return "AcquireResource from " + origin + " on " + className;
     }
   }
-  /** Запрос на загрузку ресурса. */
-  private class LoadResourceRequest implements RequestListEntry {
-    /** Имя класса ресурса. */
-    private String className = null;
-    /** Мультипликатор. */
-    private int mult = ResourceEntry.MULT_SHARE;
-    /** Списк параметров. */
-    private Map configuration = null;
-    /** Создание нового запроса на загрузку ресурса.
-     * @param nclassName имя класса для загрузки
-     * @param nmult множитель загрузки
-     * @param config конфигурация ресурса
-     */
-    public LoadResourceRequest(final String nclassName, final int nmult, final Map config) {
-      className = nclassName;
-      mult = nmult;
-      configuration = config;
-    }
-    /** Выполнение запроса.
-     * @param dt нить данных на которой выполняется запрос
-     */
-    public final boolean performAction(final DataThread dt) {
-      String logMessage = mult + " loading resource ";
-      ResourceEntry re = new ResourceEntry(className);
-      re.setMaxUsage(mult);
-      if (mult == ResourceEntry.MULT_SHARE) {
-	logMessage+= "shared ";
-	mult = 1;
-      }
-      logMessage+= className;
-      for (int i = 0; i < mult; i++) {
-	try {
-	  Resource r = (Resource) Class.forName(className).newInstance();
-	  r.setConfiguration(configuration);
-	  re.addResource(r);
-	  logMessage += "+";
-	} catch (ClassNotFoundException e) {
-	  log.warning(" failed: " + e);
-	  return true;
-	} catch (InstantiationException e) {
-	  log.warning(" failed: " + e);
-	} catch (IllegalAccessException e) {
-	  log.warning(" failed: " + e);
-	  return true;
-	}
-      }
-      dt.getResources().put(className, re);
-      logMessage += " ok";
-      log.config(logMessage);
-      synchronized (dt.dispatcher) {
-      	dt.dispatcher.notify();
-      }
-      return true;
-    }
-    /** Описание класса для статистики. */
-    public final String toString() {
-      return "LoadResource on " + className;
-    }
-  } // LoadResourceRequest
 
   /** Запрос на выгрузку ресурса. */
   private class UnloadResourceRequest implements RequestListEntry {
