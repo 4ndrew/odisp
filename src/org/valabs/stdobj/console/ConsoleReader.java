@@ -11,7 +11,7 @@ import java.io.InputStreamReader;
 /** Класс читающий данные с консоли.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ConsoleReader.java,v 1.5 2004/01/16 14:31:57 valeks Exp $
+ * @version $Id: ConsoleReader.java,v 1.6 2004/02/12 18:16:11 valeks Exp $
  */
 
 public class ConsoleReader extends Thread {
@@ -62,7 +62,7 @@ public class ConsoleReader extends Thread {
 	  }
 	  System.out.print("more? ");
 	}
-	dispatcher.sendMessage(m);
+	dispatcher.send(m);
 	System.out.print("action> ");
       }
       if (doExit) {
