@@ -1,4 +1,4 @@
-$Id: ModuleAboutReplyMessage.tpl,v 1.1 2004/08/17 08:18:15 valeks Exp $
+$Id: ModuleAboutReplyMessage.tpl,v 1.2 2004/08/17 11:37:50 valeks Exp $
 NAME com.novel.nms.messages ModuleAboutReplyMessage module_about_reply
 AUTHOR <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
 DESC Ответ на запрос об описании объекта.
@@ -7,5 +7,8 @@ FIELD Name String
 FDESC Name Название модуля.
 FIELD Version String
 FDESC Version Версия модуля.
+FIELD Copyright String
+FDESC Copyright Авторские права на модуль.
 FIELD AI String
 FDESC AI Дополнительная информация.
+FCHECK AI true
