@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 /** Стандартный объект ODISP.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: StandartODObject.java,v 1.2 2004/05/13 11:42:58 valeks Exp $
+ * @version $Id: StandartODObject.java,v 1.3 2004/05/21 20:27:20 valeks Exp $
  */
 
 public abstract class StandartODObject implements ODObject {
@@ -36,6 +36,13 @@ public abstract class StandartODObject implements ODObject {
    */
   protected final void setMatch(final String newMatch) {
     match = newMatch;
+  }
+
+  /** Доступ к RegEx выражению совпадения адреса получателя.
+   * @return строка с regex
+   */
+  public final String getMatch() {
+    return match;
   }
 
   /** Конструктор инициализирующий почтовый ящик.
@@ -107,21 +114,10 @@ public abstract class StandartODObject implements ODObject {
     handlers.put(message, handler);
   }
 
-  /** Интерфейс добавления сообщения в ящик.
-   * @param msg сообщение
-   */
-  public final void addMessage(final Message msg) {
-    if (!Pattern.matches(match, msg.getDestination())
-	&& !Pattern.matches(msg.getDestination(), getObjectName())) {
-      return;
-    }
-    handleMessage(msg);
-  }
-
   /** Обработка сообщения.
    * @param msg сообщение для обработки
    */
-  protected void handleMessage(final Message msg) {
+  public void handleMessage(final Message msg) {
     if (handlers.containsKey(msg.getAction())) {
       ((MessageHandler) handlers.get(msg.getAction())).messageReceived(msg);
     } else {

@@ -6,7 +6,7 @@ import java.util.Map;
 * посылаемых диспетчером ODISP.
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: ODObject.java,v 1.18 2004/05/13 11:42:20 valeks Exp $
+* @version $Id: ODObject.java,v 1.19 2004/05/21 20:27:20 valeks Exp $
 */
 public interface ODObject {
   /** Возвращает внутреннее ODISP имя объекта.
@@ -20,7 +20,7 @@ public interface ODObject {
   /** Интерфейс добавления сообщения в ящик.
    * @param msg сообщение для добавления
    */
-  public void addMessage(final Message msg);
+  public void handleMessage(final Message msg);
 
   /** Метод вызываемый для очистки данных класса.
    * @param type условие выхода
@@ -41,4 +41,9 @@ public interface ODObject {
    * @param cfg новая таблица
    */
   public void setConfiguration(final Map cfg);
+
+  /** Вернуть RegEx выражение для проверки соответствия получателя.
+   * @return строка с regex выражением
+   */
+  public String getMatch();
 }

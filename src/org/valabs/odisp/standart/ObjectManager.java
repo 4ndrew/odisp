@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import com.novel.odisp.common.Dispatcher;
 import com.novel.odisp.common.Message;
@@ -18,7 +19,7 @@ import com.novel.stdmsg.ODObjectLoadedMessage;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.24 2004/05/19 21:10:09 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.25 2004/05/21 20:27:20 valeks Exp $
  */
 
 public class StandartObjectManager implements ObjectManager {
@@ -129,16 +130,14 @@ public class StandartObjectManager implements ObjectManager {
       }
       if (numRequested == 0) {
 	for (int i = 0; i < oe.getProvides().length; i++) {
-	  //if (!hasProviders(oe.getProvides()[i])) {
-	    log.fine("added as provider of " + oe.getProvides()[i]);
-	    addProvider(oe.getProvides()[i], oe.getObject().getObjectName());
-	  //}
+	  log.fine("added as provider of " + oe.getProvides()[i]);
+	  addProvider(oe.getProvides()[i], oe.getObject().getObjectName());
 	}
         oe.setLoaded(true);
         flushDefferedMessages(oe.getObject().getObjectName());
 	log.config(" ok. loaded = " + objectName);
 	Message m = new ODObjectLoadedMessage(objectName);
-	oe.getObject().addMessage(m);
+	oe.getObject().handleMessage(m);
 	loaded++;
       }
     }
@@ -310,7 +309,12 @@ public class StandartObjectManager implements ObjectManager {
       synchronized (objects) {
         Iterator it = objects.keySet().iterator();
         while (it.hasNext()) {
-          recipients.add(it.next());
+	  String key = (String) it.next();
+	  ObjectEntry oe = (ObjectEntry) objects.get(key);
+	  if (Pattern.matches(oe.getObject().getMatch(), message.getDestination())
+	      && Pattern.matches(message.getDestination(), oe.getObject().getObjectName())) {
+	    recipients.add(key);
+	  }
         }
       }
     }
@@ -354,18 +358,10 @@ public class StandartObjectManager implements ObjectManager {
     if (!objects.containsKey(objectName)) {
 		return;
     }
-    ObjectEntry oe = (ObjectEntry) objects.get(objectName);
-    if (!oe.isLoaded()) {
-		return;
-    }
-    ODObject objectRef = oe.getObject();
     List toFlush = messages.flush(objectName);
     Iterator it = toFlush.iterator();
     while (it.hasNext()) {
-      objectRef.addMessage((Message) it.next());
-    }
-    synchronized (objectRef) {
-      objectRef.notify();
+      send((Message) it.next());
     }
     loadPending();
   }
