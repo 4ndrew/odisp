@@ -13,13 +13,15 @@ import org.valabs.odisp.common.Resource;
 
 /** Менеджер ресурсных объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceManager.java,v 1.32 2004/11/28 09:37:21 valeks Exp $
+ * @version $Id: ResourceManager.java,v 1.33 2005/01/11 20:47:14 valeks Exp $
  */
 class ResourceManager implements org.valabs.odisp.common.ResourceManager {
   /** Ссылка на диспетчер объектов. */
   private Dispatcher dispatcher;
   /** Нить обработки запросов. */
   private DataThread dataThread = null;
+	/** Менеджер загрузки классов. */
+	private ClassLoader loader;
   /** Журнал. */
   private Logger log = Logger.getLogger(ResourceManager.class.getName());
 
@@ -45,7 +47,8 @@ class ResourceManager implements org.valabs.odisp.common.ResourceManager {
     logMessage += className;
     for (int i = 0; i < mult; i++) {
       try {
-        Resource r = (Resource) Class.forName(className).newInstance();
+        loader = ReloadableClassLoader.getInstance("../build/");
+        Resource r = (Resource) loader.loadClass(className).newInstance();
         r.setConfiguration(config);
         re.addResource(r);
         logMessage += "+";
@@ -82,6 +85,7 @@ class ResourceManager implements org.valabs.odisp.common.ResourceManager {
     log.setLevel(java.util.logging.Level.ALL);
     dispatcher = newDispatcher;
     dataThread = new DataThread(newDispatcher);
+		loader = ReloadableClassLoader.getInstance("../build/"); // XXX: Make modifyable
   }
 
   public List statRequest() {
@@ -243,6 +247,7 @@ class ResourceManager implements org.valabs.odisp.common.ResourceManager {
         dispatcher.getExceptionHandler().signalException(e);
       }
     }
+    System.err.println("Resource type: " + result.getClass() + " asked to acquire " + className);
     return result;
   }
 
