@@ -1,11 +1,12 @@
 # Makefile for all documents
 #
-# $Id: Makefile,v 1.8 2003/10/21 20:17:18 dron Exp $
+# $Id: Makefile,v 1.9 2003/10/26 21:50:13 dron Exp $
 
 # folders & files
 TEXDOCS=impl.tex \
-		  gui_imp.tex \
-        tz.tex
+			gui_imp.tex \
+			tz.tex \
+			style-9.tex
 TEXDVIS=$(TEXDOCS:.tex=.dvi)
 XMLMSGROOT=messages.xml
 TOOLS=../tools
