@@ -19,7 +19,7 @@ import com.novel.stdobj.webcon.servlet.http.HttpServletResponse;
 /** Объект ODISP реализующий WebCon интерфейс доступа к менеджеру.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: WCConsoleObject.java,v 1.8 2004/06/09 21:07:36 valeks Exp $
+ * @version $Id: WCConsoleObject.java,v 1.9 2004/06/21 17:09:25 valeks Exp $
  */
 public class WCConsoleObject extends StandartODObject {
   /** Собственно сервлет-обработчик. */
@@ -36,7 +36,7 @@ public class WCConsoleObject extends StandartODObject {
       WCAddServletMessage.setServletHandler(m, servlet);
       dispatcher.send(m);
     } else if (ODCleanupMessage.equals(msg)) {
-      cleanUp(ODCleanupMessage.getReason(msg));
+      cleanUp(ODCleanupMessage.getReason(msg).intValue());
     } else {
       servlet.messageReceived(msg);
     }
