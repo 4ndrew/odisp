@@ -13,7 +13,7 @@ import com.novel.odisp.common.*;
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.13 2003/10/22 20:54:16 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.14 2003/10/28 14:26:43 valeks Exp $
  */
 public class StandartDispatcher implements Dispatcher {
 	private static Logger log = Logger.getLogger("com.novel.odisp");
@@ -33,8 +33,8 @@ public class StandartDispatcher implements Dispatcher {
 		if(re.loaded)
 		    continue;
 		re.loaded = true;
-		log.fine("added resource provider "+re.className);
-		provided.add(re.className);
+		log.fine("added resource provider "+od_n);
+		provided.add(od_n.substring(0, od_n.lastIndexOf(":")));
 	    }
 	    it = objects.keySet().iterator();
 	    while(it.hasNext()){
@@ -75,7 +75,7 @@ public class StandartDispatcher implements Dispatcher {
 		    Resource r = (Resource)Class.forName(className).newInstance();
 		    ResourceEntry re = new ResourceEntry(className);
 		    re.resource = r;
-
+                    log.fine("r instanceof ProxyResource"+ (r instanceof ProxyResource)+" r.className:"+r.getClass().getName());
                     if(r instanceof ProxyResource){
                         ((ProxyResource)r).setResource(param);
                         resources.put(param+":"+i, re);
@@ -334,7 +334,7 @@ public class StandartDispatcher implements Dispatcher {
 	 * @param args по 0 должно содержать имя файла с перечислением классов, которые необходимо загрузить
 	 */
 	public static void main(String args[]){
-	    log.setLevel(Level.FINE);
+	    log.setLevel(Level.ALL);
 	    if(args.length != 1)
 		usage();
 	    else {
