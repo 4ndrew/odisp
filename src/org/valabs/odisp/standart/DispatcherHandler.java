@@ -5,12 +5,16 @@ import com.novel.odisp.common.MessageHandler;
 import com.novel.odisp.common.Message;
 import com.novel.odisp.common.ObjectManager;
 import com.novel.odisp.common.ResourceManager;
+import com.novel.stdmsg.ODReleaseMessage;
+import com.novel.stdmsg.ODRemoveDepMessage;
+import com.novel.stdmsg.ODAcquireMessage;
+import com.novel.stdmsg.ODShutdownMessage;
 import java.util.logging.Logger;
 import java.util.ArrayList;
 
 /** Обработчик сообщений диспетчера ODISP.
- * @author (C) 2004 <a href="mailto:valeks@valeks.novel.local">Valentin A. Alekseev</a>
- * @version $Id: DispatcherHandler.java,v 1.3 2004/02/13 15:16:03 valeks Exp $
+ * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
+ * @version $Id: DispatcherHandler.java,v 1.4 2004/02/15 21:53:40 valeks Exp $
  */
 
 public class StandartDispatcherHandler extends CallbackODObject {
@@ -46,7 +50,10 @@ public class StandartDispatcherHandler extends CallbackODObject {
     rman = dispatcher.getResourceManager();
     addHandler("od_set_run_thread", new MessageHandler() {
 	public final void messageReceived(final Message msg) {
-	  runThread = (Thread) msg.getField(0);
+	  if (msg.getOrigin().equals("G0D")) {
+	    // наш личный 0xdeadbeaf
+	    runThread = (Thread) msg.getField(0);
+	  }
 	}
     });
     addHandler("od_unload_object", new MessageHandler() {
@@ -56,7 +63,6 @@ public class StandartDispatcherHandler extends CallbackODObject {
 	  }
 	  String objname = (String) msg.getField(0);
 	  oman.unloadObject(objname, 1);
-	  oman.getObjects().remove(objname);
 	}
       });
     addHandler("od_load_object", new MessageHandler() {
@@ -69,44 +75,47 @@ public class StandartDispatcherHandler extends CallbackODObject {
 	  oman.loadPending();
 	}
       });
-    addHandler("od_shutdown", new MessageHandler() {
+    addHandler(ODShutdownMessage.NAME, new MessageHandler() {
 	public final void messageReceived(final Message msg) {
 	  int exitCode = 0;
 	  log.info(toString() + " shutting down...");
 	  if (msg.getFieldsCount() == 1) {
 	    exitCode = ((Integer) msg.getField(0)).intValue();
 	  }
-	  oman.unloadObject("stddispatcher", exitCode);
+	  // харакири
+	  oman.unloadObject(getObjectName(), exitCode);
 	  runThread.interrupt();
 	}
       });
-    addHandler("od_acquire", new MessageHandler() {
+    addHandler(ODAcquireMessage.NAME, new MessageHandler() {
 	public final void messageReceived(final Message msg) {
 	  if (msg.getFieldsCount() > 0) {
 	    rman.acquireRequest(msg);
 	  }
 	}
       });
-    addHandler("od_release", new MessageHandler() {
+    addHandler(ODReleaseMessage.NAME, new MessageHandler() {
 	public final void messageReceived(final Message msg) {
-	  rman.releaseRequest(msg);
+	  if (msg.getFieldsCount() > 0) {
+	    rman.releaseRequest(msg);
+	  }
 	}
       });
     addHandler("od_list_objects", new MessageHandler() {
 	public final void messageReceived(final Message msg) {
-	  Message m = dispatcher.getNewMessage("object_list", msg.getOrigin(), "stddispatcher", msg.getId());
+	  Message m = dispatcher.getNewMessage("object_list", msg.getOrigin(), getObjectName(), msg.getId());
 	  m.addField(new ArrayList(oman.getObjects().keySet()));
 	  dispatcher.send(m);
 	}
       });
     addHandler("od_list_resources", new MessageHandler() {
 	public final void messageReceived(final Message msg) {
-	  Message m = dispatcher.getNewMessage("resource_list", msg.getOrigin(), "stddispatcher", msg.getId());
+	  Message m = dispatcher.getNewMessage("resource_list", msg.getOrigin(), getObjectName(), msg.getId());
 	  m.addField(new ArrayList(rman.getResources().keySet()));
 	  dispatcher.send(m);
 	}
       });
-    addHandler("od_remove_dep", new MessageHandler() {
+    addHandler(ODRemoveDepMessage.NAME, new MessageHandler() {
 	public final void messageReceived(final Message msg) {
 	  if (msg.getFieldsCount() != 1) {
 	    return;
@@ -128,6 +137,5 @@ public class StandartDispatcherHandler extends CallbackODObject {
    */
   public StandartDispatcherHandler(final Integer id) {
     super("stddispatcher");
-    setDaemon(false);
   }
 } // StandartDispatcherHandler
