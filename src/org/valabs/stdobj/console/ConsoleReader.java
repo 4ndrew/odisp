@@ -14,7 +14,7 @@ import com.novel.odisp.common.Message;
  * @author <a href="valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author <a href="dron@novel-il.ru">Андрей А. Порохин</a>
  * @author (C) 2003-2004 НПП "Новел-ИЛ"
- * @version $Id: ConsoleReader.java,v 1.12 2004/06/25 13:16:07 dron Exp $
+ * @version $Id: ConsoleReader.java,v 1.13 2004/07/13 20:50:44 dron Exp $
  */
 
 public class ConsoleReader extends Thread {
@@ -51,32 +51,35 @@ public class ConsoleReader extends Thread {
   public final void run() {
     try {
       System.out.print("action> ");
-      String action, tmp;
+      String action, tmp, fieldName;
       while ((action = inp.readLine()) != null) {
-	System.out.print("destination> ");
-	Message m
-	  = dispatcher.getNewMessage(action, inp.readLine(), objectName, 0);
-	System.out.print("params? ");
+        System.out.print("destination> ");
+        Message m
+          = dispatcher.getNewMessage(action, inp.readLine(), objectName, 0);
+        System.out.print("params? ");
         int paramCount = 0;
-	while (!inp.readLine().equals("")) {
-	  System.out.print("int|str? ");
-	  tmp = inp.readLine();
-	  System.out.print("value> ");
-	  if (tmp.startsWith("i")) {
+        while (!inp.readLine().equals("")) {
+          System.out.print("int|str? ");
+          tmp = inp.readLine();
+          System.out.print("name> ");
+          fieldName = inp.readLine();
+          System.out.print("value> ");
+          if (tmp.startsWith("i")) {
             try {
-	      m.addField("" + paramCount, new Integer(inp.readLine()));
+              m.addField((fieldName.length() > 0) ? fieldName : ("" + paramCount++),
+                new Integer(inp.readLine()));
             } catch (NumberFormatException e) {
               System.out.println("(ConsoleReader) NumberFormatException: please, retry.");
             }
-	  } else {
-	    m.addField("" + paramCount, new String(inp.readLine()));
-	  }
-          paramCount++;
-	  System.out.print("more? ");
-	}
+          } else {
+            m.addField((fieldName.length() > 0) ? fieldName : ("" + paramCount++),
+              new String(inp.readLine()));
+          }
+          System.out.print("more? ");
+        }
         m.setCorrect(true);
-	dispatcher.send(m);
-	System.out.print("action> ");
+        dispatcher.send(m);
+        System.out.print("action> ");
       }
       if (doExit) {
 	return;
