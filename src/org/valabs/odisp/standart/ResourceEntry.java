@@ -10,11 +10,11 @@ import com.novel.odisp.common.Resource;
 /** Запись об однотипных ресурах в таблице ресурсов.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ResourceEntry.java,v 1.8 2004/05/21 21:49:28 valeks Exp $
+ * @version $Id: ResourceEntry.java,v 1.9 2004/05/28 00:13:55 valeks Exp $
  */
 public class ResourceEntry {
   /** Журнал. */
-  private Logger log = Logger.getLogger("com.novel.odisp.ResourceEntry");
+  private static final Logger log = Logger.getLogger("ResourceEntry");
   /** Уникальное обозначение разделяемого ресурса. */
   public static final int MULT_SHARE = -1;
   /** Имя класса ресурса. */
@@ -23,35 +23,24 @@ public class ResourceEntry {
   private List resourceStorage = new ArrayList();
   /** Количество использованных экземпляров. */
   private int usage = 0;
+  /** Максимальное количество доступных экземпляров. */
   private int maxUsage = 0;
+  /** Счетчик захватов. */
   private int acquireCount = 0;
-  /** Поиск первого неиспользуемого ресурса.
-   * @return запись о ресурсе
-   */
-  private ResourceItem lookupFirstByUse(boolean use) {
-    Iterator it = resourceStorage.iterator();
-    while (it.hasNext()) {
-      ResourceItem rit = (ResourceItem) it.next();
-      if (rit.isUsed() == use) {
-	return rit;
-      }
-    }
-    assert true;
-    return null; // never reached in case of error.
-  }
 
   /** Поиск первого неиспользуемого ресурса.
    * @return запись о ресурсе
    */
   private ResourceItem lookupFirstUnused() {
-    return lookupFirstByUse(false);
-  }
-
-  /** Поиск первого используемого ресурса.
-   * @return запись о ресурсе
-   */
-  private ResourceItem lookupFirstUsed() {
-    return lookupFirstByUse(true);
+    Iterator it = resourceStorage.iterator();
+    while (it.hasNext()) {
+      ResourceItem rit = (ResourceItem) it.next();
+      if (!rit.isUsed()) {
+	return rit;
+      }
+    }
+    assert false : "asked to lookup for free resource " + className + " but found nothing";
+    return null; // never reached in case of error.
   }
 
   /** Поиск ресурсной записи по ресурсному объекту.
@@ -61,20 +50,12 @@ public class ResourceEntry {
     Iterator it = resourceStorage.iterator();
     while (it.hasNext()) {
       ResourceItem rit = (ResourceItem) it.next();
-      if(rit.getResource().equals(res)) {
+      if(rit.getResource() == res) {
 	return rit;
       }
     }
-    assert true;
+    assert false : "asked to lookup for resource item by resource but i found nothing";
     return null; // never reached in case of error.
-  }
-
-  /** Поиск ресурса по индексу.
-   * @param idx индекс ресурса
-   */
-  private ResourceItem lookupResourceItemByIdx(int idx) {
-    assert idx <= resourceStorage.size();
-    return (ResourceItem) resourceStorage.get(idx);
   }
 
   /** Установка нового количеств использованных экземпляров. */
@@ -86,6 +67,9 @@ public class ResourceEntry {
     }
   }
 
+  /** Проверка готовности ресурса.
+   * @return true в случае если ресурс доступен для захвата
+   */
   public final boolean isAvailable() {
     return usage != 0 || maxUsage == MULT_SHARE;
   }
@@ -94,13 +78,17 @@ public class ResourceEntry {
    * @return ссылка на ресурс
    */
   public final Resource acquireResource(String usedBy) {
-    assert usage != 0;
-    ResourceItem rit = lookupFirstUnused();
+    assert isAvailable();
+    ResourceItem rit = null;
     if (usage != MULT_SHARE) {
+      rit = lookupFirstUnused();
       usage--;
       rit.setUsed(true);
+      rit.setUsedBy(usedBy);
+    } else {
+      rit = (ResourceItem) resourceStorage.get(0); // HACK
     }
-    rit.setUsedBy(usedBy);
+    assert rit != null;
     acquireCount++;
     return rit.getResource();
   }
@@ -109,21 +97,18 @@ public class ResourceEntry {
    * @param newResource ссылка на ресурс
    */
   public final void releaseResource(final Resource newResource) {
+    if (maxUsage != MULT_SHARE) {
       ResourceItem rit = lookupResourceItemByResource(newResource);
-      if (maxUsage != MULT_SHARE) {
-	rit.setUsed(false);
-	usage++;
-      }
+      rit.setUsed(false);
+      usage++;
+    }
   }
 
   /** Добавить новый ресурс в хранилище.
    * @param newResource ссылка на ресурс
    */
   public final void addResource(final Resource newResource) {
-    ResourceItem it = new ResourceItem();
-    it.setUsed(false);
-    it.setResource(newResource);
-    resourceStorage.add(it);
+    resourceStorage.add(new ResourceItem(newResource));
   }
 
   public final void cleanUp(final int code) {
@@ -159,12 +144,6 @@ public class ResourceEntry {
     }
     result+= "\n";
     return result;
-  }
-
-  public void setUsedBy(Resource res, String usedBy) {
-    ResourceItem ri = lookupResourceItemByResource(res);
-    acquireCount++;
-    ri.setUsedBy(usedBy);
   }
 
   /** Хранилище данных о конкретной ресурсе. */
@@ -204,6 +183,9 @@ public class ResourceEntry {
      */
     public final Resource getResource() {
       return resource;
+    }
+    public ResourceItem(final Resource nresource) {
+      resource = nresource;
     }
   } // ResourceItem
 } // ResourceEntry
