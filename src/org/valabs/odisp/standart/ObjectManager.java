@@ -17,7 +17,7 @@ import java.lang.reflect.InvocationTargetException;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@valeks.novel.local">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.6 2004/03/05 21:24:10 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.7 2004/03/12 11:43:15 dron Exp $
  */
 
 public class StandartObjectManager implements ObjectManager {
@@ -68,6 +68,7 @@ public class StandartObjectManager implements ObjectManager {
 	if (numRequested == 0) {
 	  oe.getObject().start();
 	  oe.setLoaded(true);
+          flushDefferedMessages(oe.getObject().getName());
 	  for (int i = 0; i < oe.getProvides().length; i++) {
 	    if (!provided.contains(oe.getProvides()[i])) {
 	      log.fine("added provider of " + oe.getProvides()[i]);
@@ -201,7 +202,7 @@ public class StandartObjectManager implements ObjectManager {
       String className = (String) it.next();
       ObjectEntry oe = (ObjectEntry) localObjects.get(className);
       if (oe.isBlockedState() || !oe.isLoaded()) {
-	log.finest("deffered message for " + className
+	log.finest("deffered message " + message.getAction() + " for " + className
 		  + " (loaded=" + oe.isLoaded() + ")");
 	messages.addMessage(className, message);
 	continue;
