@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 /** Запись об однотипных ресурах в таблице ресурсов.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ResourceEntry.java,v 1.3 2004/02/15 21:55:13 valeks Exp $
+ * @version $Id: ResourceEntry.java,v 1.4 2004/02/20 00:20:12 valeks Exp $
  */
 public class ResourceEntry {
   /** Журнал. */
@@ -22,7 +22,8 @@ public class ResourceEntry {
   private List resourceStorage = new ArrayList();
   /** Количество использованных экземпляров. */
   private int usage = 0;
-
+  private int maxUsage = 0;
+  private int acquireCount = 0;
   /** Поиск первого неиспользуемого ресурса.
    * @return запись о ресурсе
    */
@@ -94,7 +95,8 @@ public class ResourceEntry {
   /** Установка нового количеств использованных экземпляров. */
   public final void setMaxUsage(final int newUsage) {
     usage = newUsage;
-    if (usage == MULT_SHARE) {
+    maxUsage = newUsage;
+    if (newUsage == MULT_SHARE) {
       log.fine(className + " marked as shared resource.");
     }
   }
@@ -106,13 +108,15 @@ public class ResourceEntry {
   /** Запросить ресурс.
    * @return ссылка на ресурс
    */
-  public final Resource acquireResource() {
+  public final Resource acquireResource(String usedBy) {
     assert usage == 0;
     ResourceItem rit = lookupFirstUnused();
     if (usage != MULT_SHARE) {
       usage--;
       rit.setUsed(true);
     }
+    rit.setUsedBy(usedBy);
+    acquireCount++;
     return rit.getResource();
   }
 
@@ -120,11 +124,11 @@ public class ResourceEntry {
    * @param newResource ссылка на ресурс
    */
   public final void releaseResource(final Resource newResource) {
-    ResourceItem rit = lookupResourceItemByResource(newResource);
-    if (usage != MULT_SHARE) {
-      rit.setUsed(false);
-      usage++;
-    }
+      ResourceItem rit = lookupResourceItemByResource(newResource);
+      if (usage != MULT_SHARE) {
+	rit.setUsed(false);
+	usage++;
+      }
   }
 
   /** Добавить новый ресурс в хранилище.
@@ -152,6 +156,28 @@ public class ResourceEntry {
     className = cn;
   }
 
+  /** Подготовка статистики по записи.
+   * @return строковое представление
+   */
+  public String toString() {
+    String result = "\nClass name: " + className + "\n";
+    result+= "Usage: " + (maxUsage - usage) + " of " + maxUsage + ". Acquire times: " + acquireCount + "\n";
+    result+= "Usage map: ";
+    Iterator it = resourceStorage.iterator();
+    while (it.hasNext()) {
+      ResourceItem rit = (ResourceItem) it.next();
+      result+= rit.isUsed() + (rit.isUsed() ? "(" + rit.getUsedBy() + ")" : "" ) + " ";
+    }
+    result+= "\n";
+    return result;
+  }
+
+  public void setUsedBy(Resource res, String usedBy) {
+    ResourceItem ri = lookupResourceItemByResource(res);
+    acquireCount++;
+    ri.setUsedBy(usedBy);
+  }
+
   /** Хранилище данных о конкретной ресурсе. */
   private class ResourceItem {
     /** Флаг использования. */
@@ -167,6 +193,14 @@ public class ResourceEntry {
      */
     public final void setUsed(final boolean newUsed) {
       used = newUsed;
+    }
+
+    private String usedBy = "";
+    public String getUsedBy() {
+      return usedBy;
+    }
+    public final void setUsedBy(String newUsedBy) {
+      usedBy = newUsedBy;
     }
     /** Флаг блокировки. */
     private boolean blockState = false;
