@@ -1,74 +1,59 @@
 package com.novel.stdobj.simpleconfig;
 
 import com.novel.odisp.common.Resource;
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
+import java.io.FileNotFoundException;
+import java.io.FileInputStream;
 import java.util.logging.Logger;
+import java.util.Properties;
 
-/** Ресурс ODISP реализующий доступ к конфигурационным файлам формата [имя]=[значение].
+/** Ресурс ODISP реализующий доступ к конфигурационным файлам  формата [имя]=[значение].
 * @author Валентин А. Алексеев
 * @author (C) 2003, НПП "Новел-ИЛ"
-* @version $Id: SimpleConfig.java,v 1.9 2004/01/16 14:31:57 valeks Exp $
+* @version $Id: SimpleConfig.java,v 1.10 2004/02/12 17:50:23 valeks Exp $
 */
-public class SimpleConfig implements Resource {
-  /** Имя конфигурационного файла. */
-  private String cfgName;
-  /** Содержимое конфигурации. */
-  private Map contents = new HashMap();
+public class SimpleConfig extends Properties implements Resource {
+  /** Имя конфигурационного файла по-умолчанию.*/
+  public static final String DEFAULT_CONFIG = "simpleconfig.dat";
   /** Журнал. */
   private static Logger logger = Logger.getLogger("simpleconfig");
-  /** Чтение конфигурационного файла в память.
+  /** Чтение конфигурационного файла.
    * @param newCfgName имя файла конфигурации
+   * @deprecated необходимо использовать load(new FileInputStream(String))
    */
   public final void readConfig(final String newCfgName) {
     try {
-      BufferedReader in = new BufferedReader(new FileReader(newCfgName));
-      String s;
-      Pattern p = Pattern.compile("^(\\w+)=(.*)");
-      while ((s = in.readLine()) != null) {
-	if (s.startsWith("#")) {
-	  continue;
-	}
-	Matcher m = p.matcher(s);
-	m.find();
-	if (m.groupCount() == 2) {
-	  contents.put(m.group(1), m.group(2));
-	} else {
-	  logger.finer("syntax error in line '" + s + "'. line ignored.");
-	}
-      }
-      in.close();
+      load(new FileInputStream(newCfgName));
+    } catch (FileNotFoundException e) {
+      logger.warning("file not found: " + newCfgName);
     } catch (IOException e) {
       logger.warning("unable to read config file " + newCfgName);
+    } catch (IllegalArgumentException e) {
+      logger.warning("unparsable Unicode sequence appeared in " + newCfgName);
     }
   }
   /** Возвращает значение переменной из конфигурационного файла.
    * @param name имя параметра
    * @return значение параметра или '-undef-' если параметр не определен
+   * @deprecated необходимо использовать getProperty(String)
    */
   public final String getValue(final String name) {
-    if (!contents.containsKey(name)) {
+    String result = getProperty(name);
+    if (result == null) {
       return "-undef-";
     }
-    return (String) contents.get(name);
+    return result;
   }
   /** Возвращает значение переменной из конфигурационного.
    * файла с учетом значения по умолчанию.
    * @param name имя параметра
    * @param defaultValue значение по умолчанию
+   * @deprecated необходимо использовать getProperty(String, String)
    * @return значение параметра или defaultValue если параметр не определен
    */
   public final String getValue(final String name,
 			       final String defaultValue) {
-    if (getValue(name).equals("-undef-")) {
-      return defaultValue;
-    }
-    return getValue(name);
+    return getProperty(name, defaultValue);
   }
   /** Выход.
    * @param type тип выхода
