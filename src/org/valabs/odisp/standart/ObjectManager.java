@@ -17,10 +17,12 @@ import java.lang.reflect.InvocationTargetException;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@valeks.novel.local">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.1 2004/02/13 12:11:43 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.2 2004/02/13 13:15:17 valeks Exp $
  */
 
 public class StandartObjectManager implements ObjectManager {
+  /** Карта запросов к ресурсам. */
+  private Map resourceRequests = new HashMap();
   /** Диспетчер объектов. */
   private Dispatcher dispatcher;
   /** Хранилище отложенных сообщений. */
@@ -178,15 +180,19 @@ public class StandartObjectManager implements ObjectManager {
   }
 
   public void send(Message message) {
+    Map localObjects;
+    synchronized(objects) {
+      localObjects = new HashMap(objects);
+    }
     if (message == null || 
 	message.getAction().length() == 0 || 
 	!message.isCorrect()) {
       return;
     }
-    Iterator it = objects.keySet().iterator();
+    Iterator it = localObjects.keySet().iterator();
     while (it.hasNext()) {
       String className = (String) it.next();
-      ObjectEntry oe = (ObjectEntry) objects.get(className);
+      ObjectEntry oe = (ObjectEntry) localObjects.get(className);
       if (oe.isBlockedState() || !oe.isLoaded()) {
 	log.finer("deffered message for " + className
 		  + " (loaded=" + oe.isLoaded() + ")");

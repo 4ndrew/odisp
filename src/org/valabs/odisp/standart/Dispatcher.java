@@ -29,7 +29,7 @@ import com.novel.stdmsg.*;
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.27 2004/02/13 12:11:43 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.28 2004/02/13 13:15:17 valeks Exp $
  */
 public class StandartDispatcher implements Dispatcher {
   /** Журнал. */
@@ -129,6 +129,7 @@ public class StandartDispatcher implements Dispatcher {
       = new StandartDispatcherHandler(new Integer(0));
     ObjectEntry oe
       = new ObjectEntry(stdh.getClass().getName(), 0, stdh.getDepends(), stdh.getProviding());
+    stdh.setDispatcher(this);
     oe.setObject(stdh);
     oman.getObjects().put("stddispatcher", oe);
     oman.loadPending();
@@ -195,177 +196,4 @@ public class StandartDispatcher implements Dispatcher {
       }
     }
   }
-
-  /** Обработчик сообщений диспетчера. */
-  private class StandartDispatcherHandler extends CallbackODObject {
-    private int msgId = 0;
-    /** Карта запросов к ресурсам. */
-    private Map resourceRequests = new HashMap();
-    /** Имя объекта. */
-    private String name = "stddispatcher";
-    /** Вернуть список сервисов.
-     * @return список сервисов
-     */
-    public final String[] getProviding() {
-      String[] res = {
-	"stddispatcher"
-      };
-      return res;
-    }
-    /** Вернуть список зависимостей.
-     * @return список зависимостей
-     */
-    public final String[] getDepends() {
-      String[] res = {};
-      return res;
-    }
-    /** Зарегистрировать обработчики сообщений. */
-    protected final void registerHandlers() {
-      addHandler("unload_object", new MessageHandler() {
-	  public final void messageReceived(final Message msg) {
-	    if (msg.getFieldsCount() != 1) {
-	      return;
-	    }
-	    String objname = (String) msg.getField(0);
-	    oman.unloadObject(objname, 1);
-	    oman.getObjects().remove(objname);
-	  }
-	});
-      addHandler("load_object", new MessageHandler() {
-	  public final void messageReceived(final Message msg) {
-	    if (msg.getFieldsCount() != 1) {
-	      return;
-	    }
-	    String objname = (String) msg.getField(0);
-	    oman.loadObject(objname);
-	    oman.loadPending();
-	  }
-	});
-      addHandler("od_shutdown", new MessageHandler() {
-	  public final void messageReceived(final Message msg) {
-	    int exitCode = 0;
-	    log.info(toString() + " shutting down...");
-	    if (msg.getFieldsCount() == 1) {
-	      exitCode = ((Integer) msg.getField(0)).intValue();
-	    }
-	    oman.unloadObject("stddispatcher", exitCode);
-	  }
-	});
-      addHandler("od_acquire", new MessageHandler() {
-	  public final void messageReceived(final Message msg) {
-	    if (msg.getFieldsCount() > 0) {
-	      String className = (String) msg.getField(0);
-	      boolean willBlockState = false;
-	      if (msg.getFieldsCount() == 2) {
-		willBlockState = ((Boolean) msg.getField(1)).booleanValue();
-	      }
-	      Iterator it = rman.getResources().keySet().iterator();
-	      boolean found = false;
-	      while (it.hasNext()) { // first hit
-		String curClassName = (String) it.next();
-		if (Pattern.matches(className + ":\\d+", curClassName)
-		    && ((ResourceEntry) rman.getResources().get(curClassName)).isLoaded()) {
-		  ODResourceAcquiredMessage m
-		    = new ODResourceAcquiredMessage(msg.getOrigin(), msg.getId());
-		  m.setResourceName(curClassName);
-		  m.setResource(((ResourceEntry) rman.getResources().get(curClassName)).getResource());
-		  send(m);
-		  logger.fine((msgId++) + "" + msg.getOrigin() + " acquired " + curClassName);
-		  if (willBlockState) {
-		    oman.setBlockedState(msg.getOrigin(), oman.getBlockedState(msg.getOrigin()) + 1);
-		  }
-		  rman.getResources().remove(curClassName);
-		  found = true;
-		  break;
-		}
-	      }
-	      // allow concurent request for the resource
-	      if (!found) {
-		/* we maintin list of ODISP objects that require some
-		 * specific resource each resource has corresponding
-		 * queue of objects that wanted to acquire it
-		 */
-		if (!resourceRequests.containsKey(className)) {
-		  resourceRequests.put(className, new ArrayList());
-		}
-		String wb = "";
-		if (willBlockState) {
-		  wb = "!";
-		}
-		((List) resourceRequests.get(className)).add(msg.getOrigin() + wb);
-	      }
-	    }
-	  }
-	});
-      addHandler("od_release", new MessageHandler() {
-	  public final void messageReceived(final Message msg) {
-	    if (msg.getFieldsCount() != 2) {
-	      return;
-	    }
-	    String className = (String) msg.getField(0);
-	    Resource res = (Resource) msg.getField(1);
-	    logger.fine((msgId++) + "" + msg.getOrigin() + " released " + className);
-	    // now we should check if there are any objects
-	    // sitting in resourceRequest queues
-	    if (resourceRequests.containsKey(className)) {
-	      List resQueue = ((List) resourceRequests.get(className));
-	      /* construct od_acquire message and send it to the first
-	       * object that is on the queue object's name may
-	       * contain ! modifier if acquiring should made blocking
-	       */
-	      String odObjectName = (String) resQueue.get(0);
-	      if (odObjectName.endsWith("!")) {
-		odObjectName = odObjectName.substring(0, odObjectName.length() - 1);
-		oman.setBlockedState(odObjectName, oman.getBlockedState(odObjectName) + 1);
-	      }
-	      ODResourceAcquiredMessage m = new ODResourceAcquiredMessage(odObjectName, msg.getId());
-	      m.setResourceName(className);
-	      m.setResource(res);
-	      send(m);
-	      logger.fine((msgId++) + "" + msg.getOrigin() + " acquired " + className);
-	    } else {
-	      rman.getResources().put(className, new ResourceEntry(className.substring(0, className.length() - className.indexOf(":"))));
-	    }
-	    // decrease blocking state counter in case acquire was blocking
-	    oman.setBlockedState(msg.getOrigin(), oman.getBlockedState(msg.getOrigin()) - 1);
-	  }
-	});
-      addHandler("od_list_objects", new MessageHandler() {
-	  public final void messageReceived(final Message msg) {
-	    Message m = getNewMessage("object_list", msg.getOrigin(), "stddispatcher", msg.getId());
-	    m.addField(new ArrayList(oman.getObjects().keySet()));
-	    sendMessage(m);
-	  }
-	});
-      addHandler("od_list_resources", new MessageHandler() {
-	  public final void messageReceived(final Message msg) {
-	    Message m = getNewMessage("resource_list", msg.getOrigin(), "stddispatcher", msg.getId());
-	    m.addField(new ArrayList(rman.getResources().keySet()));
-	    sendMessage(m);
-	  }
-	});
-      addHandler("od_remove_dep", new MessageHandler() {
-	  public final void messageReceived(final Message msg) {
-	    if (msg.getFieldsCount() != 1) {
-	      return;
-	    }
-	    ObjectEntry oe = (ObjectEntry) oman.getObjects().get(msg.getOrigin());
-	    oe.removeDepend((String) msg.getField(0));
-	  }
-	});
-    }
-    /** Точка выхода из объекта.
-     * @param type признак выхода
-     * @return код возврата
-     */
-    public final int cleanUp(final int type) {
-      return 0;
-    }
-    /** Конструктор объекта.
-     * @param id порядковый номер объекта
-     */
-    public StandartDispatcherHandler(final Integer id) {
-      super("stddispatcher");
-    }
-  } // StandartDispatcherHandler
 } // StandartDispatcher

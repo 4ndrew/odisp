@@ -6,19 +6,9 @@ import java.util.List;
  * класс, который выступает в качестве ODISP диспетчера.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.8 2004/02/13 12:11:43 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.9 2004/02/13 13:15:17 valeks Exp $
  */
 public interface Dispatcher {
-  /** Посылка одиночного сообщения.
-   * @param message сообщение
-   * @deprecated необходимо использовать send(Message)
-   */
-  void sendMessage(Message message);
-  /** Посылка списка сообщений.
-   * @param messageList список сообщений
-   * @deprecated необходимо использовать send(Message[])
-   */
-  void sendMessages(Message[] messageList);
   /** Посылка одиночного сообщения.
    * @param message сообщение
    */
