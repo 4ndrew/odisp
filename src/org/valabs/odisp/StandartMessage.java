@@ -1,13 +1,15 @@
 package com.novel.odisp;
+
 import com.novel.odisp.common.*;
 import java.util.*;
+import java.io.Serializable;
 
 /** Реализация стандартного сообщения для стандартного диспетчера ODISP
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: StandartMessage.java,v 1.4 2003/10/12 20:01:43 valeks Exp $
+ * @version $Id: StandartMessage.java,v 1.5 2003/11/10 13:54:34 valeks Exp $
  */
-public class StandartMessage implements Message {
+public class StandartMessage implements Message, Serializable {
 	/** Внутренний уникальный счетчик сообщения */
 	static int id = 0;
 	private int my_id;
