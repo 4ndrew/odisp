@@ -6,7 +6,7 @@ import java.util.regex.*;
 * посылаемых диспетчером ODISP.
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: ODObject.java,v 1.7 2003/10/14 09:38:34 valeks Exp $
+* @version $Id: ODObject.java,v 1.8 2003/10/15 20:51:04 valeks Exp $
 */
 public abstract class ODObject extends Thread {
 	/** Диспетчер работающий с этим объектом */
@@ -30,6 +30,7 @@ public abstract class ODObject extends Thread {
 	@param name имя объекта
 	*/
 	public ODObject(String name){
+	    super(name);
 	    messages = new ArrayList();
 	    this.name = name;
 	    this.match = name;
