@@ -10,7 +10,7 @@ import javax.swing.*;
 * @author Андрей А. Порохин
 * @author Валентин А. Алексеев
 * @author (C) 2003 НПП "Новел-ИЛ"
-* @version $Id: TestGUI.java,v 1.4 2003/10/14 13:59:07 dron Exp $
+* @version $Id: TestGUI.java,v 1.5 2003/10/14 21:06:50 dron Exp $
 */
 public class TestGUI extends CallbackODObject {
    private JTextField txt1 = new JTextField(20);
@@ -67,12 +67,18 @@ public class TestGUI extends CallbackODObject {
      mainFrame.setSize(400, 400);
      mainFrame.setVisible(true);
    }
-   public String[] getProviding(){
-	String[] res = {"testGUI"};
-	return res;
+ 
+   /** Список предоставляемых ресурсов 
+   */
+   public String[] getProviding() {
+	  String res[] = {"testGUI"};
+	  return res;
    }
-   public String[] getDepends(){
-	String[] res = {"stddispatcher"};
-	return res;
+   
+   /** Список необходимых ресурсов
+   */
+   public String[] getDepends() {
+	  String res[] = {"stddispatcher"};
+	  return res;
    }
 }
