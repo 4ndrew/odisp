@@ -3,7 +3,6 @@ package com.novel.odisp.common;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -12,7 +11,7 @@ import java.util.regex.Pattern;
 * по мере прихода.
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: CallbackODObject.java,v 1.14 2004/05/11 09:55:39 valeks Exp $
+* @version $Id: CallbackODObject.java,v 1.15 2004/05/12 13:43:24 dron Exp $
 */
 public abstract class CallbackODObject extends ODObject {
   /** Карта обработчиков сообщений. */
@@ -57,6 +56,7 @@ public abstract class CallbackODObject extends ODObject {
   protected final void handleMessage(final Message msg) {
     if (!handlersRegistred) {
       registerHandlers();
+      handlersRegistred = true;
     }
     if (handlers.containsKey(msg.getAction())) {
       ((MessageHandler) handlers.get(msg.getAction())).messageReceived(msg);
