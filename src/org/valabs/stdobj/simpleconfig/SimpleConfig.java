@@ -7,7 +7,7 @@ import java.util.regex.*;
 /** Объект ODISP реализующий доступ к конфигурационным файлам формата [имя]=[значение]
 * @author Валентин А. Алексеев
 * @author (C) 2003, НПП "Новел-ИЛ"
-* @version $Id: SimpleConfig.java,v 1.3 2003/10/07 11:13:48 valeks Exp $
+* @version $Id: SimpleConfig.java,v 1.4 2003/10/07 13:35:16 valeks Exp $
 */
 public class SimpleConfig extends PollingODObject {
 	private Map contents = new HashMap();
@@ -45,8 +45,13 @@ public class SimpleConfig extends PollingODObject {
 		    }
 		}
 	    }
+	    if(msg.getAction().equals("od_cleanup"))
+		if(msg.getFieldsCount() == 1)
+		    cleanUp(((Integer)msg.getField(0)).intValue());
 	}
 	public int cleanUp(int type){
+	    log("cleanUp","setting doExit");
+	    doExit = true;
 	    return 0;
 	}
 	public SimpleConfig(Integer id){
