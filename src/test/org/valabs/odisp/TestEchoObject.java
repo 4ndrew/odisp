@@ -9,27 +9,25 @@ import org.valabs.stdobj.echo.EchoObject;
 /** Тестовый тест для тестового объекта.
  * Проверка принципиальной возможности создания тестов для объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Алексеев Валентин А.</a>
- * @version $Id: TestEchoObject.java,v 1.1 2004/12/02 22:54:35 valeks Exp $
+ * @version $Id: TestEchoObject.java,v 1.2 2004/12/03 09:48:40 valeks Exp $
  */
 public class TestEchoObject extends TestCase {
   /** Тестирование на корректность эха. */
   public void testEcho() {
-    class BooleanResultDispatcher extends DispatcherFake {
-      boolean result = false;
+    class DispatcherTest extends DispatcherFake {
       public void send(Message msg) {
         if (msg.getAction().equals("echo_reply")) {
           if (msg.getField("0").equals("Hello, World!")) {
-            result = true;
+          } else {
+            signalException(new Exception("Wrong message text received"));
           }
+        } else {
+          signalException(new Exception("Wrong message received"));
         }
-      }
-      
-      public boolean getResult() {
-        return result;
       }
     };
     
-    BooleanResultDispatcher disp = new BooleanResultDispatcher();
+    DispatcherTest disp = new DispatcherTest();
     
     EchoObject eo = new EchoObject(new Integer(1234));
     eo.setDispatcher(disp);
@@ -37,7 +35,6 @@ public class TestEchoObject extends TestCase {
     m.setAction("echo");
     m.addField("0", "Hello, World!");
     eo.handleMessage(m);
-    assertTrue(disp.getResult());
   }
   
   public static void main(String[] args) {
