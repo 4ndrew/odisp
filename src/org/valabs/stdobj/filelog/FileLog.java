@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 /** Объект реализующий простейшую журнализацию событий согласно файлу шаблонов
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: FileLog.java,v 1.12 2003/12/03 21:14:57 valeks Exp $
+* @version $Id: FileLog.java,v 1.13 2003/12/10 09:48:14 dron Exp $
 */
 public class FileLog extends PollingODObject {
   /** Поток вывода */
@@ -41,7 +41,7 @@ public class FileLog extends PollingODObject {
       return;
     }
     if (msg instanceof ODResourceAcquiredMessage && msg.getDestination().equals(getObjectName())) { // we acquired SimpleConfig resource
-      String className = (String) ((ODResourceAcquiredMessage)msg).getClassName();
+      String className = (String) ((ODResourceAcquiredMessage)msg).getResourceName();
       if (className.startsWith("com.novel.stdobj.simpleconfig.SimpleConfig")) {
 	SimpleConfig scfg = (SimpleConfig) ((ODResourceAcquiredMessage)msg).getResource();
 	scfg.readConfig("simpleconfig.dat");
