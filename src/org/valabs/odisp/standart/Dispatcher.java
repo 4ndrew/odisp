@@ -21,13 +21,14 @@ import com.novel.odisp.common.ProxyResource;
 import com.novel.odisp.common.Dispatcher;
 import com.novel.odisp.common.CallbackODObject; // для объекта stddispatcher
 import com.novel.odisp.common.MessageHandler; // --''--
+import com.novel.stdmsg.*;
 
 /** Стандартный диспетчер ODISP.
  * Стандартный диспетчер реализует пересылку сообщений между объектами ядра
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.20 2003/11/30 22:40:55 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.21 2003/12/03 19:21:03 valeks Exp $
  */
 public class StandartDispatcher implements Dispatcher {
   /** Интерфейс к службе сообщений*/
@@ -84,7 +85,7 @@ public class StandartDispatcher implements Dispatcher {
 	  }
 	}
 	log.config(" ok. loaded = " + objectName);
-	Message m = getNewMessage("od_object_loaded", objectName, "stddispatcher", 0);
+	Message m = new ODObjectLoadedMessage(objectName);
 	oe.getObject().addMessage(m);
       }
     }
@@ -221,8 +222,8 @@ public class StandartDispatcher implements Dispatcher {
 	}
       }
       ODObject obj = oe.object;
-      Message m = getNewMessage("od_cleanup", objectName, "stddispatcher", 0);
-      m.addField(new Integer(code));
+      ODCleanupMessage m = new ODCleanupMessage(objectName, 0);
+      m.setReason(code);
       sendMessage(m);
       obj.interrupt();
       objects.remove(objectName);
@@ -643,14 +644,14 @@ public class StandartDispatcher implements Dispatcher {
 	      while (it.hasNext()) { // first hit
 		String curClassName = (String) it.next();
 		if (Pattern.matches(className + ":\\d+", curClassName) && ((ResourceEntry) resources.get(curClassName)).loaded) {
-		  Message m = getNewMessage("resource_acquired", msg.getOrigin(), "stddispatcher", msg.getId());
-		  m.addField(curClassName);
-		  m.addField(((ResourceEntry) resources.get(curClassName)).resource);
-		  resources.remove(curClassName);
+		  ODResourceAcquiredMessage m = new ODResourceAcquiredMessage(msg.getOrigin(), msg.getId());
+		  m.setClassName(curClassName);
+		  m.setResource(((ResourceEntry) resources.get(curClassName)).resource);
 		  sendMessage(m);
 		  if (willBlockState) {
 		    setBlockedState(msg.getOrigin(), getBlockedState(msg.getOrigin()) + 1);
 		  }
+		  resources.remove(curClassName);
 		  found = true;
 		  break;
 		}
@@ -686,9 +687,9 @@ public class StandartDispatcher implements Dispatcher {
 		odObjectName = odObjectName.substring(0, odObjectName.length() - 1);
 		setBlockedState(odObjectName, getBlockedState(odObjectName) + 1);
 	      }
-	      Message m = getNewMessage("resource_acquired", odObjectName, "stddispatcher", msg.getId());
-	      m.addField(className);
-	      m.addField(res);
+	      ODResourceAcquiredMessage m = new ODResourceAcquiredMessage(odObjectName, msg.getId());
+	      m.setClassName(className);
+	      m.setResource(res);
 	      sendMessage(m);
 	    } else {
 	      resources.put(className, new ResourceEntry(className.substring(0, className.length() - className.indexOf(":"))));
