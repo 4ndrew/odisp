@@ -19,7 +19,7 @@ import com.novel.stdmsg.ODObjectLoadedMessage;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.29 2004/05/28 00:18:41 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.30 2004/05/31 15:38:43 valeks Exp $
  */
 
 public class StandartObjectManager implements ObjectManager {
@@ -388,7 +388,7 @@ public class StandartObjectManager implements ObjectManager {
     List toFlush = messages.flush(objectName);
     Iterator it = toFlush.iterator();
     while (it.hasNext()) {
-      send((Message) it.next());
+      sendToObject(objectName, (Message) it.next());
     }
     loadPending();
   }
