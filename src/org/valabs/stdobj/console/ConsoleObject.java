@@ -8,7 +8,7 @@ import java.io.InputStreamReader;
 /** Объект ODISP реализующий консольный интерфейс доступа к менеджеру
 * @author Валентин А. Алексеев
 * @author (C) 2003, НПП "Новел-ИЛ"
-* @version $Id: ConsoleObject.java,v 1.11 2003/12/02 14:49:07 valeks Exp $
+* @version $Id: ConsoleObject.java,v 1.12 2003/12/04 23:24:23 dron Exp $
 */
 public class ConsoleObject extends PollingODObject {
   /** Поток читающий ввод с консоли */
@@ -67,8 +67,7 @@ public class ConsoleObject extends PollingODObject {
    */
   public String[] getDepends() {
     String res[] = {
-      "stddispatcher",
-      "log"
+      "stddispatcher"
     };
     return res;
   }
