@@ -147,7 +147,7 @@ public class Cookie extends Object implements Cloneable
     /// Sets the version of the cookie protocol used when this cookie saves
     // itself.  Since the IETF standards are still being finalized, consider
     // version 1 as experimental; do not use it (yet) on production sites. 
-    public void setVersion( int vesion )
+    public void setVersion( int version )
 	{
 	this.version = version;
 	}
