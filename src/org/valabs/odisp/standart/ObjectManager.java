@@ -30,7 +30,7 @@ import org.valabs.stdmsg.ODShutdownMessage;
  * Менеджер объектов ODISP.
  * 
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev </a>
- * @version $Id: ObjectManager.java,v 1.52 2005/02/27 13:05:24 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.53 2005/03/03 08:47:50 valeks Exp $
  */
 
 class ObjectManager implements org.valabs.odisp.common.ObjectManager {
@@ -400,13 +400,13 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
    * @param objectName имя объекта
    */
   private void flushDefferedMessages(final String objectName) {
-    if (!objects.containsKey(objectName)) { return; }
-    final List toFlush = messages.flush(objectName);
-    Iterator it = toFlush.iterator();
-    while (it.hasNext()) {
-      sendToObject(objectName, (Message) it.next());
+    if (objects.containsKey(objectName)) {
+      final Iterator it = messages.flush(objectName).iterator();
+      while (it.hasNext()) {
+        sendToObject(objectName, (Message) it.next());
+      }
+      loadPending();
     }
-    loadPending();
   }
 
   /** Получение следующего сообщения для обработки. */

@@ -15,18 +15,16 @@ import org.valabs.odisp.common.ResourceManager;
 import org.valabs.odisp.common.StandartODObject;
 import org.valabs.stdmsg.ModuleStatusMessage;
 import org.valabs.stdmsg.ModuleStatusReplyMessage;
-import org.valabs.stdmsg.ODAddProviderMessage;
 import org.valabs.stdmsg.ODGetProvidingMessage;
 import org.valabs.stdmsg.ODGetProvidingReplyMessage;
 import org.valabs.stdmsg.ODRemoveDepMessage;
-import org.valabs.stdmsg.ODRemoveProviderMessage;
 import org.valabs.stdmsg.ODShutdownMessage;
 
 /**
  * Обработчик сообщений диспетчера ODISP.
  * 
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: DispatcherHandler.java,v 1.38 2005/02/27 12:37:31 valeks Exp $
+ * @version $Id: DispatcherHandler.java,v 1.39 2005/03/03 08:47:50 valeks Exp $
  */
 
 class DispatcherHandler extends StandartODObject {
@@ -108,23 +106,23 @@ class DispatcherHandler extends StandartODObject {
         addHandler(ODGetProvidingMessage.NAME, new MessageHandler() {
             public final void messageReceived(final Message msg) {
                 final Message m = dispatcher.getNewMessage();
-                ODGetProvidingReplyMessage.setup(m, msg.getOrigin(), msg
+                ODGetProvidingReplyMessage.setup(m, getObjectName(), msg.getOrigin(), msg
                         .getId());
                 ODGetProvidingReplyMessage.setProvidingList(m, oman
                         .getProviding());
                 dispatcher.send(m);
             }
         });
-        addHandler(ODAddProviderMessage.NAME, new MessageHandler() {
-            public final void messageReceived(final Message msg) {
-                oman.addProvider(ODAddProviderMessage.getServiceName(msg), msg.getOrigin());
-            }
-        });
-        addHandler(ODRemoveProviderMessage.NAME, new MessageHandler() {
-            public final void messageReceived(final Message msg) {
-                oman.removeProvider(ODRemoveProviderMessage.getServiceName(msg), msg.getOrigin());
-            }
-        });
+//        addHandler(ODAddProviderMessage.NAME, new MessageHandler() {
+//            public final void messageReceived(final Message msg) {
+//                oman.addProvider(ODAddProviderMessage.getServiceName(msg), msg.getOrigin());
+//            }
+//        });
+//        addHandler(ODRemoveProviderMessage.NAME, new MessageHandler() {
+//            public final void messageReceived(final Message msg) {
+//                oman.removeProvider(ODRemoveProviderMessage.getServiceName(msg), msg.getOrigin());
+//            }
+//        });
         addHandler(ModuleStatusMessage.NAME, new MessageHandler() {
             public final void messageReceived(final Message msg) {
                 /** @todo. проблемы с руссификацией. */

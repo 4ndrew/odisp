@@ -5,7 +5,7 @@ import java.util.Map;
 
 /** Интерфейс менеджера объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.9 2005/02/27 12:37:28 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.10 2005/03/03 08:47:50 valeks Exp $
  */
 
 public interface ObjectManager {
@@ -36,11 +36,17 @@ public interface ObjectManager {
   /** Удалить провайдера из списка.
    * @param service название сервиса
    * @param objectName название объекта
+   * @deprecated начиная с версии 1.17 StandartODObject'а нет возможности
+   * динамически изменить список сервисов объекта, который хранится для проверки
+   * совпадения destination сообщения и имени/сервисов предоставляемых объектом.
    */
   void removeProvider(String service, String objectName);
   /** Добавить провайдера в список.
    * @param service название сервиса
    * @param objectName название объекта
+   * @deprecated начиная с версии 1.17 StandartODObject'а нет возможности
+   * динамически изменить список сервисов объекта, который хранится для проверки
+   * совпадения destination сообщения и имени/сервисов предоставляемых объектом.
    */
   void addProvider(String service, String objectName);
 } // ObjectManager

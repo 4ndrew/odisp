@@ -1,45 +1,106 @@
 package org.valabs.stdmsg;
 
+import org.valabs.odisp.common.Message;
+import org.doomdark.uuid.UUID;
 import java.util.List;
 
-import org.doomdark.uuid.UUID;
-import org.valabs.odisp.common.Message;
-
-/** Запрос на динамическое изменение списка сервисов.
- * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @author (C) 2004, НПП "Новел-ИЛ"
- * @version $Id: ODGetProvidingReplyMessage.java,v 1.9 2004/11/05 14:11:28 valeks Exp $
+/** Запрос списка доступных сервисов.
+ * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
+ * @version $Id: ODGetProvidingReplyMessage.java,v 1.10 2005/03/03 08:47:49 valeks Exp $
  */
-
 public final class ODGetProvidingReplyMessage {
-  /** Символическое имя сообщения. */
+  /** Строковое представление сообщения. */
   public static final String NAME = "od_get_providing_reply";
+  /** Индекс для поля ProvidingList. */
+  private static String idxPROVIDINGLIST = "providinglist";
 
-  /** Имя параметра с названием. */
-  private static String PROVIDINGLIST_IDX = "0";
-
-  /** Конструктор сообщения.
-   * @param objectName имя объекта
-   * @param replyId номер сообщения на которое производится ответ
+  /** Запрет на создание объекта. */
+  private ODGetProvidingReplyMessage() { /* Single-model. Не позволяется создавать объект. */ }
+  /** Проверка сообщения на корректность.
+   * @param msg Сообщение
    */
-  public static void setup(final Message msg, final String objectName, final UUID replyId) {
-    // отправлять может только диспетчер
+  private static void checkMessage(final Message msg) {
+    try {
+      assert getProvidingList(msg) != null : "Message has invalid field 'ProvidingList'";
+    } catch (AssertionError e) {
+      System.err.println("Message assertion :" + e.toString());
+      e.printStackTrace();
+    }
+    msg.setCorrect(
+      getProvidingList(msg) != null
+    );
+  }
+  /** Инициализация основных свойств сообщения.
+   * @param msg Сообщение.
+   * @param destination Точка назначения.
+   * @param origin Точка отправления.
+   * @param replyTo Идентификатор сообщения, на которое это является ответом.
+   * @return ссылка на инициализированное сообщение
+   */
+  public static Message setup(final Message msg
+,
+                              final String destination,
+                              final String origin,
+                              final UUID replyTo) {
     msg.setAction(NAME);
-    msg.setOrigin("dispatcher");
-    msg.setDestination(objectName);
-    msg.setReplyTo(replyId);
+    msg.setDestination(destination);
+    msg.setOrigin(origin);
+    msg.setReplyTo(replyTo);
     msg.setRoutable(false);
-  }
-  /** Доступ к имени сервиса. */
-  public static List getProvidingList(final Message msg) {
-    return (List) msg.getField(PROVIDINGLIST_IDX);
-  }
-  /** Установка имени сервиса. */
-  public static final void setProvidingList(final Message msg, final List newProvidingList) {
-    msg.addField(PROVIDINGLIST_IDX, newProvidingList);
+    checkMessage(msg);
+    return msg;
   }
 
-  public final boolean equals(final Message msg) {
+  /** Установить ProvidingList.
+   * Список предоставляемых сервисов.
+   * @param msg Сообщение над которым производится действие.
+   * @param newValue Новое значение для поля.
+   * @return ссылка на сообщение
+   */
+
+  public static Message setProvidingList(final Message msg, final List newValue) {
+    msg.addField(idxPROVIDINGLIST, newValue);
+    checkMessage(msg);
+    return msg;
+  }
+  /** Получить ProvidingList.
+   *Список предоставляемых сервисов.
+   * @param msg Сообщение над которым производится действие.
+   * @return значение поля
+   */
+  public static List getProvidingList(final Message msg) {
+    return (List)msg.getField(idxPROVIDINGLIST);
+  }
+
+  /** Является ли экземпляр сообщением этого типа.
+   * @param msg Сообщение.
+   * @return true - если является, false - иначе.
+   */
+  public static boolean equals(final Message msg) {
     return msg.getAction().equals(NAME);
   }
-} // ODGetProvidingReplyMessage
+  /** Копирование полей из одного сообщения в другое.
+  * @param dest Получатель.
+  * @param src Источник.
+  */
+  public static void copyFrom(final Message dest, final Message src) {
+    setProvidingList(dest, getProvidingList(src));
+  }
+  /** Генерирование уникального hash-кода сообщения.
+   * Всегда равен 0.
+   * @return hash-код сообщения.
+   */
+  public int hashCode() {
+    return 0;
+  }
+  /** Короткий способ заполнения всех полей сообщения сразу.
+   * @return ссылку на сообщение
+   * @param providinglist Список предоставляемых сервисов.
+  */
+  public static Message initAll(final Message m,
+                                final List providinglist) {
+    setProvidingList(m, providinglist);
+    return m;
+  }
+
+} // ODGetProvidingReplyMessage 

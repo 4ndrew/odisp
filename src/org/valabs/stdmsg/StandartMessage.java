@@ -20,7 +20,7 @@ import org.valabs.odisp.common.Message;
  * 
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: StandartMessage.java,v 1.26 2005/02/27 12:37:32 valeks Exp $
+ * @version $Id: StandartMessage.java,v 1.27 2005/03/03 08:47:50 valeks Exp $
  */
 public class StandartMessage implements Message, Serializable, Cloneable {
   private static MessageGraphWriter debugMGW = new MessageGraphWriter();
@@ -321,7 +321,7 @@ public class StandartMessage implements Message, Serializable, Cloneable {
             Iterator it = objects.iterator();
             final String namePrefix = " \"n";
             while (it.hasNext()) {
-              String element = (String) it.next();
+              final String element = (String) it.next();
               output.println(namePrefix + element + "\" [label=\"" + element + "\"];");
             }
             it = messages.iterator();
