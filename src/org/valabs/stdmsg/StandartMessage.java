@@ -8,7 +8,7 @@ import java.io.Serializable;
 /** Реализация стандартного сообщения для стандартного диспетчера ODISP.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: StandartMessage.java,v 1.8 2004/02/25 08:36:58 dron Exp $
+ * @version $Id: StandartMessage.java,v 1.9 2004/02/25 08:54:11 valeks Exp $
  */
 public class StandartMessage implements Message, Serializable {
   /** Флаг маршрутизации. */
@@ -178,14 +178,18 @@ public class StandartMessage implements Message, Serializable {
     } catch (Exception e) {
       stea = e.getStackTrace();
     }
-    String stackTraceMessage = "";
+    String stackTraceMessage = "\nStack trace:";
     for(int i = 1; i < 10 && i < stea.length; i++) {
-      stackTraceMessage += "\n" + stea[i];
+      stackTraceMessage += stea[i] + "\n";
+    }
+    String fieldDump = "\nField dump:";
+    for(int i = 0; i < getFieldsCount(); i++) {
+      fieldDump += "\n(" + i + ") " + getField(i).toString();
     }
     return "stdmessage id=" + myId + " replyto=" + inReplyTo
       + " action=" + action + ", destination=" + destination
       + ", origin=" + origin + ", fields.size()=" + fields.size()
-      + ", stacktrace: " + stackTraceMessage;
+      + stackTraceMessage + fieldDump;
   }
 
   /** Проверка корректности сообщения.
