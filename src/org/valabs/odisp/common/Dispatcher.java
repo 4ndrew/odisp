@@ -6,7 +6,7 @@ import java.util.List;
  * класс, который выступает в качестве ODISP диспетчера.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.7 2004/02/12 17:45:21 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.8 2004/02/13 12:11:43 valeks Exp $
  */
 public interface Dispatcher {
   /** Посылка одиночного сообщения.
@@ -46,4 +46,7 @@ public interface Dispatcher {
    * @return ссылка на сообщение
    */
   Message getNewMessage();
+
+  ObjectManager getObjectManager();
+  ResourceManager getResourceManager();
 }
