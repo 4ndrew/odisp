@@ -1,6 +1,6 @@
-<!-- $Id: build.xml,v 1.6 2003/11/19 17:20:52 valeks Exp $ -->
+<!-- $Id: build.xml,v 1.7 2003/11/25 12:48:36 valeks Exp $ -->
 <project name="nms" default="all" basedir=".">
-<!--    <property file="../build.properties"/>-->
+    <property file="build.properties"/>
 
     <target name="odisp">
 	<javac srcdir="${src-dir}/odisp" destdir="${work-dir}/build" debug="yes"/>

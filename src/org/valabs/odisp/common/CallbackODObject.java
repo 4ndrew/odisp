@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 * посылаемых диспетчером ODISP и вызывающий обработчик сообщения по мере прихода.
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: CallbackODObject.java,v 1.7 2003/11/25 00:36:58 valeks Exp $
+* @version $Id: CallbackODObject.java,v 1.8 2003/11/25 12:48:36 valeks Exp $
 */
 public abstract class CallbackODObject extends ODObject {
   /** Карта обработчиков сообщений */
@@ -53,7 +53,7 @@ public abstract class CallbackODObject extends ODObject {
    * @param msg сообщение
    */
   public final void addMessage(Message msg) {
-    if (!Pattern.matches(match, msg.getDestination())) {
+    if (!Pattern.matches(match, msg.getDestination()) || !Pattern.matches(msg.getDestination(), getObjectName())) {
       return;
     }
     handleMessage(msg);
