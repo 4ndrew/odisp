@@ -1,6 +1,6 @@
 # Makefile for all documents
 #
-# $Id: Makefile,v 1.13 2003/12/08 22:34:46 valeks Exp $
+# $Id: Makefile,v 1.14 2003/12/08 22:45:16 valeks Exp $
 
 # folders & files
 TEXDOCS=impl.tex \
@@ -27,7 +27,7 @@ tex: $(TEXDVIS)
 pdf: $(TEXPDFS)
 
 htm: $(TEXHTMLS)
-	$(HTMLPROC) -rootdir html/ $>
+	$(HTMLPROC) -rootdir html/ -local_icons $>
 
 ${TEXPDFS}: ${TEXDVIS}
 	$(PDFPROC) ${.TARGET:.pdf=}
