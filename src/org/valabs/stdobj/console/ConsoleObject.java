@@ -5,7 +5,7 @@ import com.novel.odisp.common.PollingODObject;
 /** Объект ODISP реализующий консольный интерфейс доступа к менеджеру.
 * @author Валентин А. Алексеев
 * @author (C) 2003, НПП "Новел-ИЛ"
-* @version $Id: ConsoleObject.java,v 1.15 2004/03/31 12:54:48 dron Exp $
+* @version $Id: ConsoleObject.java,v 1.16 2004/04/02 09:54:49 valeks Exp $
 */
 public class ConsoleObject extends PollingODObject {
   /** Поток читающий ввод с консоли. */
@@ -64,7 +64,7 @@ public class ConsoleObject extends PollingODObject {
    */
   public final String[] getDepends() {
     String[] res = {
-      "stddispatcher"
+      "dispatcher"
     };
     return res;
   }

@@ -7,7 +7,7 @@ import com.novel.odisp.common.Message;
 /** Запрос на динамическое изменение списка сервисов.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2004, НПП "Новел-ИЛ"
- * @version $Id: ODGetProvidingReplyMessage.java,v 1.3 2004/03/31 12:54:47 dron Exp $
+ * @version $Id: ODGetProvidingReplyMessage.java,v 1.4 2004/04/02 09:54:49 valeks Exp $
  */
 
 public class ODGetProvidingReplyMessage extends StandartMessage {
@@ -29,7 +29,7 @@ public class ODGetProvidingReplyMessage extends StandartMessage {
    */
   public ODGetProvidingReplyMessage(final String objectName, final int replyId) {
     // отправлять может только диспетчер
-    super(NAME, objectName, "stddispatcher", replyId);
+    super(NAME, objectName, "dispatcher", replyId);
   }
   /** Доступ к имени сервиса. */
   public final List getProvidingList() {

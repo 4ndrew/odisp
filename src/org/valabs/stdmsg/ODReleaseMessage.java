@@ -14,7 +14,7 @@ import com.novel.odisp.common.Resource;
  * захват не более одного ресурса с установлением режима блокировки.</p>
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODReleaseMessage.java,v 1.8 2004/03/31 17:01:40 valeks Exp $
+ * @version $Id: ODReleaseMessage.java,v 1.9 2004/04/02 09:54:49 valeks Exp $
  */
 
 public class ODReleaseMessage extends StandartMessage {
@@ -35,7 +35,7 @@ public class ODReleaseMessage extends StandartMessage {
    * @param replyTo в ответ на сообщение No.
    */
   public ODReleaseMessage(final String origin, final int replyTo) {
-    super("od_release", "stddispatcher", origin, replyTo);
+    super("od_release", "dispatcher", origin, replyTo);
   }
 
   /** Вернуть имя ресурса для захвата.

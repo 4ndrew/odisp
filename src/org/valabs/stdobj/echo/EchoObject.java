@@ -7,7 +7,7 @@ import com.novel.odisp.common.MessageHandler;
 /** Простейший ODISP объект реализующий автоответчик на приходящие сообщения.
 * @author Валентин А. Алексеев
 * @author (C) 2003, НПП "Новел-ИЛ"
-* @version $Id: EchoObject.java,v 1.11 2004/03/17 11:46:36 dron Exp $
+* @version $Id: EchoObject.java,v 1.12 2004/04/02 09:54:49 valeks Exp $
 */
 public class EchoObject extends CallbackODObject {
   /** Регистрация обработчиков. */
@@ -56,7 +56,7 @@ public class EchoObject extends CallbackODObject {
    */
   public final String[] getDepends() {
     String[] res = {
-      "stddispatcher",
+      "dispatcher",
       "log"
     };
     return res;

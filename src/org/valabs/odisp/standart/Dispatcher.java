@@ -25,7 +25,7 @@ import com.novel.stdmsg.StandartMessage;
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.39 2004/03/31 13:12:36 dron Exp $
+ * @version $Id: Dispatcher.java,v 1.40 2004/04/02 09:54:49 valeks Exp $
  */
 public class StandartDispatcher implements Dispatcher {
   /** Журнал. */
@@ -151,7 +151,7 @@ public class StandartDispatcher implements Dispatcher {
     log.info(toString() + " starting up...");
     oman.loadObject(StandartDispatcherHandler.class.getName(), null);
     oman.loadPending();
-    Message runthr = getNewMessage("od_set_run_thread", "stddispatcher", "G0D", 0);
+    Message runthr = getNewMessage("od_set_run_thread", "dispatcher", "G0D", 0);
     Thread t = new Thread("alive thread") {
 	public final void run() {
 	  try {

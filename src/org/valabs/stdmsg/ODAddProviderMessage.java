@@ -5,7 +5,7 @@ import com.novel.odisp.common.Message;
 /** Запрос на динамическое изменение списка сервисов.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2004, НПП "Новел-ИЛ"
- * @version $Id: ODAddProviderMessage.java,v 1.2 2004/03/27 20:07:56 valeks Exp $
+ * @version $Id: ODAddProviderMessage.java,v 1.3 2004/04/02 09:54:49 valeks Exp $
  */
 
 public class ODAddProviderMessage extends StandartMessage {
@@ -26,7 +26,7 @@ public class ODAddProviderMessage extends StandartMessage {
    * @param replyId номер сообщения на которое производится ответ
    */
   public ODAddProviderMessage(final String objectName, final int replyId) {
-    super(NAME, "stddispatcher", objectName, replyId);
+    super(NAME, "dispatcher", objectName, replyId);
   }
   /** Доступ к имени сервиса. */
   public final String getServiceName() {

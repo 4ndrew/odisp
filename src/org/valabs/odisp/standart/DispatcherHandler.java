@@ -23,7 +23,7 @@ import com.novel.stdmsg.ODShutdownMessage;
 
 /** Обработчик сообщений диспетчера ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: DispatcherHandler.java,v 1.12 2004/03/31 12:54:48 dron Exp $
+ * @version $Id: DispatcherHandler.java,v 1.13 2004/04/02 09:54:49 valeks Exp $
  */
 
 public class StandartDispatcherHandler extends CallbackODObject {
@@ -42,7 +42,7 @@ public class StandartDispatcherHandler extends CallbackODObject {
    */
   public final String[] getProviding() {
     String[] res = {
-      "stddispatcher"
+      "dispatcher"
     };
     return res;
   }

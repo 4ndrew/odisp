@@ -27,7 +27,7 @@ import com.novel.stdobj.simpleconfig.SimpleConfig;
 /** Объект реализующий простейшую журнализацию событий согласно файлу шаблонов.
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: FileLog.java,v 1.18 2004/03/31 12:54:48 dron Exp $
+* @version $Id: FileLog.java,v 1.19 2004/04/02 09:54:49 valeks Exp $
 */
 public class FileLog extends PollingODObject {
   /** Поток вывода. */
@@ -144,7 +144,7 @@ public class FileLog extends PollingODObject {
    */
   public final String[] getDepends() {
     String[] res = {
-      "stddispatcher",
+      "dispatcher",
       "com.novel.stdobj.simpleconfig.SimpleConfig"
     };
     return res;

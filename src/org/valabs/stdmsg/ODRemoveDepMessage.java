@@ -6,7 +6,7 @@ package com.novel.stdmsg;
  * В качестве параметра нужно указать имя зависимости.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODRemoveDepMessage.java,v 1.8 2004/03/31 17:01:40 valeks Exp $
+ * @version $Id: ODRemoveDepMessage.java,v 1.9 2004/04/02 09:54:49 valeks Exp $
  */
 
 public class ODRemoveDepMessage extends StandartMessage {
@@ -21,7 +21,7 @@ public class ODRemoveDepMessage extends StandartMessage {
    * @param replyTo индекс сообщения на которое производится ответ
    */
   public ODRemoveDepMessage(final String origin, final int replyTo) {
-    super("od_remove_dep", "stddispatcher", origin, replyTo);
+    super("od_remove_dep", "dispatcher", origin, replyTo);
   }
 
   /** Вернуть значение кода выхода.

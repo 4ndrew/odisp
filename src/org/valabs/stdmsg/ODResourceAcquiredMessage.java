@@ -5,7 +5,7 @@ import com.novel.odisp.common.Resource;
 /** Ответ на запрос о захвате ресурса.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODResourceAcquiredMessage.java,v 1.10 2004/03/31 17:01:40 valeks Exp $
+ * @version $Id: ODResourceAcquiredMessage.java,v 1.11 2004/04/02 09:54:49 valeks Exp $
  */
 public class ODResourceAcquiredMessage extends StandartMessage {
   /** Символьное имя сообщения. */
@@ -26,7 +26,7 @@ public class ODResourceAcquiredMessage extends StandartMessage {
    */
   public ODResourceAcquiredMessage(final String destination,
 				   final int replyId) {
-    super("od_resource_acquired", destination, "stddispatcher", replyId);
+    super("od_resource_acquired", destination, "dispatcher", replyId);
   }
   /** Вернуть имя класса ресурса.
    * @return имя класса

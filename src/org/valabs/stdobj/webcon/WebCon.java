@@ -24,7 +24,7 @@ import com.novel.stdobj.webcon.servlet.http.HttpServletResponse;
 /** ODISP-интерфейс к ACME серверу.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2004, НПП "Новел-ИЛ"
- * @version $Id: WebCon.java,v 1.3 2004/03/31 12:54:48 dron Exp $
+ * @version $Id: WebCon.java,v 1.4 2004/04/02 09:54:49 valeks Exp $
  */
 
 public class WebCon extends CallbackODObject implements MessageHandler {
@@ -110,7 +110,7 @@ public class WebCon extends CallbackODObject implements MessageHandler {
   /** Вернуть список зависимостей. */
   public String[] getDepends() {
     String[] result = {
-      "stddispatcher",
+      "dispatcher",
     };
     return result;
   }

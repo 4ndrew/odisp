@@ -5,7 +5,7 @@ package com.novel.stdmsg;
  * по этому оно не расширяет свой базовый класс StandartMessage.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODObjectLoadedMessage.java,v 1.6 2004/02/24 00:35:14 valeks Exp $
+ * @version $Id: ODObjectLoadedMessage.java,v 1.7 2004/04/02 09:54:49 valeks Exp $
  */
 
 public class ODObjectLoadedMessage extends StandartMessage {
@@ -15,7 +15,7 @@ public class ODObjectLoadedMessage extends StandartMessage {
    * @param destination получатель сообщения
    */
   public ODObjectLoadedMessage(final String destination) {
-    super("od_object_loaded", destination, "stddispatcher", 0);
+    super("od_object_loaded", destination, "dispatcher", 0);
   }
 
   public final boolean isRoutable() {

@@ -7,7 +7,7 @@ package com.novel.stdmsg;
  * ресурс.</p>
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODAcquireMessage.java,v 1.8 2004/03/31 17:01:40 valeks Exp $
+ * @version $Id: ODAcquireMessage.java,v 1.9 2004/04/02 09:54:49 valeks Exp $
  */
 
 public class ODAcquireMessage extends StandartMessage {
@@ -26,7 +26,7 @@ public class ODAcquireMessage extends StandartMessage {
    * @param replyTo в ответ на сообщение No.
    */
   public ODAcquireMessage(final String origin, final int replyTo) {
-    super("od_acquire", "stddispatcher", origin, replyTo);
+    super("od_acquire", "dispatcher", origin, replyTo);
   }
 
   /** Вернуть имя ресурса для захвата.

@@ -11,7 +11,7 @@ import com.novel.stdmsg.ODResourceAcquiredMessage;
 
 /** Объект, который пытается воспроизвести быстрые асинхронные запросы на захват и высвобождение ресурса.
  * @author (C) 2004 <a href="valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: Racer.java,v 1.4 2004/03/31 12:54:48 dron Exp $
+ * @version $Id: Racer.java,v 1.5 2004/04/02 09:54:49 valeks Exp $
  */
 public class Racer extends PollingODObject {
   private int acquireCount = 0;
@@ -56,7 +56,7 @@ public class Racer extends PollingODObject {
   }
   public String[] getDepends() {
     String[] result = {
-      "stddispatcher",
+      "dispatcher",
       "com.novel.stdobj.simpleconfig.SimpleConfig"
     };
     return result;
