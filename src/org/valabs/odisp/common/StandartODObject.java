@@ -6,11 +6,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 
 /** Стандартный объект ODISP.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: StandartODObject.java,v 1.4 2004/06/09 14:13:30 valeks Exp $
+ * @version $Id: StandartODObject.java,v 1.5 2004/06/25 13:08:11 valeks Exp $
  */
 
 public abstract class StandartODObject implements ODObject {
