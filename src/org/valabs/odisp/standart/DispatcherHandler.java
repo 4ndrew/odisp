@@ -24,7 +24,7 @@ import com.novel.stdmsg.ODShutdownMessage;
 
 /** Обработчик сообщений диспетчера ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: DispatcherHandler.java,v 1.15 2004/05/21 21:49:28 valeks Exp $
+ * @version $Id: DispatcherHandler.java,v 1.16 2004/05/30 11:56:32 valeks Exp $
  */
 
 public class StandartDispatcherHandler extends StandartODObject {
@@ -56,12 +56,6 @@ public class StandartDispatcherHandler extends StandartODObject {
   }
   /** Зарегистрировать обработчики сообщений. */
   protected final void registerHandlers() {
-    addHandler(ODObjectLoadedMessage.NAME, new MessageHandler() {
-	public final void messageReceived(final Message msg) {
-	  oman = dispatcher.getObjectManager();
-	  rman = dispatcher.getResourceManager();
-	}
-      });
     addHandler("od_set_run_thread", new MessageHandler() {
 	public final void messageReceived(final Message msg) {
 	  if (msg.getOrigin().equals("G0D")) {
@@ -176,6 +170,22 @@ public class StandartDispatcherHandler extends StandartODObject {
 	}
       });
   }
+
+  /** Обработка пришедшего сообщения.
+   * @param msg сообщение для обработки
+   */
+  public final void handleMessage(final Message msg) {
+    if (oman == null || rman == null) {
+      /* XXX/HACK это небольшой хак который позволяет нам встать
+       * между конструктором (из которого выполняется registerHandlers) и
+       * обработчиком сообщений.
+       */
+      oman = dispatcher.getObjectManager();
+      rman = dispatcher.getResourceManager();
+    }
+    super.handlerMessage(msg);
+  }
+
   /** Точка выхода из объекта.
    * @param type признак выхода
    * @return код возврата
