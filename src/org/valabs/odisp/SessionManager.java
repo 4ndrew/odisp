@@ -1,10 +1,8 @@
 package org.valabs.odisp;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.doomdark.uuid.UUID;
 import org.valabs.odisp.common.Message;
@@ -42,13 +40,13 @@ import org.valabs.odisp.common.MessageHandler;
  * </pre>
  * 
  * @author (C) 2004 <a href="dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: SessionManager.java,v 1.9 2004/11/05 14:11:29 valeks Exp $ 
+ * @version $Id: SessionManager.java,v 1.10 2004/11/19 20:14:59 valeks Exp $ 
  */
 public class SessionManager {
   /** Ссылка на ODSessionManager */
   private static SessionManager sessionManager = new SessionManager();
-  /** Таблица msgId <=> Обработчик (MessageHandler) */
-  private Map handlers = new HashMap();
+  /** Список обработчиков. */
+  private List handlers = new ArrayList();
   
   /** Конструктор
    */
@@ -65,16 +63,52 @@ public class SessionManager {
   }
   
   /** Добавить обработчик в список.
-   * 
+   * По-умолчанию -- добавление с автоматическим удаление после обработки.
    * @param messageId Идентификатор сообщения, которое было послано.
    * @see org.valabs.odisp.common.Message#getId()
    * @param messageHandler Обработчик для сообщения.
    */
   public void addMessageListener(UUID messageId,
                                  MessageHandler messageHandler) {
-    handlers.put(messageId, messageHandler);
+    addMessageListener(messageId, messageHandler, false);
   }
   
+  /** Добавление обработчика для указанного сообщения.
+   * В отличие от предыдущего варианта если параметр (multiply установлен в true)
+   * после обработки сообщения обработчиком запись о сессии из SessionManager не
+   * удаляется. Для того, что бы удалить её вручную необходимо воспользоваться 
+   * методом removeMessageListener.
+   * @param messageId идентификатор ответа сообщения
+   * @param messageHandler обработчик сообщения
+   * @param multiply признак множественности
+   * @see SessionManager#removeMessageListener(UUID, MessageHandler)
+   */
+  public void addMessageListener(UUID messageId, MessageHandler messageHandler, boolean multiply) {
+    handlers.add(new SessionRecord(messageId, messageHandler, multiply));
+  }
+  
+  /** Удаление обработчика сообщения сессии.
+   * @param messageId идентификатор ответа сообщения
+   * @param messageHandler обработчик сообщения
+   * @see SessionManager#addMessageListener(UUID, MessageHandler, boolean)
+   */
+  public void removeMessageListener(UUID messageId, MessageHandler messageHandler) {
+    List tmp;
+    synchronized (handlers) {
+      tmp = new ArrayList(handlers);
+    }
+    Iterator it = tmp.iterator();
+    while (it.hasNext()) {
+      SessionRecord rec = (SessionRecord) it.next();
+      if (rec.getMsgId().equals(messageId) && rec.getMessageHandler().equals(messageHandler)) {
+        it.remove();
+      }
+    }
+    synchronized (handlers) {
+      handlers = tmp;
+    }
+  }
+
   /** Функция обработки сообщения Odisp. рекоммендуется вызывать из
    * messageRecevied и handleMessage. 
    * @param msg Сообщение Odisp
@@ -85,26 +119,45 @@ public class SessionManager {
    */
   public boolean processMessage(Message msg) {
     boolean matched = false;     
-    Map toPerform;
-    List toRemove = new ArrayList();
+    List toPerform;
     synchronized(handlers) {
-      toPerform = new HashMap(handlers);
+      toPerform = new ArrayList(handlers);
     }
-    Iterator it = toPerform.keySet().iterator();
+    Iterator it = toPerform.iterator();
     while (it.hasNext()) {
-      UUID key = (UUID) it.next();
-      if (key.equals(msg.getReplyTo())) {
-        ((MessageHandler) toPerform.get(key)).messageReceived(msg);
-        toRemove.add(key);
+      SessionRecord arecord = (SessionRecord) it.next();
+      if (arecord.getMsgId().equals(msg.getReplyTo())) {
+        arecord.getMessageHandler().messageReceived(msg);
+        if (!arecord.isMultiply()) {
+          it.remove();
+        }
+        matched = true;
       }
     } // while
     synchronized(handlers) {
-      Iterator ri = toRemove.iterator();
-      while (ri.hasNext()) {
-        handlers.remove(ri.next());
-      }
+      handlers = toPerform;
     }
     return matched;
   }
-
+  
+  class SessionRecord {
+    private UUID msgId;
+    private MessageHandler messageHandler;
+    private boolean multiply;
+    SessionRecord(UUID _msgId, MessageHandler _messageHandler, boolean _multiply) {
+      msgId = _msgId;
+      messageHandler = _messageHandler;
+      multiply = _multiply;
+    }
+    
+    MessageHandler getMessageHandler() {
+      return messageHandler;
+    }
+    UUID getMsgId() {
+      return msgId;
+    }
+    boolean isMultiply() {
+      return multiply;
+    }
+  }
 }
