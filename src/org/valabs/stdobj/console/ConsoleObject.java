@@ -8,62 +8,26 @@ import java.io.InputStreamReader;
 /** Объект ODISP реализующий консольный интерфейс доступа к менеджеру
 * @author Валентин А. Алексеев
 * @author (C) 2003, НПП "Новел-ИЛ"
-* @version $Id: ConsoleObject.java,v 1.9 2003/11/20 08:29:09 valeks Exp $
+* @version $Id: ConsoleObject.java,v 1.10 2003/11/22 14:00:49 valeks Exp $
 */
 public class ConsoleObject extends PollingODObject {
   /** Поток читающий ввод с консоли */
-  private Thread reader;
+  private ConsoleReader reader;
   /** Обработчик входящих сообщений 
    * @param msg сообщение
    */
   public void handleMessage(Message msg) {
-    logger.finest("processing " + msg);
+    logger.finest("console object -- processing " + msg);
     if (msg.getAction().equals("od_object_loaded")) {
-      reader = new Thread(new Runnable() {
-	  BufferedReader inp = new BufferedReader(new InputStreamReader(System.in));
-	  public void run() {
-	    try {
-	      sleep(100);
-	      System.out.print("action> ");
-	      String action, tmp;
-	      while ((action = inp.readLine()) != null) {
-		System.out.print("destination> ");
-		Message m = dispatcher.getNewMessage(action, inp.readLine(), getObjectName(), 0);
-		System.out.print("params? ");
-		while (!inp.readLine().equals("")) {
-		  System.out.print("int|str? ");
-		  tmp = inp.readLine();
-		  System.out.print("value> ");
-		  if (tmp.startsWith("i")) {
-		    m.addField(new Integer(inp.readLine()));
-		  } else {
-		    m.addField(new String(inp.readLine()));
-		  }
-		  System.out.print("more? ");
-		}
-		getDispatcher().sendMessage(m);
-		sleep(1);
-		System.out.print("action> ");
-	      }
-	    } catch (IOException e) {
-	      logger.info("ConsoleReader: Terminal connection lost. Quitting.");
-	    } catch (InterruptedException e) {
-	      logger.info("ConsoleReader: closing console");
-	    }
-	  }    
-	});
+      reader = new ConsoleReader(getObjectName(), dispatcher, logger);
       reader.start();
-    }
-    if (msg.getAction().equals("od_cleanup")) {
-      if (msg.getFieldsCount() == 1) {
-	cleanUp(((Integer) msg.getField(0)).intValue());
-      } else {
-	cleanUp(0);
-      }
+    } else if (msg.getAction().equals("od_cleanup")) {
+      cleanUp(0);
     } else {
       System.out.println("Received:");
       System.out.println(msg.toString());
       if (msg.getFieldsCount() > 0) {
+
 	System.out.println("Fields dump:");
       }
       for (int i = 0; i < msg.getFieldsCount(); i++) {
@@ -78,8 +42,9 @@ public class ConsoleObject extends PollingODObject {
    * @return код возврата
    */
   public int cleanUp(int type) {
+    logger.finest("Cleaning up...");
     if (reader != null) {
-      reader.interrupt();
+      reader.exit();
     }
     doExit = true;
     return 0;

@@ -12,10 +12,12 @@ import java.io.InputStreamReader;
 /** Класс читающий данные с консоли
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ConsoleReader.java,v 1.3 2003/11/22 10:27:54 valeks Exp $
+ * @version $Id: ConsoleReader.java,v 1.4 2003/11/22 14:01:11 valeks Exp $
  */
 
 public class ConsoleReader extends Thread {
+  /** Признак окончания работы */
+  private boolean doExit;
   /** Имя ODISP объекта*/
   private String objectName;
   /** Журнал */
@@ -58,15 +60,21 @@ public class ConsoleReader extends Thread {
 	  System.out.print("more? ");
 	}
 	dispatcher.sendMessage(m);
-	sleep(1);
 	System.out.print("action> ");
+      }
+      if (doExit) {
+	return;
       }
     } catch (IOException e) {
       logger.finest("ConsoleReader: Terminal connection lost. Quitting.");
-      return;
-    } catch (InterruptedException e) {
-      logger.finest("ConsoleReader: closing console");
-      return;
     }
-  }     
+    return;
+  }
+  public synchronized void exit() {
+    //    logger.finest("ConsoleReader: normal shutdown.");
+    try {
+      inp.close();
+    } catch (IOException e) {/*NOP*/}
+    doExit = true;
+  }
 }// ConsoleReader
