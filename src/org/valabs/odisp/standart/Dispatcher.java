@@ -22,7 +22,7 @@ import com.novel.odisp.common.Dispatcher;
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.33 2004/02/23 14:46:11 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.34 2004/03/12 15:27:53 valeks Exp $
  */
 public class StandartDispatcher implements Dispatcher {
   /** Журнал. */
@@ -168,6 +168,7 @@ public class StandartDispatcher implements Dispatcher {
       }
       oman.loadPending();
     }
+    objs.clear();
     try {
       t.join();
     } catch (InterruptedException e) {
