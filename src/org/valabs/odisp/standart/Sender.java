@@ -3,7 +3,7 @@ package com.novel.odisp;
 
 /** Реализация единого потока рассылки и обработки сообщений.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: Sender.java,v 1.2 2004/05/14 07:56:42 valeks Exp $
+ * @version $Id: Sender.java,v 1.3 2004/05/14 11:27:20 valeks Exp $
  */
 public class Sender extends Thread {
 	/** Счетчик сообщений, которые были обработаны нитью. */
@@ -41,7 +41,7 @@ public class Sender extends Thread {
 			if (toSend != null) {
 				toSend.getObject().addMessage(toSend.getMessage());
 				messageCounter++;
-				System.err.println("Sender [" + getName() + "] message processed: " + toSend);
+				//System.err.println("Sender [" + getName() + "] message processed: " + toSend);
 			}
 		}
 	}
