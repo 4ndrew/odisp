@@ -17,7 +17,7 @@ import java.lang.reflect.InvocationTargetException;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@valeks.novel.local">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.2 2004/02/13 13:15:17 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.3 2004/02/13 15:16:03 valeks Exp $
  */
 
 public class StandartObjectManager implements ObjectManager {
@@ -37,7 +37,7 @@ public class StandartObjectManager implements ObjectManager {
   private int objCount = 0;
 
   /** Попытка подгрузки объектов в следствии изменения списка сервисов менеджера. */
-  public void loadPending() {
+  public final void loadPending() {
     // resources
     Iterator it = dispatcher.getResourceManager().getResources().keySet().iterator();
     while (it.hasNext()) {
@@ -85,7 +85,7 @@ public class StandartObjectManager implements ObjectManager {
   /** Динамическая загрузка объекта (с учётом зависимостей).
    * @param cName имя загружаемого класса
    */
-  public void loadObject(final String cName) {
+  public final void loadObject(final String cName) {
     log.config("loading object " + cName);
     try {
       Object[] params = new Object[1];
@@ -128,7 +128,7 @@ public class StandartObjectManager implements ObjectManager {
    * @param code код выхода (при code != 0 зависимые объекты
    * не удаляются).
    */
-  public void unloadObject(final String objectName, final int code) {
+  public final void unloadObject(final String objectName, final int code) {
     if (objects.containsKey(objectName)) {
       ObjectEntry oe = (ObjectEntry) objects.get(objectName);
       String[] provides = oe.getProvides();
@@ -167,26 +167,31 @@ public class StandartObjectManager implements ObjectManager {
     }
   }
 
-  /** Доступ к списку объектов. */
-  public Map getObjects() {
+  /** Доступ к списку объектов. 
+   * @return список объектов
+   */
+  public final Map getObjects() {
     return objects;
   }
 
   /** Констурктор менеджера.
    * @param newDispatcher диспетчер для которого производится управление ресурсами
    */
-  public StandartObjectManager(Dispatcher newDispatcher) {
+  public StandartObjectManager(final Dispatcher newDispatcher) {
     dispatcher = newDispatcher;
   }
 
-  public void send(Message message) {
+  /** Посылка сообщения всем объектам менеджера.
+   * @param message сообщение
+   */
+  public final void send(Message message) {
     Map localObjects;
-    synchronized(objects) {
+    synchronized (objects) {
       localObjects = new HashMap(objects);
     }
-    if (message == null || 
-	message.getAction().length() == 0 || 
-	!message.isCorrect()) {
+    if (message == null
+	|| message.getAction().length() == 0
+	|| !message.isCorrect()) {
       return;
     }
     Iterator it = localObjects.keySet().iterator();
@@ -210,7 +215,7 @@ public class StandartObjectManager implements ObjectManager {
    * @param objName имя объекта
    * @param state новый уровень блокировки
    */
-  public void setBlockedState(final String objName, final int state) {
+  public final void setBlockedState(final String objName, final int state) {
     if (!objects.containsKey(objName)) {
       return;
     }
@@ -224,7 +229,7 @@ public class StandartObjectManager implements ObjectManager {
    * @param objName имя объекта
    * @return значения уровня блокировки
    */
-  public int getBlockedState(final String objName) {
+  public final int getBlockedState(final String objName) {
     if (!objects.containsKey(objName)) {
       return 0;
     }
@@ -248,4 +253,4 @@ public class StandartObjectManager implements ObjectManager {
     }
     loadPending();
   }
-}// StandartObjectManager
+} // StandartObjectManager

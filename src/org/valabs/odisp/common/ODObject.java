@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 * посылаемых диспетчером ODISP.
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: ODObject.java,v 1.12 2004/01/16 14:31:57 valeks Exp $
+* @version $Id: ODObject.java,v 1.13 2004/02/13 15:16:03 valeks Exp $
 */
 public abstract class ODObject extends Thread {
   /** Журнал. */
@@ -34,7 +34,7 @@ public abstract class ODObject extends Thread {
   /** Конструктор инициализирующий почтовый ящик.
    * @param newName имя объекта
    */
-  public ODObject(String newName) {
+  public ODObject(final String newName) {
     super(newName);
     messages = new ArrayList();
     name = newName;

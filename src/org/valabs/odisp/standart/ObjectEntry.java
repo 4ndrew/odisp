@@ -5,7 +5,7 @@ import com.novel.odisp.common.ODObject;
 /** Запись об объекте в таблице объектов.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ObjectEntry.java,v 1.1 2004/02/13 00:11:29 valeks Exp $
+ * @version $Id: ObjectEntry.java,v 1.2 2004/02/13 15:16:03 valeks Exp $
  */
 
 public class ObjectEntry {
@@ -71,7 +71,10 @@ public class ObjectEntry {
     return object;
   }
 
-  public final void setObject(ODObject newObject) {
+  /** Установка объекта.
+   * @param newObject новый объекта
+   */
+  public final void setObject(final ODObject newObject) {
     object = newObject;
   }
 

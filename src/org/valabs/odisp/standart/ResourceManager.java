@@ -4,7 +4,6 @@ import com.novel.odisp.common.Resource;
 import com.novel.odisp.common.ProxyResource;
 import com.novel.odisp.common.Dispatcher;
 import com.novel.odisp.common.ResourceManager;
-import com.novel.odisp.common.ObjectManager;
 import com.novel.odisp.common.Message;
 import com.novel.stdmsg.ODResourceAcquiredMessage;
 import java.util.Map;
@@ -17,9 +16,10 @@ import java.util.regex.Pattern;
 
 /** Менеджер ресурсных объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@valeks.novel.local">Valentin A. Alekseev</a>
- * @version $Id: ResourceManager.java,v 1.2 2004/02/13 13:15:17 valeks Exp $
+ * @version $Id: ResourceManager.java,v 1.3 2004/02/13 15:16:03 valeks Exp $
  */
 public class StandartResourceManager implements ResourceManager {
+  /** Список ресурсов. */
   private Map resourceRequests = new HashMap();
   /** Ссылка на диспетчер объектов. */
   private Dispatcher dispatcher;
@@ -31,7 +31,7 @@ public class StandartResourceManager implements ResourceManager {
   /** Доступ к ресурсам.
    * @return список ресурсов
    */
-  public Map getResources() {
+  public final Map getResources() {
     return resources;
   }
 
@@ -40,7 +40,7 @@ public class StandartResourceManager implements ResourceManager {
    * @param mult количество загружаемых объектов
    * @param param параметр загрузки
    */
-  public void loadResource(final String className, final int mult, final String param) {
+  public final void loadResource(final String className, final int mult, final String param) {
     String logMessage = "loading resource " + className;
     for (int i = 0; i < mult; i++) {
       try {
@@ -72,7 +72,7 @@ public class StandartResourceManager implements ResourceManager {
    * @param name имя ресурсного объекта
    * @param code код выхода
    */
-  public void unloadResource(final String name, final int code) {
+  public final void unloadResource(final String name, final int code) {
     if (resources.containsKey(name)) {
       ResourceEntry res = (ResourceEntry) resources.get(name);
       List dependingObjs = new ArrayList();
@@ -101,11 +101,14 @@ public class StandartResourceManager implements ResourceManager {
   /** Конструктор менеджера ресурсов.
    * @param newDispatcher ссылка на диспетчер ресурсами которого управляет менеджер
    */
-  public StandartResourceManager(Dispatcher newDispatcher) {
+  public StandartResourceManager(final Dispatcher newDispatcher) {
     dispatcher = newDispatcher;
   }
 
-  public void acquireRequest(Message msg) {
+  /** Обработка запроса на захват объекта.
+   * @param msg сообщение о захвате
+   */
+  public final void acquireRequest(final Message msg) {
     String className = (String) msg.getField(0);
     boolean willBlockState = false;
     if (msg.getFieldsCount() == 2) {
@@ -123,7 +126,7 @@ public class StandartResourceManager implements ResourceManager {
 	m.setResource(((ResourceEntry) resources.get(curClassName)).getResource());
 	dispatcher.send(m);
 	if (willBlockState) {
-	  dispatcher.getObjectManager().setBlockedState(msg.getOrigin(), 
+	  dispatcher.getObjectManager().setBlockedState(msg.getOrigin(),
 							dispatcher.getObjectManager().getBlockedState(msg.getOrigin()) + 1);
 	}
 	resources.remove(curClassName);
@@ -147,7 +150,11 @@ public class StandartResourceManager implements ResourceManager {
       ((List) resourceRequests.get(className)).add(msg.getOrigin() + wb);
     }
   }
-  public void releaseRequest(Message msg) {
+
+  /** Обработка запроса на высвобождение ресурса.
+   * @param msg сообщение о высвобождении
+   */
+  public final void releaseRequest(final Message msg) {
     if (msg.getFieldsCount() != 2) {
       return;
     }
@@ -176,4 +183,4 @@ public class StandartResourceManager implements ResourceManager {
     // decrease blocking state counter in case acquire was blocking
     dispatcher.getObjectManager().setBlockedState(msg.getOrigin(), dispatcher.getObjectManager().getBlockedState(msg.getOrigin()) - 1);
   }
-}// ResourceManager
+} // ResourceManager

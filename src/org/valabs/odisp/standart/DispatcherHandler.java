@@ -10,15 +10,18 @@ import java.util.ArrayList;
 
 /** Обработчик сообщений диспетчера ODISP.
  * @author (C) 2004 <a href="mailto:valeks@valeks.novel.local">Valentin A. Alekseev</a>
- * @version $Id: DispatcherHandler.java,v 1.2 2004/02/13 14:09:04 valeks Exp $
+ * @version $Id: DispatcherHandler.java,v 1.3 2004/02/13 15:16:03 valeks Exp $
  */
 
 public class StandartDispatcherHandler extends CallbackODObject {
+  /** Нитка heart-beat диспетчера. */
   private Thread runThread;
+  /** Журнал. */
   private Logger log = Logger.getLogger("com.novel.odisp.StandartDispatcherHandler");
+  /** Менеджер объектов. */
   private ObjectManager oman;
+  /** Менеджер ресурсов. */
   private ResourceManager rman;
-  private int msgId = 0;
   /** Имя объекта. */
   private String name = "stddispatcher";
   /** Вернуть список сервисов.
@@ -127,4 +130,4 @@ public class StandartDispatcherHandler extends CallbackODObject {
     super("stddispatcher");
     setDaemon(false);
   }
-}// StandartDispatcherHandler
+} // StandartDispatcherHandler

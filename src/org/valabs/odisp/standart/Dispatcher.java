@@ -4,8 +4,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.FileNotFoundException;
-import java.util.Map;
-import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -14,22 +12,17 @@ import java.util.regex.Matcher;
 import java.util.logging.Logger;
 
 import com.novel.odisp.common.Message;
-import com.novel.odisp.common.ODObject;
 import com.novel.odisp.common.ResourceManager;
 import com.novel.odisp.common.ObjectManager;
-import com.novel.odisp.common.Resource;
-import com.novel.odisp.common.ProxyResource;
 import com.novel.odisp.common.Dispatcher;
-import com.novel.odisp.common.CallbackODObject; // для объекта stddispatcher
-import com.novel.odisp.common.MessageHandler; // --''--
-import com.novel.stdmsg.*;
+//import com.novel.stdmsg.*;
 
 /** Стандартный диспетчер ODISP.
  * Стандартный диспетчер реализует пересылку сообщений между объектами ядра
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.29 2004/02/13 14:09:04 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.30 2004/02/13 15:16:03 valeks Exp $
  */
 public class StandartDispatcher implements Dispatcher {
   /** Журнал. */
@@ -41,13 +34,17 @@ public class StandartDispatcher implements Dispatcher {
   /** Кол-во объектов системы. */
   private int objCount = 0;
 
-  /** Доступ к менеджеру объектов. */
-  public ObjectManager getObjectManager() {
+  /** Доступ к менеджеру объектов. 
+   * @return ссылка на менеджер объектов
+   */
+  public final ObjectManager getObjectManager() {
     return oman;
   }
 
-  /** Доступ к менеджеру ресурсов. */
-  public ResourceManager getResourceManager() {
+  /** Доступ к менеджеру ресурсов. 
+   * @return ссылка на менеджер ресурсов
+   */
+  public final ResourceManager getResourceManager() {
     return rman;
   }
 
@@ -71,14 +68,14 @@ public class StandartDispatcher implements Dispatcher {
   /** Интерфейс для объектов ядра для отсылки сообщений.
    * @param message сообщение для посылки
    */
-  public final void send(Message message) {
+  public final void send(final Message message) {
     oman.send(message);
   }
 
   /** Интерфейс для объектов ядра для отсылки сообщений.
    * @param messageList список сообщений для посылки
    */
-  public final void send(Message[] messageList) {
+  public final void send(final Message[] messageList) {
     if (messageList == null || messageList.length == 0) {
       return;
     }
@@ -91,7 +88,7 @@ public class StandartDispatcher implements Dispatcher {
   /** Интерфейс для объектов ядра для отсылки сообщений.
    * @param messageList список сообщений для посылки
    */
-  public final void send(List messageList) {
+  public final void send(final List messageList) {
     Iterator it = messageList.iterator();
     while (it.hasNext()) {
       send((Message) it.next());
@@ -135,9 +132,9 @@ public class StandartDispatcher implements Dispatcher {
     oman.loadPending();
     Message runthr = getNewMessage("od_set_run_thread", "stddispatcher", "G0D", 0);
     Thread t = new Thread("alive thread") {
-	public void run() {
+	public final void run() {
 	  try {
-	    synchronized(this) { 
+	    synchronized (this) {
 	      wait();
 	    }
 	  } catch (InterruptedException e) {

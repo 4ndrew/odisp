@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 /** Объект реализующий простейшую журнализацию событий согласно файлу шаблонов.
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: FileLog.java,v 1.15 2004/02/12 17:54:33 valeks Exp $
+* @version $Id: FileLog.java,v 1.16 2004/02/13 15:16:03 valeks Exp $
 */
 public class FileLog extends PollingODObject {
   /** Поток вывода. */
@@ -83,7 +83,7 @@ public class FileLog extends PollingODObject {
 	} catch (FileNotFoundException e) {
 	  logger.warning("unable to find config file: " + scfg.DEFAULT_CONFIG);
 	} catch (IOException e) {
-	  logger.warning("unable to read config file " + scfg.DEFAULT_CONFIG);	  
+	  logger.warning("unable to read config file " + scfg.DEFAULT_CONFIG);
 	}
 	Message[] m = {
 	  new ODReleaseMessage(getObjectName(), msg.getId()),

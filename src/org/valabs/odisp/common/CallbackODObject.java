@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 * по мере прихода.
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: CallbackODObject.java,v 1.10 2004/01/16 14:31:57 valeks Exp $
+* @version $Id: CallbackODObject.java,v 1.11 2004/02/13 15:16:03 valeks Exp $
 */
 public abstract class CallbackODObject extends ODObject {
   /** Карта обработчиков сообщений. */
@@ -78,7 +78,7 @@ public abstract class CallbackODObject extends ODObject {
    * @param type признак выхода
    * @return код возврата
   */
-  public int cleanUp(final int type) {
+  public final int cleanUp(final int type) {
     return 0;
   }
   /** Наследующие классы должны реализовывать этот метод
