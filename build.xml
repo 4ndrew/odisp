@@ -1,40 +1,49 @@
-<!-- $Id: build.xml,v 1.18 2004/11/05 14:09:42 valeks Exp $ mode: -*- --><!-- xsl -*- -->
+<!-- $Id: build.xml,v 1.19 2004/11/24 10:13:44 dron Exp $ mode: -*- --><!-- xsl -*- -->
 <project name="odisp" default="all" basedir=".">
     <taskdef resource="checkstyletask.properties"
            classpath="/usr/local/share/java/classes/checkstyle.jar"/>
 	       
     <!-- Environment setup targets and options -->
     <target name="build-dir-setup">
-	<mkdir dir="build"/>
+      <mkdir dir="build"/>
     </target>
     <target name="pre-doc-create-doc-dir">
-	<mkdir dir="docs"/>
+      <mkdir dir="docs"/>
     </target>
     
     <target name="pre-doc" depends="pre-doc-create-doc-dir"/>
     
     <target name="release-dir-setup">
-	<mkdir dir="release"/>
+      <mkdir dir="release"/>
     </target>
     <!-- Maintance tasks: clean, log, style, doc -->
-    <target name="clean">
-	<delete dir="build"/>
-	<delete dir="docs/javadoc"/>
-        <exec executable="make" dir="docs">
-             <arg line="distclean"/>
-        </exec>
+    <target name="clean" depends="clean-generated-messages">
+      <delete dir="build"/>
+      <delete dir="docs/javadoc"/>
+      <exec executable="make" dir="docs">
+         <arg line="distclean"/>
+      </exec>
+    </target>
+    
+    <target name="clean-generated-messages">
+      <java classpath="tools/tplParser.jar"
+        classname="org.valabs.tplParser.TplParser"
+        fork="true"
+        dir=".">
+        <arg value="clean"/>
+      </java>
     </target>
 
     <target name="doc-log" depends="pre-doc">
-	<cvschangelog destfile="docs/ChangeLog.xml"/>
-	<style in="docs/ChangeLog.xml" 
-               out="docs/ChangeLog.html"
-               style="tools/changelog.xsl">
+      <cvschangelog destfile="docs/ChangeLog.xml"/>
+      <style in="docs/ChangeLog.xml" 
+             out="docs/ChangeLog.html"
+             style="tools/changelog.xsl">
           <param name="title" expression="ODISP ChangeLog"/>
           <param name="module" expression="odisp"/>
           <param name="cvsweb" expression="http://cvs.novel.local/cgi-bin/viewcvs.cgi/"/>
         </style>
-	<delete file="docs/ChangeLog.xml"/>
+      <delete file="docs/ChangeLog.xml"/>
     </target>
 
     <target name="doc-style" depends="pre-doc">
