@@ -37,100 +37,98 @@ import com.novel.stdobj.webcon.servlet.http.HttpServlet;
 import com.novel.stdobj.webcon.servlet.http.HttpServletRequest;
 import com.novel.stdobj.webcon.servlet.http.HttpServletResponse;
 
-/// Simple servlet that tests the Servlet API.
-// Sample output:
-// <PRE>
-// getContentLength(): -1
-// getContentType(): null
-// getProtocol(): HTTP/1.0
-// getScheme(): http
-// getServerName(): www.acme.com
-// getServerPort(): 1234
-// getRemoteAddr(): 192.100.66.1
-// getRemoteHost(): acme.com
-// getMethod(): GET
-// getRequestURI(): http://www.acme.com:1234/TestServlet?foo=bar
-// getServletPath(): /TestServlet
-// getPathInfo(): null
-// getPathTranslated(): null
-// getQueryString(): foo=bar
-// getRemoteUser(): null
-// getAuthType(): null
-// 
-// Parameters:
-//     foo = bar
-// 
-// Header:
-//     accept: text/html, image/gif, image/jpeg, *; q=.2
-//     user-agent: Java1.0.2
-// </PRE>
-// <A HREF="/resources/classes/com.novel.stdobj.webcon/TestServlet.java">Fetch the software.</A><BR>
-// <A HREF="/resources/classes/tar.gz">Fetch the entire package.</A>
+/** Simple servlet that tests the Servlet API.
+ * Sample output:
+ * <PRE>
+ * getContentLength(): -1
+ * getContentType(): null
+ * getProtocol(): HTTP/1.0
+ * getScheme(): http
+ * getServerName(): www.acme.com
+ * getServerPort(): 1234
+ * getRemoteAddr(): 192.100.66.1
+ * getRemoteHost(): acme.com
+ * getMethod(): GET
+ * getRequestURI(): http: *www.acme.com:1234/TestServlet?foo=bar
+ * getServletPath(): /TestServlet
+ * getPathInfo(): null
+ * getPathTranslated(): null
+ * getQueryString(): foo=bar
+ * getRemoteUser(): null
+ * getAuthType(): null
+ * 
+ * Parameters:
+ *     foo = bar
+ * 
+ * Header:
+ *     accept: text/html, image/gif, image/jpeg, *; q=.2
+ *     user-agent: Java1.0.2
+ * </PRE>
+ * <A HREF="/resources/classes/com.novel.stdobj.webcon/TestServlet.java">Fetch the software.</A><BR>
+ * <A HREF="/resources/classes/tar.gz">Fetch the entire package.</A>
+ */
+public class TestServlet extends HttpServlet {
 
-public class TestServlet extends HttpServlet
-    {
+  /** Returns a string containing information about the author, version, and
+   * copyright of the servlet. 
+   */
+  public String getServletInfo() {
+    return "simple servlet that tests the Servlet API";
+  }
 
-    /// Returns a string containing information about the author, version, and
-    // copyright of the servlet.
-    public String getServletInfo()
-	{
-	return "simple servlet that tests the Servlet API";
-	}
-
-    /// Services a single request from the client.
-    // @param req the servlet request
-    // @param req the servlet response
-    // @exception ServletException when an exception has occurred
-    public void service( HttpServletRequest req, HttpServletResponse res ) throws ServletException, IOException
-	{
-	Enumeration en;
-	log( "called" );
-	res.setStatus( HttpServletResponse.SC_OK );
-	res.setContentType( "text/html" );
-	ServletOutputStream p = res.getOutputStream();
-	p.println( "<HTML><HEAD>" );
-	p.println( "<TITLE>Test Servlet Output</TITLE>" );
-	p.println( "</HEAD><BODY>" );
-	p.println( "<H2>Test Servlet Output</H2>" );
-	p.println( "<HR>" );
-	p.println( "<PRE>" );
-	p.println( "getContentLength(): " + req.getContentLength() );
-	p.println( "getContentType(): " + req.getContentType() );
-	p.println( "getProtocol(): " + req.getProtocol() );
-	p.println( "getScheme(): " + req.getScheme() );
-	p.println( "getServerName(): " + req.getServerName() );
-	p.println( "getServerPort(): " + req.getServerPort() );
-	p.println( "getRemoteAddr(): " + req.getRemoteAddr() );
-	p.println( "getRemoteHost(): " + req.getRemoteHost() );
-	p.println( "getMethod(): " + req.getMethod() );
-	p.println( "getRequestURI(): " + req.getRequestURI() );
-	p.println( "getServletPath(): " + req.getServletPath() );
-	p.println( "getPathInfo(): " + req.getPathInfo() );
-	p.println( "getPathTranslated(): " + req.getPathTranslated() );
-	p.println( "getQueryString(): " + req.getQueryString() );
-	p.println( "getRemoteUser(): " + req.getRemoteUser() );
-	p.println( "getAuthType(): " + req.getAuthType() );
-	p.println( "" );
-	p.println( "Parameters:" );
-	en = req.getParameterNames();
-	while ( en.hasMoreElements() )
-	    {
-	    String name = (String) en.nextElement();
-	    p.println( "    " + name + " = " + req.getParameter( name ) );
-	    }
-	p.println( "" );
-	p.println( "Headers:" );
-	en = req.getHeaderNames();
-	while ( en.hasMoreElements() )
-	    {
-	    String name = (String) en.nextElement();
-	    p.println( "    " + name + ": " + req.getHeader( name ) );
-	    }
-	p.println( "</PRE>" );
-	p.println( "<HR>" );
-	p.println( "</BODY></HTML>" );
-	p.flush();
-	p.close();
-	}
-
+  /** Services a single request from the client.
+   * @param req the servlet request
+   * @param req the servlet response
+   * @exception ServletException when an exception has occurred
+   */
+  public void service(HttpServletRequest req, HttpServletResponse res)
+    throws ServletException, IOException {
+    Enumeration en;
+    log("called");
+    res.setStatus(HttpServletResponse.SC_OK);
+    res.setContentType("text/html");
+    ServletOutputStream p = res.getOutputStream();
+    p.println("<HTML><HEAD>");
+    p.println("<TITLE>Test Servlet Output</TITLE>");
+    p.println("</HEAD><BODY>");
+    p.println("<H2>Test Servlet Output</H2>");
+    p.println("<HR>");
+    p.println("<PRE>");
+    p.println("getContentLength(): " + req.getContentLength());
+    p.println("getContentType(): " + req.getContentType());
+    p.println("getProtocol(): " + req.getProtocol());
+    p.println("getScheme(): " + req.getScheme());
+    p.println("getServerName(): " + req.getServerName());
+    p.println("getServerPort(): " + req.getServerPort());
+    p.println("getRemoteAddr(): " + req.getRemoteAddr());
+    p.println("getRemoteHost(): " + req.getRemoteHost());
+    p.println("getMethod(): " + req.getMethod());
+    p.println("getRequestURI(): " + req.getRequestURI());
+    p.println("getServletPath(): " + req.getServletPath());
+    p.println("getPathInfo(): " + req.getPathInfo());
+    p.println("getPathTranslated(): " + req.getPathTranslated());
+    p.println("getQueryString(): " + req.getQueryString());
+    p.println("getRemoteUser(): " + req.getRemoteUser());
+    p.println("getAuthType(): " + req.getAuthType());
+    p.println("");
+    p.println("Parameters:");
+    en = req.getParameterNames();
+    while (en.hasMoreElements()) {
+      String name = (String) en.nextElement();
+      p.println("    " + name + " = " + req.getParameter(name));
     }
+    p.println("");
+    p.println("Headers:");
+    en = req.getHeaderNames();
+    while (en.hasMoreElements()) {
+      String name = (String) en.nextElement();
+      p.println("    " + name + ": " + req.getHeader(name));
+    }
+    p.println("</PRE>");
+    p.println("<HR>");
+    p.println("</BODY></HTML>");
+    p.flush();
+    p.close();
+  }
+
+}

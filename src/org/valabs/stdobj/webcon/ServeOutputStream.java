@@ -11,19 +11,19 @@ class ServeOutputStream extends ServletOutputStream {
   private PrintStream out;
   private ServeConnection conn;
 
-  public ServeOutputStream( OutputStream out, ServeConnection conn ) {
-    this.out = new PrintStream( out );
+  public ServeOutputStream(OutputStream out, ServeConnection conn) {
+    this.out = new PrintStream(out);
     this.conn = conn;
   }
 
-  public void write( int b ) throws IOException {
+  public void write(int b) throws IOException {
     conn.writeHeaders();
-    out.write( b );
+    out.write(b);
   }
 
-  public void write( byte[] b, int off, int len ) throws IOException {
+  public void write(byte[] b, int off, int len) throws IOException {
     conn.writeHeaders();
-    out.write( b, off, len );
+    out.write(b, off, len);
   }
 
   public void flush() throws IOException {
@@ -36,34 +36,34 @@ class ServeOutputStream extends ServletOutputStream {
     out.close();
   }
 
-  public void print( String s ) throws IOException {
+  public void print(String s) throws IOException {
     conn.writeHeaders();
-    out.print( s );
+    out.print(s);
   }
 
-  public void print( int i ) throws IOException {
+  public void print(int i) throws IOException {
     conn.writeHeaders();
-    out.print( i );
+    out.print(i);
   }
 
-  public void print( long l ) throws IOException {
+  public void print(long l) throws IOException {
     conn.writeHeaders();
-    out.print( l );
+    out.print(l);
   }
 
-  public void println( String s ) throws IOException {
+  public void println(String s) throws IOException {
     conn.writeHeaders();
-    out.println( s );
+    out.println(s);
   }
 
-  public void println( int i ) throws IOException {
+  public void println(int i) throws IOException {
     conn.writeHeaders();
-    out.println( i );
+    out.println(i);
   }
 
-  public void println( long l ) throws IOException {
+  public void println(long l) throws IOException {
     conn.writeHeaders();
-    out.println( l );
+    out.println(l);
   }
 
   public void println() throws IOException {

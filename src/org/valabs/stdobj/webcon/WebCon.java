@@ -24,7 +24,7 @@ import com.novel.stdobj.webcon.servlet.http.HttpServletResponse;
 /** ODISP-интерфейс к ACME серверу.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2004, НПП "Новел-ИЛ"
- * @version $Id: WebCon.java,v 1.10 2004/07/16 12:11:27 boris Exp $
+ * @version $Id: WebCon.java,v 1.11 2004/07/20 11:54:25 valeks Exp $
  */
 
 public class WebCon extends StandartODObject implements MessageHandler {
@@ -43,52 +43,62 @@ public class WebCon extends StandartODObject implements MessageHandler {
   public final void messageReceived(final Message msg) {
     if (ODObjectLoadedMessage.equals(msg)) {
       if (acmeServe != null) {
-	return;
+        return;
       }
       acmeServe = new Serve();
       IndexServlet idx = new IndexServlet();
       acmeServe.addServlet("/", idx);
       acmeServe.addServlet("/index.html", idx);
       new Thread() {
-	public void run() {
-	  setDaemon(true);
-	  acmeServe.serve();
-	}
-      }.run();
+        public void run() {
+          setDaemon(true);
+          acmeServe.serve();
+        }
+      }
+      .run();
     } else if (WCAddServletMessage.equals(msg)) {
       if (WCAddServletMessage.getServletHandler(msg) instanceof Servlet) {
-	// обработчик действительно сервлет
-	if (acmeServe != null) {
-	  acmeServe.addServlet(WCAddServletMessage.getServletMask(msg),
-			       (Servlet) WCAddServletMessage.getServletHandler(msg));
-	} else {
-	  logger.warning("attempting to add servlet while container is not started");
-	}
+        // обработчик действительно сервлет
+        if (acmeServe != null) {
+          acmeServe.addServlet(
+            WCAddServletMessage.getServletMask(msg),
+            (Servlet) WCAddServletMessage.getServletHandler(msg));
+        } else {
+          logger.warning(
+            "attempting to add servlet while container is not started");
+        }
       } else {
-	logger.warning("handler is not an Servlet extension");
+        logger.warning("handler is not an Servlet extension");
       }
     } else if (WCRemoveServletMessage.equals(msg)) {
       if (WCRemoveServletMessage.getServletHandler(msg) instanceof Servlet) {
-	// обработчик действительно сервлет
-	if (acmeServe != null) {
-	  acmeServe.removeServlet((Servlet) WCRemoveServletMessage.getServletHandler(msg));
-	} else {
-	  logger.warning("attempting to add servlet while container is not started");
-	}
+        // обработчик действительно сервлет
+        if (acmeServe != null) {
+          acmeServe.removeServlet(
+            (Servlet) WCRemoveServletMessage.getServletHandler(msg));
+        } else {
+          logger.warning(
+            "attempting to add servlet while container is not started");
+        }
       } else {
-	logger.warning("handler is not an Servlet extension");
+        logger.warning("handler is not an Servlet extension");
       }
     } else if (WCListServletsMessage.equals(msg)) {
       if (acmeServe == null) {
-	logger.warning("servlet enumeration request before container was started");
-	return;
+        logger.warning(
+          "servlet enumeration request before container was started");
+        return;
       }
       Message m = dispatcher.getNewMessage();
-      WCListServletsReplyMessage.setup(m, msg.getOrigin(), getObjectName(), msg.getId());
+      WCListServletsReplyMessage.setup(
+        m,
+        msg.getOrigin(),
+        getObjectName(),
+        msg.getId());
       List result = new ArrayList();
       Enumeration e = acmeServe.getServletNames();
       while (e.hasMoreElements()) {
-	result.add(e.nextElement());
+        result.add(e.nextElement());
       }
       WCListServletsReplyMessage.setServletsList(m, result);
       dispatcher.send(m);
@@ -106,17 +116,13 @@ public class WebCon extends StandartODObject implements MessageHandler {
 
   /** Вернуть список сервисов. */
   public String[] getProviding() {
-    String[] result = {
-      "webcon",
-    };
+    String[] result = { "webcon", };
     return result;
   }
 
   /** Вернуть список зависимостей. */
   public String[] getDepends() {
-    String[] result = {
-      "dispatcher",
-    };
+    String[] result = { "dispatcher", };
     return result;
   }
 
@@ -134,11 +140,15 @@ public class WebCon extends StandartODObject implements MessageHandler {
       return "IndexServlet: servlet that act as front page for WebCon";
     }
     /** Выполнение запроса. */
-    public void service(final HttpServletRequest req, final HttpServletResponse res) throws ServletException, IOException {
+    public void service(
+      final HttpServletRequest req,
+      final HttpServletResponse res)
+      throws ServletException, IOException {
       res.setStatus(HttpServletResponse.SC_OK);
       res.setContentType("text/xhtml");
       ServletOutputStream p = res.getOutputStream();
-      p.println("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
+      p.println(
+        "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
       p.println("<html>");
       p.println("\t<head>");
       p.println("\t\t<title>ODISP WebCon default index page</title>");
@@ -149,14 +159,17 @@ public class WebCon extends StandartODObject implements MessageHandler {
       // список зарегистрированных сервлетов
       Enumeration e = acmeServe.getServlets();
       if (e.hasMoreElements()) {
-	p.println("\t\t<hr/>");
-	p.println("\t\t<p>List of known servlets");
-	p.println("\t\t<ul>");
-	while (e.hasMoreElements()) {
-	  p.println("\t\t\t<li>" + ((Servlet) e.nextElement()).getServletInfo() + "</li>");
-	}
-	p.println("\t\t</ul>");
-	p.println("\t\t</p>");
+        p.println("\t\t<hr/>");
+        p.println("\t\t<p>List of known servlets");
+        p.println("\t\t<ul>");
+        while (e.hasMoreElements()) {
+          p.println(
+            "\t\t\t<li>"
+              + ((Servlet) e.nextElement()).getServletInfo()
+              + "</li>");
+        }
+        p.println("\t\t</ul>");
+        p.println("\t\t</p>");
       }
       p.println("\t</body>");
       p.println("</html>");
@@ -164,4 +177,4 @@ public class WebCon extends StandartODObject implements MessageHandler {
       p.close();
     }
   }
-}// WebCon
+} // WebCon
