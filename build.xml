@@ -1,4 +1,4 @@
-<!-- $Id: build.xml,v 1.13 2004/08/25 12:34:56 valeks Exp $ mode: -*- --><!-- xsl -*- -->
+<!-- $Id: build.xml,v 1.14 2004/08/26 06:55:56 valeks Exp $ mode: -*- --><!-- xsl -*- -->
 <project name="odisp" default="all" basedir=".">
     <taskdef resource="checkstyletask.properties"
            classpath="/usr/local/share/java/classes/checkstyle.jar"/>
@@ -130,7 +130,7 @@
     <!-- Object Dispatcher -->
     <target name="odisp" depends="build-dir-setup, messages-rebuild-from-tpls">
 	<javac
-	    srcdir="org" 
+	    srcdir="src" 
 	    destdir="build" 
 	    debug="yes"
 	    deprecation="yes"
