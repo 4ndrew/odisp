@@ -12,7 +12,7 @@ import com.novel.odisp.common.*;
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.5 2003/10/07 13:34:11 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.6 2003/10/12 14:27:50 valeks Exp $
  */
 public class StandartDispatcher implements Dispatcher {
 	Map objects = new HashMap();
@@ -38,8 +38,6 @@ public class StandartDispatcher implements Dispatcher {
 		    objects.put(load.getObjectName(),load);
 		}
 		System.err.println(" ok. loaded="+load.getObjectName());
-//		synchronized(load){load.notify();}
-
 	    } catch(InvocationTargetException e){
 		System.err.println(" failed: "+e);
 	    } catch(NoSuchMethodException e){
@@ -48,12 +46,10 @@ public class StandartDispatcher implements Dispatcher {
 		System.err.println(" failed: "+e);
 	    } catch(InstantiationException e){
 	        System.err.println(" failed: "+e);
-	        e.printStackTrace();
 	    } catch(IllegalAccessException e){
 	        System.err.println(" failed: "+e);
 	    } catch(IllegalArgumentException e){
 	        System.err.println(" failed: "+e);
-		e.printStackTrace();
 	    }
 	}
 	/** Принудительная выгрузка объекта и
@@ -61,32 +57,15 @@ public class StandartDispatcher implements Dispatcher {
 	 * @param objectName внутреннее имя объекта для удаления
 	 * @return void
 	 */
-	private void unloadObject(String objectName){
+	private void unloadObject(String objectName, int code){
 	    if(objects.containsKey(objectName)){
 		ODObject obj = (ODObject)objects.get(objectName);
 		Message m = getNewMessage("od_cleanup", objectName, "stddispatcher", 0);
-		m.addField(new Integer(1));
+		m.addField(new Integer(code));
 		sendMessage(m);
 		obj.interrupt();
 		System.out.println("\tobject "+objectName+" unloaded");
 		/* объект все еще может существовать, но сообщения ему доставлятся уже не будут */
-	    }
-	}
-	/** Обработчик сообщений для диспетчера объектов */
-	private void handleMessage(Message msg){
-	    if(msg.getAction().equals("od_shutdown")){
-		System.out.println("[i] "+toString()+" shutting down...");	    
-		Iterator it = objects.keySet().iterator();
-		while(it.hasNext())
-		    unloadObject((String)it.next());
-		objects.clear();
-	    }
-	    if(msg.getAction().equals("unload_object")){
-		if(msg.getFieldsCount() != 1)
-		    return;
-		String name = (String)msg.getField(0);
-		unloadObject(name);
-		objects.remove(name);
 	    }
 	}
 	/** Интерфейс для объектов ядра для отсылки сообщений.
@@ -100,10 +79,41 @@ public class StandartDispatcher implements Dispatcher {
 		String cl_n = (String)it.next();
 		ODObject cl_send = (ODObject)objects.get(cl_n);
 		cl_send.addMessage(message);
+		System.out.println("[D] sending "+message+" to "+cl_n);
 		synchronized(cl_send){cl_send.notify();}
 	    }
-	    if(message.getDestination().equals(".*") || message.getDestination().equals("stddispatcher"))
-		handleMessage(message);
+//	    if(message.getDestination().equals(".*") || message.getDestination().equals("stddispatcher"))
+//		handleMessage(message);
+	}
+	private class StandartDispatcherHandler extends CallbackODObject {
+		public String name = "stddispatcher";
+		protected void registerHandlers(){
+		    addHandler("unload_object", new MessageHandler(){
+			public void messageReceived(Message msg){
+			    if(msg.getFieldsCount() != 1)
+				return;
+			    String name = (String)msg.getField(0);
+			    unloadObject(name, 1);
+			    objects.remove(name);
+			}
+		    });
+		    addHandler("od_shutdown", new MessageHandler(){
+			public void messageReceived(Message msg){
+			    System.out.println("[i] "+toString()+" shutting down...");	    
+			    Iterator it = objects.keySet().iterator();
+			    while(it.hasNext())
+			    unloadObject((String)it.next(), 0);
+			    objects.clear();
+			}
+		    });
+		}
+		public int cleanUp(int type){
+		    return 0;
+		}
+		public StandartDispatcherHandler(Integer id){
+		    super("stddispatcher");
+		}
+	
 	}
 	/** Конструктор загружающий первоначальный набор объектов
 	 * на основе списка
@@ -116,6 +126,9 @@ public class StandartDispatcher implements Dispatcher {
 		String cl_n = (String)it.next();
 		loadObject(cl_n);
 	    }
+	    StandartDispatcherHandler stdh = new StandartDispatcherHandler(new Integer(0));
+	    stdh.start();
+	    objects.put("stddispatcher", stdh);
 	}
 	/** Интерфейс создания нового сообщения для сокрытия конкретной реализации
 	 * сообщений.
