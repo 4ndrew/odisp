@@ -261,7 +261,7 @@ public class Serve implements ServletContext {
 
   // Methods from ServletContext.
 
-  protected Map servlets = new HashMap();
+  protected Hashtable servlets = new Hashtable();
 
   /// Gets a servlet by name.
   // @param name the servlet name
@@ -281,7 +281,7 @@ public class Serve implements ServletContext {
   // servlets that are accesible will be returned.  This enumeration always
   // includes the servlet itself.
   public Enumeration getServletNames() {
-    return servlets.keySet();
+    return servlets.keys();
   }
 
   /// Destroys all currently-loaded servlets.
