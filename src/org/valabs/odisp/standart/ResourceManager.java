@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 
 /** Менеджер ресурсных объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceManager.java,v 1.13 2004/03/08 20:39:59 valeks Exp $
+ * @version $Id: ResourceManager.java,v 1.14 2004/03/18 10:25:49 dron Exp $
  */
 public class StandartResourceManager implements ResourceManager {
   /** Ссылка на диспетчер объектов. */
@@ -383,7 +383,8 @@ public class StandartResourceManager implements ResourceManager {
 	} catch (InterruptedException e) {}
 	synchronized (requestList) {
 	  /** TODO: переделать на несколько наборов так, что бы не пытатся исполнять заведомо невыполнимые запросы. */
-	  Iterator it = requestList.iterator();
+          List localList = new ArrayList(requestList);
+	  Iterator it = localList.iterator();
 	  List toRemove = new ArrayList();
 	  while (it.hasNext()) {
 	    RequestListEntry rle = (RequestListEntry) it.next();
