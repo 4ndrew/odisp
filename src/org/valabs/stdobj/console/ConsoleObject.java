@@ -5,7 +5,7 @@ import com.novel.odisp.common.PollingODObject;
 /** Объект ODISP реализующий консольный интерфейс доступа к менеджеру.
 * @author Валентин А. Алексеев
 * @author (C) 2003, НПП "Новел-ИЛ"
-* @version $Id: ConsoleObject.java,v 1.16 2004/04/02 09:54:49 valeks Exp $
+* @version $Id: ConsoleObject.java,v 1.17 2004/05/11 09:56:32 valeks Exp $
 */
 public class ConsoleObject extends PollingODObject {
   /** Поток читающий ввод с консоли. */
@@ -43,7 +43,6 @@ public class ConsoleObject extends PollingODObject {
     if (reader != null) {
       reader.exit();
     }
-    doExit = true;
     return 0;
   }
   /** Конструктор объекта с заданным порядковым номером.

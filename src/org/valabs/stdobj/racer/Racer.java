@@ -11,7 +11,7 @@ import com.novel.stdmsg.ODResourceAcquiredMessage;
 
 /** Объект, который пытается воспроизвести быстрые асинхронные запросы на захват и высвобождение ресурса.
  * @author (C) 2004 <a href="valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: Racer.java,v 1.5 2004/04/02 09:54:49 valeks Exp $
+ * @version $Id: Racer.java,v 1.6 2004/05/11 09:56:32 valeks Exp $
  */
 public class Racer extends PollingODObject {
   private int acquireCount = 0;
@@ -27,7 +27,7 @@ public class Racer extends PollingODObject {
       cleanUp(0);
     } else if (msg instanceof ODResourceAcquiredMessage) {
       try {
-	sleep((int)Math.random() * 100);
+	wait((int)Math.random() * 100);
       } catch (InterruptedException e) {}
       ODReleaseMessage m = new ODReleaseMessage(getObjectName(), msg.getId());
       m.setResourceName((String) msg.getField("0"));
@@ -37,7 +37,7 @@ public class Racer extends PollingODObject {
 	return;
       acquireCount++;
       try {
-	sleep((int)Math.random() * 100);
+	wait((int)Math.random() * 100);
       } catch (InterruptedException e) {}
       ODAcquireMessage m1 = new ODAcquireMessage(getObjectName(), msg.getId());
       m1.setResourceName("com.novel.stdobj.simpleconfig.SimpleConfig");
@@ -45,7 +45,6 @@ public class Racer extends PollingODObject {
     }
   }
   public int cleanUp(int code) {
-    doExit = true;
     return code;
   }
   public String[] getProviding() {

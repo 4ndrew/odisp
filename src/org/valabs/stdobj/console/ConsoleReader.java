@@ -14,7 +14,7 @@ import com.novel.odisp.common.Message;
  * @author <a href="valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author <a href="dron@novel-il.ru">Андрей А. Порохин</a>
  * @author (C) 2003-2004 НПП "Новел-ИЛ"
- * @version $Id: ConsoleReader.java,v 1.8 2004/03/31 12:54:48 dron Exp $
+ * @version $Id: ConsoleReader.java,v 1.9 2004/05/11 09:56:32 valeks Exp $
  */
 
 public class ConsoleReader extends Thread {
@@ -40,6 +40,7 @@ public class ConsoleReader extends Thread {
 		       final Dispatcher disp,
 		       final Logger log) {
     super("ConsoleReader");
+    setDaemon(true);
     dispatcher = disp;
     logger = log;
     objectName = oName;

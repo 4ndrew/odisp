@@ -19,7 +19,7 @@ import com.novel.stdobj.webcon.servlet.http.HttpServletResponse;
 /** Объект ODISP реализующий WebCon интерфейс доступа к менеджеру.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: WCConsoleObject.java,v 1.3 2004/04/02 09:54:49 valeks Exp $
+ * @version $Id: WCConsoleObject.java,v 1.4 2004/05/11 09:56:32 valeks Exp $
  */
 public class WCConsoleObject extends PollingODObject {
   /** Собственно сервлет-обработчик. */
@@ -47,7 +47,6 @@ public class WCConsoleObject extends PollingODObject {
    */
   public final int cleanUp(final int type) {
     logger.finest("Cleaning up...");
-    doExit = true;
     return 0;
   }
   /** Конструктор объекта с заданным порядковым номером.
