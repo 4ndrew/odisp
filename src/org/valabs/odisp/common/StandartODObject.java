@@ -1,17 +1,16 @@
 package com.novel.odisp.common;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 /** Стандартный объект ODISP.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: StandartODObject.java,v 1.1 2004/05/13 09:22:38 valeks Exp $
+ * @version $Id: StandartODObject.java,v 1.2 2004/05/13 11:42:58 valeks Exp $
  */
 
 public abstract class StandartODObject implements ODObject {
