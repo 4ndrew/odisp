@@ -1,7 +1,10 @@
-# $Id: Makefile,v 1.1 2003/10/04 12:55:05 valeks Exp $
+# $Id: Makefile,v 1.2 2003/10/06 15:45:01 valeks Exp $
 ANT=ant
 
 all:
+	$(ANT) $@
+
+doc:
 	$(ANT) $@
 
 clean:
