@@ -18,7 +18,7 @@ import java.lang.reflect.InvocationTargetException;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@valeks.novel.local">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.12 2004/03/29 12:42:54 dron Exp $
+ * @version $Id: ObjectManager.java,v 1.13 2004/03/31 07:23:30 dron Exp $
  */
 
 public class StandartObjectManager implements ObjectManager {
@@ -282,6 +282,8 @@ public class StandartObjectManager implements ObjectManager {
     // Получатели, ибо использовать глобольный итератор без глобальной
     // блокировки объекта по меньшей мере - наивно ;-))) 
     List recipients = null;
+    // Посылка производится сервису.
+    boolean serviceMatch = true;
     // в случае если получатель смахивает на имя сервиса
     // -- разослать только провайдерам, а не всем подряд
     if (hasProviders(message.getDestination())) {
@@ -291,10 +293,10 @@ public class StandartObjectManager implements ObjectManager {
       }
     }
     if (recipients == null){
+      serviceMatch = false;
       recipients = new ArrayList();
       synchronized (objects) {
-        Iterator it =
-          Collections.synchronizedSet(objects.keySet()).iterator();
+        Iterator it = objects.keySet().iterator();
         while (it.hasNext()) {
           recipients.add(it.next());
         }
@@ -303,7 +305,9 @@ public class StandartObjectManager implements ObjectManager {
     Iterator it = recipients.iterator();
     while (it.hasNext()) {
       String objectName = (String) it.next();
-      // message.setDestination(objectName);
+      if (serviceMatch) {
+        message.setDestination(objectName);
+      }
       sendToObject(objectName, message);
     }
   }
