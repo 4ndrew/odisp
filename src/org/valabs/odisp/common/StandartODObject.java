@@ -7,9 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.valabs.odisp.SessionManager;
+
 /** Стандартный объект ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: StandartODObject.java,v 1.10 2004/08/30 10:07:12 valeks Exp $
+ * @version $Id: StandartODObject.java,v 1.11 2004/10/24 19:09:26 valeks Exp $
  */
 
 public abstract class StandartODObject implements ODObject {
@@ -125,7 +127,9 @@ public abstract class StandartODObject implements ODObject {
     if (handlers.containsKey(msg.getAction())) {
       ((MessageHandler) handlers.get(msg.getAction())).messageReceived(msg);
     } else {
-      logger.finer(" (" + getObjectName() + ") there is no handler for message " + msg.getAction());
+      if (!SessionManager.getSessionManager().processMessage(msg)) {
+        logger.finer(" (" + getObjectName() + ") there is no handler for message " + msg.getAction());
+      }
     }
   }
 
