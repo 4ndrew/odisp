@@ -1,4 +1,4 @@
-package com.novel.odisp;
+package com.novel.odisp.standart;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -13,16 +13,15 @@ import java.util.regex.Pattern;
 import com.novel.odisp.common.Dispatcher;
 import com.novel.odisp.common.Message;
 import com.novel.odisp.common.ODObject;
-import com.novel.odisp.common.ObjectManager;
 import com.novel.stdmsg.ODCleanupMessage;
 import com.novel.stdmsg.ODObjectLoadedMessage;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.35 2004/07/12 09:57:04 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.36 2004/07/21 08:05:42 valeks Exp $
  */
 
-public class StandartObjectManager implements ObjectManager {
+class ObjectManager implements com.novel.odisp.common.ObjectManager {
   /** Диспетчер объектов. */
   private Dispatcher dispatcher;
   /** Хранилище отложенных сообщений. */
@@ -300,7 +299,7 @@ public class StandartObjectManager implements ObjectManager {
   /** Констурктор менеджера.
    * @param newDispatcher диспетчер для которого производится управление ресурсами
    */
-  public StandartObjectManager(final Dispatcher newDispatcher) {
+  public ObjectManager(final Dispatcher newDispatcher) {
     dispatcher = newDispatcher;
     for (int i = 0; i < SENDER_POOL_SIZE; i++) {
       senderPool.add(new Sender(this));

@@ -1,4 +1,4 @@
-package com.novel.odisp;
+package com.novel.odisp.standart;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -10,9 +10,9 @@ import com.novel.odisp.common.Resource;
 /** Запись об однотипных ресурах в таблице ресурсов.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ResourceEntry.java,v 1.9 2004/05/28 00:13:55 valeks Exp $
+ * @version $Id: ResourceEntry.java,v 1.10 2004/07/21 08:05:42 valeks Exp $
  */
-public class ResourceEntry {
+class ResourceEntry {
   /** Журнал. */
   private static final Logger log = Logger.getLogger("ResourceEntry");
   /** Уникальное обозначение разделяемого ресурса. */

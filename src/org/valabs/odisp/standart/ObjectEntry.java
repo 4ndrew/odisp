@@ -1,4 +1,4 @@
-package com.novel.odisp;
+package com.novel.odisp.standart;
 
 import java.util.Arrays;
 
@@ -6,10 +6,10 @@ import com.novel.odisp.common.ODObject;
 /** Запись об объекте в таблице объектов.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ObjectEntry.java,v 1.7 2004/07/12 12:31:00 valeks Exp $
+ * @version $Id: ObjectEntry.java,v 1.8 2004/07/21 08:05:42 valeks Exp $
  */
 
-public class ObjectEntry {
+class ObjectEntry {
   /** Определяет загружен ли объект. */
   private boolean loaded;
   /** Проверка загрузки объекта.

@@ -1,11 +1,11 @@
-package com.novel.odisp;
+package com.novel.odisp.standart;
 
 
 /** Реализация единого потока рассылки и обработки сообщений.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: Sender.java,v 1.9 2004/07/12 12:31:00 valeks Exp $
+ * @version $Id: Sender.java,v 1.10 2004/07/21 08:05:42 valeks Exp $
  */
-public class Sender extends Thread {
+class Sender extends Thread {
 	/** Счетчик сообщений, которые были обработаны нитью. */
 	private int messageCounter = 0;
 	/** Счетчик потоков. */
@@ -13,11 +13,11 @@ public class Sender extends Thread {
 	/** Условие окончания обработки. */
 	private boolean doExit = false;
 	/** Ссылка на диспетчер объектов. */
-	private StandartObjectManager oman = null;
+	private ObjectManager oman = null;
 	/** Стандартный конструктор. 
 	 * @param noman ссылка на диспетчер объектов 
 	 */
-	public Sender(StandartObjectManager noman) {
+	public Sender(ObjectManager noman) {
 		super("sender" + (counter++));
 		setDaemon(true);
 		oman = noman;

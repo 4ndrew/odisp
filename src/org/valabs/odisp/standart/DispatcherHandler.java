@@ -1,4 +1,4 @@
-package com.novel.odisp;
+package com.novel.odisp.standart;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,14 +24,14 @@ import com.novel.stdmsg.ODShutdownMessage;
 
 /** Обработчик сообщений диспетчера ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: DispatcherHandler.java,v 1.22 2004/07/16 12:11:27 boris Exp $
+ * @version $Id: DispatcherHandler.java,v 1.23 2004/07/21 08:05:42 valeks Exp $
  */
 
-public class StandartDispatcherHandler extends StandartODObject {
+public class DispatcherHandler extends StandartODObject {
   /** Нитка heart-beat диспетчера. */
   private Thread runThread;
   /** Журнал. */
-  private Logger log = Logger.getLogger("com.novel.odisp.StandartDispatcherHandler");
+  private Logger log = Logger.getLogger("com.novel.odisp.standart.DispatcherHandler");
   /** Менеджер объектов. */
   private ObjectManager oman;
   /** Менеджер ресурсов. */
@@ -191,7 +191,7 @@ public class StandartDispatcherHandler extends StandartODObject {
   /** Конструктор объекта.
    * @param id порядковый номер объекта
    */
-  public StandartDispatcherHandler(final Integer id) {
+  public DispatcherHandler(final Integer id) {
     super("stddispatcher");
   }
 

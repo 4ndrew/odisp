@@ -1,4 +1,4 @@
-package com.novel.odisp;
+package com.novel.odisp.standart;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,22 +11,21 @@ import java.util.logging.Logger;
 import com.novel.odisp.common.Dispatcher;
 import com.novel.odisp.common.Message;
 import com.novel.odisp.common.Resource;
-import com.novel.odisp.common.ResourceManager;
 import com.novel.stdmsg.ODAcquireMessage;
 import com.novel.stdmsg.ODReleaseMessage;
 import com.novel.stdmsg.ODResourceAcquiredMessage;
 
 /** Менеджер ресурсных объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceManager.java,v 1.24 2004/07/16 12:11:27 boris Exp $
+ * @version $Id: ResourceManager.java,v 1.25 2004/07/21 08:05:42 valeks Exp $
  */
-public class StandartResourceManager implements ResourceManager {
+class ResourceManager implements com.novel.odisp.common.ResourceManager {
   /** Ссылка на диспетчер объектов. */
   //  private Dispatcher dispatcher;
   /** Нить обработки запросов. */
   private DataThread dataThread = null;
   /** Журнал. */
-  private Logger log = Logger.getLogger(StandartResourceManager.class.getName());
+  private Logger log = Logger.getLogger(ResourceManager.class.getName());
 
   /** Доступ к ресурсам.
    * @return список ресурсов
@@ -76,7 +75,7 @@ public class StandartResourceManager implements ResourceManager {
   /** Конструктор менеджера ресурсов.
    * @param newDispatcher ссылка на диспетчер ресурсами которого управляет менеджер
    */
-  public StandartResourceManager(final Dispatcher newDispatcher) {
+  public ResourceManager(final Dispatcher newDispatcher) {
     log.setLevel(java.util.logging.Level.ALL);
     dataThread = new DataThread(newDispatcher);
   }

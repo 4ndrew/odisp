@@ -1,4 +1,4 @@
-package com.novel.odisp;
+package com.novel.odisp.standart;
 
 import com.novel.odisp.common.Message;
 import com.novel.odisp.common.ODObject;
@@ -7,9 +7,9 @@ import com.novel.odisp.common.ODObject;
  * Содержит ссылку на отправляемое сообщение и на объект-получатель.
  * @author <a href="valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2004 НПП "Новел-ИЛ"
- * @version $Id: SendRecord.java,v 1.1 2004/05/14 07:56:42 valeks Exp $
+ * @version $Id: SendRecord.java,v 1.2 2004/07/21 08:05:42 valeks Exp $
  */
-public class SendRecord {
+class SendRecord {
 	private Message message;
 	private ODObject object;
 	

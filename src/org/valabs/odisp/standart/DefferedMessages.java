@@ -1,4 +1,4 @@
-package com.novel.odisp;
+package com.novel.odisp.standart;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,10 +9,10 @@ import com.novel.odisp.common.Message;
 /**
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: DefferedMessages.java,v 1.3 2004/03/31 12:54:48 dron Exp $
+ * @version $Id: DefferedMessages.java,v 1.4 2004/07/21 08:05:42 valeks Exp $
  */
 /** Коллекция отложенных сообщений. */
-public class DefferedMessages {
+class DefferedMessages {
   /** Карта очередей сообщений. */
   private Map queues = new HashMap();
   /** Добавление сообщения в определенную очередь.

@@ -1,4 +1,4 @@
-package com.novel.odisp;
+package com.novel.odisp.standart;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -13,7 +13,6 @@ import org.valeks.xlang.parser.Parser;
 import org.valeks.xlang.parser.Tag;
 import org.valeks.xlang.parser.XLangException;
 
-import com.novel.odisp.common.Dispatcher;
 import com.novel.odisp.common.ExceptionHandler;
 import com.novel.odisp.common.Message;
 import com.novel.odisp.common.ObjectManager;
@@ -26,15 +25,15 @@ import com.novel.stdmsg.StandartMessage;
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.47 2004/07/13 18:13:04 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.48 2004/07/21 08:05:42 valeks Exp $
  */
-public class StandartDispatcher implements Dispatcher, ExceptionHandler {
+public class Dispatcher implements com.novel.odisp.common.Dispatcher, ExceptionHandler {
   /** Журнал. */
-  private static Logger log = Logger.getLogger("com.novel.odisp.StandartDispatcher");
+  private static Logger log = Logger.getLogger("com.novel.odisp.standart.Dispatcher");
   /** Менеджер ресурсов. */
-  private ResourceManager rman = new StandartResourceManager(this);
+  private ResourceManager rman = new com.novel.odisp.standart.ResourceManager(this);
   /** Менеджер объектов. */
-  private ObjectManager oman = new StandartObjectManager(this);
+  private ObjectManager oman = new com.novel.odisp.standart.ObjectManager(this);
   /** Менеджер безопасности. */
   private SecurityManager sman = null;
   /** Обработчик исключений. */
@@ -135,7 +134,7 @@ public class StandartDispatcher implements Dispatcher, ExceptionHandler {
    * на основе списка
    * @param docTag 
    */
-  public StandartDispatcher(final Tag docTag) {
+  public Dispatcher(final Tag docTag) {
     log.info(toString() + " starting up...");
     Iterator it = docTag.getChild().iterator();
     Thread t = new Thread("alive thread") {
@@ -150,7 +149,7 @@ public class StandartDispatcher implements Dispatcher, ExceptionHandler {
       };
     Map tmp = new HashMap();
     tmp.put("runthr", t);
-    oman.loadObject(StandartDispatcherHandler.class.getName(), tmp);
+    oman.loadObject(DispatcherHandler.class.getName(), tmp);
     oman.loadPending();
     while (it.hasNext()) {
       Tag curt = (Tag) it.next();
@@ -206,7 +205,7 @@ public class StandartDispatcher implements Dispatcher, ExceptionHandler {
       try {
 	    InputStream inp = new FileInputStream(args[0]);
         Parser p = new Parser(inp);
-	    new StandartDispatcher(p.getRootTag());
+	    new Dispatcher(p.getRootTag());
       } catch (FileNotFoundException e) {
 	    log.severe("configuration file " + args[0] + " not found.");
       } catch (XLangException e) {
