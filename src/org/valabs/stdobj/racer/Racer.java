@@ -15,7 +15,7 @@ import com.novel.stdobj.simpleconfig.SimpleConfig;
  * 
  * @author (C) 2004 <a href="valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author <a href="dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: Racer.java,v 1.11 2004/06/09 17:52:23 valeks Exp $
+ * @version $Id: Racer.java,v 1.12 2004/06/09 19:44:43 valeks Exp $
  */
 public class Racer extends StandartODObject {
   /** Счётчик запросов */
@@ -40,9 +40,9 @@ public class Racer extends StandartODObject {
       }
 
       dispatcher.send(m);
-    } else if (msg instanceof ODCleanupMessage) {
+    } else if (ODCleanupMessage.equals(msg)) {
       cleanUp(0);
-    } else if (msg instanceof ODResourceAcquiredMessage) {
+    } else if (ODResourceAcquiredMessage.equals(msg)) {
       synchronized (requested) {
         if (!requested.booleanValue()) {
           // Отладка повторного получения сообщения od_resorce_acquared

@@ -27,7 +27,7 @@ import com.novel.stdobj.simpleconfig.SimpleConfig;
 /** Объект реализующий простейшую журнализацию событий согласно файлу шаблонов.
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: FileLog.java,v 1.25 2004/06/09 17:52:23 valeks Exp $
+* @version $Id: FileLog.java,v 1.26 2004/06/09 19:44:43 valeks Exp $
 */
 public class FileLog extends StandartODObject {
   /** Поток вывода. */
@@ -38,7 +38,7 @@ public class FileLog extends StandartODObject {
    * @param msg сообщение
    */
   public final void handleMessage(final Message msg) {
-    if (msg instanceof ODCleanupMessage
+    if (ODCleanupMessage.equals(msg)
 	&& msg.getDestination().equals(getObjectName())) {
       cleanUp(ODCleanupMessage.getReason(msg));
       return;
@@ -53,14 +53,12 @@ public class FileLog extends StandartODObject {
       dispatcher.send(m);
       return;
     }
-    if (msg instanceof ODResourceAcquiredMessage
+    if (ODResourceAcquiredMessage.equals(msg)
 	&& msg.getDestination().equals(getObjectName())) {
       // we acquired SimpleConfig resource
-      String className
-	= (String) ((ODResourceAcquiredMessage) msg).getResourceName();
+      String className = ODResourceAcquiredMessage.getResourceName(msg);
       if (className.startsWith(SimpleConfig.class.getName())) {
-	SimpleConfig scfg
-	  = (SimpleConfig) ((ODResourceAcquiredMessage) msg).getResource();
+	SimpleConfig scfg = (SimpleConfig) ODResourceAcquiredMessage.getResource(msg);
 	try {
 	  scfg.load(new FileInputStream(SimpleConfig.DEFAULT_CONFIG));
 	  try {

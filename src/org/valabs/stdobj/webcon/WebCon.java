@@ -24,7 +24,7 @@ import com.novel.stdobj.webcon.servlet.http.HttpServletResponse;
 /** ODISP-интерфейс к ACME серверу.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2004, НПП "Новел-ИЛ"
- * @version $Id: WebCon.java,v 1.6 2004/06/09 00:28:48 valeks Exp $
+ * @version $Id: WebCon.java,v 1.7 2004/06/09 19:44:43 valeks Exp $
  */
 
 public class WebCon extends StandartODObject implements MessageHandler {
@@ -51,6 +51,7 @@ public class WebCon extends StandartODObject implements MessageHandler {
       acmeServe.addServlet("/index.html", idx);
       new Thread() {
 	public void run() {
+	  setDaemon(true);
 	  acmeServe.serve();
 	}
       }.run();
@@ -91,7 +92,7 @@ public class WebCon extends StandartODObject implements MessageHandler {
       }
       m.setServletsList(result);
       dispatcher.send(m);
-    } else if (msg instanceof ODCleanupMessage) {
+    } else if (ODCleanupMessage.equals(msg)) {
       cleanUp(0);
     }
   }

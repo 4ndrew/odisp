@@ -5,7 +5,7 @@ import com.novel.odisp.common.Message;
  * Необязательный параметр reason определяет код причины выхода
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODCleanupMessage.java,v 1.8 2004/06/09 00:28:48 valeks Exp $
+ * @version $Id: ODCleanupMessage.java,v 1.9 2004/06/09 19:44:43 valeks Exp $
  */
 
 public class ODCleanupMessage {
@@ -36,5 +36,9 @@ public class ODCleanupMessage {
    */
   public static final void setReason(final Message msg, final int newReason) {
     msg.addField(REASON_IDX, new Integer(newReason));
+  }
+
+  public static final boolean equals(final Message msg) {
+    return msg.getAction().equals(NAME);
   }
 } // ODCleanupMessage

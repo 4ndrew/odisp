@@ -18,7 +18,7 @@ import com.novel.stdmsg.ODReleaseMessage;
 
 /** Менеджер ресурсных объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceManager.java,v 1.22 2004/06/09 17:52:23 valeks Exp $
+ * @version $Id: ResourceManager.java,v 1.23 2004/06/09 19:44:43 valeks Exp $
  */
 public class StandartResourceManager implements ResourceManager {
   /** Ссылка на диспетчер объектов. */
@@ -175,9 +175,10 @@ public class StandartResourceManager implements ResourceManager {
 	  // получение ресурса из хранилища
 	  Resource res = re.acquireResource(origin);
 	  // конструирование и отправка сообщения
-	  ODResourceAcquiredMessage m = new ODResourceAcquiredMessage(origin, msgid);
-	  m.setResourceName(className);
-	  m.setResource(res);
+	  Message m = dt.getDispatcher().getNewMessage();
+	  ODResourceAcquiredMessage.setup(m, origin, msgid);
+	  ODResourceAcquiredMessage.setResourceName(m, className);
+	  ODResourceAcquiredMessage.setResource(m, res);
 	  dt.getDispatcher().send(m);
 	} else {
 	  checkOnly = true;
