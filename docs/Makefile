@@ -1,6 +1,6 @@
 # Makefile for all documents
 #
-# $Id: Makefile,v 1.16 2004/01/20 14:04:37 valeks Exp $
+# $Id: Makefile,v 1.17 2004/01/27 12:57:26 valeks Exp $
 
 # folders & files
 TEXDOCS=impl.tex gui_imp.tex tz.tex style-9.tex odisp-style.tex
@@ -30,6 +30,7 @@ distclean: clean
 	@echo Full clean...
 	$(RM) $(TEXPDFS)
 	$(RM) html
+	$(RM) javadoc
 
 release: ${TEXPDFS}
 	@echo Releasing all pdfs
