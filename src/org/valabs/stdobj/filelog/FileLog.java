@@ -7,19 +7,15 @@ import java.util.regex.Pattern;
 /** Объект реализующий простейшую журнализацию событий согласно файлу шаблонов
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: FileLog.java,v 1.2 2003/10/04 12:56:20 valeks Exp $
+* @version $Id: FileLog.java,v 1.3 2003/10/07 11:13:36 valeks Exp $
 */
-public class FileLog extends ODObject {
-	public String name = "filelog";
+public class FileLog extends PollingODObject {
 	private int valuesToConfigure = 2;
 	private String logFile, patternFile;
 	private int logFileMsgId, patternFileMsgId;
 	PrintWriter out;
 	String[] patterns;
 	public void handleMessage(Message msg){
-// FileLog wants to receive _any_ message 
-//            if(!Pattern.matches(msg.getDestination(), toString()))
-//                return;	
 	    if(valuesToConfigure == 0){ // finaly we got all params we need to start -- fire up
 		try {
 		    File hLogFile = new File(logFile);
@@ -66,12 +62,10 @@ public class FileLog extends ODObject {
 	    return;
 	}
 	public int cleanUp(int type){
-//	    try {
 	    out.close();
-/*	    } catch(IOException e){
-		System.err.println("[w] unable to close log file");
-	    }*/
 	    return 0;
 	}
-	public String getObjectName(){return name;}
+	public FileLog(Integer id){
+	    super("log"+id);
+	}
 }

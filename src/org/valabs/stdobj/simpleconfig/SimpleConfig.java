@@ -7,14 +7,13 @@ import java.util.regex.*;
 /** Объект ODISP реализующий доступ к конфигурационным файлам формата [имя]=[значение]
 * @author Валентин А. Алексеев
 * @author (C) 2003, НПП "Новел-ИЛ"
-* @version $Id: SimpleConfig.java,v 1.2 2003/10/04 12:56:20 valeks Exp $
+* @version $Id: SimpleConfig.java,v 1.3 2003/10/07 11:13:48 valeks Exp $
 */
-public class SimpleConfig extends ODObject {
+public class SimpleConfig extends PollingODObject {
 	private Map contents = new HashMap();
 	public String name = "config";
 	public void handleMessage(Message msg){
-	    if(!Pattern.matches(msg.getDestination(), toString()))
-		return;
+	    log("handleMessage","processing "+msg);
 	    if(msg.getAction().equals("od_object_loaded") || msg.getAction().equals("reload")){
 		contents.clear();
 		try {
@@ -28,7 +27,6 @@ public class SimpleConfig extends ODObject {
 			m.find();
 			if(m.groupCount() == 2){
 			    contents.put(m.group(1), m.group(2));
-			    System.err.println("[D] SimpleConfig added name="+m.group(1)+", value="+m.group(2));
 			} else {
 			    System.err.println("[w] syntax error in line '"+s+"'. line ignored.");
 			}
@@ -51,5 +49,7 @@ public class SimpleConfig extends ODObject {
 	public int cleanUp(int type){
 	    return 0;
 	}
-	public String getObjectName(){return name;}
+	public SimpleConfig(Integer id){
+	    super("config"+id);
+	}
 }
