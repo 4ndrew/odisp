@@ -8,7 +8,7 @@ import java.io.InputStreamReader;
 /** Объект ODISP реализующий консольный интерфейс доступа к менеджеру
 * @author Валентин А. Алексеев
 * @author (C) 2003, НПП "Новел-ИЛ"
-* @version $Id: ConsoleObject.java,v 1.8 2003/11/15 19:42:16 valeks Exp $
+* @version $Id: ConsoleObject.java,v 1.9 2003/11/20 08:29:09 valeks Exp $
 */
 public class ConsoleObject extends PollingODObject {
   /** Поток читающий ввод с консоли */
@@ -55,7 +55,11 @@ public class ConsoleObject extends PollingODObject {
       reader.start();
     }
     if (msg.getAction().equals("od_cleanup")) {
-      cleanUp(((Integer) msg.getField(0)).intValue());
+      if (msg.getFieldsCount() == 1) {
+	cleanUp(((Integer) msg.getField(0)).intValue());
+      } else {
+	cleanUp(0);
+      }
     } else {
       System.out.println("Received:");
       System.out.println(msg.toString());
