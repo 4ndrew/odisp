@@ -16,7 +16,7 @@ import com.novel.stdmsg.ODResourceAcquiredMessage;
 
 /** Менеджер ресурсных объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceManager.java,v 1.19 2004/05/21 21:49:28 valeks Exp $
+ * @version $Id: ResourceManager.java,v 1.20 2004/05/28 00:17:21 valeks Exp $
  */
 public class StandartResourceManager implements ResourceManager {
   /** Ссылка на диспетчер объектов. */
@@ -24,7 +24,7 @@ public class StandartResourceManager implements ResourceManager {
   /** Нить обработки запросов. */
   private DataThread dataThread = null;
   /** Журнал. */
-  private Logger log = Logger.getLogger("com.novel.odisp.ResourceManager");
+  private Logger log = Logger.getLogger("com.novel.odisp.StandartResourceManager");
 
   /** Доступ к ресурсам.
    * @return список ресурсов
@@ -75,7 +75,6 @@ public class StandartResourceManager implements ResourceManager {
    * @param newDispatcher ссылка на диспетчер ресурсами которого управляет менеджер
    */
   public StandartResourceManager(final Dispatcher newDispatcher) {
-    //    dispatcher = newDispatcher;
     log.setLevel(java.util.logging.Level.ALL);
     dataThread = new DataThread(newDispatcher);
   }
@@ -131,9 +130,7 @@ public class StandartResourceManager implements ResourceManager {
     /** Выполнение действия на нити данных. */
     public final boolean performAction(final DataThread dt) {
       ResourceEntry re = (ResourceEntry) dt.getResources().get(className);
-      // синхронный доступ ко всей записи
       re.releaseResource(resource);
-      dt.setReleaseCount(dt.getReleaseCount() + 1);
       return true;
     }
 
@@ -169,28 +166,21 @@ public class StandartResourceManager implements ResourceManager {
      * @param dt нить данных
      */
     public boolean performAction(final DataThread dt) {
-/*      if (checkOnly && dt.getReleaseCount() != 0) {
-	// перезапрашивать только в том случае если производились высвобождения
-	return false;
-      }*/
       if (dt.getResources().containsKey(className)) {
 	ResourceEntry re = (ResourceEntry) dt.getResources().get(className);
-	if (re != null) {
-	    if (re.isAvailable()) {
-	      log.fine(className + " resource is in free pool.");
-	      // получение ресурса из хранилища
-	      Resource res = re.acquireResource(origin);
-	      // конструирование и отправка сообщения
-	      ODResourceAcquiredMessage m = new ODResourceAcquiredMessage(origin, msgid);
-	      m.setResourceName(className);
-	      m.setResource(res);
-	      dt.getDispatcher().send(m);
-	      dt.setReleaseCount(dt.getReleaseCount() - 1);
-	    } else {
-	      checkOnly = true;
-	      return false;
-	    }
-	  }
+	if (re.isAvailable()) {
+	  log.fine(className + " resource is in free pool.");
+	  // получение ресурса из хранилища
+	  Resource res = re.acquireResource(origin);
+	  // конструирование и отправка сообщения
+	  ODResourceAcquiredMessage m = new ODResourceAcquiredMessage(origin, msgid);
+	  m.setResourceName(className);
+	  m.setResource(res);
+	  dt.getDispatcher().send(m);
+	} else {
+	  checkOnly = true;
+	  return false;
+	}
       } else {
 	// нет такого ресурса -- просто удалить запрос. TODO: сообщение об ошибке?
       }
@@ -250,6 +240,7 @@ public class StandartResourceManager implements ResourceManager {
       dt.getResources().put(className, re);
       logMessage += " ok";
       log.config(logMessage);
+      // TODO: убрать строчку для новой схемы загрузки
       dt.getDispatcher().getObjectManager().loadPending();
       return true;
     }
@@ -329,14 +320,6 @@ public class StandartResourceManager implements ResourceManager {
     /** Доступ для запросов к диспетчеру. */
     public Dispatcher getDispatcher() {
       return dispatcher;
-    }
-    /** Счетчик запросов на высвобождение. */
-    private int releaseCount = 0;
-    public int getReleaseCount() {
-      return releaseCount;
-    }
-    public void setReleaseCount(int nc) {
-      releaseCount = nc;
     }
     /** Добавление запроса в очередь.
      * @param req запрос
