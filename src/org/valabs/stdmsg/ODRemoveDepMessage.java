@@ -5,7 +5,7 @@ package com.novel.stdmsg;
  * В качестве параметра нужно указать имя зависимости.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODRemoveDepMessage.java,v 1.1 2003/12/03 19:18:38 valeks Exp $
+ * @version $Id: ODRemoveDepMessage.java,v 1.2 2003/12/03 21:12:44 valeks Exp $
  */
 
 public class ODRemoveDepMessage extends StandartMessage {
@@ -25,9 +25,9 @@ public class ODRemoveDepMessage extends StandartMessage {
   }
 
   /** Установить значение имени зависимости
-   * @param newExitCode новое имя зависимости
+   * @param newDepName новое имя зависимости
    */
-  public ODRemoveDepMessage setDepName(Strin newDepName) {
+  public ODRemoveDepMessage setDepName(String newDepName) {
     fields.clear();
     addField(newDepName);
     return this;
