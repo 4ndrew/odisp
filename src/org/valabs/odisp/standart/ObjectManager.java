@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -26,7 +25,7 @@ import org.valabs.stdmsg.ODObjectLoadedMessage;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.38 2004/08/23 13:20:00 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.39 2004/08/26 11:32:01 valeks Exp $
  */
 
 class ObjectManager implements org.valabs.odisp.common.ObjectManager {
@@ -283,19 +282,8 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
 				objects.put(load.getObjectName(), oe);
 			}
 			statToLoadCount++;
-		} catch (InvocationTargetException e) {
-			log.warning(" failed: " + e + " cause: " + e.getTargetException());
-			e.getTargetException().printStackTrace();
-		} catch (NoSuchMethodException e) {
-			log.warning(" failed: " + e);
-		} catch (ClassNotFoundException e) {
-			log.warning(" failed: " + e);
-		} catch (InstantiationException e) {
-			log.warning(" failed: " + e);
-		} catch (IllegalAccessException e) {
-			log.warning(" failed: " + e);
-		} catch (IllegalArgumentException e) {
-			log.warning(" failed: " + e);
+		} catch (Exception e) {
+			dispatcher.getExceptionHandler().signalException(e);
 		}
 	}
 

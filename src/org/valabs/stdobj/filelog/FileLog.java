@@ -20,7 +20,7 @@ import org.valabs.stdmsg.ODObjectLoadedMessage;
 
 /** Объект реализующий простейшую журнализацию событий согласно файлу шаблонов.
 * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
-* @version $Id: FileLog.java,v 1.32 2004/08/23 07:42:38 valeks Exp $
+* @version $Id: FileLog.java,v 1.33 2004/08/26 11:32:01 valeks Exp $
 */
 public class FileLog extends StandartODObject {
 	/** Имя объекта. */
@@ -55,8 +55,10 @@ public class FileLog extends StandartODObject {
 	    }
 	    pfile.close();
 	  } catch (FileNotFoundException e) {
+	  	dispatcher.getExceptionHandler().signalException(e);
 	    logger.warning("unable to open logfile.");
 	  } catch (IOException e) {
+	  	dispatcher.getExceptionHandler().signalException(e);
 	    logger.warning("unable to read either log file or pattern file");
 	  }
       return;
