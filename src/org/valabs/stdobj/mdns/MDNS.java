@@ -28,7 +28,7 @@ import org.valabs.stdmsg.ODObjectLoadedMessage;
 
 /** Объект, который обеспечивает поддержку Zeroconf/Randezvous.
  * @author <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
- * @version $Id: MDNS.java,v 1.3 2005/01/26 08:22:53 valeks Exp $
+ * @version $Id: MDNS.java,v 1.4 2005/02/17 12:30:05 valeks Exp $
  */
 public class MDNS extends StandartODObject implements MessageHandler, ServiceListener {
   private Map listeners = new HashMap();
@@ -150,7 +150,9 @@ public class MDNS extends StandartODObject implements MessageHandler, ServiceLis
   
   public int cleanUp(int code) {
     logger.fine("Closing everything.");
-    jmdns.close();
+    if (jmdns != null) {
+      jmdns.close();
+    }
     return 0;
   }
 }
