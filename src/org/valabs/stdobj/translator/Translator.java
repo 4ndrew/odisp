@@ -10,7 +10,7 @@ import com.novel.odisp.common.Resource;
  *
  * @author <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
  * @author (C) 2004 НПП "Новел-ИЛ"
- * @version $Id: Translator.java,v 1.8 2004/04/24 19:49:07 valeks Exp $
+ * @version $Id: Translator.java,v 1.9 2004/05/22 21:47:49 dron Exp $
  */
 public class Translator extends Properties implements Resource {
   /** Имя параметра, который содержит имя файла для загрузки */
@@ -24,6 +24,57 @@ public class Translator extends Properties implements Resource {
    */
   public Translator() {
     /* empty constructor */
+  }
+  
+  /** Перевод закодированной строки в нормальную. Переводятся коды UTF
+   * "\\uxxxx", перевод строки "\\n", табуляция "\\t", перевод каретки "\\r".
+   * Код позаимствован из Properties.java от Sun.
+   *
+   * @param string Входная строка.
+   * @return Преобразованная строка.
+   */
+  public static String convertUTFString(String string) {
+    char curr;
+    int len = string.length();
+    StringBuffer resultBuff = new StringBuffer(len);
+    for (int x = 0; x < len; ) {
+      curr = string.charAt(x++);
+      if (curr == '\\') {
+        curr = string.charAt(x++);
+        if (curr == 'u') {
+          int value = 0;
+          for (int i = 0; i < 4; i++) {
+            curr = string.charAt(x++);
+            switch (curr) {
+              case '0': case '1': case '2': case '3': case '4':
+		          case '5': case '6': case '7': case '8': case '9':
+                value = (value << 4) + curr - '0';
+                break;
+              case 'a': case 'b': case 'c':
+              case 'd': case 'e': case 'f':
+                value = (value << 4) + 10 + curr - 'a';
+                break;
+              case 'A': case 'B': case 'C':
+              case 'D': case 'E': case 'F':
+                value = (value << 4) + 10 + curr - 'A';
+                break;
+              default:
+                throw new IllegalArgumentException(
+                  "UTF syntax error: \\uxxxx .");
+            } // switch
+          } // for
+          resultBuff.append((char) value);
+        } else {
+          if (curr == 't') curr = '\t';
+          else if (curr == 'r') curr = '\r';
+          else if (curr == 'n') curr = '\n';
+          else if (curr == 'f') curr = '\f';
+          resultBuff.append(curr);
+        }
+     } else
+       resultBuff.append(curr);
+     }
+     return resultBuff.toString();
   }
 
   /** Получить значение строки для определённого ключа. Используется для
