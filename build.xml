@@ -1,4 +1,4 @@
-<!-- $Id: build.xml,v 1.17 2004/10/28 22:03:07 valeks Exp $ mode: -*- --><!-- xsl -*- -->
+<!-- $Id: build.xml,v 1.18 2004/11/05 14:09:42 valeks Exp $ mode: -*- --><!-- xsl -*- -->
 <project name="odisp" default="all" basedir=".">
     <taskdef resource="checkstyletask.properties"
            classpath="/usr/local/share/java/classes/checkstyle.jar"/>
@@ -108,6 +108,7 @@
 	    >
           <classpath>
             <pathelement location="lib/xlang-parser.jar"/>
+            <pathelement location="lib/jug.jar"/>
           </classpath>
         </javac>
     </target>
