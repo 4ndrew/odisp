@@ -112,7 +112,8 @@ public class ChunkedInputStream extends FilterInputStream
     /// Reads the start of a chunk.
     private void startChunk() throws IOException
 	{
-	String line = din.readLine();
+	BufferedReader rin = new BufferedReader(new InputStreamReader(din));
+	String line = rin.readLine();
 	try
 	    {
 	    chunkCount = Integer.parseInt( line, 16 );
@@ -136,9 +137,10 @@ public class ChunkedInputStream extends FilterInputStream
 	footerNames = new Vector();
 	footerValues = new Vector();
 	String line;
+	BufferedReader rin = new BufferedReader(new InputStreamReader(din));
 	while ( true )
 	    {
-	    line = din.readLine();
+	    line = rin.readLine();
 	    if ( line.length() == 0 )
 		break;
 	    int colon = line.indexOf( ':' );
