@@ -5,7 +5,7 @@ import java.util.logging.Logger;
 
 /** Прокси-ресурс для доступа к произвольным внешним объектам.
 * @author (C) 2003 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
-* @version $Id: ProxyResource.java,v 1.7 2004/08/23 07:42:37 valeks Exp $
+* @version $Id: ProxyResource.java,v 1.8 2004/10/28 22:07:40 valeks Exp $
 */
 public class ProxyResource implements Resource {
   /** Собственно ресурс. */
@@ -57,7 +57,7 @@ public class ProxyResource implements Resource {
       return resource;
     }
     try {
-      resource = (Object) Class.forName(className).getConstructor(declParams).newInstance(params);
+      resource = Class.forName(className).getConstructor(declParams).newInstance(params);
       isAlive = true;
     } catch (InvocationTargetException e) {
       logger.warning("failed: " + e);
