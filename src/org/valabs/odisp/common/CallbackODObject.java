@@ -1,4 +1,6 @@
 package com.novel.odisp.common;
+
+import java.util.logging.*;
 import java.util.*;
 import java.util.regex.*;
 
@@ -6,15 +8,16 @@ import java.util.regex.*;
 * посылаемых диспетчером ODISP и вызывающий обработчик сообщения по мере прихода.
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: CallbackODObject.java,v 1.3 2003/10/22 21:21:33 valeks Exp $
+* @version $Id: CallbackODObject.java,v 1.4 2003/11/10 13:30:26 valeks Exp $
 */
 public abstract class CallbackODObject extends ODObject {
 	private Map handlers; 
+        private boolean handlersRegistred = false;
+        private List unhandledMessages = new LinkedList();
 	/** Признак окончания работы основного цикла обработки сообщений */
 	public CallbackODObject(String name){
 	    super(name);
 	    handlers = new HashMap();
-
 	}
 	/** Добавление нового обработчика событий
 	@param message сообщение обрабатываемое обработчиком
@@ -28,7 +31,13 @@ public abstract class CallbackODObject extends ODObject {
 	}
 	/** Цикл обработки приходящих сообщений */
 	public final void run(){
-	    registerHandlers();	
+	    registerHandlers();
+            handlersRegistred = true;
+            ListIterator it = unhandledMessages.listIterator();
+            while(it.hasNext()){
+                handleMessage((Message)it.next());
+            }
+            unhandledMessages.clear();
 	    // we do not need message loop.
 	}
 	/** Интерфейс добавления сообщения в ящик */
@@ -38,6 +47,8 @@ public abstract class CallbackODObject extends ODObject {
 	    handleMessage(msg);
 	}
 	protected final void handleMessage(Message msg){
+            if(!handlersRegistred)
+                unhandledMessages.add(msg);
 	    if(handlers.containsKey(msg.getAction())){
 		((MessageHandler)handlers.get(msg.getAction())).messageReceived(msg);
 	    } else {
