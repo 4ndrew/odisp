@@ -6,3 +6,9 @@ ODObjectLoadedMessage.java
 ODRemoveDepMessage.java
 ODRemoveProviderMessage.java
 ODShutdownMessage.java
+ModuleAboutMessage.java
+ModuleAboutReplyMessage.java
+ModuleStatusMessage.java
+ModuleStatusReplyMessage.java
+TranslatorGetTranslationMessage.java
+TranslatorGetTranslationReplyMessage.java
