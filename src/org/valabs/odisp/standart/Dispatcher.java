@@ -2,7 +2,6 @@ package com.novel.odisp;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -26,7 +25,7 @@ import com.novel.stdmsg.StandartMessage;
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.38 2004/03/31 12:54:48 dron Exp $
+ * @version $Id: Dispatcher.java,v 1.39 2004/03/31 13:12:36 dron Exp $
  */
 public class StandartDispatcher implements Dispatcher {
   /** Журнал. */
