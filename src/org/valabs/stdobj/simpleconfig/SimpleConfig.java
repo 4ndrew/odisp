@@ -1,15 +1,14 @@
-/*
- * $Id: SimpleConfig.java,v 1.1 2003/10/02 23:16:31 valeks Exp $
- *	SimpleConfig.java
- *	ODISP object that implements simple configuration file reading
- *      (C) 2003, JTT Novel-IL
- */
 package com.novel.stdobj.simpleconfig;
 import com.novel.odisp.common.*;
 import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 
+/** Объект ODISP реализующий доступ к конфигурационным файлам формата [имя]=[значение]
+* @author Валентин А. Алексеев
+* @author (C) 2003, НПП "Новел-ИЛ"
+* @version $Id: SimpleConfig.java,v 1.2 2003/10/04 12:56:20 valeks Exp $
+*/
 public class SimpleConfig extends ODObject {
 	private Map contents = new HashMap();
 	public String name = "config";
@@ -52,5 +51,5 @@ public class SimpleConfig extends ODObject {
 	public int cleanUp(int type){
 	    return 0;
 	}
-	public String getName(){return name;}
+	public String getObjectName(){return name;}
 }

@@ -1,16 +1,14 @@
-/*
- * $Id: FileLog.java,v 1.1 2003/10/02 23:16:32 valeks Exp $
- *	FileLog.java
- *	ODISP Object that logs any internal message into file if it
- *	matches pattern.
- *      (C) 2003, JTT Novel-IL
- */
 package com.novel.stdobj.filelog;
 import com.novel.odisp.common.*;
 import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
+/** Объект реализующий простейшую журнализацию событий согласно файлу шаблонов
+* @author Валентин А. Алексеев
+* @author (С) 2003, НПП "Новел-ИЛ"
+* @version $Id: FileLog.java,v 1.2 2003/10/04 12:56:20 valeks Exp $
+*/
 public class FileLog extends ODObject {
 	public String name = "filelog";
 	private int valuesToConfigure = 2;
@@ -75,5 +73,5 @@ public class FileLog extends ODObject {
 	    }*/
 	    return 0;
 	}
-	public String getName(){return name;}
+	public String getObjectName(){return name;}
 }
