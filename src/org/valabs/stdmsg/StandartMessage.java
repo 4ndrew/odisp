@@ -13,7 +13,7 @@ import org.valabs.odisp.common.Message;
  * 
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: StandartMessage.java,v 1.21 2004/08/23 07:42:36 valeks Exp $
+ * @version $Id: StandartMessage.java,v 1.22 2004/08/30 10:07:12 valeks Exp $
  */
 public class StandartMessage implements Message, Serializable {
   /** Флаг маршрутизации. */
@@ -38,7 +38,8 @@ public class StandartMessage implements Message, Serializable {
   private boolean ce = false;
   /** Список подсообщений. */
   private List envelope = null;
-
+  /** Признак OOB. */
+  private boolean oob = false;
   /** Реализация конструктора сообщения.
    * @param newAction действие которое несет сообщение
    * @param newDestination адресат сообщения
@@ -285,5 +286,19 @@ public class StandartMessage implements Message, Serializable {
   		envelope = new ArrayList();
   	}
   	envelope.add(envelopeMessage);
+  }
+  
+  /** Проверка на OOB.
+   * @return true если сообщение OOB.
+   */
+  public boolean isOOB() {
+  	return oob;
+  }
+  
+  /** Установка флага OOB.
+   * @param newValue новое значение.
+   */
+  public void setOOB(boolean newValue) {
+  	oob = newValue;
   }
 }

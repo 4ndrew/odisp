@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 
 /** Стандартный объект ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: StandartODObject.java,v 1.9 2004/08/25 08:50:45 valeks Exp $
+ * @version $Id: StandartODObject.java,v 1.10 2004/08/30 10:07:12 valeks Exp $
  */
 
 public abstract class StandartODObject implements ODObject {
@@ -117,9 +117,8 @@ public abstract class StandartODObject implements ODObject {
    * @param msg сообщение для обработки
    */
   public void handleMessage(final Message msg) {
-  	if (blockedState && !msg.getAction().startsWith("od_")) {
-  		/** TODO: возможно стоит подумать о некоем QOS для сообщений. */
-  		// пропускать лишь привилегированные сообщения
+  	if (blockedState && !msg.isOOB()) {
+  		// пропускать лишь OOB сообщения
   		messages.add(msg);
   		return;
   	}

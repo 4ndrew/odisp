@@ -6,7 +6,7 @@ import org.valabs.odisp.common.Resource;
 /** Ответ на запрос о захвате ресурса.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODResourceAcquiredMessage.java,v 1.15 2004/08/23 07:42:36 valeks Exp $
+ * @version $Id: ODResourceAcquiredMessage.java,v 1.16 2004/08/30 10:07:12 valeks Exp $
  */
 public class ODResourceAcquiredMessage extends StandartMessage {
   /** Символьное имя сообщения. */
@@ -29,6 +29,7 @@ public class ODResourceAcquiredMessage extends StandartMessage {
     msg.setReplyTo(replyId);
     msg.setRoutable(false);
     msg.setCorrect(false);
+    msg.setOOB(true);
   }
   /** Вернуть имя класса ресурса.
    * @return имя класса

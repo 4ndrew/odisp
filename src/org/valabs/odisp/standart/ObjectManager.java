@@ -25,7 +25,7 @@ import org.valabs.stdmsg.ODObjectLoadedMessage;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.39 2004/08/26 11:32:01 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.40 2004/08/30 10:07:12 valeks Exp $
  */
 
 class ObjectManager implements org.valabs.odisp.common.ObjectManager {
@@ -384,7 +384,12 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
 			objToSendTo = oe.getObject();
 		}
 		synchronized (messageStorage) {
-			messageStorage.add(new SendRecord(message, objToSendTo));
+			if (message.isOOB()) {
+				log.finest("Sending OOB message " + message);
+				messageStorage.add(0, new SendRecord(message, objToSendTo));
+			} else {
+				messageStorage.add(new SendRecord(message, objToSendTo));
+			}
 		}
 	}
 

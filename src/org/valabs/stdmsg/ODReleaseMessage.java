@@ -6,7 +6,7 @@ import org.valabs.odisp.common.Resource;
 /** Запрос диспетчера на высвобождение ресурса.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODReleaseMessage.java,v 1.13 2004/08/23 07:42:36 valeks Exp $
+ * @version $Id: ODReleaseMessage.java,v 1.14 2004/08/30 10:07:12 valeks Exp $
  */
 
 public class ODReleaseMessage {
@@ -29,6 +29,7 @@ public class ODReleaseMessage {
     msg.setOrigin(origin);
     msg.setRoutable(false);
     msg.setCorrect(false);
+    msg.setOOB(true);
   }
 
   /** Вернуть имя ресурса для захвата.

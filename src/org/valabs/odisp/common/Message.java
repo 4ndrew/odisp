@@ -5,7 +5,7 @@ import java.util.Map;
 
 /** Интерфейс сообщения ядра ODISP системы.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
- * @version $Id: Message.java,v 1.16 2004/08/23 07:42:36 valeks Exp $
+ * @version $Id: Message.java,v 1.17 2004/08/30 10:07:12 valeks Exp $
  */
 public interface Message {
 
@@ -116,4 +116,14 @@ public interface Message {
    * @param envelopeMessage подсообщение
    */
   void addToEnvelope(Message envelopeMessage);
+
+  /** Проверка на OOB.
+   * @return true в случае если сообщение с повышеным приоритетом.
+   */
+  boolean isOOB();
+  
+  /** Установка флага OOB.
+   * @param newValue новое значение OOB флага.
+   */
+  void setOOB(boolean newValue);
 }
