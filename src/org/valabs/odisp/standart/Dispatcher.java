@@ -18,14 +18,13 @@ import com.novel.odisp.common.Message;
 import com.novel.odisp.common.ObjectManager;
 import com.novel.odisp.common.ResourceManager;
 import com.novel.stdmsg.StandartMessage;
-//import com.novel.stdmsg.*;
 
 /** Стандартный диспетчер ODISP.
  * Стандартный диспетчер реализует пересылку сообщений между объектами ядра
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.40 2004/04/02 09:54:49 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.41 2004/05/18 13:45:51 valeks Exp $
  */
 public class StandartDispatcher implements Dispatcher {
   /** Журнал. */
