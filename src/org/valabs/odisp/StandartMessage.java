@@ -5,7 +5,7 @@ import java.util.*;
 /** Реализация стандартного сообщения для стандартного диспетчера ODISP
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: StandartMessage.java,v 1.3 2003/10/07 11:04:07 valeks Exp $
+ * @version $Id: StandartMessage.java,v 1.4 2003/10/12 20:01:43 valeks Exp $
  */
 public class StandartMessage implements Message {
 	/** Внутренний уникальный счетчик сообщения */
@@ -41,15 +41,15 @@ public class StandartMessage implements Message {
 	}
 	/** Возвращает действие которое несет сообщение */
 	public String getAction() { return action; }
-	/** Возвращает действие которое несет сообщение */	
+	/** Возвращает адресата сообщения */
 	public String getDestination() { return destination; }
-	/** Возвращает действие которое несет сообщение */
+	/** Возвращает автора сообщения */
 	public String getOrigin() {return origin;}
-	/** Возвращает действие которое несет сообщение */
+	/** Возвращает идентификатор сообщения на которое производится ответ */
 	public int getReplyTo() {return inReplyTo;}
-	/** Возвращает действие которое несет сообщение */
+	/** Возвращает количество полей в сообщении */
 	public int getFieldsCount() { return fields.size();}
-	/** Возвращает действие которое несет сообщение */
+	/** Возвращает уникальный идентификатор сообщения */
 	public int getId(){ return my_id; };
 	/** Представление сообщения в виде текстовой строки 
 	 * @return строчное представление сообщения
