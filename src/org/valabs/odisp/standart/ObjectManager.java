@@ -17,8 +17,8 @@ import com.novel.stdmsg.ODCleanupMessage;
 import com.novel.stdmsg.ODObjectLoadedMessage;
 
 /** Менеджер объектов ODISP.
- * @author (C) 2004 <a href="mailto:valeks@valeks.novel.local">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.20 2004/05/13 09:19:54 valeks Exp $
+ * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
+ * @version $Id: ObjectManager.java,v 1.21 2004/05/14 07:56:42 valeks Exp $
  */
 
 public class StandartObjectManager implements ObjectManager {
@@ -38,6 +38,8 @@ public class StandartObjectManager implements ObjectManager {
   public static final int SENDER_POOL_SIZE = 5;
   /** Общее число объектов. */
   private int objCount = 0;
+  /** Хранилище для сообщений. */
+  private List messageStorage = new ArrayList();
 
   /** Добавление объекта как провайдера конкретного сервиса.
    * @param service название сервиса
@@ -247,7 +249,7 @@ public class StandartObjectManager implements ObjectManager {
   public StandartObjectManager(final Dispatcher newDispatcher) {
     dispatcher = newDispatcher;
     for (int i = 0; i < SENDER_POOL_SIZE; i++) {
-      senderPool.add(new Sender());
+      senderPool.add(new Sender(this));
     }
   }
 
@@ -275,10 +277,13 @@ public class StandartObjectManager implements ObjectManager {
       }
       objToSendTo = oe.getObject();
     }
+    synchronized (messageStorage) {
+		messageStorage.add(new SendRecord(message, objToSendTo));
+    }
     /* Выбор первой наименее загруженной нити отсылки.
        Возможно в дальнейшем потребуется какой ни будь адаптивный алгоритм, который будет
        расширять размер пула нитей в зависимости от нагрузки системы.
-     */
+     *//*
     Sender victim = null;
     int leastLoad = Integer.MAX_VALUE;
     int avgLoad = 0;
@@ -289,18 +294,18 @@ public class StandartObjectManager implements ObjectManager {
 	leastLoad = tmp.getCounter();
 	victim = tmp;
       }
-    }
+    }*/
     /*
       Адаптивный алгоритм работы:
       при превышении лимита в 10-15 сообщений для минимума производится запуск пары дополнительных
       нитей с перераспределением нагрузки между ними. Когда средняя нагрузка
       опускается ниже 5 - убираем по 1 нити.
-     */
+     *//*
     avgLoad = avgLoad / senderPool.size();
     if (leastLoad > 15) {
-      victim = new Sender();
+      victim = new Sender(this);
       senderPool.add(victim);
-      senderPool.add(new Sender());
+      senderPool.add(new Sender(this));
       log.fine("Least load exceed 15 - throttling.");
     } else if (avgLoad < 5 && senderPool.size() > SENDER_POOL_SIZE) {
       Sender s = (Sender) senderPool.get(0);
@@ -308,8 +313,7 @@ public class StandartObjectManager implements ObjectManager {
       senderPool.remove(0);
       s = null;
       log.fine("Average load less than 5 - slowing down.");
-    }
-    victim.send(message, objToSendTo);
+    }*/
   }
 
   /** Посылка сообщения всем объектам менеджера.
@@ -397,5 +401,17 @@ public class StandartObjectManager implements ObjectManager {
       objectRef.notify();
     }
     loadPending();
+  }
+  
+  /** Получение следующего сообщения для обработки. */
+  public final SendRecord getNextPendingMessage() {
+  	SendRecord toSend = null;
+  	synchronized (messageStorage) {
+  		if (messageStorage.size() > 0) {
+  			toSend = (SendRecord) messageStorage.get(0);
+  			messageStorage.remove(0);
+  		}
+  	}
+  	return toSend;
   }
 } // StandartObjectManager
