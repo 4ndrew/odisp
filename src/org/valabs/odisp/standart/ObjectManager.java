@@ -18,7 +18,7 @@ import com.novel.stdmsg.ODObjectLoadedMessage;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@valeks.novel.local">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.15 2004/03/31 12:54:48 dron Exp $
+ * @version $Id: ObjectManager.java,v 1.16 2004/04/02 11:38:28 valeks Exp $
  */
 
 public class StandartObjectManager implements ObjectManager {
@@ -34,8 +34,6 @@ public class StandartObjectManager implements ObjectManager {
   private Map provided = new HashMap();
   /** Общее число объектов. */
   private int objCount = 0;
-  /** Количество объектов ожидающих загрузки. */
-  private int countPending = 0;
 
   /** Добавление объекта как провайдера конкретного сервиса.
    * @param service название сервиса
@@ -102,6 +100,7 @@ public class StandartObjectManager implements ObjectManager {
 	addProvider(objectName, objectName);
       }
     }
+    int loaded = 0;
     synchronized (objects) {
       it = objects.keySet().iterator();
       while (it.hasNext()) {
@@ -132,9 +131,12 @@ public class StandartObjectManager implements ObjectManager {
 	  log.config(" ok. loaded = " + objectName);
 	  Message m = new ODObjectLoadedMessage(objectName);
 	  oe.getObject().addMessage(m);
-	  countPending--;
+	  loaded++;
 	}
       }
+    }
+    if (loaded > 0) {
+      loadPending();
     }
   }
 
@@ -173,7 +175,6 @@ public class StandartObjectManager implements ObjectManager {
     } catch (IllegalArgumentException e) {
       log.warning(" failed: " + e);
     }
-    countPending++;
   }
 
   /** Принудительная выгрузка объекта и вызов сборщика.
