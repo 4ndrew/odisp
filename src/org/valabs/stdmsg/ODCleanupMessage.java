@@ -4,7 +4,7 @@ package com.novel.stdmsg;
  * Необязательный параметр reason определяет код причины выхода
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODCleanupMessage.java,v 1.4 2004/01/16 10:29:15 valeks Exp $
+ * @version $Id: ODCleanupMessage.java,v 1.5 2004/02/24 00:35:14 valeks Exp $
  */
 
 public class ODCleanupMessage extends StandartMessage {
@@ -52,5 +52,8 @@ public class ODCleanupMessage extends StandartMessage {
     addField(new Integer(reason));
     setCE(true);
     return true;
+  }
+  public final boolean isRoutable() {
+    return false;
   }
 } // ODCleanupMessage

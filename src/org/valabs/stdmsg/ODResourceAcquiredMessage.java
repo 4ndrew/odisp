@@ -5,7 +5,7 @@ import com.novel.odisp.common.Resource;
 /** Ответ на запрос о захвате ресурса.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODResourceAcquiredMessage.java,v 1.8 2004/01/16 14:31:57 valeks Exp $
+ * @version $Id: ODResourceAcquiredMessage.java,v 1.9 2004/02/24 00:35:14 valeks Exp $
  */
 public class ODResourceAcquiredMessage extends StandartMessage {
   /** Символьное имя сообщения. */
@@ -81,5 +81,8 @@ public class ODResourceAcquiredMessage extends StandartMessage {
       setCE(true);
     }
     return isCE();
+  }
+  public final boolean isRoutable() {
+    return false;
   }
 } // ODResourceAcquiredMessage

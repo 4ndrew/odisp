@@ -6,7 +6,7 @@ package com.novel.stdmsg;
  * рассылатся объектам.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODShutdownMessage.java,v 1.6 2004/01/16 10:29:15 valeks Exp $
+ * @version $Id: ODShutdownMessage.java,v 1.7 2004/02/24 00:35:14 valeks Exp $
  */
 
 public class ODShutdownMessage extends StandartMessage {
@@ -57,5 +57,7 @@ public class ODShutdownMessage extends StandartMessage {
     setCE(true);
     return true;
   }
-
+  public final boolean isRoutable() {
+    return false;
+  }
 } // ODShutdownMessage

@@ -1,9 +1,11 @@
 package com.novel.odisp.common;
 
+import java.util.List;
+
 /** Интерфейс сообщения ядра ODISP системы.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Message.java,v 1.4 2004/02/17 10:56:00 valeks Exp $
+ * @version $Id: Message.java,v 1.5 2004/02/24 00:35:14 valeks Exp $
  */
 public interface Message {
   /** Добавление произволього объекта в тело сообщения.
@@ -82,4 +84,18 @@ public interface Message {
    * @return сформатированное сообщение
    */
   String toString(boolean willStackTrace);
+  /** Доступ ко всему списку полей.
+   * @return список полей
+   */
+  List getFields();
+
+  /** Возможно ли маршрутизировать сообщение между диспетчерами (приложениями).
+   * @return флаг маршрутизации
+   */
+  boolean isRoutable();
+
+  /** Возможно ли маршрутизировать сообщение между диспетчерами (приложениями)
+   * @return флаг маршрутизации
+   */
+  void setRoutable(boolean newRoutable);
 }

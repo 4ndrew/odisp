@@ -7,7 +7,7 @@ package com.novel.stdmsg;
  * ресурс.</p>
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODAcquireMessage.java,v 1.6 2004/02/15 23:09:07 valeks Exp $
+ * @version $Id: ODAcquireMessage.java,v 1.7 2004/02/24 00:35:14 valeks Exp $
  */
 
 public class ODAcquireMessage extends StandartMessage {
@@ -84,5 +84,9 @@ public class ODAcquireMessage extends StandartMessage {
     } else {
       return false;
     }
+  }
+
+  public boolean isRoutable() {
+    return false;
   }
 } // ODAcquireMessage

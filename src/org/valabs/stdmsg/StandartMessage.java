@@ -8,9 +8,11 @@ import java.io.Serializable;
 /** Реализация стандартного сообщения для стандартного диспетчера ODISP.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: StandartMessage.java,v 1.6 2004/02/17 10:56:00 valeks Exp $
+ * @version $Id: StandartMessage.java,v 1.7 2004/02/24 00:35:14 valeks Exp $
  */
 public class StandartMessage implements Message, Serializable {
+  /** Флаг маршрутизации. */
+  private boolean routable = true;
   /** Внутренний уникальный счетчик сообщения. */
   private static int id = 0;
   /** Уникальный индекс сообщения в системе. */
@@ -46,6 +48,19 @@ public class StandartMessage implements Message, Serializable {
 
   /** Конструктор по-умолчанию. */
   public StandartMessage() {
+    myId = id++;
+  }
+
+  /** Копирующий конструктор создающий сообщение различающиеся лишь номером.
+   * @param msg сообещние с которого снимается копия
+   */
+  public StandartMessage(final Message msg) {
+    action = msg.getAction();
+    destination = msg.getDestination();
+    inReplyTo = msg.getReplyTo();
+    origin = msg.getOrigin();
+    fields = new ArrayList(msg.getFields());
+    routable = msg.isRoutable();
     myId = id++;
   }
 
@@ -145,7 +160,7 @@ public class StandartMessage implements Message, Serializable {
   public final String toString() {
     return "stdmessage id=" + myId + " replyto=" + inReplyTo
       + " action=" + action + ", destination=" + destination
-      + ", origin=" + origin + ", fields.size()=" + fields.size();
+      + ", origin=" + origin + ", fields.size()=" + fields.size() + (isRoutable() ? " routable" :"");
   }
 
   /** Представление сообщения в виде текстовой строки с дампом пяти последних вызово.
@@ -183,7 +198,7 @@ public class StandartMessage implements Message, Serializable {
   /** Доступ ко всему списку полей.
    * @return список полей
    */
-  protected final List getFields() {
+  public final List getFields() {
     return fields;
   }
 
@@ -199,5 +214,11 @@ public class StandartMessage implements Message, Serializable {
    */
   public final boolean isCE() {
     return ce;
+  }
+  public boolean isRoutable() {
+    return routable;
+  }
+  public void setRoutable(final boolean newRoutable) {
+    routable = newRoutable;
   }
 }

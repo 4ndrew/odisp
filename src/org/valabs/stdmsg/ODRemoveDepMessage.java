@@ -6,7 +6,7 @@ package com.novel.stdmsg;
  * В качестве параметра нужно указать имя зависимости.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODRemoveDepMessage.java,v 1.6 2004/02/15 20:58:57 valeks Exp $
+ * @version $Id: ODRemoveDepMessage.java,v 1.7 2004/02/24 00:35:14 valeks Exp $
  */
 
 public class ODRemoveDepMessage extends StandartMessage {
@@ -57,4 +57,9 @@ public class ODRemoveDepMessage extends StandartMessage {
     }
     return isCE();
   }
+
+  public final boolean isRoutable() {
+    return false;
+  }
+
 } // ODShutdownMessage
