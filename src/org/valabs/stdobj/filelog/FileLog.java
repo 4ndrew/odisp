@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 /** Объект реализующий простейшую журнализацию событий согласно файлу шаблонов
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: FileLog.java,v 1.11 2003/12/03 19:23:27 valeks Exp $
+* @version $Id: FileLog.java,v 1.12 2003/12/03 21:14:57 valeks Exp $
 */
 public class FileLog extends PollingODObject {
   /** Поток вывода */
@@ -34,7 +34,7 @@ public class FileLog extends PollingODObject {
     }
     if (msg instanceof ODObjectLoadedMessage && msg.getDestination().equals(getObjectName())) {
       setMatch(".*");
-      ODAcquireMessage m = new ODResourceAcquire(getObjectName(), 0);
+      ODAcquireMessage m = new ODAcquireMessage(getObjectName(), 0);
       m.setResourceName("com.novel.stdobj.simpleconfig.SimpleConfig");
       m.setWillBlock(true);
       dispatcher.sendMessage(m);
@@ -62,9 +62,7 @@ public class FileLog extends PollingODObject {
 	} catch (IOException e) { logger.warning("unable to read either log file or pattern file");}
 	Message[] m = {
 	  new ODReleaseMessage(getObjectName(), msg.getId()),
-	  new ODRemoveDepMessage(),
-	  /*	  dispatcher.getNewMessage("od_release", "stddispatcher", getObjectName(), msg.getId()),
-		  dispatcher.getNewMessage("od_remove_dep", "stddispatcher", getObjectName(), 0)*/
+	  new ODRemoveDepMessage(getObjectName(), 0),
 	};
 	((ODReleaseMessage)m[0]).setResourceName(className).setResource(scfg);
 	((ODRemoveDepMessage)m[1]).setDepName("com.novel.stdobj.simpleconfig.SimpleConfig");
