@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 /** Объект реализующий простейшую журнализацию событий согласно файлу шаблонов.
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: FileLog.java,v 1.16 2004/02/13 15:16:03 valeks Exp $
+* @version $Id: FileLog.java,v 1.17 2004/02/27 10:56:22 valeks Exp $
 */
 public class FileLog extends PollingODObject {
   /** Поток вывода. */
@@ -60,7 +60,7 @@ public class FileLog extends PollingODObject {
 	SimpleConfig scfg
 	  = (SimpleConfig) ((ODResourceAcquiredMessage) msg).getResource();
 	try {
-	  scfg.load(new FileInputStream(scfg.DEFAULT_CONFIG));
+	  scfg.load(new FileInputStream(SimpleConfig.DEFAULT_CONFIG));
 	  try {
 	    File hLogFile = new File(scfg.getProperty("log_logfile", "odisp.log"));
 	    if (!hLogFile.exists()) {
@@ -81,9 +81,9 @@ public class FileLog extends PollingODObject {
 	    logger.warning("unable to read either log file or pattern file");
 	  }
 	} catch (FileNotFoundException e) {
-	  logger.warning("unable to find config file: " + scfg.DEFAULT_CONFIG);
+	  logger.warning("unable to find config file: " + SimpleConfig.DEFAULT_CONFIG);
 	} catch (IOException e) {
-	  logger.warning("unable to read config file " + scfg.DEFAULT_CONFIG);
+	  logger.warning("unable to read config file " + SimpleConfig.DEFAULT_CONFIG);
 	}
 	Message[] m = {
 	  new ODReleaseMessage(getObjectName(), msg.getId()),
