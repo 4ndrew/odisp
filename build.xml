@@ -1,4 +1,4 @@
-<!-- $Id: build.xml,v 1.21 2004/12/02 22:55:05 valeks Exp $ mode: -*- --><!-- xsl -*- -->
+<!-- $Id: build.xml,v 1.22 2004/12/03 09:49:51 valeks Exp $ mode: -*- --><!-- xsl -*- -->
 <project name="odisp" default="all" basedir=".">
     <taskdef resource="checkstyletask.properties"
            classpath="/usr/local/share/java/classes/checkstyle.jar"/>
@@ -154,4 +154,13 @@
                 </manifest>
         </jar>
     </target>
+  
+  <target name="odisp-jar-debug" depends="odisp, odisp-junit">
+    <jar destfile="release/odisp.jar" basedir="build" includes="org/**,test/org/valabs/odisp/DispatcherFake.class">
+      <manifest>
+      <attribute name="Built-By" value="${user.name}"/>
+      <attribute name="Main-Class" value="org.valabs.odisp.standart.Dispatcher"/>
+      </manifest>
+    </jar>
+  </target>
 </project>
