@@ -13,7 +13,7 @@ import com.novel.odisp.common.*;
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.14 2003/10/28 14:26:43 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.15 2003/11/10 13:26:49 valeks Exp $
  */
 public class StandartDispatcher implements Dispatcher {
 	private static Logger log = Logger.getLogger("com.novel.odisp");
@@ -59,6 +59,8 @@ public class StandartDispatcher implements Dispatcher {
 			    provided.add(oe.provides[i]);
 			}
 		    log.config(" ok. loaded = " + od_n);
+                    Message m = getNewMessage("od_object_loaded", od_n, "stddispatcher", 0);
+                    oe.object.addMessage(m);
 		}
 	    }
 	}
@@ -133,9 +135,7 @@ public class StandartDispatcher implements Dispatcher {
          Class declParams[] = new Class[1];
          declParams[0] = params[0].getClass();
          ODObject load = (ODObject)Class.forName(className).getConstructor(declParams).newInstance(params);
-         Message m = getNewMessage("od_object_loaded",load.getObjectName(),"stddispatcher",0);
          load.setDispatcher(this);
-         load.addMessage(m);
          synchronized(objects){
             ObjectEntry oe = new ObjectEntry(className, false, load.getDepends(), load.getProviding());
             oe.object = load;
