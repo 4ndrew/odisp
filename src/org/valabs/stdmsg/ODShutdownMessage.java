@@ -8,17 +8,16 @@ import com.novel.odisp.common.*;
  * В качестве параметра можно указать код выхода который будет рассылатся объектам.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODShutdownMessage.java,v 1.1 2003/12/01 22:19:29 valeks Exp $
+ * @version $Id: ODShutdownMessage.java,v 1.2 2003/12/02 14:47:20 valeks Exp $
  */
 
 public class ODShutdownMessage extends StandartMessage {
   /** Создает новое сообщение с заданными параметрами 
    * @param origin отправитель
-   * @param destination получатель
    * @param replyTo индекс сообщения на которое производится ответ
    */
-  public ODShutdownMessage(String origin, String destination, int replyTo) {
-    super("od_shutdown", origin, destination, replyTo);
+  public ODShutdownMessage(String origin, int replyTo) {
+    super("od_shutdown", origin, "stddispatcher", replyTo);
   }
 
   /** Вернуть значение кода выхода
@@ -40,4 +39,4 @@ public class ODShutdownMessage extends StandartMessage {
     addField(new Integer(newExitCode));
   }
   
-}// ODShutdown
+}// ODShutdownMessage
