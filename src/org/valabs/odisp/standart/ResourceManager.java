@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 
 /** Менеджер ресурсных объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceManager.java,v 1.12 2004/03/05 21:25:53 valeks Exp $
+ * @version $Id: ResourceManager.java,v 1.13 2004/03/08 20:39:59 valeks Exp $
  */
 public class StandartResourceManager implements ResourceManager {
   /** Ссылка на диспетчер объектов. */
@@ -181,10 +181,10 @@ public class StandartResourceManager implements ResourceManager {
      * @param dt нить данных
      */
     public boolean performAction(final DataThread dt) {
-      if (checkOnly && dt.getReleaseCount() != 0) {
+/*      if (checkOnly && dt.getReleaseCount() != 0) {
 	// перезапрашивать только в том случае если производились высвобождения
 	return false;
-      }
+      }*/
       if (dt.getResources().containsKey(className)) {
 	ResourceEntry re = (ResourceEntry) dt.getResources().get(className);
 	if (re != null) {
