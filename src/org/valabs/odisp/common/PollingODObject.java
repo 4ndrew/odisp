@@ -6,7 +6,7 @@ import java.util.regex.*;
 * посылаемых диспетчером ODISP.
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: PollingODObject.java,v 1.3 2003/10/12 20:04:23 valeks Exp $
+* @version $Id: PollingODObject.java,v 1.4 2003/10/14 09:39:22 valeks Exp $
 */
 public abstract class PollingODObject extends ODObject {
 	/** Конструктор задающий ODISP имя объекта */
@@ -15,7 +15,7 @@ public abstract class PollingODObject extends ODObject {
 	}
 	/** Цикл обработки приходящих сообщений */
 	public final void run(){
-	    log("run","message processing loop started");
+//	    log("run","message processing loop started");
 	    while(doExit!=true){
 		List localMessages;
 		synchronized(this){
@@ -31,7 +31,7 @@ public abstract class PollingODObject extends ODObject {
 		    Iterator mIter = localMessages.iterator();
 		    while(mIter.hasNext()){
 			Message m = (Message)mIter.next();
-			log("run","processing "+m);
+//			log("run","processing "+m);
 			handleMessage(m);
 		    }
 		}
@@ -42,7 +42,7 @@ public abstract class PollingODObject extends ODObject {
 	    if(!Pattern.matches(match, msg.getDestination()))
 		return;
 	    synchronized (this) {messages.add(msg);}
-	    log("addMessage",""+msg);
+//	    log("addMessage",""+msg);
 	}
 	/** Метод вызываемый для очистки данных класса */
 	public int cleanUp(int type){
