@@ -36,7 +36,7 @@ import com.novel.odisp.common.MessageHandler;
  *   ODSessionManager sm = ODSessionManager.getSessionManager();
  *   if (!sm.processMessage(msg)) {
  *     System.out.println("Message processed by SessionManager");
- *   } else if (msg instanceof ODObjectLoaded) {
+ *   } else if (ODObjectLoaded.equals(msg)) {
  *     ...
  *   }
  *   ...
@@ -45,7 +45,7 @@ import com.novel.odisp.common.MessageHandler;
  * 
  * @author <a href="dron@novel-il.ru">Андрей А. Порохин</a>
  * @author (C) 2004 НПП "Новел-ИЛ"
- * @version $Id: SessionManager.java,v 1.2 2004/05/28 00:15:10 valeks Exp $ 
+ * @version $Id: SessionManager.java,v 1.3 2004/06/09 19:38:35 valeks Exp $ 
  */
 public class SessionManager {
   /** Ссылка на ODSessionManager */
