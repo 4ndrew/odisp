@@ -1,9 +1,3 @@
-/*
- * $Id: Dispatcher.java,v 1.1 2003/10/02 23:16:30 valeks Exp $
- *	StandartDispatcher.java
- *	Implementation of an ODISP dispatcher
- *      (C) 2003, JTT Novel-IL 
- */
 package com.novel.odisp;
 
 import java.io.*;
@@ -13,10 +7,21 @@ import java.util.regex.*;
 
 import com.novel.odisp.common.*;
 
-public class StandartDispatcher extends ODObject implements Dispatcher, Runnable {
+/** Стандартный диспетчер ODISP.
+ * Стандартный диспетчер реализует пересылку сообщений между объектами ядра
+ * и управление ресурсными объектами.
+ * @author Валентин А. Алексеев
+ * @author (C) 2003, НПП "Новел-ИЛ"
+ * @version $Id: Dispatcher.java,v 1.2 2003/10/03 21:23:56 valeks Exp $
+ */
+public class StandartDispatcher implements Dispatcher {
 	Map objects = new HashMap();
 	List messages = new ArrayList();
 	int obj_count = 0;
+	/** Динамическая загрузка объекта
+	 * @param className имя загружаемого класса
+	 * @return void
+	 */
 	private void loadObject(String className){
 	    System.err.print("  loading object "+className);
 	    try {
@@ -24,11 +29,12 @@ public class StandartDispatcher extends ODObject implements Dispatcher, Runnable
 		load.setDispatcher(this);
 		load.setQuant(obj_count++);
 		Message m = getNewMessage("od_object_loaded",load.getName()+(obj_count-1),toString(),0);
-		load.handleMessage(m);
+		load.addMessage(m);
 		synchronized (objects){
 		    objects.put(load.toString(),load);
 		}
 		System.err.println(" ok. loaded="+load.toString());
+		load.start();
 	    } catch(ClassNotFoundException e){
 		System.err.println(" failed: "+e);
 	    } catch(InstantiationException e){
@@ -39,53 +45,26 @@ public class StandartDispatcher extends ODObject implements Dispatcher, Runnable
 	    } catch(IllegalArgumentException e){
 	        System.err.println(" failed: "+e);
 	    }
-	    new Thread(this, "StandartDispatcherMsgProcessor").start();
 	}
-	private synchronized void unloadObject(String objectName){
-	    if(objects.containsKey(objectName)){
-		ODObject hObj = (ODObject)objects.get(objectName);
-		Message m = getNewMessage("od_cleanup", objectName, toString(), 0);
-		m.addField(new Integer(1));
-		hObj.handleMessage(m);
-		objects.remove(objectName);
-		System.gc();
-	    }
+	/** Принудительная выгрузка объекта и
+	 * вызов сборщика мусора
+	 * @param objectName внутреннее имя объекта для удаления
+	 * @return void
+	 */
+	private void unloadObject(String objectName){
+
 	}
-	public void run(){
-	    try {
-		while(true){
-		    if(messages.size() != 0){
-			List localMessages;
-			Map localObjects;
-			synchronized (messages){
-			    localMessages = new ArrayList(messages);
-			    messages.clear();
-			}
-			synchronized (objects){
-			    localObjects = new HashMap(objects);
-			}
-			if(localMessages != null && localMessages.size() != 0){
-			    Iterator mIter = localMessages.iterator();
-			    while(mIter.hasNext()){
-				Message toPost = (Message)mIter.next();
-				System.out.println("[D] Delivering "+toPost);
-				Iterator e = localObjects.keySet().iterator();
-				while(e.hasNext()){
-				    String name = (String)e.next();
-	    			    ODObject next = (ODObject)objects.get(name);
-				    if(next != null)
-	    				next.handleMessage(toPost);
-				}
-			    }
-			}
-		    }
-		    Thread.currentThread().sleep(1);
-		}
-	    } catch(InterruptedException e) { 
-		System.out.println("[i] stopping dispatcher thread");
-	    }
-	}
+	/** Интерфейс для объектов ядра для отсылки сообщений
+	 * @param message сообщение для отсылки
+	 * @return void
+	 */
+	public void sendMessage(Message message){
 	
+	}
+	/** Конструктор загружающий первоначальный набор объектов
+	 * на основе списка
+	 * @param objs список объектов для загрузки
+	 */
 	public StandartDispatcher(List objs){
 	    System.err.println("[i] "+toString()+" starting up...");
 	    objects.put(toString(), this);
@@ -95,62 +74,30 @@ public class StandartDispatcher extends ODObject implements Dispatcher, Runnable
 		loadObject(cl_n);
 	    }
 	}
-	public void sendMessage(Message message){
-	    synchronized(messages){
-		messages.add(message);
-	    }
-	    return;
-	}
-	public Resource getResourceObject(){
-	    return null;
-	}
-	public int cleanUp(int type){
-	    // we must cleanup all waiting messages...
-	    synchronized (messages) {messages.clear();}
-	    // we must cleanup all our objects...
-	    Map localObjects;
-	    synchronized (objects) {
-		localObjects = new HashMap(objects);
-	    }
-	    Iterator objIt = localObjects.keySet().iterator();
-	    while(objIt.hasNext()){
-		String name = (String)objIt.next();
-		if(name!=toString()) // avoid cleanup loop
-		    unloadObject(name);
-	    }
-	    // we must stop thread...
-	    Thread.currentThread().interrupt();
-	    return 0;
-	}
-	public void handleMessage(Message message){
-	    if(Pattern.matches(message.getDestination(),toString())){
-		if(message.getAction().equals("list_objects")){
-		    Message m = getNewMessage("object_list",message.getOrigin(),toString(),message.getId());
-		    Set objlist = objects.keySet();
-		    m.addField(objlist);
-		    sendMessage(m);
-		}
-		if(message.getAction().equals("load_object")){
-		    if(message.getFieldsCount() == 1)
-			loadObject((String)message.getField(0));
-		}
-		if(message.getAction().equals("unload_object")){
-		    if(message.getFieldsCount() == 1)
-			unloadObject((String)message.getField(0));
-		}
-		if(message.getAction().equals("od_cleanup")) // we have to be destroyed
-		    cleanUp(((Integer)message.getField(0)).intValue());
-	    }
-	    return;
-	}
+	/** Интерфейс создания нового сообщения для сокрытия конкретной реализации
+	 * сообщений.
+	 * @param action действие которое несет сообщение
+	 * @param destination адресат сообщения ({@link java.util.regex.Pattern рег.выр.})
+	 * @param origin отправитель сообщения
+	 * @param inReplyTo идентификатор сообщения на которое производится ответ
+	 * @return Message созданное сообщение
+	 */
 	public Message getNewMessage(String action, String destination, String origin, int inReplyTo){
 	    return new StandartMessage(action, destination, origin, inReplyTo);
 	}
+	/** Именование объекта. Используется при доставке сообщения
+	 * @return String внутреннее имя объекта
+	 */
 	public String toString(){ return "dispatcher"; }
+	/** Выводит сообщение об ошибке в случае некорректных параметров
+	 */
 	public static void usage(){
 	    System.err.println("Usage: java com.novel.odisp.StandartDispatcher <file-with-list-of-ODobjects-to-load>");
 	    System.exit(0);
 	}
+	/** Точка входа в StandartDispatcher.
+	 * @param args по 0 должно содержать имя файла с перечислением классов, которые необходимо загрузить
+	 */
 	public static void main(String args[]){
 	    if(args.length != 1)
 		usage();
