@@ -9,7 +9,7 @@ import org.valabs.odisp.common.Resource;
 
 /** Запись об однотипных ресурах в таблице ресурсов.
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceEntry.java,v 1.12 2004/08/23 07:42:37 valeks Exp $
+ * @version $Id: ResourceEntry.java,v 1.13 2005/02/27 12:37:31 valeks Exp $
  */
 class ResourceEntry {
   /** Журнал. */
@@ -19,7 +19,7 @@ class ResourceEntry {
   /** Имя класса ресурса. */
   private String className;
   /** Хранилище ресурсных записей. */
-  private List resourceStorage = new ArrayList();
+  private final List resourceStorage = new ArrayList();
   /** Количество использованных экземпляров. */
   private int usage = 0;
   /** Максимальное количество доступных экземпляров. */
@@ -31,30 +31,31 @@ class ResourceEntry {
    * @return запись о ресурсе
    */
   private ResourceItem lookupFirstUnused() {
-    Iterator it = resourceStorage.iterator();
+    ResourceItem result = null;
+    final Iterator it = resourceStorage.iterator();
     while (it.hasNext()) {
-      ResourceItem rit = (ResourceItem) it.next();
+      final ResourceItem rit = (ResourceItem) it.next();
       if (!rit.isUsed()) {
-	return rit;
+        result = rit;
+        break;
       }
     }
-    assert false : "asked to lookup for free resource " + className + " but found nothing";
-    return null; // never reached in case of error.
+    return result;
   }
 
   /** Поиск ресурсной записи по ресурсному объекту.
    * @return запись о ресурсе
    */
   private ResourceItem lookupResourceItemByResource(final Resource res) {
-    Iterator it = resourceStorage.iterator();
+    ResourceItem result = null;
+    final Iterator it = resourceStorage.iterator();
     while (it.hasNext()) {
-      ResourceItem rit = (ResourceItem) it.next();
+      final ResourceItem rit = (ResourceItem) it.next();
       if(rit.getResource() == res) {
-	return rit;
+        result = rit;
       }
     }
-    assert false : "asked to lookup for resource item by resource but i found nothing";
-    return null; // never reached in case of error.
+    return result;
   }
 
   /** Установка нового количеств использованных экземпляров. */
@@ -76,16 +77,16 @@ class ResourceEntry {
   /** Запросить ресурс.
    * @return ссылка на ресурс
    */
-  public final Resource acquireResource(String usedBy) {
+  public final Resource acquireResource(final String usedBy) {
     assert isAvailable();
     ResourceItem rit = null;
-    if (usage != MULT_SHARE) {
+    if (usage == MULT_SHARE) {
+      rit = (ResourceItem) resourceStorage.get(0); // HACK
+    } else {
       rit = lookupFirstUnused();
       usage--;
       rit.setUsed(true);
       rit.setUsedBy(usedBy);
-    } else {
-      rit = (ResourceItem) resourceStorage.get(0); // HACK
     }
     assert rit != null;
     acquireCount++;
@@ -97,8 +98,7 @@ class ResourceEntry {
    */
   public final void releaseResource(final Resource newResource) {
     if (maxUsage != MULT_SHARE) {
-      ResourceItem rit = lookupResourceItemByResource(newResource);
-      rit.setUsed(false);
+      lookupResourceItemByResource(newResource).setUsed(false);
       usage++;
     }
   }
@@ -111,10 +111,9 @@ class ResourceEntry {
   }
 
   public final void cleanUp(final int code) {
-    Iterator it = resourceStorage.iterator();
+    final Iterator it = resourceStorage.iterator();
     while (it.hasNext()) {
-      ResourceItem rit = (ResourceItem) it.next();
-      rit.getResource().cleanUp(code);
+      ((ResourceItem) it.next()).getResource().cleanUp(code);
     }
   }
 
@@ -130,16 +129,16 @@ class ResourceEntry {
    */
   public String toString() {
     String result = "\nClass name: " + className + "\n";
-    if (maxUsage != MULT_SHARE) {
+    if (maxUsage == MULT_SHARE) {
+      result += "Shared resource. Acquire times: " + acquireCount;
+    } else {
       result += "Usage: " + (maxUsage - usage) + " of " + maxUsage + ". Acquire times: " + acquireCount + "\n";
       result += "Usage map: ";
-      Iterator it = resourceStorage.iterator();
+      final Iterator it = resourceStorage.iterator();
       while (it.hasNext()) {
-	ResourceItem rit = (ResourceItem) it.next();
-	result+= rit.isUsed() + (rit.isUsed() ? "(" + rit.getUsedBy() + ")" : "" ) + " ";
+        final ResourceItem rit = (ResourceItem) it.next();
+        result += rit.isUsed() + (rit.isUsed() ? "(" + rit.getUsedBy() + ")" : "") + " ";
       }
-    } else {
-      result += "Shared resource. Acquire times: " + acquireCount;
     }
     result+= "\n";
     return result;

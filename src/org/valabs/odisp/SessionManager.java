@@ -52,7 +52,7 @@ import org.valabs.odisp.common.MessageHandler;
  * </pre>
  * 
  * @author (C) 2004 <a href="dron@novel-il.ru">Андрей А. Порохин </a>
- * @version $Id: SessionManager.java,v 1.13 2005/02/17 12:31:44 valeks Exp $
+ * @version $Id: SessionManager.java,v 1.14 2005/02/27 12:37:31 valeks Exp $
  */
 public class SessionManager {
 
@@ -60,7 +60,7 @@ public class SessionManager {
   private static SessionManager sessionManager = new SessionManager();
 
   /** Список обработчиков. */
-  private List handlers = Collections.synchronizedList(new ArrayList());
+  private final List handlers = Collections.synchronizedList(new ArrayList());
 
   /**
    * Конструктор
@@ -85,7 +85,7 @@ public class SessionManager {
    * @see org.valabs.odisp.common.Message#getId()
    * @param messageHandler Обработчик для сообщения.
    */
-  public void addMessageListener(UUID messageId, MessageHandler messageHandler) {
+  public void addMessageListener(final UUID messageId, final MessageHandler messageHandler) {
     addMessageListener(messageId, messageHandler, false);
   }
 
@@ -99,7 +99,7 @@ public class SessionManager {
    * @param multiply признак множественности
    * @see SessionManager#removeMessageListener(UUID, MessageHandler)
    */
-  public void addMessageListener(UUID messageId, MessageHandler messageHandler, boolean multiply) {
+  public final void addMessageListener(final UUID messageId, final MessageHandler messageHandler, final boolean multiply) {
     handlers.add(new SessionRecord(messageId, messageHandler, multiply));
   }
 
@@ -110,12 +110,12 @@ public class SessionManager {
    * @param messageHandler обработчик сообщения
    * @see SessionManager#addMessageListener(UUID, MessageHandler, boolean)
    */
-  public void removeMessageListener(UUID messageId, MessageHandler messageHandler) {
-    Iterator it = handlers.iterator();
-    while (it.hasNext()) {
-      SessionRecord element = (SessionRecord) it.next();
+  public final void removeMessageListener(final UUID messageId, final MessageHandler messageHandler) {
+    final Iterator handlerIt = handlers.iterator();
+    while (handlerIt.hasNext()) {
+      final SessionRecord element = (SessionRecord) handlerIt.next();
       if (element.getMsgId().equals(messageId) && element.getMessageHandler().equals(messageHandler)) {
-        it.remove();
+        handlerIt.remove();
       }
     }
   }
@@ -128,13 +128,13 @@ public class SessionManager {
    *         противном случае пришло сообщение, которое не подошло ни под один ответ (необходима
    *         самостоятельная обработка).
    */
-  public boolean processMessage(Message msg) {
+  public final boolean processMessage(final Message msg) {
     boolean matched = false;
-    Iterator it = handlers.iterator();
-    List toPerform = new ArrayList();
-    List toRemove = new ArrayList();
-    while (it.hasNext()) {
-      SessionRecord element = (SessionRecord) it.next();
+    Iterator commonIt = handlers.iterator();
+    final List toPerform = new ArrayList();
+    final List toRemove = new ArrayList();
+    while (commonIt.hasNext()) {
+      final SessionRecord element = (SessionRecord) commonIt.next();
       if (element.getMsgId().equals(msg.getReplyTo())) {
         toPerform.add(element);
         if (!element.isMultiply()) {
@@ -143,26 +143,26 @@ public class SessionManager {
         matched = true;
       }
     }
-    it = toPerform.iterator();
-    while (it.hasNext()) {
-      SessionRecord element = (SessionRecord) it.next();
+    commonIt = toPerform.iterator();
+    while (commonIt.hasNext()) {
+      final SessionRecord element = (SessionRecord) commonIt.next();
       element.getMessageHandler().messageReceived(msg);
     }
-    it = toRemove.iterator();
-    while (it.hasNext()) {
-      Object element = it.next();
+    commonIt = toRemove.iterator();
+    while (commonIt.hasNext()) {
+      final Object element = commonIt.next();
       handlers.remove(element);
     }
     return matched;
   }
 
-  class SessionRecord {
+  static class SessionRecord {
 
-    private UUID msgId;
+    private final UUID msgId;
 
-    private MessageHandler messageHandler;
+    private final MessageHandler messageHandler;
 
-    private boolean multiply;
+    private final boolean multiply;
 
     SessionRecord(UUID _msgId, MessageHandler _messageHandler, boolean _multiply) {
       msgId = _msgId;

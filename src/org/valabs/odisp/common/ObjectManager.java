@@ -5,7 +5,7 @@ import java.util.Map;
 
 /** Интерфейс менеджера объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.8 2004/08/23 07:42:37 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.9 2005/02/27 12:37:28 valeks Exp $
  */
 
 public interface ObjectManager {
@@ -26,9 +26,9 @@ public interface ObjectManager {
   /** Подгрузка заблокированных объектов. */
   void loadPending();
   /** Отслыка сообщения.
-   * @param m сообщение
+   * @param message сообщение
    */
-  void send(Message m);
+  void send(Message message);
   /** Получить список сервисов.
    * @return немодифицируемый список сервисов
    */

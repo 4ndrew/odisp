@@ -20,16 +20,16 @@ import org.valabs.odisp.common.Message;
  * 
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: StandartMessage.java,v 1.25 2005/01/26 22:17:49 valeks Exp $
+ * @version $Id: StandartMessage.java,v 1.26 2005/02/27 12:37:32 valeks Exp $
  */
 public class StandartMessage implements Message, Serializable, Cloneable {
   private static MessageGraphWriter debugMGW = new MessageGraphWriter();
   /** Флаг маршрутизации. */
   private boolean routable = true;
   /** Уникальный индекс сообщения в системе. */
-  private UUID myId = null;
+  private UUID myId;
   /** Список полей сообщения. */
-  private Map fields = new HashMap();
+  private final Map fields = new HashMap();
   /** Действие. */
   private String action = null;
   /** Точка назначения. */
@@ -43,7 +43,7 @@ public class StandartMessage implements Message, Serializable, Cloneable {
   /** Флаг проведения проверки. */
   private boolean ce = false;
   /** Список подсообщений. */
-  private List envelope = null;
+  private final List envelope = new ArrayList();
   /** Признак OOB. */
   private boolean oob = false;
   /** Реализация конструктора сообщения.
@@ -74,7 +74,8 @@ public class StandartMessage implements Message, Serializable, Cloneable {
     destination = msg.getDestination();
     inReplyTo = msg.getReplyTo();
     origin = msg.getOrigin();
-    fields = new HashMap(msg.getContents());
+    fields.clear();
+    fields.putAll(msg.getContents());
     routable = msg.isRoutable();
     if (noKeepId) {
       myId = UUIDGenerator.getInstance().generateTimeBasedUUID();
@@ -201,28 +202,29 @@ public class StandartMessage implements Message, Serializable, Cloneable {
   /** Представление сообщения в виде текстовой строки с дампом пяти последних вызово.
    * @return строчное представление сообщения
    */
-  public final String toString(boolean doStackTrace) {
-    if (!doStackTrace) {
-      return toString();
+  public final String toString(final boolean doStackTrace) {
+    String result = toString();
+    if (doStackTrace) {
+      // небольшой хак для того, что бы получить список вызовов методов
+      StackTraceElement[] stea = {};
+      try {
+        throw new IllegalArgumentException();
+      } catch (Exception e) {
+        stea = e.getStackTrace();
+      }
+      result += "\nStack trace:";
+      for (int i = 1; i < 10 && i < stea.length; i++) {
+        result += stea[i] + "\n";
+      }
+      String fieldDump = "\nField dump:";
+      final Iterator it = fields.keySet().iterator();
+      while (it.hasNext()) {
+        final String key = (String) it.next();
+        fieldDump += "\n(" + key + ") " + getField(key);
+      }
+      result += fieldDump;
     }
-    // небольшой хак для того, что бы получить список вызовов методов
-    StackTraceElement[] stea = {};
-    try {
-      throw new Exception();
-    } catch (Exception e) {
-      stea = e.getStackTrace();
-    }
-    String stackTraceMessage = "\nStack trace:";
-    for(int i = 1; i < 10 && i < stea.length; i++) {
-      stackTraceMessage += stea[i] + "\n";
-    }
-    String fieldDump = "\nField dump:";
-    Iterator it = fields.keySet().iterator();
-    while (it.hasNext()) {
-      String key = (String) it.next();
-      fieldDump += "\n(" + key + ") " + getField(key);
-    }
-    return toString() + stackTraceMessage + fieldDump;
+    return result;
   }
 
   /** Проверка корректности сообщения.
@@ -273,10 +275,7 @@ public class StandartMessage implements Message, Serializable, Cloneable {
   }
   
   public final void addToEnvelope(final Message envelopeMessage) {
-  	if (envelope == null) {
-  		envelope = new ArrayList();
-  	}
-  	envelope.add(envelopeMessage);
+  		envelope.add(envelopeMessage);
   }
   
   /** Проверка на OOB.
@@ -291,13 +290,13 @@ public class StandartMessage implements Message, Serializable, Cloneable {
    * @param newValue новое значение.
    */
   public void setOOB(boolean newValue) {
-  	oob = newValue;
+    oob = newValue;
   }
  
   /** Рисования графа сообщений в формате DOT. */
   static class MessageGraphWriter {
-    private MessageGraphWriter_MSGS msgs = new MessageGraphWriter_MSGS("msgs.dot");
-    private MessageGraphWriter_OBJECTS objects = new MessageGraphWriter_OBJECTS("objects.dot");
+    private final MessageGraphWriter_MSGS msgs = new MessageGraphWriter_MSGS("msgs.dot");
+    private final MessageGraphWriter_OBJECTS objects = new MessageGraphWriter_OBJECTS("objects.dot");
     
     public void logMessage(final Message msg) {
       msgs.logMessage(msg);
@@ -306,13 +305,12 @@ public class StandartMessage implements Message, Serializable, Cloneable {
   
     /** Граф пересылки сообщений. */
     class MessageGraphWriter_OBJECTS {
-      private Set objects = new HashSet();
-      private List messages = new ArrayList();
+      private final Set objects = new HashSet();
+      private final List messages = new ArrayList();
 
       public MessageGraphWriter_OBJECTS(final String outfName) {
         Runtime.getRuntime().addShutdownHook(new Thread() {
-
-          public void run() {
+          public final void run() {
             PrintStream output;
             try {
               output = new PrintStream(new FileOutputStream(outfName));
@@ -321,14 +319,15 @@ public class StandartMessage implements Message, Serializable, Cloneable {
             }
             output.println("digraph messagesobjects {");
             Iterator it = objects.iterator();
+            final String namePrefix = " \"n";
             while (it.hasNext()) {
               String element = (String) it.next();
-              output.println(" \"n" + element + "\" [label=\"" + element + "\"];");
+              output.println(namePrefix + element + "\" [label=\"" + element + "\"];");
             }
             it = messages.iterator();
             while (it.hasNext()) {
-              mrec element = (mrec) it.next();
-              output.println("  \"n" + element.origin + "\" -> " + " \"n" + element.destination + "\" [label=\""
+              final mrec element = (mrec) it.next();
+              output.println(namePrefix + element.origin + "\" -> " + namePrefix + element.destination + "\" [label=\""
                       + element.action + "\"];");
             }
             output.println("}");
@@ -340,7 +339,7 @@ public class StandartMessage implements Message, Serializable, Cloneable {
       public void logMessage(final Message msg) {
         objects.add(msg.getOrigin());
         objects.add(msg.getDestination());
-        mrec rec = new mrec();
+        final mrec rec = new mrec();
         rec.origin = msg.getOrigin();
         rec.destination = msg.getDestination();
         rec.action = msg.getAction();
@@ -369,7 +368,6 @@ public class StandartMessage implements Message, Serializable, Cloneable {
           output = new PrintStream(System.err);
         }
         Runtime.getRuntime().addShutdownHook(new Thread() {
-
           public void run() {
             output.println("}");
             output.close();
@@ -390,11 +388,12 @@ public class StandartMessage implements Message, Serializable, Cloneable {
   /* (non-Javadoc)
    * @see org.valabs.odisp.common.Message#cloneMessage()
    */
-  public Message cloneMessage() {
+  public final Message cloneMessage() {
+    Message result = null;
     try {
-      return (Message) this.clone();
+      result = (Message) this.clone();
     } catch (CloneNotSupportedException e) {
     }
-    return null;
+    return result;
   }
 }

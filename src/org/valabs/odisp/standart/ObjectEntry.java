@@ -8,7 +8,7 @@ import org.valabs.odisp.common.ODObject;
 
 /** Запись об объекте в таблице объектов.
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ObjectEntry.java,v 1.12 2005/02/12 17:27:29 valeks Exp $
+ * @version $Id: ObjectEntry.java,v 1.13 2005/02/27 12:37:31 valeks Exp $
  */
 class ObjectEntry {
 	/** Определяет загружен ли объект. */
@@ -60,7 +60,7 @@ class ObjectEntry {
 	}
 
 	/** Список зависимостей. */
-	private Set depends;
+	private final Set depends;
 	/** Вернуть список зависимостей.
 	 * @return список зависимостей
 	 */
@@ -76,7 +76,7 @@ class ObjectEntry {
 	}
 
 	/** Список сервисов. */
-	private Set provides;
+	private final Set provides;
 	/** Вернуть список сервисов.
 	 * @return список сервисов
 	 */
@@ -85,13 +85,13 @@ class ObjectEntry {
 	}
 
 	/** Конструктор класса.
-	 * @param cn имя класса
+	 * @param _className имя класса
 	 * @param newDepends список зависимостей
 	 * @param newProvides список сервисов
 	 */
-	public ObjectEntry(final String cn, final String[] newDepends,
+	public ObjectEntry(final String _className, final String[] newDepends,
 			final String[] newProvides) {
-		className = cn;
+		className = _className;
 		depends = new HashSet(Arrays.asList(newDepends));
 		provides = new HashSet(Arrays.asList(newProvides));
 	}
@@ -107,7 +107,7 @@ class ObjectEntry {
 	/**
 	 * @param intoHints The intoHints to set.
 	 */
-	public void setIntoHints(boolean intoHints) {
+	public void setIntoHints(final boolean intoHints) {
 		this.intoHints = intoHints;
 	}
 } // ObjectEntry

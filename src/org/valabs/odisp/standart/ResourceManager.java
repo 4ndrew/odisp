@@ -13,16 +13,16 @@ import org.valabs.odisp.common.Resource;
 
 /** Менеджер ресурсных объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceManager.java,v 1.35 2005/01/25 20:34:33 valeks Exp $
+ * @version $Id: ResourceManager.java,v 1.36 2005/02/27 12:37:31 valeks Exp $
  */
 class ResourceManager implements org.valabs.odisp.common.ResourceManager {
   /** Ссылка на диспетчер объектов. */
-  private Dispatcher dispatcher;
+  private final Dispatcher dispatcher;
   /** Нить обработки запросов. */
-  private DataThread dataThread = null;
+  private final DataThread dataThread;
 
   /** Журнал. */
-  private Logger log = Logger.getLogger(ResourceManager.class.getName());
+  private static final Logger log = Logger.getLogger(ResourceManager.class.getName());
 
   /** Доступ к ресурсам.
    * @return список ресурсов
@@ -35,37 +35,35 @@ class ResourceManager implements org.valabs.odisp.common.ResourceManager {
    * @param className имя загружаемого класса
    * @param mult количество загружаемых объектов
    */
-  public final void loadResource(final String className, int mult, final Map config) {
-    String logMessage = mult + " loading resource ";
-    ResourceEntry re = new ResourceEntry(className);
-    re.setMaxUsage(mult);
+  public final void loadResource(final String className, final int mult, final Map config) {
+    int realMult = mult;
+    String logMessage = realMult + " loading resource ";
+    final ResourceEntry re = new ResourceEntry(className);
+    re.setMaxUsage(realMult);
     if (mult == ResourceEntry.MULT_SHARE) {
       logMessage += "shared ";
-      mult = 1;
+      realMult = 1;
     }
     logMessage += className;
     for (int i = 0; i < mult; i++) {
       try {
-        Resource r = (Resource) Class.forName(className).newInstance();
+        final Resource r = (Resource) Class.forName(className).newInstance();
         r.setConfiguration(config);
         re.addResource(r);
         logMessage += "+";
+        synchronized (dataThread) {
+          dataThread.getResources().put(className, re);
+        }
+        logMessage += " ok";
+        log.config(logMessage);
       } catch (ClassNotFoundException e) {
         log.warning(" failed: " + e);
-        return;
       } catch (InstantiationException e) {
         log.warning(" failed: " + e);
-        return;
       } catch (IllegalAccessException e) {
         log.warning(" failed: " + e);
-        return;
       }
     }
-    synchronized (dataThread) {
-      dataThread.getResources().put(className, re);
-    }
-    logMessage += " ok";
-    log.config(logMessage);
   }
 
   /** Конструктор менеджера ресурсов.
@@ -78,12 +76,10 @@ class ResourceManager implements org.valabs.odisp.common.ResourceManager {
   }
 
   public List statRequest() {
-    List result = new ArrayList();
+    final List result = new ArrayList();
     Iterator it = dataThread.getResources().keySet().iterator();
     while (it.hasNext()) {
-      String name = (String) it.next();
-      ResourceEntry re = (ResourceEntry) dataThread.getResources().get(name);
-      result.add(re.toString());
+      result.add(dataThread.getResources().get(it.next()).toString());
     }
     it = dataThread.getRequestList().iterator();
     result.add("DataThread request queue...");
@@ -177,7 +173,7 @@ class ResourceManager implements org.valabs.odisp.common.ResourceManager {
   /**
    * @see org.valabs.odisp.common.ResourceManager#resourceAcquire(java.lang.String)
    */
-  public Resource resourceAcquire(String className) {
+  public final Resource resourceAcquire(final String className) {
     Resource result = null;
     while (result == null) {
       result = resourceTryAcquire(className);
@@ -193,29 +189,28 @@ class ResourceManager implements org.valabs.odisp.common.ResourceManager {
   /**
    * @see org.valabs.odisp.common.ResourceManager#resourceTryAcquire(java.lang.String)
    */
-  public Resource resourceTryAcquire(String className) {
+  public Resource resourceTryAcquire(final String className) {
+    Resource result = null;
     synchronized (dataThread) {
-      Map resources = dataThread.getResources();
+      final Map resources = dataThread.getResources();
       if (resources.containsKey(className)) {
-        ResourceEntry re = (ResourceEntry) resources.get(className);
+        final ResourceEntry re = (ResourceEntry) resources.get(className);
         if (re.isAvailable()) {
-          Resource result = re.acquireResource("whom-ever"); // XXX
-          return result;
+          result = re.acquireResource("whom-ever"); // XXX
         }
       }
     }
-    return null;
+    return result;
   }
 
   /**
    * @see org.valabs.odisp.common.ResourceManager#releaseResource(java.lang.String, org.valabs.odisp.common.Resource)
    */
-  public void releaseResource(String className, Resource resource) {
+  public void releaseResource(final String className, final Resource resource) {
     synchronized (dataThread) {
-      Map resources = dataThread.getResources();
+      final Map resources = dataThread.getResources();
       if (resources.containsKey(className)) {
-        ResourceEntry re = (ResourceEntry) resources.get(className);
-        re.releaseResource(resource);
+        ((ResourceEntry) resources.get(className)).releaseResource(resource);
       }
     }
   }

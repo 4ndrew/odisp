@@ -16,14 +16,14 @@ import org.valabs.stdmsg.ModuleStatusReplyMessage;
 /** Класс описывающий мгновенный слепок системы.
  * На данный момент сохраняется список и состояние модулей.
  * @author (C) 2005 <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
- * @version $Id: SystemSnapshot.java,v 1.1 2005/01/11 20:37:59 valeks Exp $
+ * @version $Id: SystemSnapshot.java,v 1.2 2005/02/27 12:37:30 valeks Exp $
  */
 class SystemSnapshot implements MessageHandler {
-  private BugTrack track;
-  private List aboutList = new ArrayList();
-  private List moduleList = new ArrayList();
+  private final BugTrack track;
+  private final List aboutList = new ArrayList();
+  private final List moduleList = new ArrayList();
   private UUID maUUID;
-  private Dispatcher dispatcher;
+  private final Dispatcher dispatcher;
   
   public SystemSnapshot(BugTrack track, Dispatcher _dispatcher) {
     dispatcher = _dispatcher;
@@ -31,17 +31,17 @@ class SystemSnapshot implements MessageHandler {
   }
   
   	public void startSnapshot() {
-  	  Message m = dispatcher.getNewMessage();
+  	  final Message m = dispatcher.getNewMessage();
   	  ModuleAboutMessage.setup(m, ".*", track.getObjectName(), UUID.getNullUUID());
   	  maUUID = m.getId();
   	  SessionManager.getSessionManager().addMessageListener(maUUID, this, true);
   	  dispatcher.send(m);
   	}
 
-  	public void messageReceived(Message msg) {
+  	public void messageReceived(final Message msg) {
   	  if (ModuleAboutReplyMessage.equals(msg)) {
   	    aboutList.add(new ModuleAbout(msg));
-  	    Message m = dispatcher.getNewMessage();
+  	    final Message m = dispatcher.getNewMessage();
   	    ModuleStatusMessage.setup(m, msg.getOrigin(), track.getObjectName(), msg.getId());
   	    SessionManager.getSessionManager().addMessageListener(m.getId(), this);
   	    dispatcher.send(m);

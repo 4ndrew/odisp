@@ -3,7 +3,7 @@ package org.valabs.odisp.standart;
 
 /** Реализация единого потока рассылки и обработки сообщений.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: Sender.java,v 1.12 2005/01/26 22:17:49 valeks Exp $
+ * @version $Id: Sender.java,v 1.13 2005/02/27 12:37:31 valeks Exp $
  */
 class Sender extends Thread {
 	/** Счетчик сообщений, которые были обработаны нитью. */
@@ -13,7 +13,7 @@ class Sender extends Thread {
 	/** Условие окончания обработки. */
 	private boolean doExit = false;
 	/** Ссылка на диспетчер объектов. */
-	private ObjectManager oman = null;
+	private final ObjectManager oman;
 	/** Стандартный конструктор. 
 	 * @param noman ссылка на диспетчер объектов 
 	 */
@@ -25,7 +25,7 @@ class Sender extends Thread {
 	}
 
 	/** Основной метод нитки, который отсылает сообщений. */
-	public void run() {
+	public final void run() {
 		while (!doExit) {
 			try {
 				synchronized (this) {
@@ -42,7 +42,6 @@ class Sender extends Thread {
 				try {
 					toSend.getObject().handleMessage0(toSend.getMessage());
 					messageCounter++;
-					//System.err.println("Sender [" + getName() + "] message processed: " + toSend);
 				} catch (Exception e) {
 					oman.signalException(e);
 				}

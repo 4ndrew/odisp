@@ -6,7 +6,7 @@ import java.util.Map;
 
 /** Интерфейс менеджера конфигурации диспетчера ODISP.
  * @author (C) 2004 <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
- * @version $Id: ConfigurationManager.java,v 1.2 2005/01/27 14:15:42 valeks Exp $
+ * @version $Id: ConfigurationManager.java,v 1.3 2005/02/27 12:37:29 valeks Exp $
  */
 public interface ConfigurationManager {
   /** Задание параметров коммандной строки.
@@ -36,11 +36,11 @@ public interface ConfigurationManager {
   public String getParameter(String domain, String paramName);
   
   /** Запись о конфигурации отдельного компонента. */
-  public class ComponentConfiguration {
+  class ComponentConfiguration {
     /** Имя класса. */
-    private String className;
+    private final String className;
     /** Конфигурация. */
-    private Map configuration;
+    private final Map configuration;
     /** Инициализация новой записи.
      * @param _className имя класса
      * @param _configuration конфигурация

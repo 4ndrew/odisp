@@ -6,11 +6,11 @@ import org.valabs.odisp.common.ODObject;
 /** Запись о посылаемом сообщении.
  * Содержит ссылку на отправляемое сообщение и на объект-получатель.
  * @author (C) 2004 <a href="valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: SendRecord.java,v 1.4 2004/08/23 07:42:37 valeks Exp $
+ * @version $Id: SendRecord.java,v 1.5 2005/02/27 12:37:31 valeks Exp $
  */
 class SendRecord {
-	private Message message;
-	private ODObject object;
+	private final Message message;
+	private final ODObject object;
 	
 	/** Доступ к сообщению.
 	 * @return ссылка на сообщение

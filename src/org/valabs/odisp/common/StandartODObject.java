@@ -17,7 +17,7 @@ import org.valabs.stdmsg.ModuleStatusReplyMessage;
  * Стандартный объект ODISP.
  * 
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev </a>
- * @version $Id: StandartODObject.java,v 1.15 2005/01/26 22:17:49 valeks Exp $
+ * @version $Id: StandartODObject.java,v 1.16 2005/02/27 12:37:29 valeks Exp $
  */
 
 public abstract class StandartODObject implements ODObject {
@@ -129,10 +129,10 @@ public abstract class StandartODObject implements ODObject {
   /**
    * Устанавливает диспетчера для текущего объекта.
    * 
-   * @param d диспетчер работающий с этим объектом
+   * @param newDisp диспетчер работающий с этим объектом
    */
-  public final void setDispatcher(final Dispatcher d) {
-    this.dispatcher = d;
+  public final void setDispatcher(final Dispatcher newDisp) {
+    this.dispatcher = newDisp;
   }
 
   /**
@@ -223,22 +223,23 @@ public abstract class StandartODObject implements ODObject {
    * @param msg
    */
   private boolean handleMessageInternal(final Message msg) {
+    boolean result = false;
     if (ModuleAboutMessage.equals(msg)) {
-      Message m = dispatcher.getNewMessage();
+      final Message m = dispatcher.getNewMessage();
       ModuleAboutReplyMessage.setup(m, msg.getOrigin(), name, msg.getId());
       ModuleAboutReplyMessage.setName(m, fullName);
       ModuleAboutReplyMessage.setVersion(m, version);
       ModuleAboutReplyMessage.setCopyright(m, copyright);
       dispatcher.send(m);
-      return true;
+      result = true;
     } else if (ModuleStatusMessage.equals(msg)) {
-      Message m = dispatcher.getNewMessage();
+      final Message m = dispatcher.getNewMessage();
       ModuleStatusReplyMessage.setup(m, msg.getOrigin(), name, msg.getId());
       objectStatus.setupStatusReply(m);
       dispatcher.send(m);
-      return true;
+      result = true;
     }
-    return false;
+    return result;
   }
 
   public void handleMessage(final Message msg) {
@@ -281,10 +282,9 @@ public abstract class StandartODObject implements ODObject {
             localMessages = new ArrayList(messages);
             messages.clear();
           }
-          Iterator it = localMessages.iterator();
-          while (it.hasNext()) {
-            Message elt = (Message) it.next();
-            handleMessage(elt);
+          final Iterator msgIt = localMessages.iterator();
+          while (msgIt.hasNext()) {
+            handleMessage((Message) msgIt.next());
           }
         }
       }.start();
@@ -295,38 +295,38 @@ public abstract class StandartODObject implements ODObject {
     return null;
   }
   
-  public void importState(Map oldState) {
+  public void importState(final Map oldState) {
     
   }
 
   	/** Хранение статуса объекта. */
-  protected class ObjectStatus {
+  protected static class ObjectStatus {
     public static final String NOERROR = "noerror";
-    private List runningTasks = new ArrayList();
-    private List completedTasks = new ArrayList();
-    private List failedTasks = new ArrayList();
+    private final List runningTasks = new ArrayList();
+    private final List completedTasks = new ArrayList();
+    private final List failedTasks = new ArrayList();
     private String runningState = ObjectStatus.NOERROR;
     
-    public void taskStarted(String task) {
+    public void taskStarted(final String task) {
       runningTasks.add(task);
     }
     
-    public void taskCompleted(String task) {
+    public void taskCompleted(final String task) {
       runningTasks.remove(task);
       completedTasks.add(task);
     }
     
-    public void taskFailed(String task) {
+    public void taskFailed(final String task) {
       runningTasks.remove(task);
       failedTasks.add(task);
     }
     
-    public void setStatus(String newStatus) {
+    public void setStatus(final String newStatus) {
       runningState = newStatus;
     }
     
-    public void setupStatusReply(Message m) {
-      ModuleStatusReplyMessage.initAll(m, runningState, runningTasks, completedTasks, failedTasks);
+    public void setupStatusReply(final Message message) {
+      ModuleStatusReplyMessage.initAll(message, runningState, runningTasks, completedTasks, failedTasks);
     }
   }
 } // StandartODObject

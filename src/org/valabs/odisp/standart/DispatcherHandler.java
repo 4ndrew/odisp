@@ -26,7 +26,7 @@ import org.valabs.stdmsg.ODShutdownMessage;
  * Обработчик сообщений диспетчера ODISP.
  * 
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: DispatcherHandler.java,v 1.37 2005/02/12 17:27:29 valeks Exp $
+ * @version $Id: DispatcherHandler.java,v 1.38 2005/02/27 12:37:31 valeks Exp $
  */
 
 class DispatcherHandler extends StandartODObject {
@@ -34,7 +34,7 @@ class DispatcherHandler extends StandartODObject {
     private Thread runThread;
 
     /** Журнал. */
-    private Logger log = Logger
+    private final static Logger log = Logger
             .getLogger("org.valabs.odisp.standart.DispatcherHandler");
 
     /** Менеджер объектов. */
@@ -44,15 +44,15 @@ class DispatcherHandler extends StandartODObject {
     private ResourceManager rman;
 
     /** Имя объекта. */
-    private static String NAME = "stddispatcher";
+    private static final String NAME = "stddispatcher";
     
-    private static String FULLNAME = "Standart ODISP Dispatcher Core";
+    private static final String FULLNAME = "Standart ODISP Dispatcher Core";
 
     /** Версия модуля. */
-    private static String VERSION = "0.1.0";
+    private static final String VERSION = "0.1.0";
 
     /** Дополнительная информация о модуле. */
-    private static String COPYRIGHT = "(C) 2003-2004 Valentin A. Alekseev, Andrew A. Porohin";
+    private static final String COPYRIGHT = "(C) 2003-2004 Valentin A. Alekseev, Andrew A. Porohin";
 
     /**
      * Вернуть список сервисов.
@@ -60,7 +60,7 @@ class DispatcherHandler extends StandartODObject {
      * @return список сервисов
      */
     public final String[] getProviding() {
-        String[] res = { "dispatcher", NAME };
+        final String[] res = { "dispatcher", NAME };
         return res;
     }
 
@@ -70,7 +70,7 @@ class DispatcherHandler extends StandartODObject {
      * @return список зависимостей
      */
     public final String[] getDepends() {
-        String[] res = {};
+        final String[] res = {};
         return res;
     }
 
@@ -78,28 +78,9 @@ class DispatcherHandler extends StandartODObject {
     protected final void registerHandlers() {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
-                System.err.println("Running shutdown hook.");
+              logger.info("Running shutdown hook.");
                 oman.unloadObject(getObjectName(), -1);
                 runThread.interrupt();
-            }
-        });
-        addHandler("od_unload_object", new MessageHandler() {
-            public final void messageReceived(final Message msg) {
-                if (msg.getFieldsCount() != 1) {
-                    return;
-                }
-                String objname = (String) msg.getField("0");
-                oman.unloadObject(objname, 1);
-            }
-        });
-        addHandler("od_load_object", new MessageHandler() {
-            public final void messageReceived(final Message msg) {
-                if (msg.getFieldsCount() != 1) {
-                    return;
-                }
-                String objname = (String) msg.getField("0");
-                oman.loadObject(objname, null);
-                oman.loadPending();
             }
         });
         addHandler(ODShutdownMessage.NAME, new MessageHandler() {
@@ -119,14 +100,14 @@ class DispatcherHandler extends StandartODObject {
                 if (msg.getFieldsCount() != 1) {
                     return;
                 }
-                ObjectEntry oe = (ObjectEntry) oman.getObjects().get(
+                final ObjectEntry oe = (ObjectEntry) oman.getObjects().get(
                         msg.getOrigin());
                 oe.removeDepend(ODRemoveDepMessage.getDepName(msg));
             }
         });
         addHandler(ODGetProvidingMessage.NAME, new MessageHandler() {
             public final void messageReceived(final Message msg) {
-                Message m = dispatcher.getNewMessage();
+                final Message m = dispatcher.getNewMessage();
                 ODGetProvidingReplyMessage.setup(m, msg.getOrigin(), msg
                         .getId());
                 ODGetProvidingReplyMessage.setProvidingList(m, oman
@@ -136,31 +117,28 @@ class DispatcherHandler extends StandartODObject {
         });
         addHandler(ODAddProviderMessage.NAME, new MessageHandler() {
             public final void messageReceived(final Message msg) {
-                String service = ODAddProviderMessage.getServiceName(msg);
-                oman.addProvider(service, msg.getOrigin());
+                oman.addProvider(ODAddProviderMessage.getServiceName(msg), msg.getOrigin());
             }
         });
         addHandler(ODRemoveProviderMessage.NAME, new MessageHandler() {
             public final void messageReceived(final Message msg) {
-                String service = ODRemoveProviderMessage.getServiceName(msg);
-                oman.removeProvider(service, msg.getOrigin());
+                oman.removeProvider(ODRemoveProviderMessage.getServiceName(msg), msg.getOrigin());
             }
         });
         addHandler(ModuleStatusMessage.NAME, new MessageHandler() {
             public final void messageReceived(final Message msg) {
                 /** @todo. проблемы с руссификацией. */
-                Message m = dispatcher.getNewMessage();
+                final Message m = dispatcher.getNewMessage();
                 ModuleStatusReplyMessage.setup(m, msg.getOrigin(),
                         getObjectName(), msg.getId());
                 String runningState = "No error";
-                List running = new ArrayList();
-                List failed = new ArrayList();
-                Set objs = oman.getObjects().keySet();
-                Iterator it = objs.iterator();
-                while (it.hasNext()) {
-                    String objName = (String) it.next();
-                    ObjectEntry oe = (ObjectEntry) oman.getObjects().get(
-                            objName);
+                final List running = new ArrayList();
+                final List failed = new ArrayList();
+                final Set objs = oman.getObjects().keySet();
+                Iterator commonIt = objs.iterator();
+                while (commonIt.hasNext()) {
+                    final String objName = (String) commonIt.next();
+                    final ObjectEntry oe = (ObjectEntry) oman.getObjects().get(objName);
                     if (oe.isLoaded()) {
                         running.add(objName);
                     } else {
@@ -168,10 +146,10 @@ class DispatcherHandler extends StandartODObject {
                         runningState = "Warning. Not all pre-requested objects are loaded. Some dependencies aren't met.";
                     }
                 }
-                List resStat = rman.statRequest();
-                it = resStat.iterator();
-                while (it.hasNext()) {
-                    running.add(it.next().toString());
+                final List resStat = rman.statRequest();
+                commonIt = resStat.iterator();
+                while (commonIt.hasNext()) {
+                    running.add(commonIt.next().toString());
                 }
                 ModuleStatusReplyMessage.setRunningState(m, runningState);
                 ModuleStatusReplyMessage.setRunningTasks(m, running);

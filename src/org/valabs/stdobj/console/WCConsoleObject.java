@@ -18,7 +18,7 @@ import org.valabs.stdobj.webcon.servlet.http.HttpServletResponse;
 
 /** Объект ODISP реализующий WebCon интерфейс доступа к менеджеру.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
- * @version $Id: WCConsoleObject.java,v 1.15 2005/01/31 10:23:16 valeks Exp $
+ * @version $Id: WCConsoleObject.java,v 1.16 2005/02/27 12:37:30 valeks Exp $
  */
 public class WCConsoleObject extends StandartODObject {
   public static final String NAME = "wcconsole";
@@ -27,14 +27,13 @@ public class WCConsoleObject extends StandartODObject {
   public static final String COPYRIGHT = "(C) 2004 Valentin A. Alekseev";
   
   /** Собственно сервлет-обработчик. */
-  WCConsoleServlet servlet = null;
+  private final WCConsoleServlet servlet = new WCConsoleServlet();
   /** Обработчик входящих сообщений.
    * @param msg сообщение
    */
   public final void handleMessage(final Message msg) {
     if (ODObjectLoadedMessage.equals(msg)) {
-      servlet = new WCConsoleServlet();
-      Message m = dispatcher.getNewMessage();
+      final Message m = dispatcher.getNewMessage();
       WCAddServletMessage.setup(m, "webcon", getObjectName(), UUID.getNullUUID());
       WCAddServletMessage.setServletMask(m, "/wcconsole");
       WCAddServletMessage.setServletHandler(m, servlet);
@@ -61,14 +60,14 @@ public class WCConsoleObject extends StandartODObject {
    * @return список сервисов
    */
   public final String[] getProviding() {
-    String[] res = {NAME};
+    final String[] res = {NAME};
     return res;
   }
   /** Вернуть список зависимостей.
    * @return список зависимостей
    */
   public final String[] getDepends() {
-    String[] res = {
+    final String[] res = {
       "dispatcher",
       "webcon",
     };
@@ -76,84 +75,85 @@ public class WCConsoleObject extends StandartODObject {
   }
 
   private class WCConsoleServlet extends HttpServlet {
-    private List messages = new ArrayList();
+    private final List messages = new ArrayList();
     /** Информация о сервлете. */
     public String getServletInfo() {
       return "WCConsoleServlet: servlet that act as ODISP console. <a href=\"/wcconsole\">Start servlet</a>";
     }
 
     /** Выполнение запроса. */
-    public void service(final HttpServletRequest req, final HttpServletResponse res) throws ServletException, IOException {
+    public void service(final HttpServletRequest req, final HttpServletResponse res) throws ServletException,
+            IOException {
       res.setStatus(HttpServletResponse.SC_OK);
       res.setContentType("text/xhtml");
-      ServletOutputStream p = res.getOutputStream();
-      p.println("<html>");
-      p.println("\t<head>");
-      p.println("\t\t<title>ODISP WebCon console</title>");
+      final ServletOutputStream page = res.getOutputStream();
+      page.println("<html>");
+      page.println("\t<head>");
+      page.println("\t\t<title>ODISP WebCon console</title>");
       if (req.getQueryString() == null) {
-	// необходимо вывести фреймовую страницу
-	p.println("\t</head>");
-	p.println("\t<frameset rows=\"80%, *\">");
-	p.println("\t\t<frame src=\"/wcconsole?log\"/>");
-	p.println("\t\t<frame src=\"/wcconsole?input\"/>");
-	p.println("\t</frameset>");
-	p.println("\t<noframes>");
-	p.println("\t\t<h3>Non-framed version of WebCon's ODISP console is not available</h3>");
-	p.println("\t</noframes>");
+        // необходимо вывести фреймовую страницу
+        page.println("\t</head>");
+        page.println("\t<frameset rows=\"80%, *\">");
+        page.println("\t\t<frame src=\"/wcconsole?log\"/>");
+        page.println("\t\t<frame src=\"/wcconsole?input\"/>");
+        page.println("\t</frameset>");
+        page.println("\t<noframes>");
+        page.println("\t\t<h3>Non-framed version of WebCon's ODISP console is not available</h3>");
+        page.println("\t</noframes>");
       } else if (req.getQueryString().startsWith("log")) {
-	p.println("\t\t<meta http-equiv=\"Refresh\" content=\"30\"/>");
-	p.println("\t</head>");
-	p.println("\t<body>");
-	p.println("\t\t<table border=\"0\">");
-	  p.println("\t\t\t<tr><td><a href=\"?log\">refresh</a></td></tr>");
-	List localMessages = null;
-	synchronized (messages) {
-	  localMessages = new ArrayList(messages);
-	}
-	if (localMessages != null && localMessages.size() > 0) {
-	  Iterator it = localMessages.iterator();
-	  while (it.hasNext()) {
-	    Message msg = (Message) it.next();
-	    // пока просто выводить результат toString(true)
-	    p.println("\t\t\t<tr><td><pre>");
-	    p.println(msg.toString(true));
-	    p.println("\t\t\t</pre></td></tr>");
-	  }
-	} else {
-	  p.println("\t\t\t<tr><td>No messages</td></tr>");
-	}
-	p.println("\t\t</table>");
-	p.println("\t</body>");
+        page.println("\t\t<meta http-equiv=\"Refresh\" content=\"30\"/>");
+        page.println("\t</head>");
+        page.println("\t<body>");
+        page.println("\t\t<table border=\"0\">");
+        page.println("\t\t\t<tr><td><a href=\"?log\">refresh</a></td></tr>");
+        List localMessages = null;
+        synchronized (messages) {
+          localMessages = new ArrayList(messages);
+        }
+        if (localMessages != null && localMessages.size() > 0) {
+          Iterator it = localMessages.iterator();
+          while (it.hasNext()) {
+            Message msg = (Message) it.next();
+            // пока просто выводить результат toString(true)
+            page.println("\t\t\t<tr><td><pre>");
+            page.println(msg.toString(true));
+            page.println("\t\t\t</pre></td></tr>");
+          }
+        } else {
+          page.println("\t\t\t<tr><td>No messages</td></tr>");
+        }
+        page.println("\t\t</table>");
+        page.println("\t</body>");
       } else if (req.getQueryString().startsWith("input")) {
-	if (req.getParameter("go") != null) {
-	  String objectName = req.getParameter("object");
-	  String message = req.getParameter("message");
-	  objectName = objectName.replaceAll("%2A", "*");
-	  Message m = dispatcher.getNewMessage(message, objectName, getObjectName(), UUID.getNullUUID());
-	  m.setCorrect(true);
-	  dispatcher.send(m);
-	}
-	p.println("\t</head>");
-	p.println("\t<body>");
-	p.println("\t\t<form>");
-	p.println("\t\t<input type='hidden' name='input'/>");
-	p.println("\t\t<input type='hidden' name='go'/>");
-	p.println("\t\t\t<table border='0'>");
-	p.println("\t\t\t<tr><td>Message:</td><td><input type='text' name='message'/></td>");
-	p.println("\t\t\t<tr><td>Object:</td><td><input type='text' name='object'/></td>");
-	p.println("\t\t\t<tr><td colspan='2'><input type='submit'/></td>");
-	p.println("\t\t\t</table>");
-	p.println("\t\t</form>");
-	p.println("\t</body>");
+        if (req.getParameter("go") != null) {
+          String objectName = req.getParameter("object");
+          String message = req.getParameter("message");
+          objectName = objectName.replaceAll("%2A", "*");
+          Message m = dispatcher.getNewMessage(message, objectName, getObjectName(), UUID.getNullUUID());
+          m.setCorrect(true);
+          dispatcher.send(m);
+        }
+        page.println("\t</head>");
+        page.println("\t<body>");
+        page.println("\t\t<form>");
+        page.println("\t\t<input type='hidden' name='input'/>");
+        page.println("\t\t<input type='hidden' name='go'/>");
+        page.println("\t\t\t<table border='0'>");
+        page.println("\t\t\t<tr><td>Message:</td><td><input type='text' name='message'/></td>");
+        page.println("\t\t\t<tr><td>Object:</td><td><input type='text' name='object'/></td>");
+        page.println("\t\t\t<tr><td colspan='2'><input type='submit'/></td>");
+        page.println("\t\t\t</table>");
+        page.println("\t\t</form>");
+        page.println("\t</body>");
       }
-      p.println("</html>");
+      page.println("</html>");
     }
 
     /** Добавление сообщения в журнал. */
     public synchronized void messageReceived(final Message msg) {
       if (messages.size() == 30) {
-	// удаление устаревших сообщений
-	messages.remove(0);
+        // удаление устаревших сообщений
+        messages.remove(0);
       }
       messages.add(msg);
     }

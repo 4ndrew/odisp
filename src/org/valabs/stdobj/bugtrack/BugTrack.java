@@ -15,7 +15,7 @@ import org.valabs.stdmsg.ODObjectLoadedMessage;
 /** Объект, который обеспечивает создание полного сообщения об ошибке возникшей во
  * время работы системы.
  * @author (C) 2005 <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
- * @version $Id: BugTrack.java,v 1.4 2005/01/26 08:22:53 valeks Exp $
+ * @version $Id: BugTrack.java,v 1.5 2005/02/27 12:37:30 valeks Exp $
  */
 public class BugTrack extends StandartODObject implements ExceptionHandler, MessageHandler {
   public static final String NAME = "bugtrack";
@@ -26,7 +26,7 @@ public class BugTrack extends StandartODObject implements ExceptionHandler, Mess
   
   public static final String COPYRIGHT = "(C) 2005 Valentin A. Alekseev";
   
-  private BugWriter bw;
+  private AbstractBugWriter bw;
   
   public BugTrack() {
     super(NAME, FULL_NAME, VERSION, COPYRIGHT);
@@ -41,20 +41,20 @@ public class BugTrack extends StandartODObject implements ExceptionHandler, Mess
     if (ODObjectLoadedMessage.equals(msg)) {
       dispatcher.addExceptionHandler(this);
     } else if (BugSignalMessage.equals(msg)) {
-      String id = BugSignalMessage.getBugId(msg);
-      String pc = BugSignalMessage.getBugPC(msg);
-      String ai = BugSignalMessage.getBugAI(msg);
+      final String id = BugSignalMessage.getBugId(msg);
+      final String pc = BugSignalMessage.getBugPC(msg);
+      final String ai = BugSignalMessage.getBugAI(msg);
       createBugReport(id, pc, ai);
     }
   }
   
-  public void setConfiguration(Map cfg) {
+  public void setConfiguration(final Map cfg) {
     super.setConfiguration(cfg);
     bw = new BugWriter_Plain(cfg);
   }
   
-  public void signalException(Exception e) {
-    StringWriter sw = new StringWriter();
+  public void signalException(final Exception e) {
+    final StringWriter sw = new StringWriter();
     e.printStackTrace(new PrintWriter(sw));
     createBugReport("EX-0", e.toString(), sw.toString());
   }
@@ -78,12 +78,12 @@ public class BugTrack extends StandartODObject implements ExceptionHandler, Mess
   }
 
   public String[] getDepends() {
-    String[] deps = { "dispatcher" };
+    final String[] deps = { "dispatcher" };
     return deps;
   }
 
   public String[] getProviding() {
-    String[] providing = { NAME };
+    final String[] providing = { NAME };
     return providing;
   }
 }

@@ -15,18 +15,18 @@ import org.valabs.odisp.common.SecurityManager;
 
 /** Обёртка диспетчера для защиты от подмены сообщений.
  * @author <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
- * @version $Id: SecureDispatcher.java,v 1.2 2005/02/17 12:29:36 valeks Exp $
+ * @version $Id: SecureDispatcher.java,v 1.3 2005/02/27 12:37:31 valeks Exp $
  */
 final class SecureDispatcher implements Dispatcher {
-  private Dispatcher realDispatcher;
-  private String objectName;
+  private final Dispatcher realDispatcher;
+  private final String objectName;
   
-  SecureDispatcher(Dispatcher _realDispatcher, String _objectName) {
+  SecureDispatcher(final Dispatcher _realDispatcher, final String _objectName) {
     realDispatcher = _realDispatcher;
     objectName = _objectName;
   }
   
-  public void send(Message message) {
+  public void send(final Message message) {
     if (message == null) {
       return;
     }
@@ -37,7 +37,7 @@ final class SecureDispatcher implements Dispatcher {
     realDispatcher.send(message);
   }
 
-  public void send(Message[] messageList) {
+  public void send(final Message[] messageList) {
     if (messageList == null) {
       return;
     }
@@ -46,18 +46,18 @@ final class SecureDispatcher implements Dispatcher {
     }
   }
 
-  public void send(List messageList) {
+  public void send(final List messageList) {
     if (messageList == null) {
       return;
     }
-    Iterator it = messageList.iterator();
+    final Iterator it = messageList.iterator();
     while (it.hasNext()) {
-      Message element = (Message) it.next();
-      send(element);
+      send((Message) it.next());
     }
   }
 
-  public Message getNewMessage(String action, String destination, String origin, UUID inReplyTo) {
+  public final Message getNewMessage(final String action, final String destination, final String origin,
+          final UUID inReplyTo) {
     assert origin.equals(objectName) : "Message origin faked.";
     return realDispatcher.getNewMessage(action, destination, origin, inReplyTo);
   }
@@ -86,15 +86,15 @@ final class SecureDispatcher implements Dispatcher {
     return realDispatcher.getExceptionHandler();
   }
 
-  public void addSecurityManager(SecurityManager additionalSecurityManager) {
+  public void addSecurityManager(final SecurityManager additionalSecurityManager) {
     realDispatcher.addSecurityManager(additionalSecurityManager);
   }
 
-  public void addExceptionHandler(ExceptionHandler ex) {
+  public void addExceptionHandler(final ExceptionHandler ex) {
     realDispatcher.addExceptionHandler(ex);
   }
 
-  public void addConfigurationManager(ConfigurationManager cman) {
+  public void addConfigurationManager(final ConfigurationManager cman) {
     realDispatcher.addConfigurationManager(cman);
   }
 

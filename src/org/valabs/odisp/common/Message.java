@@ -7,13 +7,13 @@ import org.doomdark.uuid.UUID;
 
 /** Интерфейс сообщения ядра ODISP системы.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
- * @version $Id: Message.java,v 1.19 2005/01/26 22:17:49 valeks Exp $
+ * @version $Id: Message.java,v 1.20 2005/02/27 12:37:29 valeks Exp $
  */
 public interface Message {
 
-  public Message cloneMessage();
-  public static final String RECIPIENT_ALL = ".*";
-  public static final String RECIPIENT_CATCHALL = "catch-all-service";
+  Message cloneMessage();
+  String RECIPIENT_ALL = ".*";
+  String RECIPIENT_CATCHALL = "catch-all-service";
   
   /** Выбор поля по имени.
    * @param name имя поля
@@ -32,9 +32,9 @@ public interface Message {
   UUID getId();
 
   /** Установить уникальный идентификатор сообщения.
-   * @param id идентификатор
+   * @param newId идентификатор
    */
-  void setId(UUID id);
+  void setId(UUID newId);
 
   /** Идентификатор сообщения на который идет ответ.
    * @return идентификатор
@@ -52,9 +52,9 @@ public interface Message {
   String getDestination();
 
   /** Установить получателя сообщения.
-   * @param nd новое значение
+   * @param newDest новое значение
    */
-  void setDestination(String nd);
+  void setDestination(String newDest);
 
   /** Установить индекс ответа.
    * @param nrpt индекс сообщения на которое производится ответ
@@ -62,9 +62,9 @@ public interface Message {
   void setReplyTo(UUID nrpt);
 
   /** Установить действие.
-   * @param na новое действие
+   * @param newAction новое действие
    */
-  void setAction(String na);
+  void setAction(String newAction);
 
   /** Вернуть имя отправителя.
    * @return имя отправителя

@@ -14,16 +14,14 @@ import org.valabs.odisp.common.Message;
  * 
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: ConsoleReader.java,v 1.17 2005/01/26 22:10:30 valeks Exp $
+ * @version $Id: ConsoleReader.java,v 1.18 2005/02/27 12:37:30 valeks Exp $
  */
 
 public class ConsoleReader extends Thread {
   /** Признак окончания работы. */
   private boolean doExit;
-  /** Имя ODISP объекта. */
-  private String objectName;
   /** Журнал. */
-  private Logger logger;
+  private static final Logger logger = Logger.getLogger(ConsoleReader.class.getName());
   /** Ссылка на диспетчера. */
   private Dispatcher dispatcher;
   /** Поток ввода. */
@@ -36,14 +34,10 @@ public class ConsoleReader extends Thread {
    * @param disp диспетчер ODISP
    * @param log ссылка на журнал
    */
-  public ConsoleReader(final String oName,
-		       final Dispatcher disp,
-		       final Logger log) {
+  public ConsoleReader(final Dispatcher disp) {
     super("ConsoleReader");
     setDaemon(true);
     dispatcher = disp;
-    logger = log;
-    objectName = oName;
   }
 
   /** Точка входа потока обработки ввода-вывода.
@@ -54,8 +48,8 @@ public class ConsoleReader extends Thread {
       String action, tmp, fieldName;
       while ((action = inp.readLine()) != null) {
         System.out.print("destination> ");
-        Message m
-          = dispatcher.getNewMessage(action, inp.readLine(), objectName, UUID.getNullUUID());
+        final Message m
+          = dispatcher.getNewMessage(action, inp.readLine(), null, UUID.getNullUUID());
         System.out.print("params? ");
         int paramCount = 0;
         while (!inp.readLine().equals("")) {
@@ -73,21 +67,20 @@ public class ConsoleReader extends Thread {
             }
           } else {
             m.addField((fieldName.length() > 0) ? fieldName : ("" + paramCount++),
-              new String(inp.readLine()));
+              "" + inp.readLine());
           }
           System.out.print("more? ");
         }
         m.setCorrect(true);
         dispatcher.send(m);
+        if (doExit) {
+          break;
+        }
         System.out.print("action> ");
-      }
-      if (doExit) {
-	return;
       }
     } catch (IOException e) {
       logger.finest("ConsoleReader: Terminal connection lost. Quitting.");
     }
-    return;
   }
 
   /** Завершение работы.

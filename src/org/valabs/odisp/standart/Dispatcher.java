@@ -22,21 +22,21 @@ import org.valabs.stdmsg.StandartMessage;
  * и управление ресурсными объектами.
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: Dispatcher.java,v 1.60 2005/01/27 20:50:06 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.61 2005/02/27 12:37:31 valeks Exp $
  */
 public class Dispatcher implements org.valabs.odisp.common.Dispatcher, ExceptionHandler {
   /** Журнал. */
-  private static Logger log = Logger.getLogger(Dispatcher.class.getName());
+  private static final Logger log = Logger.getLogger(Dispatcher.class.getName());
   /** Менеджер ресурсов. */
-  private ResourceManager rman = new org.valabs.odisp.standart.ResourceManager(this);
+  private final ResourceManager rman = new org.valabs.odisp.standart.ResourceManager(this);
   /** Менеджер объектов. */
-  private ObjectManager oman = new org.valabs.odisp.standart.ObjectManager(this);
+  private final ObjectManager oman = new org.valabs.odisp.standart.ObjectManager(this);
   /** Список менеджеров конфигурации. */
-  private ConfigurationManager cman = new MultiConfigurationManager();
+  private final ConfigurationManager cman = new MultiConfigurationManager();
   /** Менеджер безопасности. */
-  private SecurityManager sman = null;
+  private SecurityManager sman;
   /** Обработчик исключений. */
-  private ExceptionHandler ehandler = null;
+  private ExceptionHandler ehandler;
 
   /** Доступ к менеджеру объектов. 
    * @return ссылка на менеджер объектов
@@ -128,7 +128,7 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
         oman.loadObject(element.getClassName(), element.getConfiguration());
       }
       oman.loadPending();
-      Thread t = new Thread("alive thread") {
+      Thread aliveThread = new Thread("alive thread") {
         public final void run() {
           try {
             synchronized (this) {
@@ -139,13 +139,13 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
         }
       };
       Map tmp = new HashMap();
-      tmp.put("runthr", t);
+      tmp.put("runthr", aliveThread);
       oman.loadObject(DispatcherHandler.class.getName(), tmp);
       oman.loadPending();
 
-      t.start();
+      aliveThread.start();
       try {
-        t.join();
+        aliveThread.join();
       } catch (InterruptedException e) {
 
       }
@@ -175,8 +175,8 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
   /* (non-Javadoc)
    * @see org.valabs.odisp.common.Dispatcher#addSecurityManager(org.valabs.odisp.common.SecurityManager)
    */
-  public void addSecurityManager(SecurityManager additionalSecurityManager) {
-  	sman = additionalSecurityManager;
+  public void addSecurityManager(final SecurityManager additionalSecurityManager) {
+  		sman = additionalSecurityManager;
   }
 
   /* (non-Javadoc)
@@ -190,8 +190,8 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
   /* (non-Javadoc)
    * @see org.valabs.odisp.common.Dispatcher#addExceptionHandler(org.valabs.odisp.common.ExceptionHandler)
    */
-  public void addExceptionHandler(ExceptionHandler ex) {
-    ehandler = ex;
+  public void addExceptionHandler(final ExceptionHandler exHandler) {
+    ehandler = exHandler;
   }
 
   /* (non-Javadoc)
@@ -207,16 +207,16 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
   /* (non-Javadoc)
    * @see org.valabs.odisp.common.ExceptionHandler#signalException(java.lang.Exception)
    */
-  public void signalException(Exception e) {
+  public void signalException(final Exception exception) {
     System.err.println("========================================================");
     System.err.println("Exception caught with default exception handler:");
-    System.err.println("Exception: " + e.toString());
+    System.err.println("Exception: " + exception.toString());
     System.err.println("Stack trace:");
-    e.printStackTrace(System.err);
+    exception.printStackTrace(System.err);
     System.err.println("========================================================");
   }
   
-  public void addConfigurationManager(ConfigurationManager _cman) {
+  public void addConfigurationManager(final ConfigurationManager _cman) {
     ((MultiConfigurationManager) cman).addConfigurationManager(_cman);
   }
 
@@ -226,70 +226,79 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
   
   /** Мультиплексор менеджеров конфигурации. */
   class MultiConfigurationManager implements ConfigurationManager {
-    List cman = new ArrayList();
-    void addConfigurationManager(ConfigurationManager _cman) {
+    private final List cman = new ArrayList();
+    void addConfigurationManager(final ConfigurationManager _cman) {
       cman.add(_cman);
     }
     public List getObjectList() {
-      Iterator it = cman.iterator();
-      while (it.hasNext()) {
-        ConfigurationManager element = (ConfigurationManager) it.next();
+      final Iterator cmanIt = cman.iterator();
+      List result = null;
+      while (cmanIt.hasNext()) {
+        final ConfigurationManager element = (ConfigurationManager) cmanIt.next();
         if (element.supportComponentListing()) {
-          return element.getObjectList();
+          result = element.getObjectList();
+          break;
         }
       }
-      return null;
+      return result;
     }
     
-    public String getParameter(String domain, String paramName) {
-      Iterator it = cman.iterator();
-      while (it.hasNext()) {
-        ConfigurationManager element = (ConfigurationManager) it.next();
-        String value = element.getParameter(domain, paramName);
+    public String getParameter(final String domain, final String paramName) {
+      final Iterator cmanIt = cman.iterator();
+      String result = null;
+      while (cmanIt.hasNext()) {
+        final ConfigurationManager element = (ConfigurationManager) cmanIt.next();
+        final String value = element.getParameter(domain, paramName);
         if (value != null) {
-          return value;
+          result = value;
+          break;
         }
       }
-      return null;
+      return result;
     }
     public List getResourceList() {
-      Iterator it = cman.iterator();
-      while (it.hasNext()) {
-        ConfigurationManager element = (ConfigurationManager) it.next();
+      final Iterator cmanIt = cman.iterator();
+      List result = null;
+      while (cmanIt.hasNext()) {
+        final ConfigurationManager element = (ConfigurationManager) cmanIt.next();
         if (element.supportComponentListing()) {
-          return element.getResourceList();
+          result = element.getResourceList();
+          break;
         }
       }
-      return null;
+      return result;
     }
     
-    public void setCommandLineArguments(List args) {
-      Iterator it = cman.iterator();
-      while (it.hasNext()) {
-        ConfigurationManager element = (ConfigurationManager) it.next();
-        element.setCommandLineArguments(args);
+    public void setCommandLineArguments(final List args) {
+      final Iterator cmanIt = cman.iterator();
+      while (cmanIt.hasNext()) {
+        ((ConfigurationManager) cmanIt.next()).setCommandLineArguments(args);
       }
     }
     
     public boolean supportComponentListing() {
-      Iterator it = cman.iterator();
-      while (it.hasNext()) {
-        ConfigurationManager element = (ConfigurationManager) it.next();
+      final Iterator cmanIt = cman.iterator();
+      boolean result = false;
+      while (cmanIt.hasNext()) {
+        final ConfigurationManager element = (ConfigurationManager) cmanIt.next();
         if (element.supportComponentListing()) {
-          return true;
+          result = true;
+          break;
         }
       }
-      return false;
+      return result;
     }
     public boolean supportParameterFetching() {
-      Iterator it = cman.iterator();
-      while (it.hasNext()) {
-        ConfigurationManager element = (ConfigurationManager) it.next();
+      final Iterator cmanIt = cman.iterator();
+      boolean result = false;
+      while (cmanIt.hasNext()) {
+        final ConfigurationManager element = (ConfigurationManager) cmanIt.next();
         if (element.supportParameterFetching()) {
-          return true;
+          result = true;
+          break;
         }
       }
-      return false;
+      return result;
     }
 }
 } // StandartDispatcher

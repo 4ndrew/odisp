@@ -15,7 +15,7 @@ import org.valabs.stdobj.translator.Translator;
  *         Алексеев </a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин
  *         </a>
- * @version $Id: ConsoleObject.java,v 1.26 2005/01/26 08:22:52 valeks Exp $
+ * @version $Id: ConsoleObject.java,v 1.27 2005/02/27 12:37:30 valeks Exp $
  */
 public class ConsoleObject extends StandartODObject {
   /** Имя объекта */
@@ -46,12 +46,12 @@ public class ConsoleObject extends StandartODObject {
   public final void handleMessage(final Message msg) {
     logger.finest("console object -- processing " + msg);
     if (ODObjectLoadedMessage.equals(msg)) {
-      reader = new ConsoleReader(getObjectName(), dispatcher, logger);
+      reader = new ConsoleReader(dispatcher);
       reader.start();
       if (getParameter("hasTranslator", "no").equals("yes")) {
         tr = (Translator) dispatcher.getResourceManager().resourceAcquire(
             Translator.class.getName());
-        Message m = dispatcher.getNewMessage();
+        final Message m = dispatcher.getNewMessage();
         TranslatorGetTranslationMessage.setup(m, "translator-server",
             getObjectName(), msg.getId());
         TranslatorGetTranslationMessage.setLanguage(m, getParameter("language",

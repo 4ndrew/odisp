@@ -15,7 +15,7 @@ import java.util.StringTokenizer;
 
 /** Стартовый класс для диспетчера.
  * @author <a hrev="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
- * @version $Id: Launcher.java,v 1.1 2005/01/27 14:15:44 valeks Exp $
+ * @version $Id: Launcher.java,v 1.2 2005/02/27 12:37:32 valeks Exp $
  */
 public class Launcher {
 
@@ -25,23 +25,21 @@ public class Launcher {
   public Launcher(String[] args) {
     String dispatcher = "standart";
     List libdirs = new ArrayList();
-    int i = 0;
-    for (; i < args.length; i++) {
-      if (args[i].startsWith("--dispatcher")) {
-        dispatcher = args[i].split("=")[1];
-      } else if (args[i].startsWith("--libdir")) {
-        libdirs.add(args[i].split("=")[1]);
-      } else if (args[i].equals("--")) {
-        i++;
+    int launcherArgs = 0;
+    for (; launcherArgs < args.length; launcherArgs++) {
+      if (args[launcherArgs].startsWith("--dispatcher")) {
+        dispatcher = args[launcherArgs].split("=")[1];
+      } else if (args[launcherArgs].startsWith("--libdir")) {
+        libdirs.add(args[launcherArgs].split("=")[1]);
+      } else if (args[launcherArgs].equals("--")) {
+        launcherArgs++;
         break;
       }
     }
-    List newArgs = Arrays.asList(args).subList(i, args.length);
+    List newArgs = Arrays.asList(args).subList(launcherArgs, args.length);
     URL[] jars = searchJarURLs(libdirs);
     System.setProperty("odisp.libchecksum", folderChecksum(libdirs.toString()));
     System.setProperty("odisp.libdirs", libdirs.toString());
-    System.out.println("Library folders checksummed: " + System.getProperty("odisp.libdirs"));
-    System.out.println("Library folders checksum is: " + System.getProperty("odisp.libchecksum"));
     ClassLoader ucl = new URLClassLoader(jars);
     Class[] paramClass = {List.class};
     Object[] params = {newArgs};
@@ -64,23 +62,21 @@ public class Launcher {
     }
   }
   
-  public static String folderChecksum(String s_libdirs) {
+  public static final String folderChecksum(final String s_libdirs) {
     String result = "";
-    s_libdirs = s_libdirs.substring(1, s_libdirs.length() - 1);
-    StringTokenizer st = new StringTokenizer(s_libdirs, ",");
-    while (st.hasMoreTokens()) {
-      String libdir = st.nextToken();
-      libdir = libdir.trim();
-      File ld = new File(libdir);
-      if (ld.isDirectory()) {
-        String files[] = ld.list(new FilenameFilter() {
-          public boolean accept(File arg0, String arg1) {
-            return arg1.endsWith("jar");
-          }
-        });
+    final StringTokenizer libraryDirs = new StringTokenizer(s_libdirs.substring(1, s_libdirs.length() - 1), ",");
+    final FilenameFilter jarFiles = new FilenameFilter() {
+      public boolean accept(File arg0, String arg1) {
+        return arg1.endsWith("jar");
+      }
+    };
+    while (libraryDirs.hasMoreTokens()) {
+      final File libraryDir = new File(libraryDirs.nextToken().trim());
+      if (libraryDir.isDirectory()) {
+        final String files[] = libraryDir.list(jarFiles);
         for (int i = 0; i < files.length; i++) {
-          File f = new File(ld.getAbsolutePath() + File.separator + files[i]);
-          result += f.getName() + f.length();
+          final File file = new File(libraryDir.getAbsolutePath() + File.separator + files[i]);
+          result += file.getName() + file.length();
         }
       }
     }    
@@ -92,20 +88,21 @@ public class Launcher {
    * @return
    * @throws MalformedURLException
    */
-  private URL[] searchJarURLs(List libdirs) {
-    Iterator it = libdirs.iterator();
-    List resultUrls = new ArrayList();
-    while (it.hasNext()) {
-      String libdir = (String) it.next();
-      File ld = new File(libdir);
-      if (ld.isDirectory()) {
-        String files[] = ld.list(new FilenameFilter() {
-          public boolean accept(File arg0, String arg1) {
-            return arg1.endsWith("jar");
-          }
-        });
+  private final URL[] searchJarURLs(final List libdirs) {
+    final Iterator libdirIt = libdirs.iterator();
+    final List resultUrls = new ArrayList();
+    final FilenameFilter jarFiles = new FilenameFilter() {
+      public boolean accept(File arg0, String arg1) {
+        return arg1.endsWith("jar");
+      }
+    };
+    while (libdirIt.hasNext()) {
+      final String libdir = (String) libdirIt.next();
+      final File libraryDir = new File(libdir);
+      if (libraryDir.isDirectory()) {
+        final String files[] = libraryDir.list(jarFiles);
         for (int i = 0; i < files.length; i++) {
-          resultUrls.add("file://" + ld.getAbsolutePath() + File.separator + files[i]);
+          resultUrls.add("file://" + libraryDir.getAbsolutePath() + File.separator + files[i]);
         }
       }
     }
@@ -113,7 +110,6 @@ public class Launcher {
     for (int i = 0; i < urls.length; i++) {
       try {
         urls[i] = new URL((String) resultUrls.get(i));
-        System.out.println("Found jar: " + urls[i]);
       } catch (MalformedURLException e) {
         e.printStackTrace();
       }
@@ -121,7 +117,7 @@ public class Launcher {
     return urls;
   }
 
-  public static void main(String[] args) {
+  public static final void main(final String[] args) {
     new Launcher(args);
   }
 }

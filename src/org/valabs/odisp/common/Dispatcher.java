@@ -7,7 +7,7 @@ import org.doomdark.uuid.UUID;
 /** Стандартный интерфейс диспетчера, который должен реализовывать
  * класс, который выступает в качестве ODISP диспетчера.
  * @author (C) 2003 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
- * @version $Id: Dispatcher.java,v 1.16 2004/11/28 18:53:32 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.17 2005/02/27 12:37:29 valeks Exp $
  */
 public interface Dispatcher {
   /** Посылка одиночного сообщения.
@@ -51,7 +51,7 @@ public interface Dispatcher {
   /** Добавление менеджера безопасности. */
   void addSecurityManager(SecurityManager additionalSecurityManager);
   /** Установка нового обработчика исключений. */
-  void addExceptionHandler(ExceptionHandler ex);
+  void addExceptionHandler(ExceptionHandler exception);
   /** Добавление менеджера конфигурации. */
   void addConfigurationManager(ConfigurationManager cman);
 }

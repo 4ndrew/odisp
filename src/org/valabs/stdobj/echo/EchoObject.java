@@ -9,7 +9,7 @@ import org.valabs.odisp.common.StandartODObject;
 
 /** Простейший ODISP объект реализующий автоответчик на приходящие сообщения.
 * @author (C) 2003 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
-* @version $Id: EchoObject.java,v 1.20 2005/01/26 13:22:29 valeks Exp $
+* @version $Id: EchoObject.java,v 1.21 2005/02/27 12:37:32 valeks Exp $
 */
 public class EchoObject extends StandartODObject {
   private int replyCount = 0;
@@ -18,7 +18,7 @@ public class EchoObject extends StandartODObject {
     addHandler("echo", new MessageHandler() {
       public final void messageReceived(final Message msg) {
         logger.fine("Echo message received");
-        Message m = dispatcher.getNewMessage("echo_reply", msg.getOrigin(), getObjectName(), msg.getId());
+        final Message m = dispatcher.getNewMessage("echo_reply", msg.getOrigin(), getObjectName(), msg.getId());
         m.addField("replyCount", new Integer(replyCount++));
         m.setCorrect(true);
         dispatcher.send(m);
@@ -43,7 +43,7 @@ public class EchoObject extends StandartODObject {
    * @return список сервисов
    */
   public final String[] getProviding() {
-    String[] res = {
+    final String[] res = {
       "echo"
     };
     return res;
@@ -52,7 +52,7 @@ public class EchoObject extends StandartODObject {
    * @return список зависимостей
    */
   public final String[] getDepends() {
-    String[] res = {
+    final String[] res = {
       "dispatcher"
     };
     return res;

@@ -16,34 +16,34 @@ import java.util.logging.Logger;
 
 /** Класс читающий и сохраняющий состояние диспетчера перед перезагрузкой.
  * @author <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
- * @version $Id: DispatcherSnapshot.java,v 1.1 2005/01/26 13:23:05 valeks Exp $
+ * @version $Id: DispatcherSnapshot.java,v 1.2 2005/02/27 12:37:31 valeks Exp $
  */
 class DispatcherSnapshot {
   private static final String SNAP_NAME = "restart.snap";
   private Map objectSnapshots = new HashMap();
   private List messageQueue = new ArrayList();
-  private Logger log = Logger.getLogger(DispatcherSnapshot.class.getName());
+  private final static Logger log = Logger.getLogger(DispatcherSnapshot.class.getName());
   /**
    * 
    */
   public DispatcherSnapshot() {
     try {
-      ObjectInputStream in = new ObjectInputStream(new FileInputStream(SNAP_NAME));
-      objectSnapshots = (Map) in.readObject();
-      messageQueue = (List) in.readObject();
+      final ObjectInputStream snapFile = new ObjectInputStream(new FileInputStream(SNAP_NAME));
+      objectSnapshots = (Map) snapFile.readObject();
+      messageQueue = (List) snapFile.readObject();
       new File(SNAP_NAME).delete();
     } catch (FileNotFoundException e) {
-      // нет ножек -- нет мультиков
+      log.warning("System restart snapshot exists but it could not be loaded. Starting from scratch.");
     } catch (IOException e) {
       log.warning("System restart snapshot exists but it could not be loaded. Starting from scratch.");
     } catch (ClassNotFoundException e) {
       log.warning("System restart snapshot exists but it could not be loaded. Starting from scratch.");
     }
     Runtime.getRuntime().addShutdownHook(new Thread() {
-      public void run() {
+      public final void run() {
         if (objectSnapshots.size() > 0) {
           try {
-            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(SNAP_NAME));
+            final ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(SNAP_NAME));
             out.writeObject(objectSnapshots);
             out.writeObject(messageQueue);
             out.close();
@@ -61,14 +61,14 @@ class DispatcherSnapshot {
     messageQueue.clear();
   }
 
-  public void addObjectSnapshot(String objectName, Map options) {
+  public final void addObjectSnapshot(final String objectName, final Map options) {
     if (options != null) {
       objectSnapshots.put(objectName, options);
-      System.err.println("Saving object " + objectName + " into snapshot database ["+ options.size() +" states].");
+      log.info("Saving object " + objectName + " into snapshot database ["+ options.size() +" states].");
     }
   }
   
-  public void setMessageQueue(List queueMessages) {
+  public void setMessageQueue(final List queueMessages) {
     messageQueue.addAll(queueMessages);
   }
   
@@ -76,7 +76,7 @@ class DispatcherSnapshot {
     return messageQueue;
   }
   
-  public Map getObjectSnapshot(String objectName) {
+  public Map getObjectSnapshot(final String objectName) {
     return (Map) objectSnapshots.get(objectName);
   }
 

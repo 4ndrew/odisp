@@ -19,7 +19,7 @@ import org.valeks.xlang.parser.XLangException;
  * Реализация менеджера конфигурации.
  * 
  * @author (C) 2004 <a href="valeks@valabs.spb.ru">Валентин А. Алексеев </a>
- * @version $Id: ConfigurationManager.java,v 1.5 2005/01/27 14:15:43 valeks Exp $
+ * @version $Id: ConfigurationManager.java,v 1.6 2005/02/27 12:37:31 valeks Exp $
  */
 class ConfigurationManager implements org.valabs.odisp.common.ConfigurationManager {
 
@@ -76,7 +76,7 @@ class ConfigurationManager implements org.valabs.odisp.common.ConfigurationManag
    * 
    * @see org.valabs.odisp.common.ConfigurationManager#getParameter(java.lang.String, java.lang.String)
    */
-  public String getParameter(String domain, String paramName) {
+  public String getParameter(final String domain, final String paramName) {
     return params.get(domain, paramName);
   }
 
@@ -85,12 +85,11 @@ class ConfigurationManager implements org.valabs.odisp.common.ConfigurationManag
    * 
    * @see org.valabs.odisp.common.ConfigurationManager#setCommandLineArguments(java.lang.String[])
    */
-  public void setCommandLineArguments(List args) {
+  public void setCommandLineArguments(final List args) {
     assert args.size() > 0 : "Argument list too small";
     try {
-      InputStream inp = new FileInputStream((String) args.get(0));
-      Parser p = new Parser(inp);
-      loadConfiguration(p.getRootTag());
+      final InputStream inp = new FileInputStream((String) args.get(0));
+      loadConfiguration(new Parser(inp).getRootTag());
     } catch (FileNotFoundException e) {
       log.severe("configuration file " + args.get(0) + " not found.");
     } catch (XLangException e) {
@@ -98,28 +97,28 @@ class ConfigurationManager implements org.valabs.odisp.common.ConfigurationManag
     }
   }
 
-  private void loadConfiguration(Tag docTag) {
-    Iterator it = docTag.getChild().iterator();
+  private void loadConfiguration(final Tag docTag) {
+    final Iterator childIt = docTag.getChild().iterator();
     params.putAll("root", getParamsForTag(docTag));
-    while (it.hasNext()) {
-      Tag curt = (Tag) it.next();
+    while (childIt.hasNext()) {
+      final Tag curt = (Tag) childIt.next();
       if (curt.getName().equalsIgnoreCase("object")) {
-        String className = (String) curt.getAttributes().get("name");
+        final String className = (String) curt.getAttributes().get("name");
         if (className == null) {
           log.warning("object tag has no name attribute. ignoring.");
           continue;
         }
-        Map lparams = getParamsForTag(curt);
+        final Map lparams = getParamsForTag(curt);
         objects.add(new org.valabs.odisp.common.ConfigurationManager.ComponentConfiguration(className,
                 lparams));
         params.putAllPrefixed("boot", className, lparams);
       } else if (curt.getName().equalsIgnoreCase("resource")) {
-        String className = (String) curt.getAttributes().get("name");
+        final String className = (String) curt.getAttributes().get("name");
         if (className == null) {
           log.warning("resource tag has no name attribute. ignoring.");
           continue;
         }
-        Map lparams = getParamsForTag(curt);
+        final Map lparams = getParamsForTag(curt);
         resources.add(new org.valabs.odisp.common.ConfigurationManager.ComponentConfiguration(className,
                 lparams));
         params.putAllPrefixed("boot", className, lparams);
@@ -138,12 +137,12 @@ class ConfigurationManager implements org.valabs.odisp.common.ConfigurationManag
     if (childTag.getChild().size() != 0) {
       params = new HashMap();
       // имеются потомки -- необходимо проитерировать по списку и заполнить список
-      Iterator cit = childTag.getChild().iterator();
+      final Iterator cit = childTag.getChild().iterator();
       while (cit.hasNext()) {
-        Tag ctag = (Tag) cit.next();
+        final Tag ctag = (Tag) cit.next();
         if (ctag.getName().equalsIgnoreCase("param")) {
-          String paramName = (String) ctag.getAttributes().get("name");
-          String paramValue = (String) ctag.getAttributes().get("value");
+          final String paramName = (String) ctag.getAttributes().get("name");
+          final String paramValue = (String) ctag.getAttributes().get("value");
           if (paramName != null && paramValue != null) {
             params.put(paramName, paramValue);
           }
@@ -155,7 +154,7 @@ class ConfigurationManager implements org.valabs.odisp.common.ConfigurationManag
 
   class MultiMap {
 
-    private Map domains = new HashMap();
+    private final Map domains = new HashMap();
 
     public void put(final String domainName, final String param, final String value) {
       getDomain(domainName).put(param, value);
@@ -173,10 +172,10 @@ class ConfigurationManager implements org.valabs.odisp.common.ConfigurationManag
       //Не стоит забывать что параметров может и не быть ;)
       if (params == null) { return; }
 
-      Map domain = getDomain(domainName);
-      Iterator keyIt = params.keySet().iterator();
+      final Map domain = getDomain(domainName);
+      final Iterator keyIt = params.keySet().iterator();
       while (keyIt.hasNext()) {
-        String key = (String) keyIt.next();
+        final String key = (String) keyIt.next();
         domain.put(prefix + key, params.get(key));
       }
     }

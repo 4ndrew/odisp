@@ -12,45 +12,45 @@ import java.util.Map;
 
 /** Запись сообщения об ошибке в файл в виде простого отформатированного текста.
  * @author (C) 2005 <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
- * @version $Id: BugWriter_Plain.java,v 1.1 2005/01/11 20:37:59 valeks Exp $
+ * @version $Id: BugWriter_Plain.java,v 1.2 2005/02/27 12:37:30 valeks Exp $
  */
-public class BugWriter_Plain extends BugWriter {
+public class BugWriter_Plain extends AbstractBugWriter {
 
   public BugWriter_Plain(Map cfg) {
     super(cfg);
   }
   
-  public void writeBugReport(String id, String pc, String ai, SystemSnapshot ss) {
-    File f = new File("bug-" + DateFormat.getInstance().format(Calendar.getInstance().getTime()));
+  public void writeBugReport(final String id, final String pc, final String ai, final SystemSnapshot ss) {
+    final File reportFile = new File("bug-" + DateFormat.getInstance().format(Calendar.getInstance().getTime()));
     try {
-      if (!f.exists()) {
-        f.createNewFile();
+      if (!reportFile.exists()) {
+        reportFile.createNewFile();
       }
-      PrintWriter out = new PrintWriter(new FileWriter(f));
-      out.println("ODISP Bug Report");
-      out.println("Bug occured at: " + DateFormat.getInstance().format(Calendar.getInstance().getTime()));
+      final PrintWriter report = new PrintWriter(new FileWriter(reportFile));
+      report.println("ODISP Bug Report");
+      report.println("Bug occured at: " + DateFormat.getInstance().format(Calendar.getInstance().getTime()));
       if (id != null) {
-        out.println("Bug identification: " + id);
+        report.println("Bug identification: " + id);
       }
       if (pc != null) {
-        out.println("Probable cause: " + pc);
+        report.println("Probable cause: " + pc);
       }
       if (ai != null) {
-        out.println("Additional information: " + ai);
+        report.println("Additional information: " + ai);
       }
-      out.println("==================================================================");
-      out.println("System snapshot at the time of bug.");
-      out.println("Modules:");
+      report.println("==================================================================");
+      report.println("System snapshot at the time of bug.");
+      report.println("Modules:");
       Iterator it = ss.getModuleAboutList().iterator();
       while (it.hasNext()) {
-        out.println("  - " + it.next());
+        report.println("  - " + it.next());
       }
-      out.println("Modules status:");
+      report.println("Modules status:");
       it = ss.getModuleStatusList().iterator();
       while (it.hasNext()) {
-        out.println("  - " + it.next());
+        report.println("  - " + it.next());
       }
-      out.close();
+      report.close();
     } catch (IOException e) {
       e.printStackTrace();
     }
