@@ -19,7 +19,7 @@ import com.novel.stdmsg.ODObjectLoadedMessage;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.33 2004/06/25 21:07:29 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.34 2004/07/01 13:45:39 valeks Exp $
  */
 
 public class StandartObjectManager implements ObjectManager {
@@ -176,7 +176,8 @@ public class StandartObjectManager implements ObjectManager {
     log.config("loading object " + cName);
     try {
       Object[] params = new Object[1];
-      params[0] = new Integer(objCount++);
+      objCount += (int) (Math.random() * 10000);
+      params[0] = new Integer(objCount);
       Class[] dParams = new Class[1];
       dParams[0] = params[0].getClass();
       ODObject load =

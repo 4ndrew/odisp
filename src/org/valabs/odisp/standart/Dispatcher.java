@@ -17,6 +17,7 @@ import com.novel.odisp.common.Dispatcher;
 import com.novel.odisp.common.Message;
 import com.novel.odisp.common.ObjectManager;
 import com.novel.odisp.common.ResourceManager;
+import com.novel.odisp.common.SecurityManager;
 import com.novel.stdmsg.StandartMessage;
 
 /** Стандартный диспетчер ODISP.
@@ -24,7 +25,7 @@ import com.novel.stdmsg.StandartMessage;
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.43 2004/06/09 14:13:30 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.44 2004/07/01 13:45:39 valeks Exp $
  */
 public class StandartDispatcher implements Dispatcher {
   /** Журнал. */
@@ -33,6 +34,8 @@ public class StandartDispatcher implements Dispatcher {
   private ResourceManager rman = new StandartResourceManager(this);
   /** Менеджер объектов. */
   private ObjectManager oman = new StandartObjectManager(this);
+  /** Менеджер безопасности. */
+  private SecurityManager sman = null;
 
   /** Доступ к менеджеру объектов. 
    * @return ссылка на менеджер объектов
@@ -206,4 +209,20 @@ public class StandartDispatcher implements Dispatcher {
       }
     }
   }
+  
+  /* (non-Javadoc)
+   * @see com.novel.odisp.common.Dispatcher#addSecurityManager(com.novel.odisp.common.SecurityManager)
+   */
+  public void addSecurityManager(SecurityManager additionalSecurityManager) {
+  	sman = additionalSecurityManager;
+  }
+
+  /* (non-Javadoc)
+   * @see com.novel.odisp.common.Dispatcher#getSecurityManager()
+   */
+  public SecurityManager getSecurityManager() {
+    assert sman != null : "security manager is null! no one registered ever";
+    return sman;
+  }
+
 } // StandartDispatcher
