@@ -28,24 +28,24 @@ import com.novel.stdmsg.*;
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.23 2003/12/15 13:01:04 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.24 2004/01/16 14:31:57 valeks Exp $
  */
 public class StandartDispatcher implements Dispatcher {
-  /** Интерфейс к службе сообщений*/
+  /** Интерфейс к службе сообщений. */
   private static Logger log = Logger.getLogger("com.novel.odisp");
-  /** Карта объектов управляемых диспетчером */
+  /** Карта объектов управляемых диспетчером. */
   private Map objects = new HashMap();
-  /** Карта ресурсов диспетчера */
+  /** Карта ресурсов диспетчера. */
   private Map resources = new HashMap();
-  /** Список реализованных возможностей диспетчера */
+  /** Список реализованных возможностей диспетчера. */
   private List provided = new ArrayList();
-  /** Список требуемых возможностей */
+  /** Список требуемых возможностей. */
   private List requested = new ArrayList();
-  /** Хранилище отложенных сообщений*/
+  /** Хранилище отложенных сообщений. */
   private DefferedMessages messages = new DefferedMessages();
-  /** Кол-во объектов системы */
+  /** Кол-во объектов системы. */
   private int objCount = 0;
-  /** Попытка подгрузки ожидающих классов при смене таблицы сервисов */
+  /** Попытка подгрузки ожидающих классов при смене таблицы сервисов. */
   private void loadPending() {
     // resources
     Iterator it = resources.keySet().iterator();
@@ -67,15 +67,15 @@ public class StandartDispatcher implements Dispatcher {
 	continue;
       }
       log.config("trying to load object " + objectName);
-      int requested = oe.getDepends().length;
+      int numRequested = oe.getDepends().length;
       for (int i = 0; i < oe.depends.length; i++) {
 	if (provided.contains(oe.getDepends()[i])) {
-	  requested--;
+	  numRequested--;
 	} else {
 	  log.finer("dependency not met: " + oe.getDepends()[i]);
 	}
       }
-      if (requested == 0) {
+      if (numRequested == 0) {
 	oe.getObject().start();
 	oe.setLoaded(true);
 	for (int i = 0; i < oe.getProvides().length; i++) {
@@ -90,19 +90,20 @@ public class StandartDispatcher implements Dispatcher {
       }
     }
   }
-  /** Динамическая загрузка ресурсных объектов
+  /** Динамическая загрузка ресурсных объектов.
       @param className имя загружаемого класса
       @param mult количество загружаемых объектов
       @param param параметр загрузки
   */
-  private void loadResource(String className, int mult, String param) {
+  private void loadResource(final String className, final int mult, final String param) {
     String logMessage = "loading resource " + className;
     for (int i = 0; i < mult; i++) {
       try {
 	Resource r = (Resource) Class.forName(className).newInstance();
 	ResourceEntry re = new ResourceEntry(className);
 	re.setResource(r);
-	log.fine("r instanceof ProxyResource " + (r instanceof ProxyResource) + " r.className:" + r.getClass().getName());
+	log.fine("r instanceof ProxyResource " + (r instanceof ProxyResource)
+		 + " r.className:" + r.getClass().getName());
 	if (r instanceof ProxyResource) {
 	  ((ProxyResource) r).setResource(param);
 	  resources.put(param + ":" + i, re);
@@ -116,26 +117,27 @@ public class StandartDispatcher implements Dispatcher {
 	log.warning(" failed: " + e);
       } catch (IllegalAccessException e) {
 	log.warning(" failed: " + e);
-      }	    
+      }
     }
     logMessage += " ok.";
     log.config(logMessage);
   }
-  /** Выгрузка ресурсного объекта
-      @param roName имя ресурсного объекта
+  /** Выгрузка ресурсного объекта.
+      @param name имя ресурсного объекта
       @param code код выхода
   */
-  private void unloadResource(String roName, int code) {
-    if (resources.containsKey(roName)) {
-      ResourceEntry res = (ResourceEntry) resources.get(roName);
+  private void unloadResource(final String name, final int code) {
+    if (resources.containsKey(name)) {
+      ResourceEntry res = (ResourceEntry) resources.get(name);
       List dependingObjs = new ArrayList();
       Iterator it = objects.keySet().iterator();
       while (it.hasNext()) {
 	String className = (String) it.next();
 	String[] depends = ((ObjectEntry) objects.get(className)).depends;
 	for (int i = 0; i < depends.length; i++) {
-	  if (depends[i].equals(roName.substring(0, roName.length() - roName.indexOf(":")))
-	      && !dependingObjs.contains(roName)) {
+	  if (depends[i].equals(name.substring(0, name.length()
+					       - name.indexOf(":")))
+	      && !dependingObjs.contains(name)) {
 	    dependingObjs.add(className);
 	  }
 	}
@@ -147,23 +149,25 @@ public class StandartDispatcher implements Dispatcher {
 	}
       }
       res.getResource().cleanUp(code);
-      resources.remove(roName);
+      resources.remove(name);
     }
   }
-  /** Динамическая загрузка объекта (с учётом зависимостей)
-   * @param className имя загружаемого класса
+  /** Динамическая загрузка объекта (с учётом зависимостей).
+   * @param cName имя загружаемого класса
    */
-  private void loadObject(String className) {
-    log.config("loading object " + className);
+  private void loadObject(final String cName) {
+    log.config("loading object " + cName);
     try {
-      Object params[] = new Object[1];
+      Object[] params = new Object[1];
       params[0] = new Integer(objCount++);
-      Class declParams[] = new Class[1];
-      declParams[0] = params[0].getClass();
-      ODObject load = (ODObject) Class.forName(className).getConstructor(declParams).newInstance(params);
+      Class[] dParams = new Class[1];
+      dParams[0] = params[0].getClass();
+      ODObject load =
+	(ODObject) Class.forName(cName).getConstructor(dParams).newInstance(params);
       load.setDispatcher(this);
       synchronized (objects) {
-	ObjectEntry oe = new ObjectEntry(className, 0, load.getDepends(), load.getProviding());
+	ObjectEntry oe =
+	  new ObjectEntry(cName, 0, load.getDepends(), load.getProviding());
 	oe.object = load;
 	oe.loaded = false;
 	objects.put(load.getObjectName(), oe);
@@ -182,7 +186,7 @@ public class StandartDispatcher implements Dispatcher {
       log.warning(" failed: " + e);
     }
   }
-  /** Принудительная выгрузка объекта и вызов сборщика
+  /** Принудительная выгрузка объекта и вызов сборщика.
    * мусора, так же учитываются зависимости:
    * <ul>
    * <li> Составление списка зависимых объектов
@@ -193,19 +197,20 @@ public class StandartDispatcher implements Dispatcher {
    * @param code код выхода (при code != 0 зависимые объекты
    * не удаляются).
    */
-  private void unloadObject(String objectName, int code) {
+  private void unloadObject(final String objectName, final int code) {
     if (objects.containsKey(objectName)) {
       ObjectEntry oe = (ObjectEntry) objects.get(objectName);
       String[] provides = oe.provides;
       Iterator it = objects.keySet().iterator();
       List dependingObjs = new ArrayList();
-      
+
       while (it.hasNext()) {
 	String className = (String) it.next();
-	String depends[] = ((ObjectEntry) objects.get(className)).depends;
+	String[] depends = ((ObjectEntry) objects.get(className)).depends;
 	for (int i = 0; i < provides.length; i++) {
 	  for (int j = 0; j < depends.length; j++) {
-	    if (provides[i].equals(depends[j]) && !dependingObjs.contains(className)) {
+	    if (provides[i].equals(depends[j])
+		&& !dependingObjs.contains(className)) {
 	      dependingObjs.add(className);
 	    }
 	  }
@@ -234,7 +239,7 @@ public class StandartDispatcher implements Dispatcher {
    * Реализует multicast рассылку сообщений
    * @param message сообщение для отсылки
    */
-  public void sendMessage(Message message) {
+  public final void sendMessage(final Message message) {
     if (message.getAction().length() == 0 || !message.isCorrect()) {
       return;
     }
@@ -244,7 +249,8 @@ public class StandartDispatcher implements Dispatcher {
 	String className = (String) it.next();
 	ObjectEntry oe = (ObjectEntry) objects.get(className);
 	if (oe.isBlockedState() || !oe.loaded) {
-	  log.finer("deffered message for " + className + " (loaded=" + oe.loaded + ")");
+	  log.finer("deffered message for " + className
+		    + " (loaded=" + oe.loaded + ")");
 	  messages.addMessage(className, message);
 	  continue;
 	}
@@ -260,7 +266,7 @@ public class StandartDispatcher implements Dispatcher {
    * Реализует multicast рассылку нескольких сообщений
    * @param messageList список сообщений для отсылки
    */
-  public void sendMessages(Message[] messageList) {
+  public final void sendMessages(final Message[] messageList) {
     if (messageList.length == 0) {
       return;
     }
@@ -277,32 +283,43 @@ public class StandartDispatcher implements Dispatcher {
    * @param inReplyTo идентификатор сообщения на которое производится ответ
    * @return Message созданное сообщение
    */
-  public Message getNewMessage(String action, String destination, String origin, int inReplyTo) {
+  public final Message getNewMessage(final String action,
+				     final String destination,
+				     final String origin,
+				     final int inReplyTo) {
     return new StandartMessage(action, destination, origin, inReplyTo);
   }
-  public Message getNewMessage() {
+
+  /** Создать новое пустое сообщение.
+   * @return ссылка на сообщение
+   */
+  public final Message getNewMessage() {
     return new StandartMessage();
   }
-  /** Установка статуса блокировки объекта по ресурсу 
+  /** Установка статуса блокировки объекта по ресурсу.
    * @param objName имя объекта
    * @param state новый уровень блокировки
    */
-  private void setBlockedState(String objName, int state) {
+  private void setBlockedState(final String objName, final int state) {
     if (!objects.containsKey(objName)) {
       return;
     }
     ((ObjectEntry) objects.get(objName)).setBlockedState(state);
   }
-  private int getBlockedState(String objName) {
+  /** Получить статус блокировки объекта.
+   * @param objName имя объекта
+   * @return значения уровня блокировки
+   */
+  private int getBlockedState(final String objName) {
     if (!objects.containsKey(objName)) {
       return 0;
     }
     return ((ObjectEntry) objects.get(objName)).getBlockedState();
   }
-  /** Сброс записанных сообщений при снятии блокировки с объекта 
+  /** Сброс записанных сообщений при снятии блокировки с объекта.
    * @param objectName имя объекта
    */
-  private void flushDefferedMessages(String objectName) {
+  private void flushDefferedMessages(final String objectName) {
     if (!objects.containsKey(objectName)) {
 		return;
     }
@@ -317,14 +334,16 @@ public class StandartDispatcher implements Dispatcher {
     }
     loadPending();
   }
-  /** Конструктор загружающий первоначальный набор объектов
+  /** Конструктор загружающий первоначальный набор объектов.
    * на основе списка
    * @param objs список объектов для загрузки
    */
-  public StandartDispatcher(List objs) {
+  public StandartDispatcher(final List objs) {
     log.info(toString() + " starting up...");
-    StandartDispatcherHandler stdh = new StandartDispatcherHandler(new Integer(0));
-    ObjectEntry oe = new ObjectEntry(stdh.getClass().getName(), 0, stdh.getDepends(), stdh.getProviding());
+    StandartDispatcherHandler stdh
+      = new StandartDispatcherHandler(new Integer(0));
+    ObjectEntry oe
+      = new ObjectEntry(stdh.getClass().getName(), 0, stdh.getDepends(), stdh.getProviding());
     oe.object = stdh;
     objects.put("stddispatcher", oe);
     loadPending();
@@ -348,7 +367,8 @@ public class StandartDispatcher implements Dispatcher {
 	}
 	if (m.group(1).startsWith("r:")) {
 	  if (m.group(3) != null) {
-	    mult = new Integer(m.group(3).substring(0, m.group(3).length() - 1)).intValue();
+	    int len = m.group(3).length() - 1;
+	    mult = new Integer(m.group(3).substring(0, len)).intValue();
 	  }
 	  if (m.group(5) != null) {
                             param = m.group(5).substring(1);
@@ -359,15 +379,16 @@ public class StandartDispatcher implements Dispatcher {
       }
     }
   }
-  /** Выводит сообщение об ошибке в случае некорректных параметров */
+  /** Выводит сообщение об ошибке в случае некорректных параметров. */
   public static void usage() {
-    log.severe("Usage: java com.novel.odisp.StandartDispatcher <file-with-list-of-ODobjects-to-load>");
+    log.severe("Usage: java com.novel.odisp.StandartDispatcher <config>");
     System.exit(0);
   }
   /** Точка входа в StandartDispatcher.
-   * @param args по 0 должно содержать имя файла с перечислением классов, которые необходимо загрузить
+   * @param args по 0 должно содержать имя файла с перечислением классов,
+   * которые необходимо загрузить
    */
-  public static void main(String args[]) {
+  public static void main(final String[] args) {
     log.setLevel(java.util.logging.Level.ALL);
     if (args.length != 1) {
 		usage();
@@ -390,79 +411,81 @@ public class StandartDispatcher implements Dispatcher {
     }
   }
 
-  /** Запись об объекте в таблице объектов */
+  /** Запись об объекте в таблице объектов. */
   private class ObjectEntry {
-    /** Определяет загружен ли объект*/
+    /** Определяет загружен ли объект. */
     private boolean loaded;
-    /** Проверка загрузки объекта 
+    /** Проверка загрузки объекта.
      * @return состояние загрузки
      */
-    public boolean isLoaded() {
+    public final boolean isLoaded() {
       return loaded;
     }
-    /** Установка признака загрузки 
+    /** Установка признака загрузки.
      * @param newLoaded новое значение состояния
      */
-    public void setLoaded(boolean newLoaded) {
+    public final void setLoaded(final boolean newLoaded) {
       loaded = newLoaded;
     }
-    
-    /** Имя класса для объекта*/
+
+    /** Имя класса для объекта. */
     private String className;
-    /** Вернуть имя класса для объекта
+    /** Вернуть имя класса для объекта.
      * @return имя класса
      */
-    public String getClassName() {
+    public final String getClassName() {
       return className;
     }
-    /** Установить имя класса для объекта
+    /** Установить имя класса для объекта.
      * @param newClassName новое имя класса
      */
-    public void setClassName(String newClassName) {
+    public final void setClassName(final String newClassName) {
       className = newClassName;
     }
-    /** Состояние блокировки */
+    /** Состояние блокировки. */
     private int blockedState;
-    /** Вернуть состояние блокировки объекта
+    /** Вернуть состояние блокировки объекта.
      * @return состояние блокировки
      */
-    public int getBlockedState() {
+    public final int getBlockedState() {
       return blockedState;
     }
-
-    public boolean isBlockedState() {
+    /** Проверка заблокирован объект или нет.
+     * @return статус блокировки
+     */
+    public final boolean isBlockedState() {
       return (blockedState > 0);
     }
-    /** Установить состояние блокировки 
+    /** Установить состояние блокировки.
      * @param newBlockedState новое состояние блокировки
      */
-    public void setBlockedState(int newBlockedState) {
+    public final void setBlockedState(final int newBlockedState) {
       if (newBlockedState < 0) {
 	blockedState = 0;
       } else {
 	blockedState = newBlockedState;
       }
     }
-    /** Ссылка на объект */
+    /** Ссылка на объект. */
     private ODObject object;
-    /** Вернуть ссылку на объект 
+    /** Вернуть ссылку на объект.
      * @return ссылка на объект
      */
-    public ODObject getObject() {
+    public final ODObject getObject() {
       return object;
     }
-    /** Список зависимостей*/
+    /** Список зависимостей. */
     private String[] depends;
-    /** Вернуть список зависимостей 
+    /** Вернуть список зависимостей.
      * @return список зависимостей
     */
-    public String[] getDepends() {
+    public final String[] getDepends() {
       return depends;
     }
-    /** Убрать определенную зависимость из списка
+    /** Убрать определенную зависимость из списка.
      * @param toRemove зависимость
      */
-    public void removeDepend(String toRemove) {
+    public final void removeDepend(final String toRemove) {
       String[] newDeps = new String[depends.length - 1];
       for (int i = 0; i < depends.length; i++) {
 	if (!depends[i].equals(toRemove)) {
@@ -471,93 +494,96 @@ public class StandartDispatcher implements Dispatcher {
       }
       depends = newDeps;
     }
-    /** Список сервисов */
+    /** Список сервисов. */
     private String[] provides;
-    /** Вернуть список сервисов 
+    /** Вернуть список сервисов.
      * @return список сервисов
      */
-    public String[] getProvides() {
+    public final String[] getProvides() {
       return provides;
     }
-    /** Конструктор класса 
+    /** Конструктор класса.
      * @param cn имя класса
      * @param bs изначальное состояние блокировки
-     * @param depends список зависимостей
-     * @param provides список сервисов
+     * @param newDepends список зависимостей
+     * @param newProvides список сервисов
      */
-    public ObjectEntry(String cn, int bs, String[] depends, String[] provides) {
+    public ObjectEntry(final String cn,
+		       final int bs,
+		       final String[] newDepends,
+		       final String[] newProvides) {
       className = cn;
       blockedState = bs;
-      this.depends = depends;
+      depends = newDepends;
       for (int i = 0; i < depends.length; i++) {
 	log.fine("object " + cn + " depends on " + depends[i]);
       }
-      this.provides = provides;
+      provides = newProvides;
     }
   }
-  /** Запись о ресурсе в таблице ресурсов */
+  /** Запись о ресурсе в таблице ресурсов. */
   private class ResourceEntry {
-    /** Состояние загрузки */
+    /** Состояние загрузки. */
     private boolean loaded;
-    /** Вернуть состояние загрузки
+    /** Вернуть состояние загрузки.
      * @return состояние загрузки
      */
-    public boolean isLoaded() {
+    public final boolean isLoaded() {
       return loaded;
     }
-    /** Установить состояние загрузки
+    /** Установить состояние загрузки.
      * @param newLoaded новое значение состояния
      */
-    public void setLoaded(boolean newLoaded) {
+    public final void setLoaded(final boolean newLoaded) {
       this.loaded = newLoaded;
     }
-    
-    /** Имя класса ресурса */
+
+    /** Имя класса ресурса. */
     private String className;
-    /** Ссылка на ресурс */
+    /** Ссылка на ресурс. */
     private Resource resource;
-    /** Вернуть ссылку на ресурс
+    /** Вернуть ссылку на ресурс.
      * @return ссылка на ресурс
      */
-    public Resource getResource() {
+    public final Resource getResource() {
       return resource;
     }
-    /** Установить ссылку на ресурс 
+    /** Установить ссылку на ресурс.
      * @param newResource новое значение ссылки
      */
-    public void setResource(Resource newResource) {
+    public final void setResource(final Resource newResource) {
       resource = newResource;
     }
-    /** Конструктор класса
+    /** Конструктор класса.
      * @param cn имя класса ресурса
      */
-    public ResourceEntry(String cn) {
+    public ResourceEntry(final String cn) {
       loaded = false;
       className = cn;
     }
   }
-  /** Коллекция отложенных сообщений */
+  /** Коллекция отложенных сообщений. */
   private class DefferedMessages {
-    /** Карта очередей сообщений */
+    /** Карта очередей сообщений. */
     private Map queues = new HashMap();
-    /** Добавление сообщения в определенную очередь 
+    /** Добавление сообщения в определенную очередь.
      * @param objName имя объекта (очереди)
      * @param m сообщение для добавления
      */
-    public void addMessage(String objName, Message m) {
+    public final void addMessage(final String objName, final Message m) {
       if (!queues.containsKey(objName)) {
-	List messages = new ArrayList();
-	messages.add(m);
-	queues.put(objName, messages);
+	List lmessages = new ArrayList();
+	lmessages.add(m);
+	queues.put(objName, lmessages);
       } else {
 	((List) queues.get(objName)).add(m);
       }
     }
-    /** Возвращает список сохраненных для объекта сообщений
+    /** Возвращает список сохраненных для объекта сообщений.
      * @param objectName имя объекта (очереди)
      * @return список сообщений из очереди
      */
-    public List flush(String objectName) {
+    public final List flush(final String objectName) {
       if (queues.containsKey(objectName)) {
 	List res = new ArrayList((List) queues.get(objectName));
 	queues.remove(objectName);
@@ -567,43 +593,52 @@ public class StandartDispatcher implements Dispatcher {
       }
     }
   }
-  /** Обработчик сообщений диспетчера */
+  /** Обработчик сообщений диспетчера. */
   private class StandartDispatcherHandler extends CallbackODObject {
-    Map resourceRequests = new HashMap();
-    /** Имя объекта */
+    /** Карта запросов к ресурсам. */
+    private Map resourceRequests = new HashMap();
+    /** Имя объекта. */
     private String name = "stddispatcher";
-    /** Вернуть список сервисов
+    /** Вернуть список сервисов.
      * @return список сервисов
      */
-    public String[] getProviding() {
-      String res[] = new String[1];
-      res[0] = "stddispatcher";
+    public final String[] getProviding() {
+      String[] res = {
+	"stddispatcher"
+      };
       return res;
     }
-    /** Зарегистрировать обработчики сообщений */
-    protected void registerHandlers() {
+    /** Вернуть список зависимостей.
+     * @return список зависимостей
+     */
+    public final String[] getDepends() {
+      String[] res = {};
+      return res;
+    }
+    /** Зарегистрировать обработчики сообщений. */
+    protected final void registerHandlers() {
       addHandler("unload_object", new MessageHandler() {
-	  public void messageReceived(Message msg) {
+	  public final void messageReceived(final Message msg) {
 	    if (msg.getFieldsCount() != 1) {
 	      return;
 	    }
-	    String name = (String) msg.getField(0);
-	    unloadObject(name, 1);
-	    objects.remove(name);
+	    String objname = (String) msg.getField(0);
+	    unloadObject(objname, 1);
+	    objects.remove(objname);
 	  }
 	});
       addHandler("load_object", new MessageHandler() {
-	  public void messageReceived(Message msg) {
+	  public final void messageReceived(final Message msg) {
 	    if (msg.getFieldsCount() != 1) {
 	      return;
 	    }
-	    String name = (String) msg.getField(0);
-	    loadObject(name);
+	    String objname = (String) msg.getField(0);
+	    loadObject(objname);
 	    loadPending();
 	  }
 	});
-      addHandler("od_shutdown", new MessageHandler(){
-	  public void messageReceived(Message msg) {
+      addHandler("od_shutdown", new MessageHandler() {
+	  public final void messageReceived(final Message msg) {
 	    int exitCode = 0;
 	    log.info(toString() + " shutting down...");
 	    if (msg.getFieldsCount() == 1) {
@@ -613,7 +648,7 @@ public class StandartDispatcher implements Dispatcher {
 	  }
 	});
       addHandler("od_acquire", new MessageHandler() {
-	  public void messageReceived(Message msg) {
+	  public final void messageReceived(final Message msg) {
 	    if (msg.getFieldsCount() > 0) {
 	      String className = (String) msg.getField(0);
 	      boolean willBlockState = false;
@@ -624,8 +659,10 @@ public class StandartDispatcher implements Dispatcher {
 	      boolean found = false;
 	      while (it.hasNext()) { // first hit
 		String curClassName = (String) it.next();
-		if (Pattern.matches(className + ":\\d+", curClassName) && ((ResourceEntry) resources.get(curClassName)).loaded) {
-		  ODResourceAcquiredMessage m = new ODResourceAcquiredMessage(msg.getOrigin(), msg.getId());
+		if (Pattern.matches(className + ":\\d+", curClassName)
+		    && ((ResourceEntry) resources.get(curClassName)).loaded) {
+		  ODResourceAcquiredMessage m
+		    = new ODResourceAcquiredMessage(msg.getOrigin(), msg.getId());
 		  m.setResourceName(curClassName);
 		  m.setResource(((ResourceEntry) resources.get(curClassName)).resource);
 		  sendMessage(m);
@@ -639,29 +676,36 @@ public class StandartDispatcher implements Dispatcher {
 	      }
 	      // allow concurent request for the resource
 	      if (!found) {
-		/* we maintin list of ODISP objects that require some specific resource
-		 * each resource has corresponding queue of objects that wanted to acquire it
+		/* we maintin list of ODISP objects that require some
+		 * specific resource each resource has corresponding
+		 * queue of objects that wanted to acquire it
 		 */
 		if (!resourceRequests.containsKey(className)) {
 		  resourceRequests.put(className, new ArrayList());
 		}
-		((List) resourceRequests.get(className)).add(msg.getOrigin() + (willBlockState ? "!" : ""));
+		String wb = "";
+		if (willBlockState) {
+		  wb = "!";
+		}
+		((List) resourceRequests.get(className)).add(msg.getOrigin() + wb);
 	      }
 	    }
 	  }
 	});
       addHandler("od_release", new MessageHandler() {
-	  public void messageReceived(Message msg) {
+	  public final void messageReceived(final Message msg) {
 	    if (msg.getFieldsCount() != 2) {
 	      return;
 	    }
 	    String className = (String) msg.getField(0);
 	    Resource res = (Resource) msg.getField(1);
-	    // now we should check if there are any objects sitting in resourceRequest queues
+	    // now we should check if there are any objects
+	    // sitting in resourceRequest queues
 	    if (resourceRequests.containsKey(className)) {
 	      List resQueue = ((List) resourceRequests.get(className));
-	      /* construct od_acquire message and send it to the first object that is on the queue
-	       * object's name may contain ! modifier if acquiring should made blocking
+	      /* construct od_acquire message and send it to the first
+	       * object that is on the queue object's name may
+	       * contain ! modifier if acquiring should made blocking
 	       */
 	      String odObjectName = (String) resQueue.get(0);
 	      if (odObjectName.endsWith("!")) {
@@ -676,25 +720,25 @@ public class StandartDispatcher implements Dispatcher {
 	      resources.put(className, new ResourceEntry(className.substring(0, className.length() - className.indexOf(":"))));
 	    }
 	    // decrease blocking state counter in case acquire was blocking
-	    setBlockedState(msg.getOrigin(), getBlockedState(msg.getOrigin()) - 1); 
+	    setBlockedState(msg.getOrigin(), getBlockedState(msg.getOrigin()) - 1);
 	  }
 	});
       addHandler("od_list_objects", new MessageHandler() {
-	  public void messageReceived(Message msg) {
+	  public final void messageReceived(final Message msg) {
 	    Message m = getNewMessage("object_list", msg.getOrigin(), "stddispatcher", msg.getId());
 	    m.addField(new ArrayList(objects.keySet()));
 	    sendMessage(m);
 	  }
 	});
       addHandler("od_list_resources", new MessageHandler() {
-	  public void messageReceived(Message msg) {
+	  public final void messageReceived(final Message msg) {
 	    Message m = getNewMessage("resource_list", msg.getOrigin(), "stddispatcher", msg.getId());
 	    m.addField(new ArrayList(resources.keySet()));
 	    sendMessage(m);
 	  }
 	});
       addHandler("od_remove_dep", new MessageHandler() {
-	  public void messageReceived(Message msg) {
+	  public final void messageReceived(final Message msg) {
 	    if (msg.getFieldsCount() != 1) {
 	      return;
 	    }
@@ -703,17 +747,17 @@ public class StandartDispatcher implements Dispatcher {
 	  }
 	});
     }
-    /** Точка выхода из объекта 
+    /** Точка выхода из объекта.
      * @param type признак выхода
      * @return код возврата
      */
-    public int cleanUp(int type) {
+    public final int cleanUp(final int type) {
       return 0;
     }
-    /** Конструктор объекта 
+    /** Конструктор объекта.
      * @param id порядковый номер объекта
      */
-    public StandartDispatcherHandler(Integer id) {
+    public StandartDispatcherHandler(final Integer id) {
       super("stddispatcher");
     }
   }

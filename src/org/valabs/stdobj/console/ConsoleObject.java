@@ -2,21 +2,18 @@ package com.novel.stdobj.console;
 
 import com.novel.odisp.common.PollingODObject;
 import com.novel.odisp.common.Message;
-import java.io.IOException;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-/** Объект ODISP реализующий консольный интерфейс доступа к менеджеру
+/** Объект ODISP реализующий консольный интерфейс доступа к менеджеру.
 * @author Валентин А. Алексеев
 * @author (C) 2003, НПП "Новел-ИЛ"
-* @version $Id: ConsoleObject.java,v 1.12 2003/12/04 23:24:23 dron Exp $
+* @version $Id: ConsoleObject.java,v 1.13 2004/01/16 14:31:57 valeks Exp $
 */
 public class ConsoleObject extends PollingODObject {
-  /** Поток читающий ввод с консоли */
+  /** Поток читающий ввод с консоли. */
   private ConsoleReader reader;
-  /** Обработчик входящих сообщений 
+  /** Обработчик входящих сообщений.
    * @param msg сообщение
    */
-  public void handleMessage(Message msg) {
+  public final void handleMessage(final Message msg) {
     logger.finest("console object -- processing " + msg);
     if (msg.getAction().equals("od_object_loaded")) {
       reader = new ConsoleReader(getObjectName(), dispatcher, logger);
@@ -37,11 +34,11 @@ public class ConsoleObject extends PollingODObject {
     }
     return;
   }
-  /** Выход 
+  /** Выход.
    * @param type признак выхода
    * @return код возврата
    */
-  public int cleanUp(int type) {
+  public final int cleanUp(final int type) {
     logger.finest("Cleaning up...");
     if (reader != null) {
       reader.exit();
@@ -49,24 +46,24 @@ public class ConsoleObject extends PollingODObject {
     doExit = true;
     return 0;
   }
-  /** Конструктор объекта с заданным порядковым номером
+  /** Конструктор объекта с заданным порядковым номером.
    * @param id номер
    */
-  public ConsoleObject(Integer id) {
+  public ConsoleObject(final Integer id) {
     super("console" + id);
   }
-  /** Вернуть список сервисов
+  /** Вернуть список сервисов.
    * @return список сервисов
    */
-  public String[] getProviding() {
-    String res[] = {"console"};
+  public final String[] getProviding() {
+    String[] res = {"console"};
     return res;
   }
-  /** Вернуть список зависимостей 
+  /** Вернуть список зависимостей.
    * @return список зависимостей
    */
-  public String[] getDepends() {
-    String res[] = {
+  public final String[] getDepends() {
+    String[] res = {
       "stddispatcher"
     };
     return res;

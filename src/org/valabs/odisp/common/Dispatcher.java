@@ -4,24 +4,28 @@ package com.novel.odisp.common;
  * класс, который выступает в качестве ODISP диспетчера.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.5 2003/11/23 00:06:36 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.6 2004/01/16 14:31:57 valeks Exp $
  */
 public interface Dispatcher {
-  /** Посылка одиночного сообщения 
+  /** Посылка одиночного сообщения.
    * @param message сообщение
    */
   void sendMessage(Message message);
-  /** Посылка списка сообщений
+  /** Посылка списка сообщений.
    * @param messageList список сообщений
    */
   void sendMessages(Message[] messageList);
-  /** Генерация нового сообщения с заданными параметрами
+  /** Генерация нового сообщения с заданными параметрами.
    * @param action действие
    * @param destination получатель
    * @param origin отправитель
    * @param inReplyTo сообщение на которое производится ответ
    * @return сообщение
    */
-  Message getNewMessage(String action, String destination, String origin, int inReplyTo);
+  Message getNewMessage(String action, String destination,
+			String origin, int inReplyTo);
+  /** Создать пустое сообщение.
+   * @return ссылка на сообщение
+   */
   Message getNewMessage();
 }

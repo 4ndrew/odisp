@@ -9,94 +9,94 @@ import java.util.logging.Logger;
 * посылаемых диспетчером ODISP.
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: ODObject.java,v 1.11 2003/11/15 19:14:45 valeks Exp $
+* @version $Id: ODObject.java,v 1.12 2004/01/16 14:31:57 valeks Exp $
 */
 public abstract class ODObject extends Thread {
-  /** Журнал */
+  /** Журнал. */
   protected Logger logger;
-  /** Диспетчер работающий с этим объектом */
+  /** Диспетчер работающий с этим объектом. */
   protected Dispatcher dispatcher;
-  /** Список сообщений к обработке */
+  /** Список сообщений к обработке. */
   protected List messages;
-  /** Признак окончания работы основного цикла обработки сообщений */
+  /** Признак окончания работы основного цикла обработки сообщений. */
   protected boolean doExit;
-  /** Regex маска принимаемых сообщений. По умолчанию инициализируется именем объекта. */
+  /** Regex маска принимаемых сообщений.
+   * По умолчанию инициализируется именем объекта. */
   protected String match;
-  /** Внутреннее имя объекта в ядре ODISP */
+  /** Внутреннее имя объекта в ядре ODISP. */
   public String name;
-  /** Изменить маску принимаемых сообщений
-   * @param match новая маска
+  /** Изменить маску принимаемых сообщений.
+   * @param newMatch новая маска
    */
-  protected void setMatch(String match) {
-    this.match = match;
+  protected final void setMatch(final String newMatch) {
+    match = newMatch;
   }
-  /** Конструктор инициализирующий почтовый ящик
-   * @param name имя объекта
+  /** Конструктор инициализирующий почтовый ящик.
+   * @param newName имя объекта
    */
-  public ODObject(String name) {
-    super(name);
+  public ODObject(String newName) {
+    super(newName);
     messages = new ArrayList();
-    this.name = name;
-    this.match = name;
-    logger = Logger.getLogger(name);
+    name = newName;
+    match = newName;
+    logger = Logger.getLogger(newName);
   }
-  /** Доступ к диспетчеру 
+  /** Доступ к диспетчеру.
    * @return ссылка на диспетчер
    */
-  protected Dispatcher getDispatcher() {
+  protected final Dispatcher getDispatcher() {
     return dispatcher;
   }
-  /** Возвращает внутреннее ODISP имя объекта 
+  /** Возвращает внутреннее ODISP имя объекта.
    * @return ODISP имя объекта
    */
-  public String getObjectName() {
+  public final String getObjectName() {
     return name;
   }
-  /** Устанавливает диспетчера для текущего объекта 
+  /** Устанавливает диспетчера для текущего объекта.
    * @param d диспетчер работающий с этим объектом
    */
-  public void setDispatcher(Dispatcher d) {
+  public final void setDispatcher(final Dispatcher d) {
     this.dispatcher = d;
   }
-  /** Интерфейс добавления сообщения в ящик 
+  /** Интерфейс добавления сообщения в ящик.
    * @param msg сообщение для добавления
    */
-  public abstract void addMessage(Message msg);
-  /** Добавление списка сообщений в ящик 
-   * @param messages список сообщений для добавления
+  public abstract void addMessage(final Message msg);
+
+  /** Добавление списка сообщений в ящик.
+   * @param newMessages список сообщений для добавления
    */
-  public void addMessages(List messages) {
-    Iterator it = messages.iterator();
+  public final void addMessages(final List newMessages) {
+    Iterator it = newMessages.iterator();
     while (it.hasNext()) {
 		addMessage((Message) it.next());
     }
-  }	
+  }
   /** Метод который вызывает для обработки пришедшего сообщения.
    * Подклассы обязаны реализовать этот метод для корректной работы.
    * @param msg сообщение для обработки
    */
-  protected abstract void handleMessage(Message msg);
-  /** Метод вызываемый для очистки данных класса 
+  protected abstract void handleMessage(final Message msg);
+
+  /** Метод вызываемый для очистки данных класса.
    * @param type условие выхода
    * @return код возврата
    */
-  public abstract int cleanUp(int type);
-  /** Вывод журнальных сообщений на экран
+  public abstract int cleanUp(final int type);
+  /** Вывод журнальных сообщений на экран.
    * @param place участок кода к которому относится сообщение
    * @param msg сообщение
    * @deprecated необходимо использовать logger
    */
-  protected void log(String place, String msg) {
+  protected final void log(final String place, final String msg) {
     logger.fine(getObjectName() + "." + place + ": " + msg);
   }
-  /** Выдача списка зависимостей
+  /** Выдача списка зависимостей.
    * @return массив зависимостей
    */
-  public String[] getDepends() {
-    String res[] = {};
-    return res;
-  }
-  /** Список сервисов предоставляемых объектом
+  public abstract String[] getDepends();
+  /** Список сервисов предоставляемых объектом.
    * @return список сервисов
    */
   public abstract String[] getProviding();

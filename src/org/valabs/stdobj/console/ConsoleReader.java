@@ -1,6 +1,5 @@
 package com.novel.stdobj.console;
 
-import java.lang.Thread;
 import java.util.logging.Logger;
 import com.novel.odisp.common.Dispatcher;
 import com.novel.odisp.common.Message;
@@ -9,29 +8,32 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 
-/** Класс читающий данные с консоли
+/** Класс читающий данные с консоли.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ConsoleReader.java,v 1.4 2003/11/22 14:01:11 valeks Exp $
+ * @version $Id: ConsoleReader.java,v 1.5 2004/01/16 14:31:57 valeks Exp $
  */
 
 public class ConsoleReader extends Thread {
-  /** Признак окончания работы */
+  /** Признак окончания работы. */
   private boolean doExit;
-  /** Имя ODISP объекта*/
+  /** Имя ODISP объекта. */
   private String objectName;
-  /** Журнал */
+  /** Журнал. */
   private Logger logger;
-  /** Ссылка на диспетчера */
+  /** Ссылка на диспетчера. */
   private Dispatcher dispatcher;
-  /** Поток ввода */
-  private BufferedReader inp = new BufferedReader(new InputStreamReader(System.in));
-  /** Конструктор объекта слушающего ввод с консоли
+  /** Поток ввода. */
+  private BufferedReader inp
+    = new BufferedReader(new InputStreamReader(System.in));
+  /** Конструктор объекта слушающего ввод с консоли.
    * @param oName имя ODISP-объекта
    * @param disp диспетчер ODISP
    * @param log ссылка на журнал
    */
-  public ConsoleReader(String oName, Dispatcher disp, Logger log) {
+  public ConsoleReader(final String oName,
+		       final Dispatcher disp,
+		       final Logger log) {
     super("ConsoleReader");
     dispatcher = disp;
     logger = log;
@@ -40,13 +42,14 @@ public class ConsoleReader extends Thread {
 
   /**
    */
-  public void run() {
+  public final void run() {
     try {
       System.out.print("action> ");
       String action, tmp;
       while ((action = inp.readLine()) != null) {
 	System.out.print("destination> ");
-	Message m = dispatcher.getNewMessage(action, inp.readLine(), objectName, 0);
+	Message m
+	  = dispatcher.getNewMessage(action, inp.readLine(), objectName, 0);
 	System.out.print("params? ");
 	while (!inp.readLine().equals("")) {
 	  System.out.print("int|str? ");
@@ -70,11 +73,13 @@ public class ConsoleReader extends Thread {
     }
     return;
   }
-  public synchronized void exit() {
+
+  /** Завершение работы. */
+  public final synchronized void exit() {
     //    logger.finest("ConsoleReader: normal shutdown.");
     try {
       inp.close();
-    } catch (IOException e) {/*NOP*/}
+    } catch (IOException e) { /*NOP*/ }
     doExit = true;
   }
-}// ConsoleReader
+} // ConsoleReader

@@ -1,26 +1,33 @@
 package com.novel.stdobj.simpleconfig;
 
 import com.novel.odisp.common.Resource;
-import java.io.*;
-import java.util.*;
-import java.util.regex.*;
-import java.util.logging.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+import java.util.logging.Logger;
 
-/** Ресурс ODISP реализующий доступ к конфигурационным файлам формата [имя]=[значение]
+/** Ресурс ODISP реализующий доступ к конфигурационным файлам формата [имя]=[значение].
 * @author Валентин А. Алексеев
 * @author (C) 2003, НПП "Новел-ИЛ"
-* @version $Id: SimpleConfig.java,v 1.8 2003/11/27 02:00:01 valeks Exp $
+* @version $Id: SimpleConfig.java,v 1.9 2004/01/16 14:31:57 valeks Exp $
 */
 public class SimpleConfig implements Resource {
-  String cfgName;
-  Map contents = new HashMap();
+  /** Имя конфигурационного файла. */
+  private String cfgName;
+  /** Содержимое конфигурации. */
+  private Map contents = new HashMap();
+  /** Журнал. */
   private static Logger logger = Logger.getLogger("simpleconfig");
-  /** Чтение конфигурационного файла в память
-   * @param cfgName имя файла конфигурации
+  /** Чтение конфигурационного файла в память.
+   * @param newCfgName имя файла конфигурации
    */
-  public void readConfig(String cfgName) {
+  public final void readConfig(final String newCfgName) {
     try {
-      BufferedReader in = new BufferedReader(new FileReader(cfgName));
+      BufferedReader in = new BufferedReader(new FileReader(newCfgName));
       String s;
       Pattern p = Pattern.compile("^(\\w+)=(.*)");
       while ((s = in.readLine()) != null) {
@@ -32,37 +39,49 @@ public class SimpleConfig implements Resource {
 	if (m.groupCount() == 2) {
 	  contents.put(m.group(1), m.group(2));
 	} else {
-	  logger.finer("[w] syntax error in line '" + s + "'. line ignored.");
+	  logger.finer("syntax error in line '" + s + "'. line ignored.");
 	}
       }
       in.close();
-    } catch (IOException e) { /*NOP*/ }
+    } catch (IOException e) {
+      logger.warning("unable to read config file " + newCfgName);
+    }
   }
-  /** Возвращает значение переменной из конфигурационного файла 
+  /** Возвращает значение переменной из конфигурационного файла.
    * @param name имя параметра
-   * @return значение параметра или '-undef-' в случае если параметр не определен
+   * @return значение параметра или '-undef-' если параметр не определен
    */
-  public String getValue(String name) {
+  public final String getValue(final String name) {
     if (!contents.containsKey(name)) {
       return "-undef-";
     }
     return (String) contents.get(name);
   }
-  /** Возвращает значение переменной из конфигурационного файла с учетом значения по умолчанию
+  /** Возвращает значение переменной из конфигурационного.
+   * файла с учетом значения по умолчанию.
    * @param name имя параметра
    * @param defaultValue значение по умолчанию
    * @return значение параметра или defaultValue если параметр не определен
    */
-  public String getValue(String name, String defaultValue) {
+  public final String getValue(final String name,
+			       final String defaultValue) {
     if (getValue(name).equals("-undef-")) {
       return defaultValue;
     }
     return getValue(name);
   }
-  public int cleanUp(int type) {
+  /** Выход.
+   * @param type тип выхода
+   * @return код выхода
+   */
+  public final int cleanUp(final int type) {
     return 0;
   }
-  public int getMaxReferenceCount() {
+
+  /** Вернуть максимальное кол-во экземпляров.
+   * @return максимальное число экземпляров
+   */
+  public final int getMaxReferenceCount() {
     return 0;
   }
 }

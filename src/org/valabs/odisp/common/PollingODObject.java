@@ -9,19 +9,19 @@ import java.util.regex.Pattern;
 * посылаемых диспетчером ODISP.
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: PollingODObject.java,v 1.10 2003/11/27 00:26:51 valeks Exp $
+* @version $Id: PollingODObject.java,v 1.11 2004/01/16 14:31:57 valeks Exp $
 */
 public abstract class PollingODObject extends ODObject {
-  /** Конструктор задающий ODISP имя объекта 
+  /** Конструктор задающий ODISP имя объекта.
    * @param name имя объекта
    */
-  public PollingODObject(String name) {
+  public PollingODObject(final String name) {
     super(name);
   }
-  /** Цикл обработки приходящих сообщений */
+  /** Цикл обработки приходящих сообщений. */
   public final void run() {
     logger.finest("message processing loop started");
-    while (doExit != true) {
+    while (!doExit) {
       List localMessages;
       synchronized (this) {
 	try {
@@ -41,22 +41,23 @@ public abstract class PollingODObject extends ODObject {
       }
     }
   }
-  /** Интерфейс добавления сообщения в ящик 
+  /** Интерфейс добавления сообщения в ящик.
    * @param msg сообщение
    */
-  public final void addMessage(Message msg) {
-    if (!Pattern.matches(match, msg.getDestination()) && !Pattern.matches(msg.getDestination(), getObjectName())) {
+  public final void addMessage(final Message msg) {
+    if (!Pattern.matches(match, msg.getDestination())
+	&& !Pattern.matches(msg.getDestination(), getObjectName())) {
 		return;
     }
     synchronized (this) {
       messages.add(msg);
     }
   }
-  /** Метод вызываемый для очистки данных класса 
+  /** Метод вызываемый для очистки данных класса.
    * @param type признак выхода
    * @return код возврата
    */
-  public int cleanUp(int type) {
+  public int cleanUp(final int type) {
     doExit = true;
     return 0;
   }

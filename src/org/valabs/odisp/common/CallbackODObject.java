@@ -8,37 +8,39 @@ import java.util.ListIterator;
 import java.util.regex.Pattern;
 
 /** Базовый класс реализующий почтовый ящик для сообщений
-* посылаемых диспетчером ODISP и вызывающий обработчик сообщения по мере прихода.
+* посылаемых диспетчером ODISP и вызывающий обработчик сообщения
+* по мере прихода.
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: CallbackODObject.java,v 1.9 2003/11/27 00:26:51 valeks Exp $
+* @version $Id: CallbackODObject.java,v 1.10 2004/01/16 14:31:57 valeks Exp $
 */
 public abstract class CallbackODObject extends ODObject {
-  /** Карта обработчиков сообщений */
-  private Map handlers; 
-  /** Признак вызова метода регистрации обработчиков*/
+  /** Карта обработчиков сообщений. */
+  private Map handlers;
+  /** Признак вызова метода регистрации обработчиков. */
   private boolean handlersRegistred = false;
-  /** Список сообщений пришедших до регистрации обработчиков */
+  /** Список сообщений пришедших до регистрации обработчиков. */
   private List unhandledMessages = new LinkedList();
-  /** Конструктор объекта с заданным именем
+  /** Конструктор объекта с заданным именем.
    * @param name имя объекта
    */
-  public CallbackODObject(String name) {
+  public CallbackODObject(final String name) {
     super(name);
     handlers = new HashMap();
   }
-  /** Добавление нового обработчика событий
+  /** Добавление нового обработчика событий.
       @param message сообщение обрабатываемое обработчиком
-      @param handler класс-обработчик сообщения	
+      @param handler класс-обработчик сообщения
   */
-  protected void addHandler(String message, MessageHandler handler) {
+  protected final void addHandler(final String message,
+				  final MessageHandler handler) {
     if (handlers.containsKey(message)) {
       return;
     }
     logger.finest("registered handler for " + message);
     handlers.put(message, handler);
   }
-  /** Цикл обработки приходящих сообщений */
+  /** Цикл обработки приходящих сообщений. */
   public final void run() {
     registerHandlers();
     handlersRegistred = true;
@@ -49,19 +51,20 @@ public abstract class CallbackODObject extends ODObject {
     unhandledMessages.clear();
     // we do not need message loop.
   }
-  /** Интерфейс добавления сообщения в ящик 
+  /** Интерфейс добавления сообщения в ящик.
    * @param msg сообщение
    */
-  public final void addMessage(Message msg) {
-    if (!Pattern.matches(match, msg.getDestination()) && !Pattern.matches(msg.getDestination(), getObjectName())) {
+  public final void addMessage(final Message msg) {
+    if (!Pattern.matches(match, msg.getDestination())
+	&& !Pattern.matches(msg.getDestination(), getObjectName())) {
       return;
     }
     handleMessage(msg);
   }
-  /** Обработка сообщения
+  /** Обработка сообщения.
    * @param msg сообщение для обработки
    */
-  protected final void handleMessage(Message msg) {
+  protected final void handleMessage(final Message msg) {
     if (!handlersRegistred) {
       unhandledMessages.add(msg);
     }
@@ -71,13 +74,14 @@ public abstract class CallbackODObject extends ODObject {
       logger.finer("there is no handler for message " + msg.getAction());
     }
   }
-  /** Метод вызываемый для очистки данных класса 
+  /** Метод вызываемый для очистки данных класса.
    * @param type признак выхода
    * @return код возврата
   */
-  public int cleanUp(int type) {
+  public int cleanUp(final int type) {
     return 0;
   }
-  /** Наследующие классы должны реализовывать этот метод для регистрации обработчиков  */
+  /** Наследующие классы должны реализовывать этот метод
+   * для регистрации обработчиков. */
   protected abstract void registerHandlers();
 }

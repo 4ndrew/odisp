@@ -6,54 +6,54 @@ import java.util.logging.Logger;
 /** Прокси-ресурс для доступа к произвольным внешним объектам.
 * @author Валентин А. Алексеев
 * @author (C) 2003, НПП "Новел-ИЛ"
-* @version $Id: ProxyResource.java,v 1.3 2003/11/15 19:32:10 valeks Exp $
+* @version $Id: ProxyResource.java,v 1.4 2004/01/16 14:31:57 valeks Exp $
 */
 public class ProxyResource implements Resource {
-  /** Собственно ресурс */
+  /** Собственно ресурс. */
   private Object resource;
-  /** Получить доступ к ресурсу 
+  /** Получить доступ к ресурсу.
    * @return ссылка на ресурс
    */
-  public Object getResource() {
+  public final Object getResource() {
     return resource;
   }
-  /** Имя класса */
+  /** Имя класса. */
   private String className;
-  /** Признак подгрузки ресурса */
+  /** Признак подгрузки ресурса. */
   private boolean isAlive;
-  /** Журнал */
+  /** Журнал. */
   private static Logger logger = Logger.getLogger("proxyresource");
-  /** Максимальное количество ссылок одновременно поддерживаемых объектом 
+  /** Максимальное количество ссылок одновременно поддерживаемых объектом.
    * @return список ссылок
    */
-  public int getMaxReferenceCount() {
+  public final int getMaxReferenceCount() {
     return 0;
   }
-  /** Вызывается при необходимости очистить ресурсы 
+  /** Вызывается при необходимости очистить ресурсы.
    * @param type признак выхода
    * @return код возврата
    */
-  public int cleanUp(int type) {
+  public final int cleanUp(final int type) {
     return 0;
   }
-  /** Установить новый класс ресурса
-   * @param className имя класса
+  /** Установить новый класс ресурса.
+   * @param cName имя класса
    */
-  public void setResource(String className) {
-    this.className = className;
+  public final void setResource(final String cName) {
+    className = cName;
   }
-  /** Проверить доступность ресурса 
+  /** Проверить доступность ресурса.
    * @return признак готовности ресурса
    */
-  public boolean isAlive() {
+  public final boolean isAlive() {
     return isAlive;
   }
-  /** Создать новый экземпляр класса ресурса
+  /** Создать новый экземпляр класса ресурса.
    * @param declParams список типов формальных параметров конструктора
    * @param params значения формальных параметров
    * @return ссылка на объект
    */
-  public Object newInstance(Class[] declParams, Object[] params) {
+  public final Object newInstance(final Class[] declParams, final Object[] params) {
     if (isAlive) {
       return resource;
     }
