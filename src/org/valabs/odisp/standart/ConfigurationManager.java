@@ -18,11 +18,12 @@ import org.valeks.xlang.parser.XLangException;
 
 /** Реализация менеджера конфигурации.
  * @author (C) 2004 <a href="valeks@valabs.spb.ru">Валентин А. Алексеев</a>
- * @version $Id: ConfigurationManager.java,v 1.1 2004/11/28 10:51:56 valeks Exp $
+ * @version $Id: ConfigurationManager.java,v 1.2 2004/11/28 18:47:56 valeks Exp $
  */
-public class ConfigurationManager implements org.valabs.odisp.common.ConfigurationManager {
+class ConfigurationManager implements org.valabs.odisp.common.ConfigurationManager {
   List objects = new ArrayList();
   List resources = new ArrayList();
+  MultiMap params = new MultiMap();
   Logger log = Logger.getLogger(ConfigurationManager.class.getName());
   
   public ConfigurationManager() {
@@ -54,16 +55,14 @@ public class ConfigurationManager implements org.valabs.odisp.common.Configurati
    * @see org.valabs.odisp.common.ConfigurationManager#supportParameterFetching()
    */
   public boolean supportParameterFetching() {
-    // TODO Auto-generated method stub
-    return false;
+    return true;
   }
 
   /* (non-Javadoc)
    * @see org.valabs.odisp.common.ConfigurationManager#getParameter(java.lang.String, java.lang.String)
    */
   public String getParameter(String domain, String paramName) {
-    // TODO Auto-generated method stub
-    return null;
+    return params.get(domain, paramName);
   }
 
   /* (non-Javadoc)
@@ -83,6 +82,7 @@ public class ConfigurationManager implements org.valabs.odisp.common.Configurati
   
   private void loadConfiguration(Tag docTag) {
     Iterator it = docTag.getChild().iterator();
+    params.putAll("root", getParamsForTag(docTag));
     while (it.hasNext()) {
       Tag curt = (Tag) it.next();
       if (curt.getName().equalsIgnoreCase("object")) {
@@ -91,16 +91,18 @@ public class ConfigurationManager implements org.valabs.odisp.common.Configurati
           log.warning("object tag has no name attribute. ignoring.");
           continue;
         }
-        Map params = getParamsForTag(curt);
-        objects.add(new org.valabs.odisp.common.ConfigurationManager.ComponentConfiguration(className, params));
+        Map lparams = getParamsForTag(curt);
+        objects.add(new org.valabs.odisp.common.ConfigurationManager.ComponentConfiguration(className, lparams));
+        params.putAllPrefixed("boot", className, lparams);
       } else if (curt.getName().equalsIgnoreCase("resource")) {
         String className = (String) curt.getAttributes().get("name");
         if (className == null) {
           log.warning("resource tag has no name attribute. ignoring.");
           continue;
         }
-        Map params = getParamsForTag(curt);
-        resources.add(new org.valabs.odisp.common.ConfigurationManager.ComponentConfiguration(className, params));
+        Map lparams = getParamsForTag(curt);
+        resources.add(new org.valabs.odisp.common.ConfigurationManager.ComponentConfiguration(className, lparams));
+        params.putAllPrefixed("boot", className, lparams);
       }
     }
     log.fine("Found " + resources.size() + " resources and " + objects.size() + " objects to load.");
@@ -130,4 +132,38 @@ public class ConfigurationManager implements org.valabs.odisp.common.Configurati
     return params;
   }
 
+  class MultiMap {
+    private Map domains = new HashMap();
+    public void put(final String domainName, final String param, final String value) {
+      getDomain(domainName).put(param, value);
+    }
+    
+    public String get(final String domainName, final String paramName) {
+      return (String) getDomain(domainName).get(paramName);
+    }
+    
+    public void putAll(final String domainName, final Map params) {
+      getDomain(domainName).putAll(params);
+    }
+    
+    public void putAllPrefixed(final String domainName, final String prefix, final Map params) {
+      Map domain = getDomain(domainName);
+      Iterator keyIt = params.keySet().iterator();
+      while (keyIt.hasNext()) {
+        String key = (String) keyIt.next();
+        domain.put(prefix + key, params.get(key));
+      }
+    }
+    
+    public Map getDomain(final String domain) {
+      Map result;
+      if (domains.containsKey(domain)) {
+        result = (Map) domains.get(domain);
+      } else {
+        result = new HashMap();
+        domains.put(domain, result);
+      }
+      return result;
+    }
+  }
 }
