@@ -1,8 +1,6 @@
 package org.valabs.odisp.standart;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -10,22 +8,20 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import org.doomdark.uuid.UUID;
+import org.valabs.odisp.common.ConfigurationManager;
 import org.valabs.odisp.common.ExceptionHandler;
 import org.valabs.odisp.common.Message;
 import org.valabs.odisp.common.ObjectManager;
 import org.valabs.odisp.common.ResourceManager;
 import org.valabs.odisp.common.SecurityManager;
 import org.valabs.stdmsg.StandartMessage;
-import org.valeks.xlang.parser.Parser;
-import org.valeks.xlang.parser.Tag;
-import org.valeks.xlang.parser.XLangException;
 
 /** Стандартный диспетчер ODISP.
  * Стандартный диспетчер реализует пересылку сообщений между объектами ядра
  * и управление ресурсными объектами.
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: Dispatcher.java,v 1.55 2004/11/05 14:11:29 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.56 2004/11/28 10:51:56 valeks Exp $
  */
 public class Dispatcher implements org.valabs.odisp.common.Dispatcher, ExceptionHandler {
   /** Журнал. */
@@ -34,6 +30,8 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
   private ResourceManager rman = new org.valabs.odisp.standart.ResourceManager(this);
   /** Менеджер объектов. */
   private ObjectManager oman = new org.valabs.odisp.standart.ObjectManager(this);
+  /** Список менеджеров конфигурации. */
+  private ConfigurationManager cman = new MultiConfigurationManager();
   /** Менеджер безопасности. */
   private SecurityManager sman = null;
   /** Обработчик исключений. */
@@ -107,101 +105,54 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
     return new StandartMessage();
   }
 
-  /** Получить информацию о параметрах для заданного тега.
-   * @param childTag тег
-   */
-  private Map getParamsForTag(final Tag childTag) {
-    Map params = null;
-    if (childTag.getChild().size() != 0) {
-      params = new HashMap();
-      // имеются потомки -- необходимо проитерировать по списку и заполнить список
-      Iterator cit = childTag.getChild().iterator();
-      while (cit.hasNext()) {
-        Tag ctag = (Tag) cit.next();
-        if (ctag.getName().equalsIgnoreCase("param")) {
-          String paramName = (String) ctag.getAttributes().get("name");
-          String paramValue = (String) ctag.getAttributes().get("value");
-          if (paramName != null && paramValue != null) {
-            params.put(paramName, paramValue);
+  public Dispatcher(String[] args) {
+    log.info(toString() + " starting up...");
+    addConfigurationManager(new org.valabs.odisp.standart.ConfigurationManager());
+    getConfigurationManager().setCommandLineArguments(args);
+    if (getConfigurationManager().supportComponentListing()) {
+      List resources = getConfigurationManager().getResourceList();
+      List objects = getConfigurationManager().getObjectList();
+      Iterator it = resources.iterator();
+      while (it.hasNext()) {
+        ConfigurationManager.ComponentConfiguration element = (ConfigurationManager.ComponentConfiguration) it.next();
+        int mult = -1;
+        if (element.getConfiguration() != null && element.getConfiguration().containsKey("mult")) {
+          mult = new Integer((String) (element.getConfiguration().get("mult"))).intValue();
+        }
+        rman.loadResource(element.getClassName(), mult, element.getConfiguration());
+      }
+      it = objects.iterator();
+      while (it.hasNext()) {
+        ConfigurationManager.ComponentConfiguration element = (ConfigurationManager.ComponentConfiguration) it.next();
+        oman.loadObject(element.getClassName(), element.getConfiguration());
+      }
+      oman.loadPending();
+      Thread t = new Thread("alive thread") {
+        public final void run() {
+          try {
+            synchronized (this) {
+              wait();
+            }
+          } catch (InterruptedException e) {
           }
         }
-      }
-    }
-    return params;
-  }
-
-  /** Конструктор загружающий первоначальный набор объектов.
-   * на основе списка
-   * @param docTag 
-   */
-  public Dispatcher(final Tag docTag) {
-    log.info(toString() + " starting up...");
-    Iterator it = docTag.getChild().iterator();
-    Thread t = new Thread("alive thread") {
-	public final void run() {
-	  try {
-	    synchronized (this) {
-	      wait();
-	    }
-	  } catch (InterruptedException e) {
-	  }
-	}
       };
-    Map tmp = new HashMap();
-    tmp.put("runthr", t);
-    oman.loadObject(DispatcherHandler.class.getName(), tmp);
-    oman.loadPending();
-    Map resources = new HashMap();
-    Map objects = new HashMap();
-    while (it.hasNext()) {
-      Tag curt = (Tag) it.next();
-      if (curt.getName().equalsIgnoreCase("object")) {
-        String className = (String) curt.getAttributes().get("name");
-        if (className == null) {
-          log.warning("object tag has no name attribute. ignoring.");
-          continue;
-        }
-        Map params = getParamsForTag(curt);
-        objects.put(className, params);
-      } else if (curt.getName().equalsIgnoreCase("resource")) {
-        String className = (String) curt.getAttributes().get("name");
-        if (className == null) {
-          log.warning("resource tag has no name attribute. ignoring.");
-          continue;
-        }
-        Map params = getParamsForTag(curt);
-        resources.put(className, params);
-      }
-    }
+      Map tmp = new HashMap();
+      tmp.put("runthr", t);
+      oman.loadObject(DispatcherHandler.class.getName(), tmp);
+      oman.loadPending();
 
-    it = resources.keySet().iterator();
-    while (it.hasNext()) {
-      String className = (String) it.next();
-      int mult = -1;
-      if (resources.get(className) != null && ((Map) resources.get(className)).get("mult") != null) {
-        mult = new Integer((String) ((Map) resources.get(className)).get("mult")).intValue();
-        
-      }
-      rman.loadResource(className, mult, (Map) resources.get(className));
-    }
-    try {
-	Thread.sleep(100);
-    } catch (InterruptedException e) {
-	
-    }
-    it = objects.keySet().iterator();
-    while (it.hasNext()) {
-      String className = (String) it.next();
-      oman.loadObject(className, (Map) objects.get(className));
-    }
-    oman.loadPending();
-    t.start();
-    try {
-      t.join();
-    } catch (InterruptedException e) {
+      t.start();
+      try {
+        t.join();
+      } catch (InterruptedException e) {
 
+      }
+    } else {
+      log.severe("Default configuration manager does not support component listing. Bailing out.");
     }
   }
+  
   /** Выводит сообщение об ошибке в случае некорректных параметров. */
   public static void usage() {
     log.severe("Usage: java org.valabs.odisp.standart.Dispatcher <config>");
@@ -216,15 +167,7 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
     if (args.length != 1) {
 		usage();
     } else {
-      try {
-	    InputStream inp = new FileInputStream(args[0]);
-        Parser p = new Parser(inp);
-	    new Dispatcher(p.getRootTag());
-      } catch (FileNotFoundException e) {
-	    log.severe("configuration file " + args[0] + " not found.");
-      } catch (XLangException e) {
-        log.severe("configuration file " + args[0] + " contains unrecoverable errors: " + e);
-      }
+      new Dispatcher(args);
     }
   }
   
@@ -247,29 +190,105 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
    * @see org.valabs.odisp.common.Dispatcher#addExceptionHandler(org.valabs.odisp.common.ExceptionHandler)
    */
   public void addExceptionHandler(ExceptionHandler ex) {
-	ehandler = ex;
+    ehandler = ex;
   }
 
   /* (non-Javadoc)
    * @see org.valabs.odisp.common.Dispatcher#getExceptionHandler()
    */
   public ExceptionHandler getExceptionHandler() {
-  	if(ehandler == null) {
-  		return this;
-  	}
-	return ehandler;
+  		if(ehandler == null) {
+  		  return this;
+  		}
+  		return ehandler;
   }
 
   /* (non-Javadoc)
    * @see org.valabs.odisp.common.ExceptionHandler#signalException(java.lang.Exception)
    */
   public void signalException(Exception e) {
-	System.err.println("========================================================");
-	System.err.println("Exception caught with default exception handler:");
-	System.err.println("Exception: " + e.toString());
-	System.err.println("Stack trace:");
-	e.printStackTrace(System.err);
-	System.err.println("========================================================");
+    System.err.println("========================================================");
+    System.err.println("Exception caught with default exception handler:");
+    System.err.println("Exception: " + e.toString());
+    System.err.println("Stack trace:");
+    e.printStackTrace(System.err);
+    System.err.println("========================================================");
+  }
+  
+  public void addConfigurationManager(ConfigurationManager _cman) {
+    ((MultiConfigurationManager) cman).addConfigurationManager(_cman);
   }
 
+  public ConfigurationManager getConfigurationManager() {
+    return cman;
+  }
+  
+  /** Мультиплексор менеджеров конфигурации. */
+  class MultiConfigurationManager implements ConfigurationManager {
+    List cman = new ArrayList();
+    void addConfigurationManager(ConfigurationManager _cman) {
+      cman.add(_cman);
+    }
+    public List getObjectList() {
+      Iterator it = cman.iterator();
+      while (it.hasNext()) {
+        ConfigurationManager element = (ConfigurationManager) it.next();
+        if (element.supportComponentListing()) {
+          return element.getObjectList();
+        }
+      }
+      return null;
+    }
+    
+    public String getParameter(String domain, String paramName) {
+      Iterator it = cman.iterator();
+      while (it.hasNext()) {
+        ConfigurationManager element = (ConfigurationManager) it.next();
+        String value = element.getParameter(domain, paramName);
+        if (value != null) {
+          return value;
+        }
+      }
+      return null;
+    }
+    public List getResourceList() {
+      Iterator it = cman.iterator();
+      while (it.hasNext()) {
+        ConfigurationManager element = (ConfigurationManager) it.next();
+        if (element.supportComponentListing()) {
+          return element.getResourceList();
+        }
+      }
+      return null;
+    }
+    
+    public void setCommandLineArguments(String[] args) {
+      Iterator it = cman.iterator();
+      while (it.hasNext()) {
+        ConfigurationManager element = (ConfigurationManager) it.next();
+        element.setCommandLineArguments(args);
+      }
+    }
+    
+    public boolean supportComponentListing() {
+      Iterator it = cman.iterator();
+      while (it.hasNext()) {
+        ConfigurationManager element = (ConfigurationManager) it.next();
+        if (element.supportComponentListing()) {
+          return true;
+        }
+      }
+      return false;
+    }
+    public boolean supportParameterFetching() {
+      Iterator it = cman.iterator();
+      while (it.hasNext()) {
+        ConfigurationManager element = (ConfigurationManager) it.next();
+        if (element.supportParameterFetching()) {
+          return true;
+        }
+      }
+      return false;
+    }
+}
 } // StandartDispatcher

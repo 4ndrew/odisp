@@ -1,0 +1,133 @@
+package org.valabs.odisp.standart;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.valeks.xlang.parser.Parser;
+import org.valeks.xlang.parser.Tag;
+import org.valeks.xlang.parser.XLangException;
+
+
+/** Реализация менеджера конфигурации.
+ * @author (C) 2004 <a href="valeks@valabs.spb.ru">Валентин А. Алексеев</a>
+ * @version $Id: ConfigurationManager.java,v 1.1 2004/11/28 10:51:56 valeks Exp $
+ */
+public class ConfigurationManager implements org.valabs.odisp.common.ConfigurationManager {
+  List objects = new ArrayList();
+  List resources = new ArrayList();
+  Logger log = Logger.getLogger(ConfigurationManager.class.getName());
+  
+  public ConfigurationManager() {
+    log.setLevel(Level.ALL);
+  }
+  
+  /* (non-Javadoc)
+   * @see org.valabs.odisp.common.ConfigurationManager#supportComponentListing()
+   */
+  public boolean supportComponentListing() {
+    return true;
+  }
+
+  /* (non-Javadoc)
+   * @see org.valabs.odisp.common.ConfigurationManager#getResourceList()
+   */
+  public List getResourceList() {
+    return resources;
+  }
+
+  /* (non-Javadoc)
+   * @see org.valabs.odisp.common.ConfigurationManager#getObjectList()
+   */
+  public List getObjectList() {
+    return objects;
+  }
+
+  /* (non-Javadoc)
+   * @see org.valabs.odisp.common.ConfigurationManager#supportParameterFetching()
+   */
+  public boolean supportParameterFetching() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  /* (non-Javadoc)
+   * @see org.valabs.odisp.common.ConfigurationManager#getParameter(java.lang.String, java.lang.String)
+   */
+  public String getParameter(String domain, String paramName) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  /* (non-Javadoc)
+   * @see org.valabs.odisp.common.ConfigurationManager#setCommandLineArguments(java.lang.String[])
+   */
+  public void setCommandLineArguments(String[] args) {
+    try {
+	    InputStream inp = new FileInputStream(args[0]);
+        Parser p = new Parser(inp);
+	    loadConfiguration(p.getRootTag());
+      } catch (FileNotFoundException e) {
+	    log.severe("configuration file " + args[0] + " not found.");
+      } catch (XLangException e) {
+        log.severe("configuration file " + args[0] + " contains unrecoverable errors: " + e);
+      }
+  }
+  
+  private void loadConfiguration(Tag docTag) {
+    Iterator it = docTag.getChild().iterator();
+    while (it.hasNext()) {
+      Tag curt = (Tag) it.next();
+      if (curt.getName().equalsIgnoreCase("object")) {
+        String className = (String) curt.getAttributes().get("name");
+        if (className == null) {
+          log.warning("object tag has no name attribute. ignoring.");
+          continue;
+        }
+        Map params = getParamsForTag(curt);
+        objects.add(new org.valabs.odisp.common.ConfigurationManager.ComponentConfiguration(className, params));
+      } else if (curt.getName().equalsIgnoreCase("resource")) {
+        String className = (String) curt.getAttributes().get("name");
+        if (className == null) {
+          log.warning("resource tag has no name attribute. ignoring.");
+          continue;
+        }
+        Map params = getParamsForTag(curt);
+        resources.add(new org.valabs.odisp.common.ConfigurationManager.ComponentConfiguration(className, params));
+      }
+    }
+    log.fine("Found " + resources.size() + " resources and " + objects.size() + " objects to load.");
+  }
+
+
+  /** Получить информацию о параметрах для заданного тега.
+   * @param childTag тег
+   */
+  private Map getParamsForTag(final Tag childTag) {
+    Map params = null;
+    if (childTag.getChild().size() != 0) {
+      params = new HashMap();
+      // имеются потомки -- необходимо проитерировать по списку и заполнить список
+      Iterator cit = childTag.getChild().iterator();
+      while (cit.hasNext()) {
+        Tag ctag = (Tag) cit.next();
+        if (ctag.getName().equalsIgnoreCase("param")) {
+          String paramName = (String) ctag.getAttributes().get("name");
+          String paramValue = (String) ctag.getAttributes().get("value");
+          if (paramName != null && paramValue != null) {
+            params.put(paramName, paramValue);
+          }
+        }
+      }
+    }
+    return params;
+  }
+
+}
