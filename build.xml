@@ -1,4 +1,4 @@
-<!-- $Id: build.xml,v 1.15 2004/09/02 18:42:13 valeks Exp $ mode: -*- --><!-- xsl -*- -->
+<!-- $Id: build.xml,v 1.16 2004/10/22 10:34:39 valeks Exp $ mode: -*- --><!-- xsl -*- -->
 <project name="odisp" default="all" basedir=".">
     <taskdef resource="checkstyletask.properties"
            classpath="/usr/local/share/java/classes/checkstyle.jar"/>
@@ -17,7 +17,7 @@
 	<mkdir dir="release"/>
     </target>
     <!-- Maintance tasks: clean, log, style, doc -->
-    <target name="clean" depends="messages-clean-generated">
+    <target name="clean">
 	<delete dir="build"/>
 	<delete dir="docs/javadoc"/>
         <exec executable="make" dir="docs">
@@ -51,7 +51,7 @@
     </target>
 
     <!-- Javadoc and general documentation targets -->
-    <target name="doc-javadoc" depends="pre-doc, messages-rebuild-from-tpls">
+    <target name="doc-javadoc" depends="pre-doc, messages-generate">
 	<javadoc
             destdir="docs/javadoc"
             encoding="koi8-r"
@@ -85,53 +85,19 @@
     <!-- General building and releasing tags: all, world, release*, nightly -->
     <target name="all" depends="odisp"/>
     <target name="world" depends="clean, all, doc, doc-general"/>
+
+  <target name="messages-generate-build">
+    <ant dir="tools"/>
+  </target>
+  
+  <target name="messages-generate-gen">
+    <java classpath="tools/tplParser.jar" classname="org.valabs.tplParser.TplParser"/>
+  </target>
+
+  <target name="messages-generate" depends="messages-generate-build, messages-generate-gen"/>
     
-    <!-- Generate ODISP message classes off templates. -->
-    <target name="messages-rebuild-from-tpls">
-        <echo>Generating templates list...</echo>
-        <exec executable="find" output=".tpllist">
-	    <arg line="."/>
-	    <arg line="-name *tpl"/>
-	</exec>
-	<echo>Getting ready to process...</echo>
-	<exec executable="sed">
-	    <arg line="-e 's/^\(.*\)\.tpl$/awk -f tools\/genmessage.awk \1.tpl > \1.java/'"/>
-	    <arg line="-i."/>
-	    <arg line=".tpllist"/>
-	</exec>
-	<echo>Expanding templates...</echo>
-	<exec executable="sh">
-	    <arg line=".tpllist"/>
-	</exec>
-	<echo>Removing temporary files.</echo>
-	<delete file=".tpllist"/>
-	<delete file=".tpllist."/>
-    </target>
-
-    <!-- Remove messages that were generated off TPLs. -->
-    <target name="messages-clean-generated">
-        <echo>Generating templates list...</echo>
-        <exec executable="find" output=".tpllist">
-	    <arg line="."/>
-	    <arg line="-name *tpl"/>
-	</exec>
-	<echo>Getting ready to process...</echo>
-	<exec executable="sed">
-	    <arg line="-e 's/^\(.*\)\.tpl$/rm -f  \1.java/'"/>
-	    <arg line="-i."/>
-	    <arg line=".tpllist"/>
-	</exec>
-	<echo>Expanding templates...</echo>
-	<exec executable="sh">
-	    <arg line=".tpllist"/>
-	</exec>
-	<echo>Removing temporary files.</echo>
-	<delete file=".tpllist"/>
-	<delete file=".tpllist."/>
-    </target>
-
     <!-- Object Dispatcher -->
-    <target name="odisp" depends="build-dir-setup, messages-rebuild-from-tpls">
+    <target name="odisp" depends="build-dir-setup, messages-generate">
 	<javac
 	    srcdir="src" 
 	    destdir="build" 
