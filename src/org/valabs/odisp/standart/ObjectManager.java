@@ -18,7 +18,7 @@ import com.novel.stdmsg.ODObjectLoadedMessage;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@valeks.novel.local">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.17 2004/05/11 09:55:39 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.18 2004/05/11 13:10:49 valeks Exp $
  */
 
 public class StandartObjectManager implements ObjectManager {
@@ -191,7 +191,7 @@ public class StandartObjectManager implements ObjectManager {
    * @param code код выхода (при code != 0 зависимые объекты
    * не удаляются).
    */
-  public final void unloadObject(final String objectName, final int code) {
+  public synchronized final void unloadObject(final String objectName, final int code) {
     if (objects.containsKey(objectName)) {
       ObjectEntry oe = (ObjectEntry) objects.get(objectName);
       String[] provides = oe.getProvides();
@@ -243,7 +243,7 @@ public class StandartObjectManager implements ObjectManager {
    */
   public StandartObjectManager(final Dispatcher newDispatcher) {
     dispatcher = newDispatcher;
-    for(int i = 0; i < SENDER_POOL_SIZE; i++) {
+    for (int i = 0; i < SENDER_POOL_SIZE; i++) {
       senderPool.add(new Sender());
     }
   }
@@ -278,14 +278,34 @@ public class StandartObjectManager implements ObjectManager {
      */
     Sender victim = null;
     int leastLoad = Integer.MAX_VALUE;
-    for(int i = 0; i < senderPool.size(); i++) {
+    int avgLoad = 0;
+    for (int i = 0; i < senderPool.size(); i++) {
       Sender tmp = (Sender) senderPool.get(i);
+      avgLoad += tmp.getCounter();
       if (tmp.getCounter() < leastLoad) {
 	leastLoad = tmp.getCounter();
 	victim = tmp;
       }
     }
     victim.send(message, objToSendTo);
+    /*
+      Адаптивный алгоритм работы:
+      при превышении лимита в 10-15 сообщений для минимума производится запуск пары дополнительных
+      нитей с перераспределением нагрузки между ними. Когда средняя нагрузка
+      опускается ниже 5 - убираем по 1 нити.
+     */
+    avgLoad = avgLoad / senderPool.size();
+    if (leastLoad > 15) {
+      senderPool.add(new Sender());
+      senderPool.add(new Sender());
+      log.fine("Least load exceed 15 - throttling.");
+    } else if (avgLoad < 5 && senderPool.size() > SENDER_POOL_SIZE) {
+      Sender s = (Sender) senderPool.get(0);
+      s.quit();
+      senderPool.remove(0);
+      s = null;
+      log.fine("Average load less than 5 - slowing down.");
+    }
   }
 
   /** Посылка сообщения всем объектам менеджера.
