@@ -25,7 +25,7 @@ import org.valabs.stdmsg.StandartMessage;
  * и управление ресурсными объектами.
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: Dispatcher.java,v 1.53 2004/10/28 22:10:27 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.54 2004/10/29 11:11:20 valeks Exp $
  */
 public class Dispatcher implements org.valabs.odisp.common.Dispatcher, ExceptionHandler {
   /** Журнал. */
@@ -183,6 +183,11 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
         
       }
       rman.loadResource(className, mult, (Map) resources.get(className));
+    }
+    try {
+	Thread.sleep(100);
+    } catch (InterruptedException e) {
+	
     }
     it = objects.keySet().iterator();
     while (it.hasNext()) {
