@@ -1,10 +1,8 @@
 package org.valabs.stdobj.translator;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Properties;
 
 import org.valabs.odisp.common.Message;
@@ -16,9 +14,8 @@ import org.valabs.stdmsg.TranslatorGetTranslationMessage;
 import org.valabs.stdmsg.TranslatorGetTranslationReplyMessage;
 
 /**
- * @author valeks
- * @author (C) 2004 НПП "Новел-ИЛ"
- * @version $Id: TranslatorServer.java,v 1.5 2005/01/26 08:22:52 valeks Exp $
+ * @author <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
+ * @version $Id: TranslatorServer.java,v 1.6 2005/01/27 20:52:54 valeks Exp $
  */
 public class TranslatorServer extends StandartODObject
 		implements
@@ -30,7 +27,7 @@ public class TranslatorServer extends StandartODObject
 	/** Версия объекта. */
 	private static String VERSION = "0.1.0";
 	/** Авторство. */
-	private static String COPYRIGHT = "(C) JTT Novel-IL";
+	private static String COPYRIGHT = "(C) Valentin A. Alekseev";
 
 	public TranslatorServer() {
 		super(NAME, FULL_NAME, VERSION, COPYRIGHT);
@@ -40,32 +37,25 @@ public class TranslatorServer extends StandartODObject
 	  if (TranslatorGetTranslationMessage.equals(msg)) { 
 			String language = TranslatorGetTranslationMessage.getLanguage(msg);
 			String encoding = TranslatorGetTranslationMessage.getEncoding(msg);
-			/** @todo. Possible security vulnerability -- directory traversal. */
-			File f = new File(getParameter("catalogueroot", "resources"
-					+ File.separator + "language")
-					+ File.separator
-					+ language
-					+ (encoding != null ? "." + encoding : ""));
-			if (!f.canRead() && !f.isDirectory()) {
-				/** TODO: вернуть ошибку. */
-				return;
-			}
-			String[] files = f.list(new FilenameFilter() {
-				public boolean accept(final File dir, final String name) {
-					return name.endsWith("lng");
-				}
-			});
+			String packagePath = getParameter("catalogueroot", "/resources/language")
+					+ "/" + language + (encoding != null ? "." + encoding : "");
 			Properties result = new Properties();
-			for (int i = 0; i < files.length; i++) {
-				try {
-					result.load(new FileInputStream(f.getAbsolutePath() + File.separator + files[i]));
-				} catch (FileNotFoundException e) {
-					// за время пути собачка могла подрасти?!?
-					dispatcher.getExceptionHandler().signalException(e);
-				} catch (IOException e) {
-					dispatcher.getExceptionHandler().signalException(e);
-				}
-			}
+	    BufferedReader inSettings = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(packagePath + "/settings"))); // XXX: обязательно ли это '/'
+	    try {
+	      String inLine = null;
+	      do {
+	        inLine = inSettings.readLine();
+	        if (inLine != null) {
+	          try {
+	            result.load(getClass().getResourceAsStream(packagePath + "/" + inLine));
+	          } catch (Exception e) {
+	            logger.warning("Unable to load resource file " + inLine);
+	          }
+	        }
+	      } while (inLine != null);
+	    } catch (IOException e) {
+	      
+	    }
 			Message m = dispatcher.getNewMessage();
 			TranslatorGetTranslationReplyMessage.setup(m, msg.getOrigin(),
 					getObjectName(), msg.getId());

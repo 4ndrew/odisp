@@ -1,10 +1,8 @@
 package org.valabs.stdobj.translator;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -15,7 +13,7 @@ import org.valabs.odisp.common.Resource;
  *
  * @author <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
  * @author (C) 2004 НПП "Новел-ИЛ"
- * @version $Id: Translator.java,v 1.15 2004/11/13 16:49:25 dron Exp $
+ * @version $Id: Translator.java,v 1.16 2005/01/27 20:52:54 valeks Exp $
  */
 public class Translator extends Properties implements Resource {
   /** Путь к корневой папке транляций. */
@@ -25,7 +23,7 @@ public class Translator extends Properties implements Resource {
   /** Автозагрузка. */
   public static final String AutoLoad  				= "Autoload";
   /** Путь к корневой папке транляций по-умолчанию. */
-  private final String DefaultLanguageDir = "resources/language";
+  private final String DefaultLanguageDir = "/resources/language";
   /** Идентификатор языка по-умолчанию. */
   private final String DefaultLanguageId = "en";
   /** Корневой каталог для трансляций. */
@@ -162,25 +160,23 @@ public class Translator extends Properties implements Resource {
     
     if (!autoLoad) return;
     
-    File f = new File(rootDir + File.separator + langId);
-    if (f.canRead() && f.isDirectory()) {
-      String[] files = f.list(new FilenameFilter() {
-        public boolean accept(final File dir, final String name) {
-          return name.endsWith("lng");
+    try {
+      BufferedReader inSettings = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(rootDir + "/" + langId + "/settings"))); // XXX: обязательно ли это '/'
+      String inLine = null;
+      do {
+        inLine = inSettings.readLine();
+        if (inLine != null) {
+          try {
+            load(getClass().getResourceAsStream(rootDir + "/" + langId + "/" + inLine));
+          } catch (Exception e) {
+            logger.warning("Unable to load resource file " + inLine);
+          }
         }
-      });
-      for (int i = 0; i < files.length; i++) {
-        try {
-          load(new FileInputStream(f.getAbsolutePath() + File.separator
-              + files[i]));
-        } catch (FileNotFoundException e) {
-          logger.warning("File not found: " + files[i]);
-        } catch (IOException e) {
-          logger.warning("Input/Output error while reading " + files[i]);
-        }
-      }
-    } else {
-      logger.warning("Directory could not be read: " + f);
+      } while (inLine != null);
+    } catch (IOException e) {
+      e.printStackTrace(System.err);
+    } catch (NullPointerException e) {
+      e.printStackTrace(System.err);
     }
   }
 }
