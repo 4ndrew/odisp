@@ -17,12 +17,12 @@ import org.valabs.stdmsg.ODObjectLoadedMessage;
 /** Объект, который обеспечивает создание полного сообщения об ошибке возникшей во
  * время работы системы.
  * @author (C) 2005 <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
- * @version $Id: BugTrack.java,v 1.1 2005/01/11 20:37:59 valeks Exp $
+ * @version $Id: BugTrack.java,v 1.2 2005/01/18 07:41:51 valeks Exp $
  */
 public class BugTrack extends StandartODObject implements ExceptionHandler, MessageHandler {
   public static final String NAME = "bugtrack";
   
-  public static final String FULL_NAME = "about.bugtrack";
+  public static final String FULL_NAME = "Bug report service";
   
   public static final String VERSION = "0.1.0";
   
