@@ -10,7 +10,7 @@ import com.novel.odisp.common.Resource;
  *
  * @author <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
  * @author (C) 2004 НПП "Новел-ИЛ"
- * @version $Id: Translator.java,v 1.10 2004/08/18 12:53:28 dron Exp $
+ * @version $Id: Translator.java,v 1.11 2004/08/18 13:01:09 dron Exp $
  */
 public class Translator extends Properties implements Resource {
   /** Имя параметра, который содержит имя файла для загрузки */
