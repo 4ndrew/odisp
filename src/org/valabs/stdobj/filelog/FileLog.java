@@ -27,7 +27,7 @@ import com.novel.stdobj.simpleconfig.SimpleConfig;
 /** Объект реализующий простейшую журнализацию событий согласно файлу шаблонов.
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: FileLog.java,v 1.24 2004/06/09 14:19:38 valeks Exp $
+* @version $Id: FileLog.java,v 1.25 2004/06/09 17:52:23 valeks Exp $
 */
 public class FileLog extends StandartODObject {
   /** Поток вывода. */
@@ -58,7 +58,7 @@ public class FileLog extends StandartODObject {
       // we acquired SimpleConfig resource
       String className
 	= (String) ((ODResourceAcquiredMessage) msg).getResourceName();
-      if (className.startsWith("com.novel.stdobj.simpleconfig.SimpleConfig")) {
+      if (className.startsWith(SimpleConfig.class.getName())) {
 	SimpleConfig scfg
 	  = (SimpleConfig) ((ODResourceAcquiredMessage) msg).getResource();
 	try {
@@ -88,11 +88,13 @@ public class FileLog extends StandartODObject {
 	  logger.warning("unable to read config file " + SimpleConfig.DEFAULT_CONFIG);
 	}
 	Message[] m = {
-	  new ODReleaseMessage(getObjectName(), msg.getId()),
+	  dispatcher.getNewMessage(),
 	  new ODRemoveDepMessage(getObjectName(), 0),
 	};
-	((ODReleaseMessage) m[0]).setResourceName(className).setResource(scfg);
-	((ODRemoveDepMessage) m[1]).setDepName("com.novel.stdobj.simpleconfig.SimpleConfig");
+	ODReleaseMessage.setup(m[0], getObjectName(), msg.getId());
+	ODReleaseMessage.setResourceName(m[0], className);
+	ODReleaseMessage.setResource(m[0], scfg);
+	((ODRemoveDepMessage) m[1]).setDepName(SimpleConfig.class.getName());
 	dispatcher.send(m);
       }
       return;

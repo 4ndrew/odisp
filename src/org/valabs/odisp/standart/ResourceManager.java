@@ -14,10 +14,11 @@ import com.novel.odisp.common.Resource;
 import com.novel.odisp.common.ResourceManager;
 import com.novel.stdmsg.ODResourceAcquiredMessage;
 import com.novel.stdmsg.ODAcquireMessage;
+import com.novel.stdmsg.ODReleaseMessage;
 
 /** Менеджер ресурсных объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceManager.java,v 1.21 2004/06/09 14:19:38 valeks Exp $
+ * @version $Id: ResourceManager.java,v 1.22 2004/06/09 17:52:23 valeks Exp $
  */
 public class StandartResourceManager implements ResourceManager {
   /** Ссылка на диспетчер объектов. */
@@ -25,7 +26,7 @@ public class StandartResourceManager implements ResourceManager {
   /** Нить обработки запросов. */
   private DataThread dataThread = null;
   /** Журнал. */
-  private Logger log = Logger.getLogger("com.novel.odisp.StandartResourceManager");
+  private Logger log = Logger.getLogger(StandartResourceManager.class.getName());
 
   /** Доступ к ресурсам.
    * @return список ресурсов
@@ -67,8 +68,8 @@ public class StandartResourceManager implements ResourceManager {
       return;
     }
     // разбор сообщения
-    String className = (String) msg.getField("0");
-    Resource res = (Resource) msg.getField("1");
+    String className = ODReleaseMessage.getResourceName(msg);
+    Resource res = ODReleaseMessage.getResource(msg);
     dataThread.addRequest(new ReleaseResourceRequest(msg.getOrigin(), className, res));
   }
 

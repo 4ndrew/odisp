@@ -1,99 +1,81 @@
 package com.novel.stdmsg;
 
 import com.novel.odisp.common.Resource;
+import com.novel.odisp.common.Message;
 
 /** Запрос диспетчера на высвобождение ресурса.
- * <p>Запрос должен содержать минимум 1 параметр - имя ресурсного объекта.
- * Необязательный дополнительный параметр (по умолчанию - ложь) определяет
- * будет ли объект считатся блокированным до тех пор пока он не возвратит
- * ресурс.</p>
- * <p><b>ВНИМАНИЕ</b>: текущая реализация стандартного диспетчера не
- * позволяет корректно отслеживать быль ли высвобожден ресурс, который
- * использовался с блокировкой или нет. Для того, что бы избежать
- * некорректного поведения, рекомендуется одновременно производить
- * захват не более одного ресурса с установлением режима блокировки.</p>
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODReleaseMessage.java,v 1.9 2004/04/02 09:54:49 valeks Exp $
+ * @version $Id: ODReleaseMessage.java,v 1.10 2004/06/09 17:52:23 valeks Exp $
  */
 
-public class ODReleaseMessage extends StandartMessage {
+public class ODReleaseMessage {
   /** Символьное имя сообщения. */
   public static final String NAME = "od_release";
 
   /** Имя ресурса. */
   private transient String resourceName = "";
   /** Индекс имени в сообщении. */
-  private static final String NAME_IDX = "0";
+  private static final String NAME_IDX = "resname";
   /** Ресурс. */
   private transient Resource resource;
   /** Индекс ресурса в сообщении. */
-  private static final String RES_IDX = "1";
+  private static final String RES_IDX = "resobj";
 
-  /** Создать новое сообщение диспетчеру с запросом на захват ресурса.
+  /** Инициализация сообщения диспетчеру с запросом на высвобождение ресурса.
+   * @param msg сообщение
    * @param origin автор
    * @param replyTo в ответ на сообщение No.
    */
-  public ODReleaseMessage(final String origin, final int replyTo) {
-    super("od_release", "dispatcher", origin, replyTo);
+  public static final void setup(final Message msg, final String origin, final int replyTo) {
+    msg.setAction(NAME);
+    msg.setDestination("dispatcher");
+    msg.setReplyTo(replyTo);
+    msg.setOrigin(origin);
+    msg.setRoutable(false);
+    msg.setCorrect(false);
   }
 
   /** Вернуть имя ресурса для захвата.
+   * @param msg сообщение
    * @return имя ресурса
    */
-  public final String getResourceName() {
-    if (isCE()) {
-      return (String) getField(NAME_IDX);
-    }
-    return resourceName;
+  public static final String getResourceName(final Message msg) {
+    return (String) msg.getField(NAME_IDX);
   }
 
   /** Установить имя ресурса.
+   * @param msg сообщение
    * @param newName новое имя
    * @return ссылка на текущее сообщение
    */
-  public final ODReleaseMessage setResourceName(final String newName) {
-    resourceName = newName;
-    return this;
+  public static final void setResourceName(final Message msg, final String newName) {
+    msg.addField(NAME_IDX, newName);
+    if (msg.getContents().size() == 2) {
+      msg.setCorrect(true);
+    }
   }
 
   /** Вернуть ссылку на ресурс.
+   * @param msg сообщение
    * @return ссылка на ресурс
    */
-  public final Resource getResource() {
-    if (isCE()) {
-      return (Resource) getField(RES_IDX);
-    }
-    return resource;
+  public static final Resource getResource(final Message msg) {
+    return (Resource) msg.getField(RES_IDX);
   }
 
   /** Установить новое значение ссылки на ресурс.
+   * @param msg сообщение
    * @param newResource новое значение ссылки
    * @return ссылка на текущее сообщение
    */
-  public final ODReleaseMessage setResource(final Resource newResource) {
-    resource = newResource;
-    return this;
-  }
-
-  /** Проверка корректности сообщения.
-   * @return флаг корректности
-   */
-  public final boolean isCorrect() {
-    if (isCE()) {
-      return true;
-    }
-    if (resourceName != "" && resource != null) {
-      getContents().clear();
-      addField(NAME_IDX, resourceName);
-      addField(RES_IDX, resource);
-      setCE(true);
-      return true;
-    } else {
-      return false;
+  public static final void setResource(final Message msg, final Resource newResource) {
+    msg.addField(RES_IDX, newResource);
+    if (msg.getContents().size() == 2) {
+      msg.setCorrect(true);
     }
   }
-  public final boolean isRoutable() {
-    return false;
+  public static final boolean equals(final Message msg) {
+    return msg.getAction().equals(NAME);
   }
 } // ODReleaseMessage

@@ -15,7 +15,7 @@ import com.novel.stdobj.simpleconfig.SimpleConfig;
  * 
  * @author (C) 2004 <a href="valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author <a href="dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: Racer.java,v 1.10 2004/06/09 14:19:38 valeks Exp $
+ * @version $Id: Racer.java,v 1.11 2004/06/09 17:52:23 valeks Exp $
  */
 public class Racer extends StandartODObject {
   /** Счётчик запросов */
@@ -57,9 +57,10 @@ public class Racer extends StandartODObject {
       try {
       	wait((int)Math.random() * 100);
       } catch (Exception e) {}
-      ODReleaseMessage m = new ODReleaseMessage(getObjectName(), msg.getId());
-      m.setResourceName((String) msg.getField("0"));
-      m.setResource((Resource) msg.getField("1"));
+      Message m = dispatcher.getNewMessage();
+      ODReleaseMessage.setup(m, getObjectName(), msg.getId());
+      ODReleaseMessage.setResourceName(m, (String) msg.getField("0"));
+      ODReleaseMessage.setResource(m, (Resource) msg.getField("1"));
       dispatcher.send(m);
       // Это пока не надо.
       //if (acquireCount > 100)
