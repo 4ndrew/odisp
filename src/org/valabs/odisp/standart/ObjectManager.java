@@ -19,7 +19,7 @@ import com.novel.stdmsg.ODObjectLoadedMessage;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.26 2004/05/21 21:02:03 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.27 2004/05/21 21:35:34 valeks Exp $
  */
 
 public class StandartObjectManager implements ObjectManager {
@@ -312,7 +312,7 @@ public class StandartObjectManager implements ObjectManager {
 	  String key = (String) it.next();
 	  ObjectEntry oe = (ObjectEntry) objects.get(key);
 	  if (Pattern.matches(oe.getObject().getMatch(), message.getDestination())
-	      && Pattern.matches(message.getDestination(), oe.getObject().getObjectName())) {
+	      || Pattern.matches(message.getDestination(), oe.getObject().getObjectName())) {
 	    recipients.add(key);
 	  }
         }
