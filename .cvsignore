@@ -6,3 +6,4 @@ hints
 odisp.log
 release
 .tpllist
+*.dot
