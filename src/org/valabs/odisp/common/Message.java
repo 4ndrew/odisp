@@ -1,11 +1,12 @@
 package com.novel.odisp.common;
 
+import java.util.List;
 import java.util.Map;
 
 /** Интерфейс сообщения ядра ODISP системы.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Message.java,v 1.12 2004/06/09 14:19:38 valeks Exp $
+ * @version $Id: Message.java,v 1.13 2004/06/29 07:51:49 valeks Exp $
  */
 public interface Message {
 
@@ -106,4 +107,13 @@ public interface Message {
    * @param value значение поля
    */
   void addField(String name, Object value);
+  
+  /** Доступ к подсообщениям.
+ 	* @return список подсообщений
+   */
+  List getEnvelope();
+  /** Добавление подсообщения.
+   * @param envelopeMessage подсообщение
+   */
+  void addToEnvelope(Message envelopeMessage);
 }

@@ -14,7 +14,7 @@ import com.novel.odisp.common.Message;
  * @author <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: StandartMessage.java,v 1.18 2004/06/25 13:15:31 dron Exp $
+ * @version $Id: StandartMessage.java,v 1.19 2004/06/29 07:51:49 valeks Exp $
  */
 public class StandartMessage implements Message, Serializable {
   /** Флаг маршрутизации. */
@@ -37,6 +37,9 @@ public class StandartMessage implements Message, Serializable {
   private int lastIdx = 0;
   /** Флаг проведения проверки. */
   private boolean ce = false;
+  /** Список подсообщений. */
+  private List envelope = null;
+
   /** Реализация конструктора сообщения.
    * @param newAction действие которое несет сообщение
    * @param newDestination адресат сообщения
@@ -272,5 +275,16 @@ public class StandartMessage implements Message, Serializable {
 
   public Object getField(final String name) {
     return fields.get(name);
+  }
+  
+  public final List getEnvelope() {
+  	return envelope;
+  }
+  
+  public final void addToEnvelope(final Message envelopeMessage) {
+  	if (envelope == null) {
+  		envelope = new ArrayList();
+  	}
+  	envelope.add(envelopeMessage);
   }
 }
