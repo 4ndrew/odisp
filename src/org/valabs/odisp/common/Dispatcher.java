@@ -2,10 +2,12 @@ package org.valabs.odisp.common;
 
 import java.util.List;
 
+import org.doomdark.uuid.UUID;
+
 /** Стандартный интерфейс диспетчера, который должен реализовывать
  * класс, который выступает в качестве ODISP диспетчера.
  * @author (C) 2003 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
- * @version $Id: Dispatcher.java,v 1.14 2004/08/23 07:42:37 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.15 2004/11/05 14:11:29 valeks Exp $
  */
 public interface Dispatcher {
   /** Посылка одиночного сообщения.
@@ -30,7 +32,7 @@ public interface Dispatcher {
    * @return сообщение
    */
   Message getNewMessage(String action, String destination,
-			String origin, int inReplyTo);
+			String origin, UUID inReplyTo);
   /** Создать пустое сообщение.
    * @return ссылка на сообщение
    */

@@ -7,21 +7,21 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.doomdark.uuid.UUID;
+import org.doomdark.uuid.UUIDGenerator;
 import org.valabs.odisp.common.Message;
 
 /** Реализация стандартного сообщения для стандартного диспетчера ODISP.
  * 
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: StandartMessage.java,v 1.22 2004/08/30 10:07:12 valeks Exp $
+ * @version $Id: StandartMessage.java,v 1.23 2004/11/05 14:11:28 valeks Exp $
  */
 public class StandartMessage implements Message, Serializable {
   /** Флаг маршрутизации. */
   private boolean routable = true;
-  /** Внутренний уникальный счетчик сообщения. */
-  private static int id = 0;
   /** Уникальный индекс сообщения в системе. */
-  private int myId = -1;
+  private UUID myId = null;
   /** Список полей сообщения. */
   private Map fields = new HashMap();
   /** Действие. */
@@ -31,7 +31,7 @@ public class StandartMessage implements Message, Serializable {
   /** Отправитель. */
   private String origin = null;
   /** Идентификатор сообщения на которое производится ответ. */
-  private int inReplyTo = -1;
+  private UUID inReplyTo = null;
   /** Индекс последнего добавленного поля. */
   private int lastIdx = 0;
   /** Флаг проведения проверки. */
@@ -49,17 +49,17 @@ public class StandartMessage implements Message, Serializable {
   public StandartMessage(final String newAction,
 			 final String newDestination,
 			 final String newOrigin,
-			 final int newInReplyTo) {
+			 final UUID newInReplyTo) {
     action = newAction;
     destination = newDestination;
     inReplyTo = newInReplyTo;
     origin = newOrigin;
-    myId = id++;
+    myId = UUIDGenerator.getInstance().generateTimeBasedUUID();
   }
 
   /** Конструктор по-умолчанию. */
   public StandartMessage() {
-    myId = id++;
+    myId = UUIDGenerator.getInstance().generateTimeBasedUUID();
   }
 
   /** Копирование сообщения. */
@@ -71,7 +71,7 @@ public class StandartMessage implements Message, Serializable {
     fields = new HashMap(msg.getContents());
     routable = msg.isRoutable();
     if (noKeepId) {
-      myId = id++;
+      myId = UUIDGenerator.getInstance().generateTimeBasedUUID();
     } else {
       myId = msg.getId();
     }
@@ -151,14 +151,14 @@ public class StandartMessage implements Message, Serializable {
   /** Возвращает идентификатор сообщения на которое производится ответ.
    * @return идентификатор
    */
-  public final int getReplyTo() {
+  public final UUID getReplyTo() {
     return inReplyTo;
   }
 
   /** Устанавливает идентификатор сообщения на которое производится ответ.
    * @param newId идентификатор
    */
-  public final void setReplyTo(final int newId) {
+  public final void setReplyTo(final UUID newId) {
     inReplyTo = newId;
   }
 
@@ -172,14 +172,14 @@ public class StandartMessage implements Message, Serializable {
   /** Возвращает уникальный идентификатор сообщения.
    * @return идентификатор
    */
-  public final int getId() {
+  public final UUID getId() {
     return myId;
   }
 
   /** Устанавливает уникальный идентификатор сообщения.
    * @param newId идентификатор
    */
-  public final void setId(final int newId) {
+  public final void setId(final UUID newId) {
     myId = newId;
   }
 

@@ -2,12 +2,13 @@ package org.valabs.stdmsg;
 
 import java.util.List;
 
+import org.doomdark.uuid.UUID;
 import org.valabs.odisp.common.Message;
 
 /** Запрос на динамическое изменение списка сервисов.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2004, НПП "Новел-ИЛ"
- * @version $Id: ODGetProvidingReplyMessage.java,v 1.8 2004/08/23 07:42:36 valeks Exp $
+ * @version $Id: ODGetProvidingReplyMessage.java,v 1.9 2004/11/05 14:11:28 valeks Exp $
  */
 
 public final class ODGetProvidingReplyMessage {
@@ -21,7 +22,7 @@ public final class ODGetProvidingReplyMessage {
    * @param objectName имя объекта
    * @param replyId номер сообщения на которое производится ответ
    */
-  public static void setup(final Message msg, final String objectName, final int replyId) {
+  public static void setup(final Message msg, final String objectName, final UUID replyId) {
     // отправлять может только диспетчер
     msg.setAction(NAME);
     msg.setOrigin("dispatcher");

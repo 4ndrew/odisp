@@ -9,23 +9,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import org.valeks.xlang.parser.Parser;
-import org.valeks.xlang.parser.Tag;
-import org.valeks.xlang.parser.XLangException;
-
+import org.doomdark.uuid.UUID;
 import org.valabs.odisp.common.ExceptionHandler;
 import org.valabs.odisp.common.Message;
 import org.valabs.odisp.common.ObjectManager;
 import org.valabs.odisp.common.ResourceManager;
 import org.valabs.odisp.common.SecurityManager;
 import org.valabs.stdmsg.StandartMessage;
+import org.valeks.xlang.parser.Parser;
+import org.valeks.xlang.parser.Tag;
+import org.valeks.xlang.parser.XLangException;
 
 /** Стандартный диспетчер ODISP.
  * Стандартный диспетчер реализует пересылку сообщений между объектами ядра
  * и управление ресурсными объектами.
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: Dispatcher.java,v 1.54 2004/10/29 11:11:20 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.55 2004/11/05 14:11:29 valeks Exp $
  */
 public class Dispatcher implements org.valabs.odisp.common.Dispatcher, ExceptionHandler {
   /** Журнал. */
@@ -96,7 +96,7 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
   public final Message getNewMessage(final String action,
 				     final String destination,
 				     final String origin,
-				     final int inReplyTo) {
+				     final UUID inReplyTo) {
     return new StandartMessage(action, destination, origin, inReplyTo);
   }
 

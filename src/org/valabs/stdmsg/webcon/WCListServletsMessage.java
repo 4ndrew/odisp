@@ -1,10 +1,11 @@
 package org.valabs.stdmsg.webcon;
 
+import org.doomdark.uuid.UUID;
 import org.valabs.odisp.common.Message;
 
 /** Получение списка сервлетов в контейнере.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: WCListServletsMessage.java,v 1.5 2004/08/23 07:42:36 valeks Exp $
+ * @version $Id: WCListServletsMessage.java,v 1.6 2004/11/05 14:11:29 valeks Exp $
  */
 
 public class WCListServletsMessage {
@@ -15,7 +16,7 @@ public class WCListServletsMessage {
    * @param objectName источник сообщения
    * @param msgId индекс сообщения на которое производится ответ
    */
-  public static final void setup(final Message msg, final String webConName, final String objectName, final int msgId) {
+  public static final void setup(final Message msg, final String webConName, final String objectName, final UUID msgId) {
     msg.setAction(NAME);
     msg.setDestination(webConName);
     msg.setOrigin(objectName);

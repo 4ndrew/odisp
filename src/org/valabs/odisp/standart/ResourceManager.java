@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.doomdark.uuid.UUID;
 import org.valabs.odisp.common.Dispatcher;
 import org.valabs.odisp.common.Message;
 import org.valabs.odisp.common.Resource;
@@ -17,7 +18,7 @@ import org.valabs.stdmsg.ODResourceAcquiredMessage;
 
 /** Менеджер ресурсных объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceManager.java,v 1.29 2004/10/28 22:53:16 valeks Exp $
+ * @version $Id: ResourceManager.java,v 1.30 2004/11/05 14:11:29 valeks Exp $
  */
 class ResourceManager implements org.valabs.odisp.common.ResourceManager {
   /** Ссылка на диспетчер объектов. */
@@ -148,13 +149,13 @@ class ResourceManager implements org.valabs.odisp.common.ResourceManager {
     /** Имя отправителя. */
     private String origin = null;
     /** Индекс сообщения инициировавшего запрос. */
-    private int msgid = -1;
+    private UUID msgid = null;
     /** Конструирование нового запроса.
      * @param nclassName имя ресурса
      * @param norigin отправитель запроса
      * @param nmsgid индекс сообщения
      */
-    public AcquireResourceRequest(final String norigin, final int nmsgId,
+    public AcquireResourceRequest(final String norigin, final UUID nmsgId,
 				  final String nclassName) {
       className = nclassName;
       origin = norigin;

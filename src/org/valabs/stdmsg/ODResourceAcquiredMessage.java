@@ -1,14 +1,15 @@
 package org.valabs.stdmsg;
 
+import org.doomdark.uuid.UUID;
 import org.valabs.odisp.common.Message;
 import org.valabs.odisp.common.Resource;
 
 /** Ответ на запрос о захвате ресурса.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODResourceAcquiredMessage.java,v 1.16 2004/08/30 10:07:12 valeks Exp $
+ * @version $Id: ODResourceAcquiredMessage.java,v 1.17 2004/11/05 14:11:28 valeks Exp $
  */
-public class ODResourceAcquiredMessage extends StandartMessage {
+public class ODResourceAcquiredMessage {
   /** Символьное имя сообщения. */
   public static final String NAME = "od_resource_acquired";
   /** Индекс имени ресурса. */
@@ -22,7 +23,7 @@ public class ODResourceAcquiredMessage extends StandartMessage {
    */
   public static final void setup(final Message msg,
 				 final String destination,
-				 final int replyId) {
+				 final UUID replyId) {
     msg.setAction(NAME);
     msg.setOrigin("dispatcher");
     msg.setDestination(destination);

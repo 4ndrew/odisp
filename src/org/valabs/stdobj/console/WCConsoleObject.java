@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.doomdark.uuid.UUID;
 import org.valabs.odisp.common.Message;
 import org.valabs.odisp.common.StandartODObject;
 import org.valabs.stdmsg.ODCleanupMessage;
@@ -18,7 +19,7 @@ import org.valabs.stdobj.webcon.servlet.http.HttpServletResponse;
 
 /** Объект ODISP реализующий WebCon интерфейс доступа к менеджеру.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
- * @version $Id: WCConsoleObject.java,v 1.11 2004/08/23 07:42:37 valeks Exp $
+ * @version $Id: WCConsoleObject.java,v 1.12 2004/11/05 14:11:29 valeks Exp $
  */
 public class WCConsoleObject extends StandartODObject {
   /** Собственно сервлет-обработчик. */
@@ -30,7 +31,7 @@ public class WCConsoleObject extends StandartODObject {
     if (ODObjectLoadedMessage.equals(msg)) {
       servlet = new WCConsoleServlet();
       Message m = dispatcher.getNewMessage();
-      WCAddServletMessage.setup(m, "webcon", getObjectName(), 0);
+      WCAddServletMessage.setup(m, "webcon", getObjectName(), UUID.getNullUUID());
       WCAddServletMessage.setServletMask(m, "/wcconsole");
       WCAddServletMessage.setServletHandler(m, servlet);
       dispatcher.send(m);
@@ -127,7 +128,7 @@ public class WCConsoleObject extends StandartODObject {
 	  String objectName = req.getParameter("object");
 	  String message = req.getParameter("message");
 	  objectName = objectName.replaceAll("%2A", "*");
-	  Message m = dispatcher.getNewMessage(message, objectName, getObjectName(), 0);
+	  Message m = dispatcher.getNewMessage(message, objectName, getObjectName(), UUID.getNullUUID());
 	  dispatcher.send(m);
 	}
 	p.println("\t</head>");

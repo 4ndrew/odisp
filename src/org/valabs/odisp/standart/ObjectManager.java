@@ -18,6 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
+import org.doomdark.uuid.UUID;
 import org.valabs.odisp.common.Dispatcher;
 import org.valabs.odisp.common.Message;
 import org.valabs.odisp.common.ODObject;
@@ -26,7 +27,7 @@ import org.valabs.stdmsg.ODObjectLoadedMessage;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.42 2004/11/05 12:12:24 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.43 2004/11/05 14:11:29 valeks Exp $
  */
 
 class ObjectManager implements org.valabs.odisp.common.ObjectManager {
@@ -177,7 +178,7 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
 				log.config(" ok. loaded = " + objectName);
 				statLoadedOrder.add(oe.getObject().getClass().getName());
 				Message m = dispatcher.getNewMessage();
-				ODObjectLoadedMessage.setup(m, objectName, 0);
+				ODObjectLoadedMessage.setup(m, objectName, UUID.getNullUUID());
 				m.setDestination(objectName);
 				oe.getObject().handleMessage(m);
 				loaded++;
@@ -334,7 +335,7 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
 				}
 			}
 			Message m = dispatcher.getNewMessage();
-			ODCleanupMessage.setup(m, objectName, 0);
+			ODCleanupMessage.setup(m, objectName, UUID.getNullUUID());
 			ODCleanupMessage.setReason(m, new Integer(code));
 			dispatcher.send(m);
 			objects.remove(objectName);

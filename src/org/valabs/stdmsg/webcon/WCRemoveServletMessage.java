@@ -1,11 +1,12 @@
 package org.valabs.stdmsg.webcon;
 
+import org.doomdark.uuid.UUID;
 import org.valabs.odisp.common.Message;
 
 /** Удаление сервлета из контейнера.
  * Производится удаление ссылки на обработчик запросов из записей контейнера.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: WCRemoveServletMessage.java,v 1.6 2004/10/28 22:57:00 valeks Exp $
+ * @version $Id: WCRemoveServletMessage.java,v 1.7 2004/11/05 14:11:29 valeks Exp $
  */
 
 public class WCRemoveServletMessage {
@@ -18,7 +19,7 @@ public class WCRemoveServletMessage {
    * @param objectName источник сообщения
    * @param msgId индекс сообщения на которое производится ответ
    */
-  public static final void setup(final Message msg, final String webConName, final String objectName, final int msgId) {
+  public static final void setup(final Message msg, final String webConName, final String objectName, final UUID msgId) {
     msg.setAction(NAME);
     msg.setDestination(webConName);
     msg.setOrigin(objectName);

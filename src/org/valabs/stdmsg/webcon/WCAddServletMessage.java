@@ -1,5 +1,6 @@
 package org.valabs.stdmsg.webcon;
 
+import org.doomdark.uuid.UUID;
 import org.valabs.odisp.common.Message;
 
 /** Добавление сервлета в контейнер WebCon.
@@ -8,7 +9,7 @@ import org.valabs.odisp.common.Message;
  * во время isCorrect().</p>
  * <p>Сообщение не является маршрутизируемым, так как не имеет смысл добавлять сервлеты в удаленный контейнер.</p>
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: WCAddServletMessage.java,v 1.7 2004/10/28 22:57:00 valeks Exp $
+ * @version $Id: WCAddServletMessage.java,v 1.8 2004/11/05 14:11:29 valeks Exp $
  */
 
 public class WCAddServletMessage {
@@ -23,7 +24,7 @@ public class WCAddServletMessage {
    * @param objectName источник сообщения
    * @param msgId индекс сообщения на которое производится ответ
    */
-  public static final void setup(final Message msg, final String webConName, final String objectName, final int msgId) {
+  public static final void setup(final Message msg, final String webConName, final String objectName, final UUID msgId) {
     msg.setAction(NAME);
     if (webConName == null) {
       msg.setDestination("webcon");      

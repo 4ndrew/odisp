@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.doomdark.uuid.UUID;
 import org.valabs.odisp.common.Message;
 import org.valabs.odisp.common.MessageHandler;
 
@@ -41,7 +42,7 @@ import org.valabs.odisp.common.MessageHandler;
  * </pre>
  * 
  * @author (C) 2004 <a href="dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: SessionManager.java,v 1.8 2004/10/28 22:06:42 valeks Exp $ 
+ * @version $Id: SessionManager.java,v 1.9 2004/11/05 14:11:29 valeks Exp $ 
  */
 public class SessionManager {
   /** Ссылка на ODSessionManager */
@@ -69,9 +70,9 @@ public class SessionManager {
    * @see org.valabs.odisp.common.Message#getId()
    * @param messageHandler Обработчик для сообщения.
    */
-  public void addMessageListener(int messageId,
+  public void addMessageListener(UUID messageId,
                                  MessageHandler messageHandler) {
-    handlers.put(new Integer(messageId), messageHandler);
+    handlers.put(messageId, messageHandler);
   }
   
   /** Функция обработки сообщения Odisp. рекоммендуется вызывать из
@@ -91,8 +92,8 @@ public class SessionManager {
     }
     Iterator it = toPerform.keySet().iterator();
     while (it.hasNext()) {
-      Integer key = (Integer) it.next();
-      if (key.equals(new Integer(msg.getReplyTo()))) {
+      UUID key = (UUID) it.next();
+      if (key.equals(msg.getReplyTo())) {
         ((MessageHandler) toPerform.get(key)).messageReceived(msg);
         toRemove.add(key);
       }

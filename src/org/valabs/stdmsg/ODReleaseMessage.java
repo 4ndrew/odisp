@@ -1,12 +1,13 @@
 package org.valabs.stdmsg;
 
+import org.doomdark.uuid.UUID;
 import org.valabs.odisp.common.Message;
 import org.valabs.odisp.common.Resource;
 
 /** Запрос диспетчера на высвобождение ресурса.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODReleaseMessage.java,v 1.14 2004/08/30 10:07:12 valeks Exp $
+ * @version $Id: ODReleaseMessage.java,v 1.15 2004/11/05 14:11:28 valeks Exp $
  */
 
 public class ODReleaseMessage {
@@ -22,7 +23,7 @@ public class ODReleaseMessage {
    * @param origin автор
    * @param replyTo в ответ на сообщение No.
    */
-  public static final void setup(final Message msg, final String origin, final int replyTo) {
+  public static final void setup(final Message msg, final String origin, final UUID replyTo) {
     msg.setAction(NAME);
     msg.setDestination("dispatcher");
     msg.setReplyTo(replyTo);

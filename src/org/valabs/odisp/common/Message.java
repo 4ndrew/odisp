@@ -3,9 +3,11 @@ package org.valabs.odisp.common;
 import java.util.List;
 import java.util.Map;
 
+import org.doomdark.uuid.UUID;
+
 /** Интерфейс сообщения ядра ODISP системы.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
- * @version $Id: Message.java,v 1.17 2004/08/30 10:07:12 valeks Exp $
+ * @version $Id: Message.java,v 1.18 2004/11/05 14:11:29 valeks Exp $
  */
 public interface Message {
 
@@ -23,17 +25,17 @@ public interface Message {
   /** Уникальный идентификатор сообщения.
    * @return идентификатор
    */
-  int getId();
+  UUID getId();
 
   /** Установить уникальный идентификатор сообщения.
    * @param id идентификатор
    */
-  void setId(int id);
+  void setId(UUID id);
 
   /** Идентификатор сообщения на который идет ответ.
    * @return идентификатор
    */
-  int getReplyTo();
+  UUID getReplyTo();
 
   /** Действие которое несет сообщение.
    * @return действие
@@ -53,7 +55,7 @@ public interface Message {
   /** Установить индекс ответа.
    * @param nrpt индекс сообщения на которое производится ответ
    */
-  void setReplyTo(int nrpt);
+  void setReplyTo(UUID nrpt);
 
   /** Установить действие.
    * @param na новое действие

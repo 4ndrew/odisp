@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.logging.Logger;
 
+import org.doomdark.uuid.UUID;
 import org.valabs.odisp.common.Dispatcher;
 import org.valabs.odisp.common.Message;
 
@@ -13,7 +14,7 @@ import org.valabs.odisp.common.Message;
  * 
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: ConsoleReader.java,v 1.15 2004/08/23 07:42:37 valeks Exp $
+ * @version $Id: ConsoleReader.java,v 1.16 2004/11/05 14:11:29 valeks Exp $
  */
 
 public class ConsoleReader extends Thread {
@@ -54,7 +55,7 @@ public class ConsoleReader extends Thread {
       while ((action = inp.readLine()) != null) {
         System.out.print("destination> ");
         Message m
-          = dispatcher.getNewMessage(action, inp.readLine(), objectName, 0);
+          = dispatcher.getNewMessage(action, inp.readLine(), objectName, UUID.getNullUUID());
         System.out.print("params? ");
         int paramCount = 0;
         while (!inp.readLine().equals("")) {
