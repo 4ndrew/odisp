@@ -13,13 +13,14 @@ import org.valabs.odisp.common.Resource;
 
 /** Менеджер ресурсных объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceManager.java,v 1.34 2005/01/24 12:57:59 valeks Exp $
+ * @version $Id: ResourceManager.java,v 1.35 2005/01/25 20:34:33 valeks Exp $
  */
 class ResourceManager implements org.valabs.odisp.common.ResourceManager {
   /** Ссылка на диспетчер объектов. */
   private Dispatcher dispatcher;
   /** Нить обработки запросов. */
   private DataThread dataThread = null;
+
   /** Журнал. */
   private Logger log = Logger.getLogger(ResourceManager.class.getName());
 
@@ -67,14 +68,6 @@ class ResourceManager implements org.valabs.odisp.common.ResourceManager {
     log.config(logMessage);
   }
 
-  /** Выгрузка ресурсного объекта.
-   * @param className имя ресурсного объекта
-   * @param code код выхода
-   */
-  public final void unloadResource(final String className, final int code) {
-    dataThread.addRequest(new UnloadResourceRequest(className, code));
-  }
-
   /** Конструктор менеджера ресурсов.
    * @param newDispatcher ссылка на диспетчер ресурсами которого управляет менеджер
    */
@@ -111,55 +104,6 @@ class ResourceManager implements org.valabs.odisp.common.ResourceManager {
     /** Строковое описание класса. */
     public String toString();
   } // RequestListEntry
-
-  /** Запрос на выгрузку ресурса. */
-  private class UnloadResourceRequest implements RequestListEntry {
-    /** Имя класса ресурса для выгрузки. */
-    private String className = null;
-    /** Код выгрузки. */
-    private int code = 0;
-    /** Инициализация нового запроса на загрузку ресурса. */
-    public UnloadResourceRequest(final String nclassName, final int ncode) {
-      className = nclassName;
-      code = ncode;
-    }
-    /** Выполнение запроса на заданной нити данных.
-     * На данный момент в случае если в очереди имеются запросы к выгружаемому ресурсу они там и останутся.
-     * Необходимо выбрать из двух стратегий: либо не выполнять запрос на выгрузку пока запросы на захват не будут
-     * удовлетворены или удалять подобные ресурсы из очереди автоматически.
-     * Фактическая выгрузка зависимых объектов происходит только в том случае если код выгрузки равен 0.
-     * @param dt нить данных
-     */
-    public final boolean performAction(final DataThread dt) {
-      if (dt.getResources().containsKey(className)) {
-	ResourceEntry res = (ResourceEntry) dt.getResources().get(className);
-	List dependingObjs = new ArrayList();
-	Iterator it = dt.getDispatcher().getObjectManager().getObjects().keySet().iterator(); // TODO: убрать этот ужас
-	while (it.hasNext()) {
-	  String oclassName = (String) it.next();
-	  String[] depends = ((ObjectEntry) dt.getDispatcher().getObjectManager().getObjects().get(oclassName)).getDepends();
-	  for (int i = 0; i < depends.length; i++) {
-	    if (depends[i].equals(className) && !dependingObjs.contains(className)) {
-	      dependingObjs.add(oclassName);
-	    }
-	  }
-	}
-	if (code == 0) {
-	  it = dependingObjs.iterator();
-	  while (it.hasNext()) {
-	    dt.getDispatcher().getObjectManager().unloadObject((String) it.next(), code);
-	  }
-	}
-	res.cleanUp(code);
-	dt.getResources().remove(className);
-      }
-      return true;
-    }
-    /** Описание класса для статистики. */
-    public final String toString() {
-      return "UnloadResource on " + className;
-    }
-  } // UnloadResourceRequest
 
   /** Отдельная нить обработки запросов на захват-высвобождение в стиле DataThread,
    * которая гарантирует синхронность обращение к списку ресурсов.
