@@ -41,7 +41,7 @@ import org.valabs.odisp.common.MessageHandler;
  * </pre>
  * 
  * @author (C) 2004 <a href="dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: SessionManager.java,v 1.7 2004/10/15 13:08:24 boris Exp $ 
+ * @version $Id: SessionManager.java,v 1.8 2004/10/28 22:06:42 valeks Exp $ 
  */
 public class SessionManager {
   /** Ссылка на ODSessionManager */
@@ -99,8 +99,8 @@ public class SessionManager {
     } // while
     synchronized(handlers) {
       Iterator ri = toRemove.iterator();
-      while (it.hasNext()) {
-        handlers.remove(it.next());
+      while (ri.hasNext()) {
+        handlers.remove(ri.next());
       }
     }
     return matched;
