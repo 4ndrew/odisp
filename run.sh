@@ -1,7 +1,8 @@
 #!/bin/sh
-# $Id: run.sh,v 1.8 2004/08/23 07:42:37 valeks Exp $
+# $Id: run.sh,v 1.9 2004/11/29 07:31:54 valeks Exp $
 JAVA_HOME=${JAVA_HOME:-/usr/local/jdk1.4.1}; export JAVA_HOME
-CLASSPATH=$CLASSPATH:$PWD/../build/:$PWD/../lib/xlang-parser.jar; export CLASSPATH
+UUIDPATH=$PWD/lib/jug.jar
+CLASSPATH=$CLASSPATH:$PWD/build/:$PWD/lib/xlang-parser.jar:$UUIDPATH; export CLASSPATH
 CLASSES_CONF=$PWD/classes.cfg
 # for debugging: 
 # ./run.sh -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n
