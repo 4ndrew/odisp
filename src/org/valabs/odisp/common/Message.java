@@ -6,21 +6,9 @@ import java.util.Map;
 /** Интерфейс сообщения ядра ODISP системы.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Message.java,v 1.7 2004/03/26 21:53:37 valeks Exp $
+ * @version $Id: Message.java,v 1.8 2004/03/31 13:13:44 dron Exp $
  */
 public interface Message {
-  /** Добавление произволього объекта в тело сообщения.
-   * @param field объект для добавления
-   * @deprecated необходимо использовать #addField(String, Object)
-   */
-  void addField(Object field);
-
-  /** Выборка объекта по индексу.
-   * @param field индекс объекта в теле сообщения
-   * @deprecated необходимо использовать #getField(String)
-   * @return содержимое поля
-   */
-  Object getField(int field);
 
   /** Выбор поля по имени.
    * @param name имя поля
@@ -93,12 +81,6 @@ public interface Message {
    * @return сформатированное сообщение
    */
   String toString(boolean willStackTrace);
-
-  /** Доступ ко всему списку полей.
-   * @return список полей
-   * @deprecated необходимо использовать #getContents()
-   */
-  List getFields();
 
   /** Возможно ли маршрутизировать сообщение между диспетчерами (приложениями).
    * @return флаг маршрутизации
