@@ -30,8 +30,8 @@
 
 package org.valabs.stdobj.webcon.servlet;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.BufferedReader;
+import java.io.Reader;
 
 /// Special InputStream used by servlets.
 // <P>
@@ -42,16 +42,13 @@ import java.io.InputStream;
 // <A HREF="/resources/classes/org.valabs.stdobj.webcon/servlet/ServletInputStream.java">Fetch the software.</A><BR>
 // <A HREF="/resources/classes/tar.gz">Fetch the entire package.</A>
 
-public abstract class ServletInputStream extends InputStream
-    {
+public class ServletInputStream extends BufferedReader {
 
-    /// Reads bytes into the specified byte array until the array is filled
-    // or a newline character is read.
-    // @param b the buffer where data is stored
-    // @param off the start offset of the data
-    // @param len the length of the data
-    // @return the actual number of bytes read, or -1 on EOF
-    // @exception IOException if an I/O error has occurred
-    public abstract int readLine( byte[] b, int off, int len ) throws IOException;
-
-    }
+    /**
+   * @param arg0
+   */
+  public ServletInputStream(Reader arg0) {
+    super(arg0);
+    // TODO Auto-generated constructor stub
+  }
+}
