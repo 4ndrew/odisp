@@ -1,8 +1,12 @@
 package test.org.valabs.odisp;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import junit.framework.TestCase;
 
 import org.doomdark.uuid.UUID;
 import org.valabs.odisp.common.ConfigurationManager;
@@ -18,9 +22,9 @@ import org.valabs.stdmsg.StandartMessage;
 
 /** Диспетчер-заглушка для тестирования ODISP объектов.
  * @author (С) 2004 <a href="mailto:valeks@novel-il.ru">Алексеев Валентин А.</a>
- * @version $Id: DispatcherFake.java,v 1.2 2004/12/02 22:58:24 valeks Exp $
+ * @version $Id: DispatcherFake.java,v 1.3 2004/12/03 09:44:01 valeks Exp $
  */
-public class DispatcherFake implements Dispatcher, ObjectManager, ResourceManager, SecurityManager, ConfigurationManager, ExceptionHandler {
+public class DispatcherFake extends TestCase implements Dispatcher, ObjectManager, ResourceManager, SecurityManager, ConfigurationManager, ExceptionHandler {
 
   /* (non-Javadoc)
    * @see org.valabs.odisp.common.Dispatcher#send(org.valabs.odisp.common.Message)
@@ -173,5 +177,8 @@ public class DispatcherFake implements Dispatcher, ObjectManager, ResourceManage
     return false;
   }
   public void signalException(Exception e) {
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    e.printStackTrace(new PrintStream(out));
+    assertTrue("Exception " + e.toString() + " signaled. Stack trace:\n" + out.toString(), false);
   }
 }
