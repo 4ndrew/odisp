@@ -5,10 +5,10 @@ import java.util.*;
 * посылаемых диспетчером ODISP.
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: ODObject.java,v 1.2 2003/10/03 21:23:04 valeks Exp $
+* @version $Id: ODObject.java,v 1.3 2003/10/06 12:38:12 valeks Exp $
 */
 public abstract class ODObject extends Thread {
-	private Dispatcher dispatcher;
+	protected Dispatcher dispatcher;
 	private List messages;
 	/** Признак окончания работы основного цикла обработки сообщений */
 	private boolean doExit;
