@@ -1,4 +1,4 @@
-<!-- $Id: build.xml,v 1.20 2004/12/02 22:12:04 valeks Exp $ mode: -*- --><!-- xsl -*- -->
+<!-- $Id: build.xml,v 1.21 2004/12/02 22:55:05 valeks Exp $ mode: -*- --><!-- xsl -*- -->
 <project name="odisp" default="all" basedir=".">
     <taskdef resource="checkstyletask.properties"
            classpath="/usr/local/share/java/classes/checkstyle.jar"/>
@@ -106,16 +106,29 @@
   <target name="messages-generate" depends="messages-generate-build, messages-generate-gen"/>
     
     <!-- Object Dispatcher -->
-  <target name="odisp-junit">
-    <junit printsummary="yes" fork="yes" haltonfailure="yes">
+  <target name="odisp-junit-compile" depends="odisp">
+    <javac
+      srcdir="src/test"
+      destdir="build"
+      deprecation="yes"
+      source="1.4">
       <classpath>
         <pathelement location="lib/xlang-parser.jar"/>
         <pathelement location="lib/jug.jar"/>
         <pathelement location="build"/>
       </classpath>
-      <formatter type="plain"/>
+    </javac>
+  </target>
+  <target name="odisp-junit" depends="odisp-junit-compile">
+    <junit printsummary="withOutAndErr" fork="yes" haltonfailure="yes">
+      <classpath>
+        <pathelement location="lib/xlang-parser.jar"/>
+        <pathelement location="lib/jug.jar"/>
+        <pathelement location="build"/>
+      </classpath>
       <test name="test.org.valabs.odisp.AllTests"/>
     </junit>
+    
   </target>  
 
     <target name="odisp" depends="build-dir-setup, messages-generate">
