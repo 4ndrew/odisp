@@ -10,12 +10,14 @@ package com.novel.stdmsg;
  * захват не более одного ресурса с установлением режима блокировки.</p>
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODAcquireMessage.java,v 1.3 2003/12/04 09:48:20 valeks Exp $
+ * @version $Id: ODAcquireMessage.java,v 1.4 2003/12/15 14:02:43 valeks Exp $
  */
 
 public class ODAcquireMessage extends StandartMessage {
   /** Символьное имя сообщения*/
   public static final String name = "od_acquire";
+  private transient String resourceName;
+  private transient boolean willBlock = false;
   /** Создать новое сообщение диспетчеру с запросом на захват ресурса
    * @param origin автор
    * @param replyTo в ответ на сообщение No.
@@ -28,7 +30,10 @@ public class ODAcquireMessage extends StandartMessage {
    * @return имя ресурса
    */
   public String getResourceName() {
-    return (String) getField(0);
+    if (ce) {
+      return (String) getField(0);
+    }
+    return resourceName;
   }
 
   /** Установить имя ресурса
@@ -36,7 +41,7 @@ public class ODAcquireMessage extends StandartMessage {
    * @return ссылка на текущее сообщение
    */
   public ODAcquireMessage setResourceName(String newName) {
-    fields.add(0, newName);
+    resourceName = newName;
     return this;
   }
 
@@ -45,11 +50,10 @@ public class ODAcquireMessage extends StandartMessage {
    * @return режим захвата
    */
   public boolean getWillBlock() {
-    boolean result = false;
-    if (getFieldsCount() == 2) {
-      result = ((Boolean) getField(1)).booleanValue();
+    if (ce) {
+      return ((Boolean) getField(1)).booleanValue();
     }
-    return result;
+    return willBlock;
   }
 
   /** Установить режим блокировки
@@ -57,8 +61,22 @@ public class ODAcquireMessage extends StandartMessage {
    * @return ссылка на текущее сообщение
    */
   public ODAcquireMessage setWillBlock(boolean newBlock) {
-    fields.add(1, new Boolean(newBlock));
+    willBlock = newBlock;
     return this;
   }
   
+  public boolean isCorrect() {
+    if (ce) {
+      return true;
+    }
+    if (resourceName != "") {
+      fields.clear();
+      addField(resourceName);
+      addField(new Boolean(willBlock));
+      ce = true;
+      return true;
+    } else {
+      return false;
+    }
+  }
 }// ODAcquireMessage

@@ -12,12 +12,16 @@ import com.novel.odisp.common.Resource;
  * захват не более одного ресурса с установлением режима блокировки.</p>
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODReleaseMessage.java,v 1.3 2003/12/04 09:48:20 valeks Exp $
+ * @version $Id: ODReleaseMessage.java,v 1.4 2003/12/15 14:02:43 valeks Exp $
  */
 
 public class ODReleaseMessage extends StandartMessage {
   /** Символьное имя сообщения*/
   public static final String name = "od_object_loaded";
+
+  private transient String resourceName = "";
+  private transient Resource resource;
+
   /** Создать новое сообщение диспетчеру с запросом на захват ресурса
    * @param origin автор
    * @param replyTo в ответ на сообщение No.
@@ -30,7 +34,10 @@ public class ODReleaseMessage extends StandartMessage {
    * @return имя ресурса
    */
   public String getResourceName() {
-    return (String) getField(0);
+    if (ce) { 
+      return (String) getField(0);
+    }
+    return resourceName;
   }
 
   /** Установить имя ресурса
@@ -38,7 +45,7 @@ public class ODReleaseMessage extends StandartMessage {
    * @return ссылка на текущее сообщение
    */
   public ODReleaseMessage setResourceName(String newName) {
-    fields.add(0, newName);
+    resourceName = newName;
     return this;
   }
 
@@ -46,7 +53,10 @@ public class ODReleaseMessage extends StandartMessage {
    * @return ссылка на ресурс
    */
   public Resource getResource() {
-    return (Resource) getField(1);
+    if (ce) {
+      return (Resource) getField(1);
+    }
+    return resource;
   }
 
   /** Установить новое значение ссылки на ресурс
@@ -54,8 +64,23 @@ public class ODReleaseMessage extends StandartMessage {
    * @return ссылка на текущее сообщение
    */
   public ODReleaseMessage setResource(Resource newResource) {
-    fields.add(1, newResource);
+    resource = newResource;
     return this;
   }
   
+  public boolean isCorrect() {
+    if (ce) {
+      return true;
+    }
+    if (resourceName != "" && resource != null) {
+      fields.clear();
+      addField(resourceName);
+      addField(resource);
+      ce = true;
+      return true;
+    } else {
+      return false;
+    }
+  }
+
 }// ODReleaseMessage
