@@ -1,9 +1,10 @@
 # Makefile for all documents
 #
-# $Id: Makefile,v 1.7 2003/10/14 13:47:37 valeks Exp $
+# $Id: Makefile,v 1.8 2003/10/21 20:17:18 dron Exp $
 
 # folders & files
 TEXDOCS=impl.tex \
+		  gui_imp.tex \
         tz.tex
 TEXDVIS=$(TEXDOCS:.tex=.dvi)
 XMLMSGROOT=messages.xml
@@ -15,9 +16,13 @@ FIND=find
 RM=rm -rf
 XSLTPROC=xsltproc
 
-all: $(TEXDVIS) $(XMLMSGROOT:.xml=.html)
+all: texdocs xmldocs 
 
-messages.html: $(XMLMSGROOT)
+texdocs: $(TEXDVIS)
+
+xmldocs: $(XMLMSGROOT:.xml=.html)
+
+$(XMLMSGROOT:.xml=.html): $(XMLMSGROOT)
 	@echo Generating HTML reference for messages
 	$(XSLTPROC) --xinclude --output messages.html $(TOOLS)/messages.xsl messages.xml
 	$(RM) $(XMLMSGROOT)
