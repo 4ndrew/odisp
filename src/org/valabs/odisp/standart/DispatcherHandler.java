@@ -9,6 +9,10 @@ import com.novel.stdmsg.ODReleaseMessage;
 import com.novel.stdmsg.ODRemoveDepMessage;
 import com.novel.stdmsg.ODAcquireMessage;
 import com.novel.stdmsg.ODShutdownMessage;
+import com.novel.stdmsg.ODGetProvidingMessage;
+import com.novel.stdmsg.ODAddProviderMessage;
+import com.novel.stdmsg.ODRemoveProviderMessage;
+import com.novel.stdmsg.ODGetProvidingReplyMessage;
 import java.util.logging.Logger;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +21,7 @@ import java.util.Set;
 
 /** Обработчик сообщений диспетчера ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: DispatcherHandler.java,v 1.8 2004/03/26 21:53:38 valeks Exp $
+ * @version $Id: DispatcherHandler.java,v 1.9 2004/03/27 19:40:18 valeks Exp $
  */
 
 public class StandartDispatcherHandler extends CallbackODObject {
@@ -128,6 +132,7 @@ public class StandartDispatcherHandler extends CallbackODObject {
 	  while (it.hasNext()) {
 	    m.addField(it.next());
 	  }
+	  m.setRoutable(false);
 	  dispatcher.send(m);
 	}
       });
@@ -138,6 +143,25 @@ public class StandartDispatcherHandler extends CallbackODObject {
 	  }
 	  ObjectEntry oe = (ObjectEntry) oman.getObjects().get(msg.getOrigin());
 	  oe.removeDepend((String) msg.getField(0));
+	}
+      });
+    addHandler(ODGetProvidingMessage.NAME, new MessageHandler() {
+	public final void messageReceived(final Message msg) {
+	  ODGetProvidingReplyMessage m = new ODGetProvidingReplyMessage(msg.getOrigin(), msg.getId());
+	  m.setProvidingList(oman.getProviding());
+	  dispatcher.send(m);
+	}
+      });
+    addHandler(ODAddProviderMessage.NAME, new MessageHandler() {
+	public final void messageReceived(final Message msg) {
+	  String service = (String) msg.getField("0");
+	  oman.addProvider(service, msg.getOrigin());
+	}
+      });
+    addHandler(ODRemoveProviderMessage.NAME, new MessageHandler() {
+	public final void messageReceived(final Message msg) {
+	  String service = (String) msg.getField("0");
+	  oman.removeProvider(service, msg.getOrigin());
 	}
       });
   }

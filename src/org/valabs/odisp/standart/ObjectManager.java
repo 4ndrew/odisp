@@ -5,6 +5,7 @@ import com.novel.odisp.common.ObjectManager;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.logging.Logger;
@@ -17,7 +18,7 @@ import java.lang.reflect.InvocationTargetException;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@valeks.novel.local">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.9 2004/03/26 21:53:38 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.10 2004/03/27 19:40:18 valeks Exp $
  */
 
 public class StandartObjectManager implements ObjectManager {
@@ -30,11 +31,64 @@ public class StandartObjectManager implements ObjectManager {
   /** Журнал. */
   private Logger log = Logger.getLogger("com.novel.odisp.StandartObjectManager");
   /** Список сервисов менеджера. */
-  private List provided = new ArrayList();
+  private Map provided = new HashMap();
   /** Общее число объектов. */
   private int objCount = 0;
   /** Количество объектов ожидающих загрузки. */
   private int countPending = 0;
+
+  /** Добавление объекта как провайдера конкретного сервиса.
+   * @param service название сервиса
+   * @param objectName название объекта
+   */
+  public void addProvider(final String service, final String objectName) {
+    if (!provided.containsKey(service)) {
+      provided.put(service, new ArrayList());
+    }
+    ((List) provided.get(service)).add(objectName);
+  }
+
+  /** Удаление провайдера конкретного сервиса.
+   * В случае если у сервиса не остается ни одного провайдера -- он автоматически будет удален.
+   * @param service название сервиса
+   * @param objectName название объекта
+   */
+  public void removeProvider(final String service, final String objectName) {
+    if (provided.containsKey(service)) {
+      ((List) provided.get(service)).remove(objectName);
+      if (((List) provided.get(service)).size() == 0) {
+	provided.remove(service);
+      }
+    }
+  }
+
+  /** Проверка на существование провайдеров сервиса.
+   * @param service название сервиса
+   * @return флаг присутствия сервиса
+   */
+  private boolean hasProviders(final String service) {
+    return provided.containsKey(service);
+  }
+
+  /** Получить список объектов-провайдеров сервиса.
+   * @param service имя сервиса
+   * @return немодифицируемый thread-safe список объектов
+   */
+  private List getProviders(final String service) {
+    if (provided.containsKey(service)) {
+      return Collections.unmodifiableList(Collections.synchronizedList((List) provided.get(service)));
+    } else {
+      return null;
+    }
+  }
+
+  /** Получить список сервисов диспетчера.
+   * @return немодифицируемый список сервисов
+   */
+  public List getProviding() {
+    return new ArrayList(Collections.unmodifiableSet(provided.keySet()));
+  }
+
   /** Попытка подгрузки объектов в следствии изменения списка сервисов менеджера. */
   public final void loadPending() {
     if (countPending == 0) {
@@ -47,7 +101,7 @@ public class StandartObjectManager implements ObjectManager {
     while (it.hasNext()) {
       String objectName = (String) it.next();
       log.fine("added resource provider " + objectName);
-      provided.add(objectName);
+      addProvider(objectName, objectName); // ресурсы считаются провайдерами сервиса с собственным именем
     }
     synchronized (objects) {
       it = objects.keySet().iterator();
@@ -60,7 +114,7 @@ public class StandartObjectManager implements ObjectManager {
 	log.config("trying to load object " + objectName);
 	int numRequested = oe.getDepends().length;
 	for (int i = 0; i < oe.getDepends().length; i++) {
-	  if (provided.contains(oe.getDepends()[i])) {
+	  if (hasProviders(oe.getDepends()[i])) {
 	    numRequested--;
 	  } else {
 	    log.finer("dependency not met: " + oe.getDepends()[i]);
@@ -71,9 +125,9 @@ public class StandartObjectManager implements ObjectManager {
 	  oe.setLoaded(true);
           flushDefferedMessages(oe.getObject().getName());
 	  for (int i = 0; i < oe.getProvides().length; i++) {
-	    if (!provided.contains(oe.getProvides()[i])) {
-	      log.fine("added provider of " + oe.getProvides()[i]);
-	      provided.add(oe.getProvides()[i]);
+	    if (!hasProviders(oe.getProvides()[i])) {
+	      log.fine("added as provider of " + oe.getProvides()[i]);
+	      addProvider(oe.getProvides()[i], oe.getObject().getName());
 	    }
 	  }
 	  log.config(" ok. loaded = " + objectName);
@@ -151,6 +205,8 @@ public class StandartObjectManager implements ObjectManager {
 	      dependingObjs.add(className);
 	    }
 	  }
+	  // не забываем удалить объект из списков провайдеров
+	  removeProvider(provides[i], objectName);
 	}
       }
       if (code == 0) {
@@ -187,34 +243,59 @@ public class StandartObjectManager implements ObjectManager {
     dispatcher = newDispatcher;
   }
 
+  /** Послать сообщение конкретному объекту.
+   * @param objectName имя объекта
+   * @param message сообщение
+   */
+  private void sendToObject(final String objectName, final Message message) {
+    ObjectEntry oe = null;
+    // исключить модификацию списка дескрипторов объектов
+    synchronized (objects) {
+      oe = (ObjectEntry) objects.get(objectName);
+    }
+    ODObject objToSendTo = null;
+    // исключить модификацию дескриптора состояние объекта
+    synchronized (oe) {
+      if (oe.isBlockedState() || !oe.isLoaded()) {
+	log.finest("deffered message " + message.getAction() + " for " + objectName
+		   + " (loaded=" + oe.isLoaded() + ")");
+	messages.addMessage(objectName, message);
+	return;
+      }
+      objToSendTo = oe.getObject();
+    }
+    // синхронно для объекта
+    synchronized (objToSendTo) {
+      objToSendTo.addMessage(message);
+      objToSendTo.notify();
+    }
+  }
+
   /** Посылка сообщения всем объектам менеджера.
    * @param message сообщение
    */
   public final void send(Message message) {
-    Map localObjects;
-    synchronized (objects) {
-      localObjects = new HashMap(objects);
-    }
     if (message == null
 	|| message.getAction().length() == 0
 	|| !message.isCorrect()) {
       return;
     }
-    Iterator it = localObjects.keySet().iterator();
+    Iterator it = null;
+    // в случае если получатель смахивает на имя сервиса -- разослать только провайдерам, а не всем подряд
+    if (hasProviders(message.getDestination())) {
+      List providers = getProviders(message.getDestination());
+      if (providers != null) {
+	it = providers.iterator();
+      }
+    }
+    if (it == null){
+      synchronized (objects) {
+	it = Collections.synchronizedSet(objects.keySet()).iterator();
+      }
+    }
     while (it.hasNext()) {
-      String className = (String) it.next();
-      ObjectEntry oe = (ObjectEntry) localObjects.get(className);
-      if (oe.isBlockedState() || !oe.isLoaded()) {
-	log.finest("deffered message " + message.getAction() + " for " + className
-		  + " (loaded=" + oe.isLoaded() + ")");
-	messages.addMessage(className, message);
-	continue;
-      }
-      ODObject objToSendTo = oe.getObject();
-      objToSendTo.addMessage(message);
-      synchronized (objToSendTo) {
-	objToSendTo.notify();
-      }
+      String objectName = (String) it.next();
+      sendToObject(objectName, message);
     }
   }
   /** Установка статуса блокировки объекта по ресурсу.

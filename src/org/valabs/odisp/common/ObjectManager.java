@@ -1,10 +1,11 @@
 package com.novel.odisp.common;
 
 import java.util.Map;
+import java.util.List;
 
 /** Интерфейс менеджера объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@valeks.novel.local">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.3 2004/03/26 21:53:38 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.4 2004/03/27 19:40:18 valeks Exp $
  */
 
 public interface ObjectManager {
@@ -38,4 +39,18 @@ public interface ObjectManager {
    * @param newState новое состояние
    */
   void setBlockedState(String objName, int newState);
+  /** Получить список сервисов.
+   * @return немодифицируемый список сервисов
+   */
+  List getProviding();
+  /** Удалить провайдера из списка.
+   * @param service название сервиса
+   * @param objectName название объекта
+   */
+  void removeProvider(String service, String objectName);
+  /** Добавить провайдера в список.
+   * @param service название сервиса
+   * @param objectName название объекта
+   */
+  void addProvider(String service, String objectName);
 } // ObjectManager
