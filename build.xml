@@ -1,4 +1,4 @@
-<!-- $Id: build.xml,v 1.2 2003/10/06 15:46:32 valeks Exp $ -->
+<!-- $Id: build.xml,v 1.3 2003/10/07 11:00:47 valeks Exp $ -->
 <project name="nms" default="all" basedir=".">
     <property name="odisp-src" location="./"/>
     <path id="odisp-src">
@@ -23,7 +23,7 @@
 	<mkdir dir="${odisp-doc}"/>    
     </target>
     <target name="odisp">
-	<javac srcdir="${odisp-src}" destdir="${build-dir}"/>
+	<javac srcdir="${odisp-src}" destdir="${build-dir}" debug="yes"/>
     </target>
     <target name="clean">
 	<delete dir="${build-dir}"/>
