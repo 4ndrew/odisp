@@ -8,7 +8,7 @@ import java.io.InputStreamReader;
 /** Объект ODISP реализующий консольный интерфейс доступа к менеджеру
 * @author Валентин А. Алексеев
 * @author (C) 2003, НПП "Новел-ИЛ"
-* @version $Id: ConsoleObject.java,v 1.10 2003/11/22 14:00:49 valeks Exp $
+* @version $Id: ConsoleObject.java,v 1.11 2003/12/02 14:49:07 valeks Exp $
 */
 public class ConsoleObject extends PollingODObject {
   /** Поток читающий ввод с консоли */
@@ -32,7 +32,7 @@ public class ConsoleObject extends PollingODObject {
       }
       for (int i = 0; i < msg.getFieldsCount(); i++) {
 	System.out.print(i + ":");
-	System.out.println(msg.getField(i).toString());
+	System.out.println(msg.getField(i));
       }
     }
     return;
