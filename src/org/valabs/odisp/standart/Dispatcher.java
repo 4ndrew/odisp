@@ -27,7 +27,7 @@ import com.novel.odisp.common.MessageHandler; // --''--
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.19 2003/11/30 16:32:57 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.20 2003/11/30 22:40:55 valeks Exp $
  */
 public class StandartDispatcher implements Dispatcher {
   /** Интерфейс к службе сообщений*/
@@ -162,7 +162,7 @@ public class StandartDispatcher implements Dispatcher {
       ODObject load = (ODObject) Class.forName(className).getConstructor(declParams).newInstance(params);
       load.setDispatcher(this);
       synchronized (objects) {
-	ObjectEntry oe = new ObjectEntry(className, false, load.getDepends(), load.getProviding());
+	ObjectEntry oe = new ObjectEntry(className, 0, load.getDepends(), load.getProviding());
 	oe.object = load;
 	oe.loaded = false;
 	objects.put(load.getObjectName(), oe);
@@ -242,7 +242,7 @@ public class StandartDispatcher implements Dispatcher {
       while (it.hasNext()) {
 	String className = (String) it.next();
 	ObjectEntry oe = (ObjectEntry) objects.get(className);
-	if (oe.blockedState || !oe.loaded) {
+	if (oe.isBlockedState() || !oe.loaded) {
 	  log.finer("deffered message for " + className + " (loaded=" + oe.loaded + ")");
 	  messages.addMessage(className, message);
 	  continue;
@@ -273,7 +273,7 @@ public class StandartDispatcher implements Dispatcher {
 	while (it.hasNext()) {
 	  String className = (String) it.next();
 	  ObjectEntry oe = (ObjectEntry) objects.get(className);
-	  if (oe.blockedState || !oe.loaded) {
+	  if (oe.isBlockedState() || !oe.loaded) {
 	    log.finer("deffered message for " + className + " (loaded=" + oe.loaded + ")");
 	    messages.addMessage(className, message);
 	    continue;
@@ -342,7 +342,7 @@ public class StandartDispatcher implements Dispatcher {
   public StandartDispatcher(List objs) {
     log.info(toString() + " starting up...");
     StandartDispatcherHandler stdh = new StandartDispatcherHandler(new Integer(0));
-    ObjectEntry oe = new ObjectEntry(stdh.getClass().getName(), false, stdh.getDepends(), stdh.getProviding());
+    ObjectEntry oe = new ObjectEntry(stdh.getClass().getName(), 0, stdh.getDepends(), stdh.getProviding());
     oe.object = stdh;
     objects.put("stddispatcher", oe);
     loadPending();
@@ -503,7 +503,7 @@ public class StandartDispatcher implements Dispatcher {
      * @param depends список зависимостей
      * @param provides список сервисов
      */
-    public ObjectEntry(String cn, boolean bs, String[] depends, String[] provides) {
+    public ObjectEntry(String cn, int bs, String[] depends, String[] provides) {
       className = cn;
       blockedState = bs;
       this.depends = depends;
@@ -684,7 +684,7 @@ public class StandartDispatcher implements Dispatcher {
 	      String odObjectName = (String) resQueue.get(0);
 	      if (odObjectName.endsWith("!")) {
 		odObjectName = odObjectName.substring(0, odObjectName.length() - 1);
-		setBlockingState(odObjectName, getBlockingState(odObjectName) + 1);
+		setBlockedState(odObjectName, getBlockedState(odObjectName) + 1);
 	      }
 	      Message m = getNewMessage("resource_acquired", odObjectName, "stddispatcher", msg.getId());
 	      m.addField(className);
