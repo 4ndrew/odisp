@@ -1,6 +1,7 @@
-$Id: ModuleStatusReplyMessage.tpl,v 1.1 2004/08/17 08:18:15 valeks Exp $
+$Id: ModuleStatusReplyMessage.tpl,v 1.2 2004/08/20 13:46:15 valeks Exp $
 NAME com.novel.nms.messages ModuleStatusReplyMessage module_status_reply
 AUTHOR <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
+AUTHOR (C) 2004 НПП "Новел-ИЛ"
 DESC Ответ на запрос о статусе модуля.
 DESC Каждый из списков содержит строковые описания заданий (текущих,
 DESC выполненных, ошибочных). Каждое описание может содержать краткое
