@@ -12,7 +12,7 @@ import com.novel.odisp.common.Resource;
  *
  * @author <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
  * @author (C) 2004 НПП "Новел-ИЛ"
- * @version $Id: Translator.java,v 1.2 2004/02/18 16:03:34 dron Exp $
+ * @version $Id: Translator.java,v 1.3 2004/02/18 16:16:45 dron Exp $
  */
 public class Translator extends Properties implements Resource {
   /** Отладочный лог */
@@ -47,7 +47,9 @@ public class Translator extends Properties implements Resource {
    * умолчанию.
    */
   public synchronized String translate(String key, String defaultValue) {
-    return getProperty(key, defaultValue);
+    String tmp = getProperty(key, defaultValue);
+    logger.fine("Translated: " + tmp);
+    return tmp;
   }
   
   /** Очистка ресурса
