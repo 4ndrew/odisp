@@ -18,7 +18,7 @@ import java.lang.reflect.InvocationTargetException;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@valeks.novel.local">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.10 2004/03/27 19:40:18 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.11 2004/03/27 23:13:33 valeks Exp $
  */
 
 public class StandartObjectManager implements ObjectManager {
@@ -91,17 +91,16 @@ public class StandartObjectManager implements ObjectManager {
 
   /** Попытка подгрузки объектов в следствии изменения списка сервисов менеджера. */
   public final void loadPending() {
-    if (countPending == 0) {
-      // проводить процедуру загрузки только в том случае если кто-то ожидает загрузки
-      return;
-    }
     // resources
     Map resourceList = new HashMap(dispatcher.getResourceManager().getResources());
     Iterator it = resourceList.keySet().iterator();
     while (it.hasNext()) {
       String objectName = (String) it.next();
       log.fine("added resource provider " + objectName);
-      addProvider(objectName, objectName); // ресурсы считаются провайдерами сервиса с собственным именем
+      if (!hasProviders(objectName)) {
+	// ресурсы считаются провайдерами сервиса с собственным именем
+	addProvider(objectName, objectName);
+      }
     }
     synchronized (objects) {
       it = objects.keySet().iterator();
@@ -295,6 +294,7 @@ public class StandartObjectManager implements ObjectManager {
     }
     while (it.hasNext()) {
       String objectName = (String) it.next();
+      message.setDestination(objectName);
       sendToObject(objectName, message);
     }
   }
