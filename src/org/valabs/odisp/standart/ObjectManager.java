@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
@@ -25,7 +26,7 @@ import org.valabs.stdmsg.ODObjectLoadedMessage;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.41 2004/10/28 22:17:05 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.42 2004/11/05 12:12:24 valeks Exp $
  */
 
 class ObjectManager implements org.valabs.odisp.common.ObjectManager {
@@ -37,7 +38,7 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
 	private Map objects = new HashMap();
 	/** Журнал. */
 	private Logger log = Logger
-			.getLogger("org.valabs.odisp.StandartObjectManager");
+			.getLogger(ObjectManager.class.getName());
 	/** Список сервисов менеджера. */
 	private Map provided = new HashMap();
 	/** Пул нитей отсылки. */
@@ -121,7 +122,7 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
 			if (!hasProviders(objectName)) {
 				// ресурсы считаются провайдерами сервиса с собственным именем
 				addProvider(objectName, objectName);
-				log.fine("added resource provider " + objectName);
+				log.finest("added resource provider " + objectName);
 				statLoadedOrder.add(objectName);
 			}
 		}
@@ -156,18 +157,18 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
 			if (oe.isLoaded()) {
 				continue;
 			}
-			log.config("trying to load object " + objectName);
+			log.finest("trying to load object " + objectName);
 			int numRequested = oe.getDepends().length;
 			for (int i = 0; i < oe.getDepends().length; i++) {
 				if (hasProviders(oe.getDepends()[i])) {
 					numRequested--;
 				} else {
-					log.finer("dependency not met: " + oe.getDepends()[i]);
+					log.finest("dependency not met: " + oe.getDepends()[i]);
 				}
 			}
 			if (numRequested == 0) {
 				for (int i = 0; i < oe.getProvides().length; i++) {
-					log.fine("added as provider of " + oe.getProvides()[i]);
+					log.finest("added as provider of " + oe.getProvides()[i]);
 					addProvider(oe.getProvides()[i], oe.getObject()
 							.getObjectName());
 				}
@@ -326,7 +327,7 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
 				while (it.hasNext()) {
 					String className = (String) it.next();
 					if (objects.containsKey(className)) {
-						log.fine("removing " + objectName + "'s dependency "
+						log.finest("removing " + objectName + "'s dependency "
 								+ className);
 						unloadObject(className, code);
 					}
@@ -353,6 +354,7 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
 	 */
 	public ObjectManager(final Dispatcher newDispatcher) {
 		dispatcher = newDispatcher;
+		log.setLevel(Level.FINE);
 		for (int i = 0; i < SENDER_POOL_SIZE; i++) {
 			senderPool.add(new Sender(this));
 		}
