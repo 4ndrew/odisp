@@ -8,7 +8,6 @@ import java.util.List;
 import org.valabs.odisp.common.Message;
 import org.valabs.odisp.common.MessageHandler;
 import org.valabs.odisp.common.StandartODObject;
-import org.valabs.stdmsg.ODCleanupMessage;
 import org.valabs.stdmsg.ODObjectLoadedMessage;
 import org.valabs.stdmsg.webcon.WCAddServletMessage;
 import org.valabs.stdmsg.webcon.WCListServletsMessage;
@@ -23,7 +22,7 @@ import org.valabs.stdobj.webcon.servlet.http.HttpServletResponse;
 
 /** ODISP-интерфейс к ACME серверу.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: WebCon.java,v 1.16 2005/01/26 08:22:52 valeks Exp $
+ * @version $Id: WebCon.java,v 1.17 2005/01/26 09:12:14 valeks Exp $
  */
 
 public class WebCon extends StandartODObject implements MessageHandler {
