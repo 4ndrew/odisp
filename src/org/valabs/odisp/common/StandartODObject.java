@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 /** Стандартный объект ODISP.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: StandartODObject.java,v 1.3 2004/05/21 20:27:20 valeks Exp $
+ * @version $Id: StandartODObject.java,v 1.4 2004/06/09 14:13:30 valeks Exp $
  */
 
 public abstract class StandartODObject implements ODObject {
@@ -82,7 +82,7 @@ public abstract class StandartODObject implements ODObject {
   /** Установить таблицу параметров.
    * @param cfg новая таблица
    */
-  public final void setConfiguration(final Map cfg) {
+  public void setConfiguration(final Map cfg) {
     configuration = cfg;
   }
   /** Получить значение параметра конфигурации.

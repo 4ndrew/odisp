@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import com.novel.odisp.common.StandartODObject;
@@ -23,7 +24,7 @@ import com.novel.stdmsg.ODShutdownMessage;
 
 /** Обработчик сообщений диспетчера ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: DispatcherHandler.java,v 1.18 2004/06/09 00:28:48 valeks Exp $
+ * @version $Id: DispatcherHandler.java,v 1.19 2004/06/09 14:13:31 valeks Exp $
  */
 
 public class StandartDispatcherHandler extends StandartODObject {
@@ -55,14 +56,6 @@ public class StandartDispatcherHandler extends StandartODObject {
   }
   /** Зарегистрировать обработчики сообщений. */
   protected final void registerHandlers() {
-    addHandler("od_set_run_thread", new MessageHandler() {
-	public final void messageReceived(final Message msg) {
-	  if (msg.getOrigin().equals("G0D")) {
-	    // наш личный 0xdeadbeaf
-	    runThread = (Thread) msg.getField("0");
-	  }
-	}
-    });
     addHandler("od_unload_object", new MessageHandler() {
 	public final void messageReceived(final Message msg) {
 	  if (msg.getFieldsCount() != 1) {
@@ -197,5 +190,17 @@ public class StandartDispatcherHandler extends StandartODObject {
    */
   public StandartDispatcherHandler(final Integer id) {
     super("stddispatcher");
+  }
+
+  /** Специальная обработка конфигурации.
+   * @param cfg конфигурация объекта
+   */
+  public void setConfiguration(final Map cfg) {
+    /* XXX/HACK и опять хак. 
+     * Необходимо "правильным" путём передать ссылку на runThread от диспетчера.
+     */
+    runThread = (Thread) cfg.get("runthr");
+    cfg.remove("runthr");
+    super.setConfiguration(cfg);
   }
 } // StandartDispatcherHandler

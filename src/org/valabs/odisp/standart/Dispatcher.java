@@ -24,7 +24,7 @@ import com.novel.stdmsg.StandartMessage;
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.42 2004/05/28 00:16:12 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.43 2004/06/09 14:13:30 valeks Exp $
  */
 public class StandartDispatcher implements Dispatcher {
   /** Журнал. */
@@ -130,7 +130,20 @@ public class StandartDispatcher implements Dispatcher {
   public StandartDispatcher(final Tag docTag) {
     log.info(toString() + " starting up...");
     Iterator it = docTag.getChild().iterator();
-    oman.loadObject(StandartDispatcherHandler.class.getName(), null);
+    Thread t = new Thread("alive thread") {
+	public final void run() {
+	  try {
+	    synchronized (this) {
+	      wait();
+	    }
+	  } catch (InterruptedException e) {
+	  }
+	}
+      };
+    Map tmp = new HashMap();
+    tmp.put("runthr", t);
+    oman.loadObject(StandartDispatcherHandler.class.getName(), tmp);
+    oman.loadPending();
     while (it.hasNext()) {
       Tag curt = (Tag) it.next();
       if (curt.getName().equalsIgnoreCase("object")) {
@@ -161,20 +174,7 @@ public class StandartDispatcher implements Dispatcher {
       }
     }
     oman.loadPending();
-    Message runthr = getNewMessage("od_set_run_thread", "dispatcher", "G0D", 0);
-    Thread t = new Thread("alive thread") {
-	public final void run() {
-	  try {
-	    synchronized (this) {
-	      wait();
-	    }
-	  } catch (InterruptedException e) {
-	  }
-	}
-      };
     t.start();
-    runthr.addField("0", t);
-    oman.send(runthr);
     try {
       t.join();
     } catch (InterruptedException e) {
