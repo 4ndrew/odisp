@@ -45,7 +45,7 @@ import com.novel.odisp.common.MessageHandler;
  * 
  * @author <a href="dron@novel-il.ru">Андрей А. Порохин</a>
  * @author (C) 2004 НПП "Новел-ИЛ"
- * @version $Id: SessionManager.java,v 1.1 2004/04/14 13:10:03 dron Exp $ 
+ * @version $Id: SessionManager.java,v 1.2 2004/05/28 00:15:10 valeks Exp $ 
  */
 public class SessionManager {
   /** Ссылка на ODSessionManager */
@@ -55,7 +55,7 @@ public class SessionManager {
   
   /** Конструктор
    */
-  public SessionManager() {
+  protected SessionManager() {
     super();
   }
   
@@ -80,9 +80,6 @@ public class SessionManager {
   
   /** Функция обработки сообщения Odisp. рекоммендуется вызывать из
    * messageRecevied и handleMessage. 
-   * 
-   * @see com.novel.odisp.common.PollingODObject#messageReceived(Message)
-   * @see com.novel.odisp.common.CallbackODObject#handleMessage(Message) 
    * @param msg Сообщение Odisp
    * @return Если в списке менеджера сессий существует обработчик для данного
    * сообщения, то возвращает true, в противном случае пришло сообщение,
