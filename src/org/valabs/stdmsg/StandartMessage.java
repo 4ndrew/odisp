@@ -1,6 +1,8 @@
 package com.novel.stdmsg;
 
 import com.novel.odisp.common.Message;
+
+import java.util.Iterator;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
@@ -10,7 +12,7 @@ import java.io.Serializable;
 /** Реализация стандартного сообщения для стандартного диспетчера ODISP.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: StandartMessage.java,v 1.10 2004/03/03 14:02:54 valeks Exp $
+ * @version $Id: StandartMessage.java,v 1.11 2004/03/23 13:18:54 dron Exp $
  */
 public class StandartMessage implements Message, Serializable {
   /** Флаг маршрутизации. */
@@ -187,8 +189,10 @@ public class StandartMessage implements Message, Serializable {
       stackTraceMessage += stea[i] + "\n";
     }
     String fieldDump = "\nField dump:";
-    for(int i = 0; i < getFieldsCount(); i++) {
-      fieldDump += "\n(" + i + ") " + getField(i).toString();
+    Iterator it = fields.keySet().iterator();
+    while (it.hasNext()) {
+      String key = (String) it.next();
+      fieldDump += "\n(" + key + ") " + getField(key);
     }
     return "stdmessage id=" + myId + " replyto=" + inReplyTo
       + " action=" + action + ", destination=" + destination
