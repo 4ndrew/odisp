@@ -19,7 +19,7 @@ import com.novel.stdmsg.ODObjectLoadedMessage;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.31 2004/06/09 00:28:48 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.32 2004/06/21 17:18:18 valeks Exp $
  */
 
 public class StandartObjectManager implements ObjectManager {
@@ -281,9 +281,8 @@ public class StandartObjectManager implements ObjectManager {
       }
       ODObject obj = oe.getObject();
       Message m = dispatcher.getNewMessage();
-      ODCleanupMessage.setup(m);
-      ODCleanupMessage.setReason(m, code);
-      m.setDestination(objectName);
+      ODCleanupMessage.setup(m, objectName, 0);
+      ODCleanupMessage.setReason(m, new Integer(code));
       dispatcher.send(m);
       objects.remove(objectName);
       log.config("\tobject " + objectName + " unloaded");
