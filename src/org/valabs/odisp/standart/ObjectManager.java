@@ -17,7 +17,7 @@ import java.lang.reflect.InvocationTargetException;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@valeks.novel.local">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.7 2004/03/12 11:43:15 dron Exp $
+ * @version $Id: ObjectManager.java,v 1.8 2004/03/18 11:20:12 valeks Exp $
  */
 
 public class StandartObjectManager implements ObjectManager {
@@ -42,7 +42,8 @@ public class StandartObjectManager implements ObjectManager {
       return;
     }
     // resources
-    Iterator it = dispatcher.getResourceManager().getResources().keySet().iterator();
+    Map resourceList = new HashMap(dispatcher.getResourceManager().getResources());
+    Iterator it = resourceList.keySet().iterator();
     while (it.hasNext()) {
       String objectName = (String) it.next();
       log.fine("added resource provider " + objectName);
