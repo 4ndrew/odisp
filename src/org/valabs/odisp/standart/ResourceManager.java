@@ -16,11 +16,11 @@ import java.util.regex.Pattern;
 
 /** Менеджер ресурсных объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceManager.java,v 1.6 2004/02/17 11:00:26 valeks Exp $
+ * @version $Id: ResourceManager.java,v 1.7 2004/02/20 00:27:14 valeks Exp $
  */
 public class StandartResourceManager implements ResourceManager {
   /** Список запросов на ресурсы. */
-  private Map resourceRequests = new HashMap();
+  private RequestQueue resourceQueue = new RequestQueue();
   /** Ссылка на диспетчер объектов. */
   private Dispatcher dispatcher;
   /** Журнал. */
@@ -123,32 +123,43 @@ public class StandartResourceManager implements ResourceManager {
     log.fine("resource acquientance request from " + msg.getOrigin() + " to " + className);
     ResourceEntry re = (ResourceEntry) resources.get(className);
     if (re != null) {
-      if (re.isAvailable()) {
-	log.fine(className + " resource is in free pool.");
-	// получение ресурса из хранилища
-	Resource res = re.acquireResource();
-	// конструирование и отправка сообщения
-	ODResourceAcquiredMessage m = new ODResourceAcquiredMessage(msg.getOrigin(), msg.getId());
-	m.setResourceName(className);
-	m.setResource(res);
-	dispatcher.send(m);
-	if (willBlockState) {
-	  log.fine("acquitentance of resource " + className + " by " + msg.getOrigin() + " will be blocking");
-	  // сохранение и изменение статуса блокировки объекта
-	  re.setBlockState(res, willBlockState);
-	  dispatcher.getObjectManager().setBlockedState(msg.getOrigin(),
-							dispatcher.getObjectManager().getBlockedState(msg.getOrigin()) + 1);
+      synchronized (re) {
+	// превентивный ядерный удар. синхронизировать обращение на всю запись о ресурсе
+	if (re.isAvailable()) {
+	  log.fine(className + " resource is in free pool.");
+	  // получение ресурса из хранилища
+	  Resource res = re.acquireResource(msg.getOrigin());
+	  // конструирование и отправка сообщения
+	  ODResourceAcquiredMessage m = new ODResourceAcquiredMessage(msg.getOrigin(), msg.getId());
+	  m.setResourceName(className);
+	  m.setResource(res);
+	  dispatcher.send(m);
+	  if (willBlockState) {
+	    log.fine("acquitentance of resource " + className + " by " + msg.getOrigin() + " will be blocking");
+	    // сохранение и изменение статуса блокировки объекта
+	    re.setBlockState(res, willBlockState);
+	    dispatcher.getObjectManager().setBlockedState(msg.getOrigin(),
+							  dispatcher.getObjectManager().getBlockedState(msg.getOrigin()) + 1);
+	  }
+	} else {
+	  log.finer(className + " resource busy -- putting request to queue");
+	  resourceQueue.addRequest(className, new ResourceRequest(msg.getOrigin(), msg.getId(), willBlockState));
 	}
-      } else {
-	log.finer(className + " resource busy -- putting request to queue");
-	if (!resourceRequests.containsKey(className)) {
-	  log.fine("created request queue for " + className);
-	  resourceRequests.put(className, new ArrayList());
-	}
-	List rrl = (List) resourceRequests.get(className);
-	rrl.add(new ResourceRequest(msg.getOrigin(), msg.getId(), willBlockState));
       }
     }
+  }
+
+  public List statRequest() {
+    List result = new ArrayList();
+    String res = "";
+    Iterator it = resources.keySet().iterator();
+    while (it.hasNext()) {
+      String resname = (String) it.next();
+      res = ((ResourceEntry) resources.get(resname)).toString();
+      result.add(res);
+    }
+    result.add(resourceQueue.toString());
+    return result;
   }
 
   /** Обработка запроса на высвобождение ресурса.
@@ -158,46 +169,50 @@ public class StandartResourceManager implements ResourceManager {
     if (msg.getFieldsCount() != 2) {
       return;
     }
+    // разбор сообщения
     String className = (String) msg.getField(0);
     Resource res = (Resource) msg.getField(1);
-    log.finest(msg.toString(true));
-    if (!resourceRequests.containsKey(className)
-	|| ((List) resourceRequests.get(className)).size() == 0) {
-      log.fine(className + " no requests in queue");
-      // если объект не требуется кем-то еще -- просто высвободить его
-      ResourceEntry re = (ResourceEntry) resources.get(className);
-      if (re.isBlockState(res)) {
-	log.fine("releasing block for object " + msg.getOrigin());
-	dispatcher.getObjectManager().setBlockedState(msg.getOrigin(),
-						      dispatcher.getObjectManager().getBlockedState(msg.getOrigin()) - 1);
+    synchronized (resourceQueue) {
+      ResourceRequest rr = resourceQueue.nextRequest(className);
+      if (rr != null) {
+	log.fine(className + " has request in its queue.");
+	ResourceEntry re = (ResourceEntry) resources.get(className);
+	synchronized (re) {
+	  // в добавок синхронизировать и доступ к записи о ресурсе
+	  if (re.isBlockState(res)) {
+	    // снятие блокировки если она была
+	    log.fine("releasing block for object " + msg.getOrigin());
+	    dispatcher.getObjectManager().setBlockedState(msg.getOrigin(),
+							  dispatcher.getObjectManager().getBlockedState(msg.getOrigin()) - 1);
+	  }
+	  re.setUsedBy(res, rr.getObjectName());
+	  if (rr.isBlockState()) {
+	    // сохранение нового статуса блокировки объекта
+	    log.finer("setting block for object " + rr.getObjectName());
+	    re.setBlockState(res, rr.isBlockState());
+	    dispatcher.getObjectManager().setBlockedState(msg.getOrigin(),
+							  dispatcher.getObjectManager().getBlockedState(msg.getOrigin()) + 1);
+	  }
+	}
+	// подготовка и посылка сообщения о захвате ресурса
+	ODResourceAcquiredMessage m = new ODResourceAcquiredMessage(rr.getObjectName(), rr.getMsgId());
+	m.setResourceName(className);
+	m.setResource(res);
+	dispatcher.send(m);
+      } else {
+	log.fine(className + " no requests in queue");
+	// если объект не требуется кем-то еще -- просто высвободить его
+	ResourceEntry re = (ResourceEntry) resources.get(className);
+	synchronized (re) {
+	  // синхронный доступ ко всей записи
+	  if (re.isBlockState(res)) {
+	    log.fine("releasing block for object " + msg.getOrigin());
+	    dispatcher.getObjectManager().setBlockedState(msg.getOrigin(),
+							  dispatcher.getObjectManager().getBlockedState(msg.getOrigin()) - 1);
+	  }
+	  re.releaseResource(res);
+	}
       }
-      re.releaseResource(res);
-    } else {
-      log.fine(className + " requests in queue");
-      // реализация очереди (FIFO) -- выбор головного элемента
-      List rrl = (List) resourceRequests.get(className);
-      ResourceRequest rr = (ResourceRequest) rrl.get(0);
-      ResourceEntry re = (ResourceEntry) resources.get(className);
-      if (re.isBlockState(res)) {
-	log.fine("releasing block for object " + msg.getOrigin());
-	dispatcher.getObjectManager().setBlockedState(msg.getOrigin(),
-						      dispatcher.getObjectManager().getBlockedState(msg.getOrigin()) - 1);
-      }
-      // подготовка и посылка сообщения о захвате ресурса
-      ODResourceAcquiredMessage m = new ODResourceAcquiredMessage(rr.getObjectName(), rr.getMsgId());
-      m.setResourceName(className);
-      m.setResource(res);
-      dispatcher.send(m);
-      if (rr.isBlockState()) {
-	log.finer("setting block for object " + rr.getObjectName());
-	// сохранение нового статуса блокировки объекта
-	re.setBlockState(res, rr.isBlockState());
-	dispatcher.getObjectManager().setBlockedState(msg.getOrigin(),
-						      dispatcher.getObjectManager().getBlockedState(msg.getOrigin()) + 1);
-      }
-      // удаление запроса из головы очереди
-      rrl.remove(0);
-      log.finer("request removed from head of a queue");
     }
   }
 
@@ -241,4 +256,75 @@ public class StandartResourceManager implements ResourceManager {
       log.finer(newObject + " request is now on queue");
     }
   } // ResourceRequest
+
+  /** Класс инкапсулирующий очередь запросов к ресурсам. */
+  private class RequestQueue {
+    private Map tempReqs = new HashMap();
+    /** Список запросов. */
+    private Map resourceRequests = new HashMap();
+    /** Добавление нового запроса в очередь
+     * @param className имя класса ресурса
+     * @param rr запись о запросе
+     */
+    public final void addRequest(final String className, final ResourceRequest rr) {
+      List rrl;
+      if (!tempReqs.containsKey(className)) {
+	rrl = new ArrayList();
+	tempReqs.put(className, rrl);
+      } else {
+	rrl = (List) tempReqs.get(className);
+      }
+      rrl.add(rr);
+    }
+
+    /** Выборка следующего запроса на захват ресурса.
+     * @param className имя ресурса
+     * @return информация о захвате или null в случае если запросов нет.
+     */
+    public final ResourceRequest nextRequest(final String className) {
+      synchronized (tempReqs) {
+	// переброска запросов из временной очереди
+	Iterator it = tempReqs.keySet().iterator();
+	while (it.hasNext()) {
+	  String key = (String) it.next();
+	  List rrl = (List) tempReqs.get(key);
+	  if (resourceRequests.containsKey(key)) {
+	    ((List) resourceRequests.get(key)).addAll(rrl);
+	  } else {
+	    resourceRequests.put(key, rrl);
+	  }
+	}
+	tempReqs.clear();
+      }
+      ResourceRequest result = null;
+      if (resourceRequests.containsKey(className) 
+	  || ((List) resourceRequests.get(className)).size() != 0) {
+	List rrl = (List) resourceRequests.get(className);
+	synchronized (rrl) {
+	  try {
+	    result = (ResourceRequest) rrl.get(0);
+	    rrl.remove(0);
+	  } catch (IndexOutOfBoundsException e) { /* злостный хак. */}
+	}
+      }
+      return result;
+    }
+
+    public final String toString() {
+      String result = "Acquire queue stats:\n";
+      Iterator it = resourceRequests.keySet().iterator();
+      while (it.hasNext()) {
+	String className = (String) it.next();
+	List rrl = (List) resourceRequests.get(className);
+	result += "  resource " + className + " has " + rrl.size() + " requests from: ";
+	Iterator rit = rrl.iterator();
+	while (rit.hasNext()) {
+	  ResourceRequest rr = (ResourceRequest) rit.next();
+	  result+= rr.getObjectName() + (rr.isBlockState() ? "(blocking) " : " ");
+	}
+	result += "\n";
+      }
+      return result;
+    }
+  } // RequestQueue
 } // ResourceManager
