@@ -19,9 +19,14 @@ import org.valabs.stdobj.webcon.servlet.http.HttpServletResponse;
 
 /** Объект ODISP реализующий WebCon интерфейс доступа к менеджеру.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
- * @version $Id: WCConsoleObject.java,v 1.12 2004/11/05 14:11:29 valeks Exp $
+ * @version $Id: WCConsoleObject.java,v 1.13 2005/01/25 19:03:34 valeks Exp $
  */
 public class WCConsoleObject extends StandartODObject {
+  public static final String NAME = "wcconsole";
+  public static final String FULLNAME = "ODISP Web Console";
+  public static final String VERSION = "0.1.0";
+  public static final String COPYRIGHT = "(C) 2004 Valentin A. Alekseev";
+  
   /** Собственно сервлет-обработчик. */
   WCConsoleServlet servlet = null;
   /** Обработчик входящих сообщений.
@@ -54,13 +59,13 @@ public class WCConsoleObject extends StandartODObject {
    * @param id номер
    */
   public WCConsoleObject(final Integer id) {
-    super("wcconsole" + id);
+    super(NAME + id, FULLNAME, VERSION, COPYRIGHT);
   }
   /** Вернуть список сервисов.
    * @return список сервисов
    */
   public final String[] getProviding() {
-    String[] res = {"wcconsole"};
+    String[] res = {NAME};
     return res;
   }
   /** Вернуть список зависимостей.

@@ -7,7 +7,7 @@ import org.valabs.stdmsg.ODCleanupMessage;
 
 /** Простейший ODISP объект реализующий автоответчик на приходящие сообщения.
 * @author (C) 2003 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
-* @version $Id: EchoObject.java,v 1.17 2004/08/23 07:42:37 valeks Exp $
+* @version $Id: EchoObject.java,v 1.18 2005/01/25 19:03:34 valeks Exp $
 */
 public class EchoObject extends StandartODObject {
   /** Регистрация обработчиков. */
@@ -40,7 +40,7 @@ public class EchoObject extends StandartODObject {
    * @param id индекс объекта
    */
   public EchoObject(final Integer id) {
-    super("echo" + id);
+    super("echo" + id, "Echo object", "0.1.0", "(C) 2003-2005 Valentin A. Alekseev");
   }
   /** Получить список предоставляемых сервисов.
    * @return список сервисов

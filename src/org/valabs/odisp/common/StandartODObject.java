@@ -8,12 +8,16 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import org.valabs.odisp.SessionManager;
+import org.valabs.stdmsg.ModuleAboutMessage;
+import org.valabs.stdmsg.ModuleAboutReplyMessage;
+import org.valabs.stdmsg.ModuleStatusMessage;
+import org.valabs.stdmsg.ModuleStatusReplyMessage;
 
 /**
  * Стандартный объект ODISP.
  * 
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev </a>
- * @version $Id: StandartODObject.java,v 1.13 2004/12/01 10:35:32 boris Exp $
+ * @version $Id: StandartODObject.java,v 1.14 2005/01/25 19:03:33 valeks Exp $
  */
 
 public abstract class StandartODObject implements ODObject {
@@ -37,12 +41,20 @@ public abstract class StandartODObject implements ODObject {
 
   /** Внутреннее имя объекта в ядре ODISP. */
   private String name;
+  
+  private String version;
+  
+  private String copyright;
+  
+  protected ObjectStatus objectStatus = new ObjectStatus();
 
   /** Карта обработчиков сообщений. */
   private Map handlers;
 
   /** Признак блокировки объекта. */
   private boolean blockedState = false;
+
+  private String fullName;
 
   /**
    * Изменить маску принимаемых сообщений.
@@ -66,10 +78,34 @@ public abstract class StandartODObject implements ODObject {
    * Конструктор инициализирующий почтовый ящик.
    * 
    * @param newName имя объекта
+   * @deprecated необходимо использовать полный конструктор
+   * @see StandartODObject(String, String, String, String)
    */
-  public StandartODObject(final String newName) {
+  public StandartODObject(final String name) {
+    initialize(name, "An old style StandartODObject", "0.0.0", "(C) Dumb user");
+  }
+  
+  /**
+   * Конструктор инициализирующий почтовый ящик.
+   * 
+   * @param newName имя объекта
+   * @param version версия объекта
+   * @param copyright авторство
+   * @param ai дополнительная информация
+   */
+  public StandartODObject(final String newName, final String fullName, final String version, final String copyright) {
+    initialize(newName, fullName, version, copyright);
+  }
+
+  /**
+   * @param newName
+   */
+  private void initialize(final String newName, final String newFullName, final String newVersion, final String newCopyright) {
     messages = new ArrayList();
     name = newName;
+    version = newVersion;
+    copyright = newCopyright;
+    fullName = newFullName;
     match = newName;
     logger = Logger.getLogger(newName);
     logger.setLevel(java.util.logging.Level.ALL);
@@ -150,6 +186,22 @@ public abstract class StandartODObject implements ODObject {
    * @param msg сообщение для обработки
    */
   public void handleMessage(final Message msg) {
+    if (ModuleAboutMessage.equals(msg)) {
+      Message m = dispatcher.getNewMessage();
+      ModuleAboutReplyMessage.setup(m, msg.getOrigin(), getObjectName(), msg
+          .getId());
+      ModuleAboutReplyMessage.setName(m, fullName);
+      ModuleAboutReplyMessage.setVersion(m, version);
+      ModuleAboutReplyMessage.setCopyright(m, copyright);
+      dispatcher.send(m);
+      return;
+    } else if (ModuleStatusMessage.equals(msg)) {
+      Message m = dispatcher.getNewMessage();
+      ModuleStatusReplyMessage.setup(m, msg.getOrigin(), getObjectName(), msg.getId());
+      objectStatus.setupStatusReply(m);
+      dispatcher.send(m);
+      return;
+    }
     if (blockedState && !msg.isOOB()) {
       // пропускать лишь OOB сообщения
       messages.add(msg);
@@ -214,6 +266,45 @@ public abstract class StandartODObject implements ODObject {
           }
         }
       }.start();
+    }
+  }
+  
+  public Map exportState() {
+    return null;
+  }
+  
+  public void importState(Map oldState) {
+    
+  }
+
+  	/** Хранение статуса объекта. */
+  protected class ObjectStatus {
+    public static final String NOERROR = "noerror";
+    private List runningTasks = new ArrayList();
+    private List completedTasks = new ArrayList();
+    private List failedTasks = new ArrayList();
+    private String runningState = ObjectStatus.NOERROR;
+    
+    public void taskStarted(String task) {
+      runningTasks.add(task);
+    }
+    
+    public void taskCompleted(String task) {
+      runningTasks.remove(task);
+      completedTasks.add(task);
+    }
+    
+    public void taskFailed(String task) {
+      runningTasks.remove(task);
+      failedTasks.add(task);
+    }
+    
+    public void setStatus(String newStatus) {
+      runningState = newStatus;
+    }
+    
+    public void setupStatusReply(Message m) {
+      ModuleStatusReplyMessage.initAll(m, runningState, runningTasks, completedTasks, failedTasks);
     }
   }
 } // StandartODObject

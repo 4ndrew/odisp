@@ -29,17 +29,20 @@ import org.valabs.stdmsg.ODObjectLoadedMessage;
 
 /** Объект, который обеспечивает поддержку Zeroconf/Randezvous.
  * @author <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
- * @version $Id: MDNS.java,v 1.1 2005/01/24 13:01:54 valeks Exp $
+ * @version $Id: MDNS.java,v 1.2 2005/01/25 19:03:34 valeks Exp $
  */
 public class MDNS extends StandartODObject implements MessageHandler, ServiceListener {
   private Map listeners = new HashMap();
   public static final String NAME = "mdns";
+  public static final String FULLNAME = "Multicast DNS service discovery interface";
+  public static final String VERSION = "0.1.0";
+  public static final String COPYRIGHT = "(C) 2005 Valentin A. Alekseev";
   private JmDNS jmdns;
   /**
    * @param newName
    */
   public MDNS(Integer newName) {
-    super(NAME + newName);
+    super(NAME + newName, FULLNAME, VERSION, COPYRIGHT);
     setBlockedState(true);
   }
   

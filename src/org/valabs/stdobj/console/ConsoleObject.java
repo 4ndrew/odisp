@@ -1,14 +1,9 @@
 package org.valabs.stdobj.console;
 
-import java.util.ArrayList;
 import java.util.Enumeration;
 
 import org.valabs.odisp.common.Message;
 import org.valabs.odisp.common.StandartODObject;
-import org.valabs.stdmsg.ModuleAboutMessage;
-import org.valabs.stdmsg.ModuleAboutReplyMessage;
-import org.valabs.stdmsg.ModuleStatusMessage;
-import org.valabs.stdmsg.ModuleStatusReplyMessage;
 import org.valabs.stdmsg.ODCleanupMessage;
 import org.valabs.stdmsg.ODObjectLoadedMessage;
 import org.valabs.stdmsg.TranslatorGetTranslationMessage;
@@ -21,7 +16,7 @@ import org.valabs.stdobj.translator.Translator;
  *         Алексеев </a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин
  *         </a>
- * @version $Id: ConsoleObject.java,v 1.24 2004/10/28 22:54:33 valeks Exp $
+ * @version $Id: ConsoleObject.java,v 1.25 2005/01/25 19:03:34 valeks Exp $
  */
 public class ConsoleObject extends StandartODObject {
   /** Имя объекта */
@@ -70,23 +65,6 @@ public class ConsoleObject extends StandartODObject {
       tr.putAll(TranslatorGetTranslationReplyMessage.getTranslation(msg));
       doTranslation = true;
       logger.fine("Console translation enabled");
-    } else if (ModuleAboutMessage.equals(msg)) {
-      Message m = dispatcher.getNewMessage();
-      ModuleAboutReplyMessage.setup(m, msg.getOrigin(), getObjectName(), msg
-          .getId());
-      ModuleAboutReplyMessage.setName(m, FULLNAME);
-      ModuleAboutReplyMessage.setVersion(m, VERSION);
-      ModuleAboutReplyMessage.setCopyright(m, COPYRIGHT);
-      dispatcher.send(m);
-    } else if (ModuleStatusMessage.equals(msg)) {
-      Message m = dispatcher.getNewMessage();
-      ModuleStatusReplyMessage.setup(m, msg.getOrigin(), getObjectName(), msg
-          .getId());
-      ModuleStatusReplyMessage.setRunningState(m, "noerror");
-      ModuleStatusReplyMessage.setRunningTasks(m, new ArrayList());
-      ModuleStatusReplyMessage.setCompletedTasks(m, new ArrayList());
-      ModuleStatusReplyMessage.setFailedTasks(m, new ArrayList());
-      dispatcher.send(m);
     } else {
       System.out.println("Received:");
       String msgToString = msg.toString(true);
@@ -122,7 +100,7 @@ public class ConsoleObject extends StandartODObject {
    * @param id номер
    */
   public ConsoleObject(final Integer id) {
-    super(NAME + id);
+    super(NAME + id, FULLNAME, VERSION, COPYRIGHT);
   }
 
   /**

@@ -23,10 +23,14 @@ import org.valabs.stdobj.webcon.servlet.http.HttpServletResponse;
 
 /** ODISP-интерфейс к ACME серверу.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: WebCon.java,v 1.14 2005/01/11 20:34:49 valeks Exp $
+ * @version $Id: WebCon.java,v 1.15 2005/01/25 19:03:33 valeks Exp $
  */
 
 public class WebCon extends StandartODObject implements MessageHandler {
+  public static final String NAME = "webcon";
+  public static final String FULLNAME = "Servlet container interface to ODISP";
+  public static final String VERSION = "0.1.0";
+  public static final String COPYRIGHT = "(C) 2004 Valentin A. Alekseev";
   /** Ссылка на сам сервер. */
   private Serve acmeServe = null;
   /** Регистрация обработчиков сообщений. */
@@ -59,9 +63,11 @@ public class WebCon extends StandartODObject implements MessageHandler {
       if (WCAddServletMessage.getServletHandler(msg) instanceof Servlet) {
         // обработчик действительно сервлет
         if (acmeServe != null) {
+          Servlet s = (Servlet) WCAddServletMessage.getServletHandler(msg);
           acmeServe.addServlet(
             WCAddServletMessage.getServletMask(msg),
-            (Servlet) WCAddServletMessage.getServletHandler(msg));
+            s);
+          objectStatus.taskStarted(s.getServletInfo());
         } else {
           logger.warning(
             "attempting to add servlet while container is not started");
@@ -73,8 +79,10 @@ public class WebCon extends StandartODObject implements MessageHandler {
       if (WCRemoveServletMessage.getServletHandler(msg) instanceof Servlet) {
         // обработчик действительно сервлет
         if (acmeServe != null) {
+          Servlet s = (Servlet) WCRemoveServletMessage.getServletHandler(msg);
           acmeServe.removeServlet(
-            (Servlet) WCRemoveServletMessage.getServletHandler(msg));
+            s);
+          objectStatus.taskCompleted(s.getServletInfo());
         } else {
           logger.warning(
             "attempting to add servlet while container is not started");
@@ -110,7 +118,7 @@ public class WebCon extends StandartODObject implements MessageHandler {
    * @param id порядковый номер
    */
   public WebCon(Integer id) {
-    super("webcon" + id);
+    super(NAME + id, FULLNAME, VERSION, COPYRIGHT);
   }
 
   /** Вернуть список сервисов. */

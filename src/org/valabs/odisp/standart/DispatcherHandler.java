@@ -13,8 +13,6 @@ import org.valabs.odisp.common.MessageHandler;
 import org.valabs.odisp.common.ObjectManager;
 import org.valabs.odisp.common.ResourceManager;
 import org.valabs.odisp.common.StandartODObject;
-import org.valabs.stdmsg.ModuleAboutMessage;
-import org.valabs.stdmsg.ModuleAboutReplyMessage;
 import org.valabs.stdmsg.ModuleStatusMessage;
 import org.valabs.stdmsg.ModuleStatusReplyMessage;
 import org.valabs.stdmsg.ODAddProviderMessage;
@@ -28,7 +26,7 @@ import org.valabs.stdmsg.ODShutdownMessage;
  * Обработчик сообщений диспетчера ODISP.
  * 
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: DispatcherHandler.java,v 1.33 2005/01/24 12:57:59 valeks Exp $
+ * @version $Id: DispatcherHandler.java,v 1.34 2005/01/25 19:03:34 valeks Exp $
  */
 
 class DispatcherHandler extends StandartODObject {
@@ -47,12 +45,14 @@ class DispatcherHandler extends StandartODObject {
 
     /** Имя объекта. */
     private static String NAME = "stddispatcher";
+    
+    private static String FULLNAME = "Standart ODISP Dispatcher Core";
 
     /** Версия модуля. */
-    private String VERSION = "0.1.0";
+    private static String VERSION = "0.1.0";
 
     /** Дополнительная информация о модуле. */
-    private String COPYRIGHT = "(C) 2003-2004 Valentin A. Alekseev, Andrew A. Porohin";
+    private static String COPYRIGHT = "(C) 2003-2004 Valentin A. Alekseev, Andrew A. Porohin";
 
     /**
      * Вернуть список сервисов.
@@ -146,18 +146,6 @@ class DispatcherHandler extends StandartODObject {
                 oman.removeProvider(service, msg.getOrigin());
             }
         });
-        addHandler(ModuleAboutMessage.NAME, new MessageHandler() {
-            public final void messageReceived(final Message msg) {
-                Message m = dispatcher.getNewMessage();
-                ModuleAboutReplyMessage.setup(m, msg.getOrigin(),
-                        getObjectName(), msg.getId());
-                ModuleAboutReplyMessage.setName(m,
-                        "Standart Object Dispatcher Core");
-                ModuleAboutReplyMessage.setVersion(m, VERSION);
-                ModuleAboutReplyMessage.setCopyright(m, COPYRIGHT);
-                dispatcher.send(m);
-            }
-        });
         addHandler(ModuleStatusMessage.NAME, new MessageHandler() {
             public final void messageReceived(final Message msg) {
                 /** @todo. проблемы с руссификацией. */
@@ -221,7 +209,7 @@ class DispatcherHandler extends StandartODObject {
      * @param id порядковый номер объекта
      */
     public DispatcherHandler(final Integer id) {
-        super(NAME + id);
+        super(NAME + id, FULLNAME, VERSION, COPYRIGHT);
     }
 
     /** Специальная обработка конфигурации.

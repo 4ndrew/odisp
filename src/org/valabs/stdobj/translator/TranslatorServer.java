@@ -22,7 +22,7 @@ import org.valabs.odisp.common.StandartODObject;
 /**
  * @author valeks
  * @author (C) 2004 îðð "îÏ×ÅÌ-éì"
- * @version $Id: TranslatorServer.java,v 1.3 2004/09/09 10:12:12 dron Exp $
+ * @version $Id: TranslatorServer.java,v 1.4 2005/01/25 19:03:33 valeks Exp $
  */
 public class TranslatorServer extends StandartODObject
 		implements
@@ -37,23 +37,11 @@ public class TranslatorServer extends StandartODObject
 	private static String COPYRIGHT = "(C) JTT Novel-IL";
 
 	public TranslatorServer(final Integer id) {
-		super(NAME + id);
+		super(NAME + id, FULL_NAME, VERSION, COPYRIGHT);
 	}
 
 	public void messageReceived(final Message msg) {
-		if (ModuleAboutMessage.equals(msg)) {
-			Message m = dispatcher.getNewMessage();
-			ModuleAboutReplyMessage.setup(m, msg.getOrigin(), getObjectName(),
-					msg.getId());
-			ModuleAboutReplyMessage.initAll(m, FULL_NAME, VERSION, COPYRIGHT, null);
-			dispatcher.send(m);
-		} else if (ModuleStatusMessage.equals(msg)) {
-			Message m = dispatcher.getNewMessage();
-			ModuleStatusReplyMessage.setup(m, msg.getOrigin(), getObjectName(),
-					msg.getId());
-			List dumb = new ArrayList();
-			ModuleStatusReplyMessage.initAll(m, "noerror", dumb, dumb, dumb);
-		} else if (TranslatorGetTranslationMessage.equals(msg)) { 
+	  if (TranslatorGetTranslationMessage.equals(msg)) { 
 			String language = TranslatorGetTranslationMessage.getLanguage(msg);
 			String encoding = TranslatorGetTranslationMessage.getEncoding(msg);
 			/** @todo. Possible security vulnerability -- directory traversal. */

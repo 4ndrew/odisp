@@ -20,7 +20,8 @@ import org.valabs.stdmsg.ODObjectLoadedMessage;
 
 /** Объект реализующий простейшую журнализацию событий согласно файлу шаблонов.
 * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
-* @version $Id: FileLog.java,v 1.33 2004/08/26 11:32:01 valeks Exp $
+* @version $Id: FileLog.java,v 1.34 2005/01/25 19:03:34 valeks Exp $
+* @deprecated Неиспользуемый объект с неинформативным выводом. Возможно стоит дописать обработку в StandartMessage.
 */
 public class FileLog extends StandartODObject {
 	/** Имя объекта. */
