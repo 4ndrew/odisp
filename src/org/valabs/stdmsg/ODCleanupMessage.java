@@ -4,7 +4,7 @@ package com.novel.stdmsg;
  * Необязательный параметр reason определяет код причины выхода
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODCleanupMessage.java,v 1.5 2004/02/24 00:35:14 valeks Exp $
+ * @version $Id: ODCleanupMessage.java,v 1.6 2004/03/31 17:01:40 valeks Exp $
  */
 
 public class ODCleanupMessage extends StandartMessage {
@@ -13,7 +13,7 @@ public class ODCleanupMessage extends StandartMessage {
   /** Причина выхода. */
   private transient int reason = 0;
   /** Индек поля с причиной. */
-  private static final int REASON_IDX = 0;
+  private static final String REASON_IDX = "0";
   /** Конструктор сообщения.
    * @param destination получатель сообщения
    * @param replyId индекс сообщения на которое производится ответ
@@ -48,8 +48,8 @@ public class ODCleanupMessage extends StandartMessage {
     if (isCE()) {
       return true;
     }
-    getFields().clear();
-    addField(new Integer(reason));
+    getContents().clear();
+    addField(REASON_IDX, new Integer(reason));
     setCE(true);
     return true;
   }

@@ -6,7 +6,7 @@ package com.novel.stdmsg;
  * рассылатся объектам.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODShutdownMessage.java,v 1.8 2004/03/04 13:31:38 dron Exp $
+ * @version $Id: ODShutdownMessage.java,v 1.9 2004/03/31 17:01:40 valeks Exp $
  */
 
 public class ODShutdownMessage extends StandartMessage {
@@ -16,7 +16,7 @@ public class ODShutdownMessage extends StandartMessage {
   /** Код выхода. */
   private transient int exitCode = 0;
   /** Индекс поля в сообщении. */
-  private static final int EXITCODE_IDX = 0;
+  private static final String EXITCODE_IDX = "0";
 
   /** Создает новое сообщение с заданными параметрами.
    * @param origin отправитель
@@ -52,8 +52,8 @@ public class ODShutdownMessage extends StandartMessage {
     if (isCE()) {
       return true;
     }
-    getFields().clear();
-    addField(new Integer(exitCode));
+    getContents().clear();
+    addField(EXITCODE_IDX, new Integer(exitCode));
     setCE(true);
     return true;
   }

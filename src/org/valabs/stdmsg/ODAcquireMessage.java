@@ -7,7 +7,7 @@ package com.novel.stdmsg;
  * ресурс.</p>
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODAcquireMessage.java,v 1.7 2004/02/24 00:35:14 valeks Exp $
+ * @version $Id: ODAcquireMessage.java,v 1.8 2004/03/31 17:01:40 valeks Exp $
  */
 
 public class ODAcquireMessage extends StandartMessage {
@@ -16,11 +16,11 @@ public class ODAcquireMessage extends StandartMessage {
   /** Имя ресурса. */
   private transient String resourceName;
   /** Индекс блокировки в списке полей. */
-  private static final int NAME_IDX = 0;
+  private static final String NAME_IDX = "0";
   /** Флаг блокировки. */
   private transient boolean willBlock = false;
   /** Индекс флага блокировки. */
-  private static final int BLOCK_IDX = 0;
+  private static final String BLOCK_IDX = "1";
   /** Создать новое сообщение диспетчеру с запросом на захват ресурса.
    * @param origin автор
    * @param replyTo в ответ на сообщение No.
@@ -76,9 +76,9 @@ public class ODAcquireMessage extends StandartMessage {
       return true;
     }
     if (resourceName != "") {
-      getFields().clear();
-      addField(resourceName);
-      addField(new Boolean(willBlock));
+      getContents().clear();
+      addField(NAME_IDX, resourceName);
+      addField(BLOCK_IDX, new Boolean(willBlock));
       setCE(true);
       return true;
     } else {

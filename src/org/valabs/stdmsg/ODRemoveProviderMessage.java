@@ -5,7 +5,7 @@ import com.novel.odisp.common.Message;
 /** Запрос на динамическое изменение списка сервисов.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2004, НПП "Новел-ИЛ"
- * @version $Id: ODRemoveProviderMessage.java,v 1.2 2004/03/27 20:07:56 valeks Exp $
+ * @version $Id: ODRemoveProviderMessage.java,v 1.3 2004/03/31 17:01:40 valeks Exp $
  */
 
 public class ODRemoveProviderMessage extends StandartMessage {
@@ -45,6 +45,7 @@ public class ODRemoveProviderMessage extends StandartMessage {
       return true;
     }
     if (serviceName != null) {
+      getContents().clear();
       addField(SERVICENAME_IDX, serviceName);
       setCE(true);
     }

@@ -6,7 +6,7 @@ package com.novel.stdmsg;
  * В качестве параметра нужно указать имя зависимости.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODRemoveDepMessage.java,v 1.7 2004/02/24 00:35:14 valeks Exp $
+ * @version $Id: ODRemoveDepMessage.java,v 1.8 2004/03/31 17:01:40 valeks Exp $
  */
 
 public class ODRemoveDepMessage extends StandartMessage {
@@ -15,7 +15,7 @@ public class ODRemoveDepMessage extends StandartMessage {
   /** Имя зависимости. */
   private transient String depName = "";
   /** Индекс имени. */
-  private static final int DEPNAME_IDX = 0;
+  private static final String DEPNAME_IDX = "0";
   /** Создает новое сообщение с заданными параметрами.
    * @param origin отправитель
    * @param replyTo индекс сообщения на которое производится ответ
@@ -51,8 +51,8 @@ public class ODRemoveDepMessage extends StandartMessage {
       return true;
     }
     if (depName != "") {
-      getFields().clear();
-      addField(depName);
+      getContents().clear();
+      addField(DEPNAME_IDX, depName);
       setCE(true);
     }
     return isCE();

@@ -14,7 +14,7 @@ import com.novel.odisp.common.Resource;
  * захват не более одного ресурса с установлением режима блокировки.</p>
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODReleaseMessage.java,v 1.7 2004/02/24 00:35:14 valeks Exp $
+ * @version $Id: ODReleaseMessage.java,v 1.8 2004/03/31 17:01:40 valeks Exp $
  */
 
 public class ODReleaseMessage extends StandartMessage {
@@ -24,11 +24,11 @@ public class ODReleaseMessage extends StandartMessage {
   /** Имя ресурса. */
   private transient String resourceName = "";
   /** Индекс имени в сообщении. */
-  private static final int NAME_IDX = 0;
+  private static final String NAME_IDX = "0";
   /** Ресурс. */
   private transient Resource resource;
   /** Индекс ресурса в сообщении. */
-  private static final int RES_IDX = 0;
+  private static final String RES_IDX = "1";
 
   /** Создать новое сообщение диспетчеру с запросом на захват ресурса.
    * @param origin автор
@@ -62,7 +62,7 @@ public class ODReleaseMessage extends StandartMessage {
    */
   public final Resource getResource() {
     if (isCE()) {
-      return (Resource) getField(1);
+      return (Resource) getField(RES_IDX);
     }
     return resource;
   }
@@ -84,9 +84,9 @@ public class ODReleaseMessage extends StandartMessage {
       return true;
     }
     if (resourceName != "" && resource != null) {
-      getFields().clear();
-      addField(resourceName);
-      addField(resource);
+      getContents().clear();
+      addField(NAME_IDX, resourceName);
+      addField(RES_IDX, resource);
       setCE(true);
       return true;
     } else {

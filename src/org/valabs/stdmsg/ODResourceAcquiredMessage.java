@@ -5,7 +5,7 @@ import com.novel.odisp.common.Resource;
 /** Ответ на запрос о захвате ресурса.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODResourceAcquiredMessage.java,v 1.9 2004/02/24 00:35:14 valeks Exp $
+ * @version $Id: ODResourceAcquiredMessage.java,v 1.10 2004/03/31 17:01:40 valeks Exp $
  */
 public class ODResourceAcquiredMessage extends StandartMessage {
   /** Символьное имя сообщения. */
@@ -14,11 +14,11 @@ public class ODResourceAcquiredMessage extends StandartMessage {
   /** Имя ресурса. */
   private transient String resourceName = "";
   /** Индекс имени ресурса. */
-  private static final int RESNAME_IDX = 0;
+  private static final String RESNAME_IDX = "0";
   /** Ресурс. */
   private transient Resource resource;
-  /** Индекс имени ресурса. */
-  private static final int RES_IDX = 0;
+  /** Индекс ресурса. */
+  private static final String RES_IDX = "1";
 
   /** Конструктор сообщения.
    * @param destination получатель сообщения
@@ -53,7 +53,7 @@ public class ODResourceAcquiredMessage extends StandartMessage {
    */
   public final Resource getResource() {
     if (isCE()) {
-      return (Resource) getField(1);
+      return (Resource) getField(RES_IDX);
     }
     return resource;
   }
@@ -75,9 +75,9 @@ public class ODResourceAcquiredMessage extends StandartMessage {
       return true;
     }
     if (resourceName != "" && resource != null) {
-      getFields().clear();
-      addField(resourceName);
-      addField(resource);
+      getContents().clear();
+      addField(RESNAME_IDX, resourceName);
+      addField(RES_IDX, resource);
       setCE(true);
     }
     return isCE();
