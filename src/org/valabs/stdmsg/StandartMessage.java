@@ -1,11 +1,16 @@
 package org.valabs.stdmsg;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.doomdark.uuid.UUID;
 import org.doomdark.uuid.UUIDGenerator;
@@ -15,9 +20,10 @@ import org.valabs.odisp.common.Message;
  * 
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: StandartMessage.java,v 1.23 2004/11/05 14:11:28 valeks Exp $
+ * @version $Id: StandartMessage.java,v 1.24 2005/01/24 13:01:54 valeks Exp $
  */
 public class StandartMessage implements Message, Serializable {
+  private static MessageGraphWriter debugMGW = new MessageGraphWriter();
   /** Флаг маршрутизации. */
   private boolean routable = true;
   /** Уникальный индекс сообщения в системе. */
@@ -75,7 +81,7 @@ public class StandartMessage implements Message, Serializable {
     } else {
       myId = msg.getId();
     }
-    setCE(msg.isCorrect());
+    setCorrect(msg.isCorrect());
   }
 
   /** Копирующий конструктор.
@@ -238,27 +244,12 @@ public class StandartMessage implements Message, Serializable {
     return fields;
   }
 
-  /** Установить флаг корректности.
-   * @param newCE новое значение
-   * @deprecated move to new-styled Typed Messages, use setCorrect
-   */
-  public final void setCE(final boolean newCE) {
-    setCorrect(newCE);
-  }
-
   /** Установка флага корректности.
    */
   public final void setCorrect(final boolean newCE) {
     ce = newCE;
   }
 
-  /** Проверить флаг корректности.
-   * @return значение флага
-   * @deprecated move to new-styled Typed Messages, use isCorrect
-   */
-  public final boolean isCE() {
-    return ce;
-  }
   public boolean isRoutable() {
     return routable;
   }
@@ -292,7 +283,8 @@ public class StandartMessage implements Message, Serializable {
    * @return true если сообщение OOB.
    */
   public boolean isOOB() {
-  	return oob;
+    debugMGW.logMessage(this);
+    return oob;
   }
   
   /** Установка флага OOB.
@@ -300,5 +292,98 @@ public class StandartMessage implements Message, Serializable {
    */
   public void setOOB(boolean newValue) {
   	oob = newValue;
+  }
+ 
+  /** Рисования графа сообщений в формате DOT. */
+  static class MessageGraphWriter {
+    private MessageGraphWriter_MSGS msgs = new MessageGraphWriter_MSGS("msgs.dot");
+    private MessageGraphWriter_OBJECTS objects = new MessageGraphWriter_OBJECTS("objects.dot");
+    
+    public void logMessage(final Message msg) {
+      msgs.logMessage(msg);
+      objects.logMessage(msg);
+    }
+  
+    /** Граф пересылки сообщений. */
+    class MessageGraphWriter_OBJECTS {
+      private Set objects = new HashSet();
+      private List messages = new ArrayList();
+
+      public MessageGraphWriter_OBJECTS(final String outfName) {
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+
+          public void run() {
+            PrintStream output;
+            try {
+              output = new PrintStream(new FileOutputStream(outfName));
+            } catch (IOException e) {
+              output = new PrintStream(System.err);
+            }
+            output.println("digraph messagesobjects {");
+            Iterator it = objects.iterator();
+            while (it.hasNext()) {
+              String element = (String) it.next();
+              output.println(" \"n" + element + "\" [label=\"" + element + "\"];");
+            }
+            it = messages.iterator();
+            while (it.hasNext()) {
+              mrec element = (mrec) it.next();
+              output.println("  \"n" + element.origin + "\" -> " + " \"n" + element.destination + "\" [label=\""
+                      + element.action + "\"];");
+            }
+            output.println("}");
+            output.close();
+          }
+        });
+      }
+
+      public void logMessage(final Message msg) {
+        objects.add(msg.getOrigin());
+        objects.add(msg.getDestination());
+        mrec rec = new mrec();
+        rec.origin = msg.getOrigin();
+        rec.destination = msg.getDestination();
+        rec.action = msg.getAction();
+        rec.id = msg.getId();
+        rec.replyid = msg.getReplyTo();
+        messages.add(rec);
+      }
+      class mrec {
+        String origin;
+        String destination;
+        String action;
+        UUID id;
+        UUID replyid;
+      }
+    }
+    
+    /** Граф последовательности сообщений. */
+    static class MessageGraphWriter_MSGS {
+
+      private PrintStream output;
+
+      public MessageGraphWriter_MSGS(String outfName) {
+        try {
+          output = new PrintStream(new FileOutputStream(outfName));
+        } catch (IOException e) {
+          output = new PrintStream(System.err);
+        }
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+
+          public void run() {
+            output.println("}");
+            output.close();
+          }
+        });
+        output.println("digraph messages {");
+        output.println("  \"n" + UUID.getNullUUID() + "\" [label=\"No origin\"];");
+      }
+
+      public void logMessage(final Message msg) {
+        output.println("  \"n" + msg.getId() + "\" [label=\"" + msg.getAction() + "\\n" + msg.getOrigin()
+                + " to " + msg.getDestination() + "\"];");
+        output.println("  \"n" + msg.getReplyTo() + "\" -> " + " \"n" + msg.getId() + "\";");
+      }
+    }
   }
 }

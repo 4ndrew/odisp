@@ -13,3 +13,8 @@ ModuleStatusReplyMessage.java
 TranslatorGetTranslationMessage.java
 TranslatorGetTranslationReplyMessage.java
 BugSignalMessage.java
+MDNSTypeNotifyMessage.java
+MDNSRegisterTypeNotifyMessage.java
+MDNSListServicesMessage.java
+MDNSAdvertiseServiceMessage.java
+MDNSListServicesReplyMessage.java
