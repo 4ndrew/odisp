@@ -5,7 +5,7 @@ import java.util.*;
 /** Реализация стандартного сообщения для стандартного диспетчера ODISP
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: StandartMessage.java,v 1.2 2003/10/03 21:26:07 valeks Exp $
+ * @version $Id: StandartMessage.java,v 1.3 2003/10/07 11:04:07 valeks Exp $
  */
 public class StandartMessage implements Message {
 	/** Внутренний уникальный счетчик сообщения */
@@ -55,6 +55,6 @@ public class StandartMessage implements Message {
 	 * @return строчное представление сообщения
 	*/
 	public String toString(){
-	    return "StandartMessage: id="+my_id+" replyto="+inReplyTo+" action=" + action + ", destination=" + destination + ", origin="+origin+", fields.size()=" + fields.size();
+	    return "stdmessage id="+my_id+" replyto="+inReplyTo+" action=" + action + ", destination=" + destination + ", origin="+origin+", fields.size()=" + fields.size();
 	}
 }
