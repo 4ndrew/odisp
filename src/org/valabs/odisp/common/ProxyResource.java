@@ -1,43 +1,78 @@
 package com.novel.odisp.common;
 
-import java.lang.reflect.*;
-import java.util.logging.*;
+import java.lang.reflect.InvocationTargetException;
+import java.util.logging.Logger;
 
 /** Прокси-ресурс для доступа к произвольным внешним объектам.
 * @author Валентин А. Алексеев
 * @author (C) 2003, НПП "Новел-ИЛ"
-* @version $Id: ProxyResource.java,v 1.2 2003/10/22 21:21:33 valeks Exp $
+* @version $Id: ProxyResource.java,v 1.3 2003/11/15 19:32:10 valeks Exp $
 */
 public class ProxyResource implements Resource {
-        public Object resource;
-        public String className;
-        private boolean isAlive;
-	private static Logger logger = Logger.getLogger("proxyresource");
-	/** Максимальное количество ссылок одновременно поддерживаемых объектом */
-	public int getMaxReferenceCount(){return 0;};
-	/** Вызывается при необходимости очистить ресурсы */
-	public int cleanUp(int type){return 0;};
-        public void setResource(String className){
-                this.className = className;
-        }
-        public boolean isAlive(){return isAlive;}
-        public Object newInstance(Class[] declParams, Object[] params){
-                try {
-                        resource = (Object)Class.forName(className).getConstructor(declParams).newInstance(params);
-                        isAlive = true;
-                } catch(InvocationTargetException e){
-                        logger.warning("failed: "+e);
-                } catch(NoSuchMethodException e){
-                        logger.warning("failed: "+e);
-                } catch(ClassNotFoundException e){
-                	logger.warning("failed: "+e);
-                } catch(InstantiationException e){
-                        logger.warning("failed: "+e);
-                } catch(IllegalAccessException e){
-                        logger.warning("failed: "+e);
-                } catch(IllegalArgumentException e){
-                        logger.warning("failed: "+e);
-                }
-                return resource;
-        }
+  /** Собственно ресурс */
+  private Object resource;
+  /** Получить доступ к ресурсу 
+   * @return ссылка на ресурс
+   */
+  public Object getResource() {
+    return resource;
+  }
+  /** Имя класса */
+  private String className;
+  /** Признак подгрузки ресурса */
+  private boolean isAlive;
+  /** Журнал */
+  private static Logger logger = Logger.getLogger("proxyresource");
+  /** Максимальное количество ссылок одновременно поддерживаемых объектом 
+   * @return список ссылок
+   */
+  public int getMaxReferenceCount() {
+    return 0;
+  }
+  /** Вызывается при необходимости очистить ресурсы 
+   * @param type признак выхода
+   * @return код возврата
+   */
+  public int cleanUp(int type) {
+    return 0;
+  }
+  /** Установить новый класс ресурса
+   * @param className имя класса
+   */
+  public void setResource(String className) {
+    this.className = className;
+  }
+  /** Проверить доступность ресурса 
+   * @return признак готовности ресурса
+   */
+  public boolean isAlive() {
+    return isAlive;
+  }
+  /** Создать новый экземпляр класса ресурса
+   * @param declParams список типов формальных параметров конструктора
+   * @param params значения формальных параметров
+   * @return ссылка на объект
+   */
+  public Object newInstance(Class[] declParams, Object[] params) {
+    if (isAlive) {
+      return resource;
+    }
+    try {
+      resource = (Object) Class.forName(className).getConstructor(declParams).newInstance(params);
+      isAlive = true;
+    } catch (InvocationTargetException e) {
+      logger.warning("failed: " + e);
+    } catch (NoSuchMethodException e) {
+      logger.warning("failed: " + e);
+    } catch (ClassNotFoundException e) {
+      logger.warning("failed: " + e);
+    } catch (InstantiationException e) {
+      logger.warning("failed: " + e);
+    } catch (IllegalAccessException e) {
+      logger.warning("failed: " + e);
+    } catch (IllegalArgumentException e) {
+      logger.warning("failed: " + e);
+    }
+    return resource;
+  }
 }
