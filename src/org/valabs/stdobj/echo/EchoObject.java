@@ -5,11 +5,10 @@ import java.util.regex.Pattern;
 /** Простейший ODISP объект реализующий автоответчик на приходящие сообщения
 * @author Валентин А. Алексеев
 * @author (C) 2003, НПП "Новел-ИЛ"
-* @version $Id: EchoObject.java,v 1.6 2003/10/22 21:22:03 valeks Exp $
+* @version $Id: EchoObject.java,v 1.7 2003/11/10 14:24:26 valeks Exp $
 */
 public class EchoObject extends CallbackODObject {
 	protected void registerHandlers(){
-	    addHandler("od_object_created", new MessageHandler(){public void messageReceived(Message msg){}});
 	    addHandler("od_cleanup", new MessageHandler(){
 		public void messageReceived(Message msg){cleanUp(((Integer)msg.getField(0)).intValue());}
 	    });
