@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 /** Запись об однотипных ресурах в таблице ресурсов.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ResourceEntry.java,v 1.4 2004/02/20 00:20:12 valeks Exp $
+ * @version $Id: ResourceEntry.java,v 1.5 2004/02/23 14:42:00 valeks Exp $
  */
 public class ResourceEntry {
   /** Журнал. */
@@ -102,7 +102,7 @@ public class ResourceEntry {
   }
 
   public final boolean isAvailable() {
-    return usage != 0;
+    return usage != 0 || maxUsage == MULT_SHARE;
   }
 
   /** Запросить ресурс.
@@ -125,7 +125,7 @@ public class ResourceEntry {
    */
   public final void releaseResource(final Resource newResource) {
       ResourceItem rit = lookupResourceItemByResource(newResource);
-      if (usage != MULT_SHARE) {
+      if (maxUsage != MULT_SHARE) {
 	rit.setUsed(false);
 	usage++;
       }
@@ -161,12 +161,16 @@ public class ResourceEntry {
    */
   public String toString() {
     String result = "\nClass name: " + className + "\n";
-    result+= "Usage: " + (maxUsage - usage) + " of " + maxUsage + ". Acquire times: " + acquireCount + "\n";
-    result+= "Usage map: ";
-    Iterator it = resourceStorage.iterator();
-    while (it.hasNext()) {
-      ResourceItem rit = (ResourceItem) it.next();
-      result+= rit.isUsed() + (rit.isUsed() ? "(" + rit.getUsedBy() + ")" : "" ) + " ";
+    if (maxUsage != MULT_SHARE) {
+      result += "Usage: " + (maxUsage - usage) + " of " + maxUsage + ". Acquire times: " + acquireCount + "\n";
+      result += "Usage map: ";
+      Iterator it = resourceStorage.iterator();
+      while (it.hasNext()) {
+	ResourceItem rit = (ResourceItem) it.next();
+	result+= rit.isUsed() + (rit.isUsed() ? "(" + rit.getUsedBy() + ")" : "" ) + " ";
+      }
+    } else {
+      result += "Shared resource. Acquire times: " + acquireCount;
     }
     result+= "\n";
     return result;
