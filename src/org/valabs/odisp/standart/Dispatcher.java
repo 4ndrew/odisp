@@ -26,7 +26,7 @@ import com.novel.stdmsg.StandartMessage;
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.46 2004/07/12 09:57:04 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.47 2004/07/13 18:13:04 valeks Exp $
  */
 public class StandartDispatcher implements Dispatcher, ExceptionHandler {
   /** Журнал. */
@@ -251,7 +251,12 @@ public class StandartDispatcher implements Dispatcher, ExceptionHandler {
    * @see com.novel.odisp.common.ExceptionHandler#signalException(java.lang.Exception)
    */
   public void signalException(Exception e) {
-  	log.throwing("unknown", "unknown", e);
+	System.err.println("========================================================");
+	System.err.println("Exception caught with default exception handler:");
+	System.err.println("Exception: " + e.toString());
+	System.err.println("Stack trace:");
+	e.printStackTrace(System.err);
+	System.err.println("========================================================");
   }
 
 } // StandartDispatcher
