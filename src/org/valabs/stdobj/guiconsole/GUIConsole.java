@@ -13,7 +13,7 @@ import javax.swing.text.html.*;
 /** Объект ODISP реализующий графический интерфейс доступа к менеджеру
  * @author Андрей А. Порохин
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: GUIConsole.java,v 1.8 2003/11/17 12:56:55 dron Exp $
+ * @version $Id: GUIConsole.java,v 1.9 2003/11/17 21:27:52 valeks Exp $
  */
 public class GUIConsole extends PollingODObject {
   JFrame mFrame;
@@ -25,7 +25,6 @@ public class GUIConsole extends PollingODObject {
   JComboBox action;
   HTMLDocument doc;
   public void handleMessage(Message msg) {
-    log("handleMessage", "processing " + msg);
     if (msg.getAction().equals("od_cleanup")) {
       cleanUp(((Integer) msg.getField(0)).intValue());
     } else if (msg.getAction().equals("od_object_loaded")) {
