@@ -12,7 +12,7 @@ import com.novel.odisp.common.*;
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.4 2003/10/07 11:03:36 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.5 2003/10/07 13:34:11 valeks Exp $
  */
 public class StandartDispatcher implements Dispatcher {
 	Map objects = new HashMap();
@@ -62,21 +62,31 @@ public class StandartDispatcher implements Dispatcher {
 	 * @return void
 	 */
 	private void unloadObject(String objectName){
-	    System.out.println("[i] "+toString()+" shutting down...");
 	    if(objects.containsKey(objectName)){
 		ODObject obj = (ODObject)objects.get(objectName);
-//		obj.stop();
-		objects.remove(objectName);
+		Message m = getNewMessage("od_cleanup", objectName, "stddispatcher", 0);
+		m.addField(new Integer(1));
+		sendMessage(m);
+		obj.interrupt();
 		System.out.println("\tobject "+objectName+" unloaded");
 		/* объект все еще может существовать, но сообщения ему доставлятся уже не будут */
 	    }
 	}
 	/** Обработчик сообщений для диспетчера объектов */
 	private void handleMessage(Message msg){
-	    if(msg.getAction().equals("od_cleanup")){
+	    if(msg.getAction().equals("od_shutdown")){
+		System.out.println("[i] "+toString()+" shutting down...");	    
 		Iterator it = objects.keySet().iterator();
 		while(it.hasNext())
 		    unloadObject((String)it.next());
+		objects.clear();
+	    }
+	    if(msg.getAction().equals("unload_object")){
+		if(msg.getFieldsCount() != 1)
+		    return;
+		String name = (String)msg.getField(0);
+		unloadObject(name);
+		objects.remove(name);
 	    }
 	}
 	/** Интерфейс для объектов ядра для отсылки сообщений.
