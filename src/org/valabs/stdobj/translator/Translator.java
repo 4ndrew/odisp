@@ -1,11 +1,9 @@
 package com.novel.stdobj.translator;
 
-import java.lang.String;
-import java.lang.Exception;
-import java.util.Properties;
-import java.util.logging.Logger;
 import java.io.FileInputStream;
 import java.util.Map;
+import java.util.Properties;
+import java.util.logging.Logger;
 
 import com.novel.odisp.common.Resource;
 
@@ -13,7 +11,7 @@ import com.novel.odisp.common.Resource;
  *
  * @author <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
  * @author (C) 2004 НПП "Новел-ИЛ"
- * @version $Id: Translator.java,v 1.4 2004/03/26 21:53:37 valeks Exp $
+ * @version $Id: Translator.java,v 1.5 2004/03/31 13:11:58 dron Exp $
  */
 public class Translator extends Properties implements Resource {
   /** Отладочный лог */
