@@ -1,6 +1,6 @@
 # Makefile for all documents
 #
-# $Id: Makefile,v 1.12 2003/12/08 21:53:20 valeks Exp $
+# $Id: Makefile,v 1.13 2003/12/08 22:34:46 valeks Exp $
 
 # folders & files
 TEXDOCS=impl.tex \
@@ -10,22 +10,31 @@ TEXDOCS=impl.tex \
 			odisp-style.tex
 TEXDVIS=$(TEXDOCS:.tex=.dvi)
 TEXPDFS=$(TEXDOCS:.tex=.pdf)
+TEXHTMLS=$(TEXDOCS:.tex=.html)
 TOOLS=../tools
 
 # tools
 TEXPROC=latex
 PDFPROC=dvipdfm
+HTMLPROC=latex2html
 FIND=find
 RM=rm -rf
 
-all: texdocs
+all: tex pdf html
 
-texdocs: $(TEXDVIS)
+tex: $(TEXDVIS)
 
-pdfdocs: $(TEXPDFS)
+pdf: $(TEXPDFS)
+
+htm: $(TEXHTMLS)
+	$(HTMLPROC) -rootdir html/ $>
 
 ${TEXPDFS}: ${TEXDVIS}
-	dvipdfm ${.TARGET:.pdf=}
+	$(PDFPROC) ${.TARGET:.pdf=}
+
+${TEXHTMLS}: 
+	mkdir -p html/${.TARGET:.html=}
+	$(HTMLPROC) -rootdir html/${.TARGET:.html=} ${.TARGET:.html=.tex}
 
 $(TEXDOCS:.tex=.dvi): $(@:.dvi=.tex)
 	@echo Generating TeX docs...
