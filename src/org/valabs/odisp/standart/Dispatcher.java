@@ -12,7 +12,7 @@ import com.novel.odisp.common.*;
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.2 2003/10/03 21:23:56 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.3 2003/10/04 12:53:05 valeks Exp $
  */
 public class StandartDispatcher implements Dispatcher {
 	Map objects = new HashMap();
@@ -28,7 +28,7 @@ public class StandartDispatcher implements Dispatcher {
 		ODObject load = (ODObject)Class.forName(className).newInstance();
 		load.setDispatcher(this);
 		load.setQuant(obj_count++);
-		Message m = getNewMessage("od_object_loaded",load.getName()+(obj_count-1),toString(),0);
+		Message m = getNewMessage("od_object_loaded",load.getObjectName()+(obj_count-1),toString(),0);
 		load.addMessage(m);
 		synchronized (objects){
 		    objects.put(load.toString(),load);
@@ -52,14 +52,24 @@ public class StandartDispatcher implements Dispatcher {
 	 * @return void
 	 */
 	private void unloadObject(String objectName){
-
+	    if(objects.containsKey(objectName)){
+		ODObject obj = (ODObject)objects.get(objectName);
+		Message m = getNewMessage("od_cleanup",toString(), obj.toString(), 0);
+		m.addField(new Integer(1));
+		obj.addMessage(m);
+		objects.remove(objectName); 
+		/* объект все еще может существовать, но сообщения ему доставлятся уже не будут */
+	    }
 	}
-	/** Интерфейс для объектов ядра для отсылки сообщений
+	/** Интерфейс для объектов ядра для отсылки сообщений.
+	 * Реализует multicast рассылку сообщений
 	 * @param message сообщение для отсылки
 	 * @return void
 	 */
 	public void sendMessage(Message message){
-	
+	    Iterator it = objects.keySet().iterator();
+	    while(it.hasNext())
+		((ODObject)it.next()).addMessage(message);
 	}
 	/** Конструктор загружающий первоначальный набор объектов
 	 * на основе списка
