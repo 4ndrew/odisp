@@ -1,48 +1,46 @@
-<!-- $Id: build.xml,v 1.11 2004/08/25 12:03:19 valeks Exp $ mode: -*- --><!-- xsl -*- -->
+<!-- $Id: build.xml,v 1.12 2004/08/25 12:22:18 valeks Exp $ mode: -*- --><!-- xsl -*- -->
 <project name="odisp" default="all" basedir=".">
     <taskdef resource="checkstyletask.properties"
            classpath="/usr/local/share/java/classes/checkstyle.jar"/>
-
-    <property file="build.properties"/>
-    
+	       
     <!-- Environment setup targets and options -->
     <target name="build-dir-setup">
-	<mkdir dir="${work-dir}/build"/>
+	<mkdir dir="build"/>
     </target>
     <target name="doc-dir-setup">
-	<mkdir dir="${work-dir}/docs"/>
+	<mkdir dir="docs"/>
     </target>
     <target name="release-dir-setup">
-	<mkdir dir="${work-dir}/release"/>
+	<mkdir dir="release"/>
     </target>
     <!-- Maintance tasks: clean, log, style, doc -->
     <target name="clean" depends="messages-clean-generated">
-	<delete dir="${work-dir}/build"/>
-	<delete dir="${work-dir}/docs/javadoc"/>
-        <exec executable="make" dir="${work-dir}/docs">
+	<delete dir="build"/>
+	<delete dir="docs/javadoc"/>
+        <exec executable="make" dir="docs">
              <arg line="distclean"/>
         </exec>
     </target>
 
     <target name="log" depends="doc-dir-setup">
-	<cvschangelog destfile="${work-dir}/docs/ChangeLog-odisp.xml"/>
-	<style in="${work-dir}/docs/ChangeLog-odisp.xml" 
-               out="${work-dir}/docs/ChangeLog-odisp.html"
-               style="${work-dir}/docs/changelog.xsl">
+	<cvschangelog destfile="docs/ChangeLog-odisp.xml"/>
+	<style in="docs/ChangeLog-odisp.xml" 
+               out="docs/ChangeLog-odisp.html"
+               style="docs/changelog.xsl">
           <param name="title" expression="ODISP ChangeLog"/>
           <param name="module" expression="odisp"/>
           <param name="cvsweb" expression="http://cvs.novel.local/cgi-bin/viewcvs.cgi/"/>
         </style>
-	<delete file="${work-dir}/docs/ChangeLog.xml"/>
+	<delete file="docs/ChangeLog.xml"/>
     </target>
 
     <target name="style">
-      <checkstyle config="${work-dir}docs/sun_checks.xml" failOnViolation="no">
+      <checkstyle config="docs/sun_checks.xml" failOnViolation="no">
         <fileset dir="messages" includes="**/*.java"/>
         <fileset dir="odisp" includes="**/*.java"/>
         <fileset dir="server" includes="**/*.java"/>
         <fileset dir="client" includes="**/*.java"/>        
-        <formatter type="plain" toFile="${work-dir}/docs/checkstyle_errors.txt"/>
+        <formatter type="plain" toFile="docs/checkstyle_errors.txt"/>
       </checkstyle>
       <exec executable="cat">
         <arg line="docs/checkstyle_errors.txt"/>
@@ -52,17 +50,17 @@
     <!-- Javadoc and general documentation targets -->
     <target name="javadoc" depends="doc-dir-setup, messages-rebuild-from-tpls">
 	<javadoc
-            destdir="${work-dir}/docs/javadoc"
+            destdir="docs/javadoc"
             encoding="koi8-r"
             author="yes"
             version="yes"
             verbose="no"
             source="1.4"
-            classpath="${src-dir}/lib/xlang-parser.jar">
+            classpath="lib/xlang-parser.jar">
 	    <tag name="fixme." description="Must FIX:" enabled="yes" scope="all"/>
 	    <tag name="todo." description="To do:" enabled="yes" scope="all"/>	    
 	    <tag name="xxx." description="Urgent!:" enabled="yes" scope="all"/>	    
-	    <packageset dir="${src-dir}/odisp" defaultexcludes="yes"/>
+	    <packageset dir="odisp" defaultexcludes="yes"/>
             <link offline="false" href="${jdk-doc-path}"/>
 	</javadoc>
     </target>
@@ -76,7 +74,7 @@
     <target name="doc" depends="javadoc, doxygen"/>
     
     <target name="doc-general">
-	<exec executable="make" dir="${work-dir}/docs">
+	<exec executable="make" dir="docs">
 	    <arg line="all"/>
         </exec>	
     </target>
@@ -103,8 +101,8 @@
 	    <arg line=".tpllist"/>
 	</exec>
 	<echo>Removing temporary files.</echo>
-<!--	<delete file=".tpllist"/>
-	<delete file=".tpllist."/>-->
+	<delete file=".tpllist"/>
+	<delete file=".tpllist."/>
     </target>
 
     <!-- Remove messages that were generated off TPLs. -->
@@ -125,27 +123,27 @@
 	    <arg line=".tpllist"/>
 	</exec>
 	<echo>Removing temporary files.</echo>
-<!--	<delete file=".tpllist"/>
-	<delete file=".tpllist."/>-->
+	<delete file=".tpllist"/>
+	<delete file=".tpllist."/>
     </target>
 
     <!-- Object Dispatcher -->
     <target name="odisp" depends="build-dir-setup, messages-rebuild-from-tpls">
 	<javac
-	    srcdir="${src-dir}/src" 
-	    destdir="${work-dir}/build" 
+	    srcdir="org" 
+	    destdir="build" 
 	    debug="yes"
 	    deprecation="yes"
 	    source="1.4"
 	    failonerror="${fail-on-error}"
 	    >
           <classpath>
-            <pathelement location="${work-dir}/lib/xlang-parser.jar"/>
+            <pathelement location="lib/xlang-parser.jar"/>
           </classpath>
         </javac>
     </target>
     <target name="odisp-jar" depends="release-dir-setup, odisp">
-	<jar destfile="${work-dir}/release/odisp.jar" basedir="${work-dir}/build" includes="org/valabs/odisp/**">
+	<jar destfile="release/odisp.jar" basedir="build" includes="org/valabs/odisp/**">
                 <manifest>
                         <attribute name="Built-By" value="${user.name}"/>
                         <attribute name="Main-Class" value="org.valabs.odisp.standart.Dispatcher"/>
