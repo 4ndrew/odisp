@@ -2,13 +2,14 @@ package org.valabs.odisp.common;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
 /** Стандартный объект ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: StandartODObject.java,v 1.8 2004/08/23 07:42:37 valeks Exp $
+ * @version $Id: StandartODObject.java,v 1.9 2004/08/25 08:50:45 valeks Exp $
  */
 
 public abstract class StandartODObject implements ODObject {
@@ -27,6 +28,8 @@ public abstract class StandartODObject implements ODObject {
   private String name;
   /** Карта обработчиков сообщений. */
   private Map handlers;
+  /** Признак блокировки объекта. */
+  private boolean blockedState = false;
   /** Изменить маску принимаемых сообщений.
    * @param newMatch новая маска
    */
@@ -114,6 +117,12 @@ public abstract class StandartODObject implements ODObject {
    * @param msg сообщение для обработки
    */
   public void handleMessage(final Message msg) {
+  	if (blockedState && !msg.getAction().startsWith("od_")) {
+  		/** TODO: возможно стоит подумать о некоем QOS для сообщений. */
+  		// пропускать лишь привилегированные сообщения
+  		messages.add(msg);
+  		return;
+  	}
     if (handlers.containsKey(msg.getAction())) {
       ((MessageHandler) handlers.get(msg.getAction())).messageReceived(msg);
     } else {
@@ -134,5 +143,31 @@ public abstract class StandartODObject implements ODObject {
   public int cleanUp(final int type) {
     return 0;
   }
-
+  
+  /** Установить состояние блокировки.
+   * В этом состоянии все сообщения, которые были получены объектом (кроме
+   * сообщений с префиксом "od_"), сохраняются для последующей обработки.
+   * При смене состояния на "неблокирующее" сохраненные сообщения передаются
+   * на обработку отдельному Sender-потоку.
+   * @param newState новое состояние
+   */
+  protected void setBlockedState(final boolean newState) {
+  	blockedState = newState;
+  	if (!blockedState) {
+  		new Thread("sender-message-flush") {
+  		List localMessages;
+  		public void run() {
+  			synchronized (messages) {
+  				localMessages = new ArrayList(messages);
+  				messages.clear();
+  			}
+  			Iterator it = localMessages.iterator();
+  			while (it.hasNext()) {
+  				Message elt = (Message) it.next();
+  				handleMessage(elt);
+  			}
+  		}
+  		}.start();
+  	}
+  }
 } // StandartODObject
