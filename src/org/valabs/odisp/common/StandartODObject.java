@@ -11,7 +11,7 @@ import org.valabs.odisp.SessionManager;
 
 /** Стандартный объект ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: StandartODObject.java,v 1.11 2004/10/24 19:09:26 valeks Exp $
+ * @version $Id: StandartODObject.java,v 1.12 2004/11/05 12:11:41 valeks Exp $
  */
 
 public abstract class StandartODObject implements ODObject {
@@ -119,17 +119,15 @@ public abstract class StandartODObject implements ODObject {
    * @param msg сообщение для обработки
    */
   public void handleMessage(final Message msg) {
-  	if (blockedState && !msg.isOOB()) {
-  		// пропускать лишь OOB сообщения
-  		messages.add(msg);
-  		return;
-  	}
-    if (handlers.containsKey(msg.getAction())) {
+    if (blockedState && !msg.isOOB()) {
+      // пропускать лишь OOB сообщения
+      messages.add(msg);
+      return;
+    }
+    if (!SessionManager.getSessionManager().processMessage(msg) && handlers.containsKey(msg.getAction())) {
       ((MessageHandler) handlers.get(msg.getAction())).messageReceived(msg);
     } else {
-      if (!SessionManager.getSessionManager().processMessage(msg)) {
-        logger.finer(" (" + getObjectName() + ") there is no handler for message " + msg.getAction());
-      }
+      logger.finer(" (" + getObjectName() + ") there is no handler for message " + msg.getAction());
     }
   }
 
