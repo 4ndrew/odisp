@@ -22,17 +22,19 @@ import org.doomdark.uuid.UUID;
 import org.valabs.odisp.common.Dispatcher;
 import org.valabs.odisp.common.Message;
 import org.valabs.odisp.common.ODObject;
-import org.valabs.stdmsg.ODCleanupMessage;
 import org.valabs.stdmsg.ODObjectLoadedMessage;
+import org.valabs.stdmsg.ODShutdownMessage;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.45 2005/01/24 12:57:59 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.46 2005/01/26 13:23:05 valeks Exp $
  */
 
 class ObjectManager implements org.valabs.odisp.common.ObjectManager {
 	/** Диспетчер объектов. */
 	private Dispatcher dispatcher;
+	/** Снапшот системы. */
+  private DispatcherSnapshot ds = new DispatcherSnapshot();
 	/** Хранилище отложенных сообщений. */
 	private DefferedMessages messages = new DefferedMessages();
 	/** Список объектов. */
@@ -46,8 +48,6 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
 	private List senderPool = new ArrayList();
 	/** Максимальное количество нитей создаваемых для отсылки изначально. */
 	public static final int SENDER_POOL_SIZE = 5;
-	/** Общее число объектов. */
-	private int objCount = 0;
 	/** Хранилище для сообщений. */
 	private List messageStorage = new ArrayList();
 	/** Статистика загрузки объектов. */
@@ -128,29 +128,7 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
 			}
 		}
 		int loaded = 0;
-		Map localObjects = null;
-		synchronized (objects) {
-			if (hints == null) {
-				try {
-					List hints = new ArrayList();
-					File hintsFile = new File("hints");
-					BufferedReader in = new BufferedReader(new FileReader(hintsFile));
-					String s = in.readLine();
-					while (s != null) {
-						hints.add(s);
-						s = in.readLine();
-					}
-				} catch (IOException e) {
-					hints = null;
-				}
-			}
-			if (hints != null) {
-				localObjects = new TreeMap(new HintsOrderComparator(hints));
-				localObjects.putAll(objects);
-			} else {
-				localObjects = new HashMap(objects);
-			}
-		}
+		Map localObjects = loadHints();
 		it = localObjects.keySet().iterator();
 		while (it.hasNext()) {
 			String objectName = (String) it.next();
@@ -177,6 +155,10 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
 				flushDefferedMessages(oe.getObject().getObjectName());
 				log.config(" ok. loaded = " + objectName);
 				statLoadedOrder.add(oe.getObject().getClass().getName());
+				if (ds.hasSnapshot()) {
+				  log.config("Restoring state from snapshot for " + oe.getObject().getObjectName());
+				  oe.getObject().importState(ds.getObjectSnapshot(oe.getObject().getObjectName()));
+				}
 				Message m = dispatcher.getNewMessage();
 				ODObjectLoadedMessage.setup(m, objectName, UUID.getNullUUID());
 				m.setDestination(objectName);
@@ -188,63 +170,102 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
 		if (loaded > 0) {
 			loadPending();
 			if (statToLoadCount == 0) {
-				// вывести удачный порядок загрузки.
-				String msg = "\n============================================\n";
-				msg += "loadPending() fire count: " + statLoadPendingFireCount;
-				msg += "Loaded order:\n";
-				it = statLoadedOrder.iterator();
-				while (it.hasNext()) {
-					String elt = (String) it.next();
-					msg += "\t" + elt + "\n";
-				}
-				msg += "Total: " + statLoadedOrder.size() + "\n";
-				msg += "Preparing hints...\n";
-				List resultHints = new ArrayList();
-				synchronized (objects) {
-					resultHints.addAll(dispatcher.getResourceManager().getResources().keySet());
-					it = statLoadedOrder.iterator();
-					while (it.hasNext()) {
-						String className = (String) it.next();
-						Iterator iit = objects.keySet().iterator();
-						while (iit.hasNext()) {
-							ObjectEntry element = (ObjectEntry) objects.get(iit.next());
-							if (element.getObject().getClass().getName().equals(className)) {
-								if (!element.isIntoHints()) {
-									msg += "\t" + element.getObject().getObjectName() + " was not ordered to be placed into hints\n";
-									break;
-								} else if (!resultHints.contains(className)) {
-									resultHints.add(className);
-								}
-							}
-						}
-					}
-				}
-				if (resultHints.size() > 0) { 
-					msg += "Result hints file:\n";
-					/** @todo. HACK файл hints пишется в текущий каталог, что не есть гут. */
-					try {
-						File hintsFile = new File("hints");
-						hintsFile.createNewFile();
-						PrintStream out = new PrintStream(new FileOutputStream(hintsFile));
-						it = resultHints.iterator();
-						while (it.hasNext()) {
-							String elt = (String) it.next();
-							out.println(elt);
-							msg += "\t" + elt + "\n";
-						}
-					} catch (IOException e) {
-						log.warning("Unable to write hints file.");
-						dispatcher.getExceptionHandler().signalException(e);
-					}
-					msg += "Total: " + resultHints.size() + "\n";
-					msg += "============================================\n";
-					log.fine(msg);
-				}
+				storeHints();
+				ds.clearSnapshot();
 			}
 		} 
 	}
 
-	/** Динамическая загрузка объекта (с учётом зависимостей).
+	/**
+   * 
+   */
+  private void storeHints() {
+    Iterator it;
+    // вывести удачный порядок загрузки.
+    String msg = "\n============================================\n";
+    msg += "loadPending() fire count: " + statLoadPendingFireCount;
+    msg += "Loaded order:\n";
+    it = statLoadedOrder.iterator();
+    while (it.hasNext()) {
+    	String elt = (String) it.next();
+    	msg += "\t" + elt + "\n";
+    }
+    msg += "Total: " + statLoadedOrder.size() + "\n";
+    msg += "Preparing hints...\n";
+    List resultHints = new ArrayList();
+    synchronized (objects) {
+    	resultHints.addAll(dispatcher.getResourceManager().getResources().keySet());
+    	it = statLoadedOrder.iterator();
+    	while (it.hasNext()) {
+    		String className = (String) it.next();
+    		Iterator iit = objects.keySet().iterator();
+    		while (iit.hasNext()) {
+    			ObjectEntry element = (ObjectEntry) objects.get(iit.next());
+    			if (element.getObject().getClass().getName().equals(className)) {
+    				if (!element.isIntoHints()) {
+    					msg += "\t" + element.getObject().getObjectName() + " was not ordered to be placed into hints\n";
+    					break;
+    				} else if (!resultHints.contains(className)) {
+    					resultHints.add(className);
+    				}
+    			}
+    		}
+    	}
+    }
+    if (resultHints.size() > 0) { 
+    	msg += "Result hints file:\n";
+    	/** @todo. HACK файл hints пишется в текущий каталог, что не есть гут. */
+    	try {
+    		File hintsFile = new File("hints");
+    		hintsFile.createNewFile();
+    		PrintStream out = new PrintStream(new FileOutputStream(hintsFile));
+    		it = resultHints.iterator();
+    		while (it.hasNext()) {
+    			String elt = (String) it.next();
+    			out.println(elt);
+    			msg += "\t" + elt + "\n";
+    		}
+    	} catch (IOException e) {
+    		log.warning("Unable to write hints file.");
+    		dispatcher.getExceptionHandler().signalException(e);
+    	}
+    	msg += "Total: " + resultHints.size() + "\n";
+    	msg += "============================================\n";
+    	log.fine(msg);
+    }
+  }
+
+  /**
+   * @return
+   */
+  private Map loadHints() {
+    Map localObjects;
+    synchronized (objects) {
+			if (hints == null) {
+				try {
+					List hints = new ArrayList();
+					File hintsFile = new File("hints");
+					BufferedReader in = new BufferedReader(new FileReader(hintsFile));
+					String s = in.readLine();
+					while (s != null) {
+						hints.add(s);
+						s = in.readLine();
+					}
+				} catch (IOException e) {
+					hints = null;
+				}
+			}
+			if (hints != null) {
+				localObjects = new TreeMap(new HintsOrderComparator(hints));
+				localObjects.putAll(objects);
+			} else {
+				localObjects = new HashMap(objects);
+			}
+		}
+    return localObjects;
+  }
+
+  /** Динамическая загрузка объекта (с учётом зависимостей).
 	 * Сохранение порядка в hints включено.
 	 * @param cName имя загружаемого класса
 	 * @param configuration список параметров загрузки
@@ -266,13 +287,7 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
 	public final void loadObject(final String cName, final Map configuration, final boolean intoHints) {
 		log.config("loading object " + cName);
 		try {
-			Object[] params = new Object[1];
-			objCount += (int) (Math.random() * 10000);
-			params[0] = new Integer(objCount);
-			Class[] dParams = new Class[1];
-			dParams[0] = params[0].getClass();
-			ODObject load = (ODObject) Class.forName(cName).getConstructor(
-					dParams).newInstance(params);
+			ODObject load = (ODObject) Class.forName(cName).newInstance();
 			load.setDispatcher(dispatcher);
 			load.setConfiguration(configuration);
 			synchronized (objects) {
@@ -323,21 +338,21 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
 					removeProvider(provides[i], objectName);
 				}
 			}
-			if (code == 0) {
-				it = dependingObjs.iterator();
-				while (it.hasNext()) {
-					String className = (String) it.next();
-					if (objects.containsKey(className)) {
-						log.finest("removing " + objectName + "'s dependency "
-								+ className);
-						unloadObject(className, code);
-					}
-				}
+			it = dependingObjs.iterator();
+      while (it.hasNext()) {
+        String className = (String) it.next();
+        if (objects.containsKey(className)) {
+          log.finest("removing " + objectName + "'s dependency " + className);
+          unloadObject(className, code);
+        }
+      }
+			oe.getObject().cleanUp(code);
+			if (code == ODShutdownMessage.SHUTDOWN_RESTART) {
+			  if (ds == null) {
+			    ds = new DispatcherSnapshot();
+			  }
+			  ds.addObjectSnapshot(objectName, oe.getObject().exportState());
 			}
-			Message m = dispatcher.getNewMessage();
-			ODCleanupMessage.setup(m, objectName, UUID.getNullUUID());
-			ODCleanupMessage.setReason(m, new Integer(code));
-			dispatcher.send(m);
 			objects.remove(objectName);
 			log.config("\tobject " + objectName + " unloaded");
 		}
@@ -466,6 +481,11 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
 			if (messageStorage.size() > 0) {
 				toSend = (SendRecord) messageStorage.get(0);
 				messageStorage.remove(0);
+			}
+			if (ds != null) {
+			  // XXX: проблема -- ds создаётся только после запуска всех объектов
+			  // но к этому моменту уже могут существовать сообщения кроме ODObjectLoaded!
+			  ds.setMessageQueue(messageStorage);
 			}
 		}
 		return toSend;
