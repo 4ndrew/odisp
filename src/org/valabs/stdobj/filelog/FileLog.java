@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 /** Объект реализующий простейшую журнализацию событий согласно файлу шаблонов
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: FileLog.java,v 1.5 2003/10/13 11:29:13 valeks Exp $
+* @version $Id: FileLog.java,v 1.6 2003/10/14 09:41:08 valeks Exp $
 */
 public class FileLog extends PollingODObject {
     PrintWriter out;
@@ -49,10 +49,14 @@ public class FileLog extends PollingODObject {
 			pfile.close();
 		    } catch (FileNotFoundException e) {System.err.println("[w] unable to open logfile.");
 		    } catch (IOException e) {System.err.println("[w] unable to read either log file or pattern file");}
-		    Message m = dispatcher.getNewMessage("od_release", "stddispatcher", getObjectName(), msg.getId());
-		    m.addField(msg.getField(0));
-		    m.addField(scfg);
-		    dispatcher.sendMessage(m);
+		    Message[] m = {
+			dispatcher.getNewMessage("od_release", "stddispatcher", getObjectName(), msg.getId()),
+			dispatcher.getNewMessage("od_remove_dep", "stddispatcher", getObjectName(), 0)
+		    };
+		    m[0].addField(msg.getField(0));
+		    m[0].addField(scfg);
+		    m[1].addField("com.novel.stdobj.simpleconfig.SimpleConfig");
+		    dispatcher.sendMessages(m);
 		}
 	    }
 	    return;
@@ -81,5 +85,18 @@ public class FileLog extends PollingODObject {
     }
     public FileLog(Integer id){
 	super("log"+id);
+    }
+    public String[] getProviding(){
+	String res[] = {
+	    "log"
+	};
+	return res;
+    }
+    public String[] getDepends(){
+	String res[] = {
+	    "stddispatcher",
+	    "com.novel.stdobj.simpleconfig.SimpleConfig"
+	};
+	return res;
     }
 }
