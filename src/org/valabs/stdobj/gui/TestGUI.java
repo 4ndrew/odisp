@@ -8,8 +8,9 @@ import javax.swing.*;
 /** Объект, реализующие функции GUI-менеджера, то есть основного окна (?)
 * программы (тестовая версия).
 * @author Andrew A. Porohin
+* @author Валентин А. Алексеев
 * @author (C) 2003 НПП "Новел-ИЛ"
-* @version $Id: TestGUI.java,v 1.2 2003/10/13 22:50:27 dron Exp $
+* @version $Id: TestGUI.java,v 1.3 2003/10/14 09:53:23 valeks Exp $
 */
 public class TestGUI extends CallbackODObject {
    private JTextField txt1 = new JTextField(20);
@@ -32,7 +33,7 @@ public class TestGUI extends CallbackODObject {
                   }
                 });
    }
-   
+
    /** Зачистка
    */
    public int cleanUp(int type) {
@@ -41,17 +42,17 @@ public class TestGUI extends CallbackODObject {
       mainFrame.dispose();
       return 0;
    }
-   
+
    /** Конструктор
    */
    public TestGUI(Integer id) {
      super("testGUI"+id);
      JButton buttonOk; /* Просто тестовый батон */
      ButtonOkListener bol = new ButtonOkListener();
-     
+
      buttonOk = new JButton("Ok :-)");
      buttonOk.addActionListener(bol);
-     
+
      mainFrame = new JFrame("TestGUI::mainFrame");
      // temporarily...
      mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -61,5 +62,13 @@ public class TestGUI extends CallbackODObject {
      cn.add(txt1);
      mainFrame.setSize(400, 400);
      mainFrame.setVisible(true);
+   }
+   public String[] getProviding(){
+	String[] res = {"testGUI"};
+	return res;
+   }
+   public String[] getDepends(){
+	String[] res = {"stddispatcher"};
+	return res;
    }
 }
