@@ -22,7 +22,7 @@ import org.valabs.odisp.common.StandartODObject;
 /**
  * @author valeks
  * @author (C) 2004 îðð "îÏ×ÅÌ-éì"
- * @version $Id: TranslatorServer.java,v 1.2 2004/08/23 07:42:38 valeks Exp $
+ * @version $Id: TranslatorServer.java,v 1.3 2004/09/09 10:12:12 dron Exp $
  */
 public class TranslatorServer extends StandartODObject
 		implements
@@ -45,15 +45,14 @@ public class TranslatorServer extends StandartODObject
 			Message m = dispatcher.getNewMessage();
 			ModuleAboutReplyMessage.setup(m, msg.getOrigin(), getObjectName(),
 					msg.getId());
-			ModuleAboutReplyMessage.initAll(m, VERSION, null, COPYRIGHT,
-					FULL_NAME);
+			ModuleAboutReplyMessage.initAll(m, FULL_NAME, VERSION, COPYRIGHT, null);
 			dispatcher.send(m);
 		} else if (ModuleStatusMessage.equals(msg)) {
 			Message m = dispatcher.getNewMessage();
 			ModuleStatusReplyMessage.setup(m, msg.getOrigin(), getObjectName(),
 					msg.getId());
 			List dumb = new ArrayList();
-			ModuleStatusReplyMessage.initAll(m, dumb, dumb, dumb, "noerror");
+			ModuleStatusReplyMessage.initAll(m, "noerror", dumb, dumb, dumb);
 		} else if (TranslatorGetTranslationMessage.equals(msg)) { 
 			String language = TranslatorGetTranslationMessage.getLanguage(msg);
 			String encoding = TranslatorGetTranslationMessage.getEncoding(msg);
@@ -86,7 +85,7 @@ public class TranslatorServer extends StandartODObject
 			Message m = dispatcher.getNewMessage();
 			TranslatorGetTranslationReplyMessage.setup(m, msg.getOrigin(),
 					getObjectName(), msg.getId());
-			TranslatorGetTranslationReplyMessage.initAll(m, result);
+			TranslatorGetTranslationReplyMessage.setTranslation(m, result);
 			dispatcher.send(m);
 		}
 	}
