@@ -100,11 +100,10 @@ import com.novel.stdobj.webcon.servlet.ServletException;
  * @see com.novel.stdobj.webcon.servlet.http.HttpServlet
  * @author (C) 1996,1998 by Jef Poskanzer <jef@acme.com>
  * @author (C) 2004 Valentin A. Alekseev
- * @version $Id: Serve.java,v 1.6 2004/03/31 12:54:48 dron Exp $
+ * @version $Id: Serve.java,v 1.7 2004/07/12 06:38:48 valeks Exp $
  */
 
 public class Serve implements ServletContext {
-  private static final String progName = "Serve";
   private int port;
   private PrintStream logStream;
   WildcardDictionary registry;

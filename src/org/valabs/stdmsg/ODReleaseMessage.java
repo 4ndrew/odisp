@@ -6,19 +6,14 @@ import com.novel.odisp.common.Message;
 /** Запрос диспетчера на высвобождение ресурса.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODReleaseMessage.java,v 1.10 2004/06/09 17:52:23 valeks Exp $
+ * @version $Id: ODReleaseMessage.java,v 1.11 2004/07/12 06:38:48 valeks Exp $
  */
 
 public class ODReleaseMessage {
   /** Символьное имя сообщения. */
   public static final String NAME = "od_release";
-
-  /** Имя ресурса. */
-  private transient String resourceName = "";
   /** Индекс имени в сообщении. */
   private static final String NAME_IDX = "resname";
-  /** Ресурс. */
-  private transient Resource resource;
   /** Индекс ресурса в сообщении. */
   private static final String RES_IDX = "resobj";
 

@@ -6,18 +6,13 @@ import com.novel.odisp.common.Message;
 /** Ответ на запрос о захвате ресурса.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODResourceAcquiredMessage.java,v 1.12 2004/06/09 19:44:43 valeks Exp $
+ * @version $Id: ODResourceAcquiredMessage.java,v 1.13 2004/07/12 06:38:48 valeks Exp $
  */
 public class ODResourceAcquiredMessage extends StandartMessage {
   /** Символьное имя сообщения. */
   public static final String NAME = "od_resource_acquired";
-
-  /** Имя ресурса. */
-  private transient String resourceName = "";
   /** Индекс имени ресурса. */
   private static final String RESNAME_IDX = "resname";
-  /** Ресурс. */
-  private transient Resource resource;
   /** Индекс ресурса. */
   private static final String RES_IDX = "resobj";
 

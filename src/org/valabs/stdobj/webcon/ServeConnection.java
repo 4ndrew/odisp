@@ -716,8 +716,6 @@ class ServeConnection extends Thread implements HttpServletRequest, HttpServletR
     setHeader( name, to1123String( new Date( value ) ) );
   }
 
-  private static final String[] weekdays = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
-
   /// Converts a Date into an RFC-1123 string.
   private static String to1123String( Date date ) {
     // We have to go through some machinations here to get the

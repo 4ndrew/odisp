@@ -2,14 +2,13 @@ package com.novel.odisp.common;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
 /** Стандартный объект ODISP.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: StandartODObject.java,v 1.5 2004/06/25 13:08:11 valeks Exp $
+ * @version $Id: StandartODObject.java,v 1.6 2004/07/12 06:38:48 valeks Exp $
  */
 
 public abstract class StandartODObject implements ODObject {
@@ -28,8 +27,6 @@ public abstract class StandartODObject implements ODObject {
   private String name;
   /** Карта обработчиков сообщений. */
   private Map handlers;
-  /** Список сообщений пришедших до регистрации обработчиков. */
-  private List unhandledMessages = new LinkedList();
   /** Изменить маску принимаемых сообщений.
    * @param newMatch новая маска
    */
