@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 /** Объект реализующий простейшую журнализацию событий согласно файлу шаблонов
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: FileLog.java,v 1.4 2003/10/12 20:07:33 valeks Exp $
+* @version $Id: FileLog.java,v 1.5 2003/10/13 11:29:13 valeks Exp $
 */
 public class FileLog extends PollingODObject {
     PrintWriter out;
@@ -67,8 +67,10 @@ public class FileLog extends PollingODObject {
 	    if(Pattern.matches((String)it.next(), msg.getAction()))
 		doMatch = true;
 	log("doLog","3");
-	if(doMatch)
+	if(doMatch){
 	    out.write(new Date().toString() + " -- "+msg+"\n");
+	    out.flush();
+	}
 	log("doLog","4");
     }
     public int cleanUp(int type){
