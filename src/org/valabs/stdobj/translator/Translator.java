@@ -10,7 +10,7 @@ import com.novel.odisp.common.Resource;
  *
  * @author <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
  * @author (C) 2004 НПП "Новел-ИЛ"
- * @version $Id: Translator.java,v 1.7 2004/04/23 13:32:23 dron Exp $
+ * @version $Id: Translator.java,v 1.8 2004/04/24 19:49:07 valeks Exp $
  */
 public class Translator extends Properties implements Resource {
   /** Имя параметра, который содержит имя файла для загрузки */
@@ -63,13 +63,13 @@ public class Translator extends Properties implements Resource {
   public void setConfiguration(final Map cfg) {
     try {
       String fileName = DefaultLanguageFile;
-      if (cfg != null) {
-        fileName = config.get(LaguageFile, DefaultLanguageFile);
+      if (cfg != null && cfg.containsKey(LanguageFile)) {
+        fileName = (String) cfg.get(LanguageFile);
       }
       FileInputStream inputStream = new FileInputStream(fileName);
       load(inputStream);
     } catch (Exception e) {
-      logger.warning("Exception: " + e);
+//      logger.warning("Exception: " + e);
     }
   }
 }
