@@ -24,7 +24,7 @@ import com.novel.stdmsg.ODShutdownMessage;
 
 /** Обработчик сообщений диспетчера ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: DispatcherHandler.java,v 1.20 2004/06/09 18:55:57 valeks Exp $
+ * @version $Id: DispatcherHandler.java,v 1.21 2004/06/25 13:15:31 dron Exp $
  */
 
 public class StandartDispatcherHandler extends StandartODObject {
@@ -117,6 +117,7 @@ public class StandartDispatcherHandler extends StandartODObject {
 	  }
 	  m.addField("0", reply);
 	  m.setRoutable(false);
+          m.setCorrect(true);
 	  dispatcher.send(m);
 	}
       });
@@ -130,6 +131,7 @@ public class StandartDispatcherHandler extends StandartODObject {
 	    m.addField("" + (count++), it.next());
 	  }
 	  m.setRoutable(false);
+          m.setCorrect(true);
 	  dispatcher.send(m);
 	}
       });

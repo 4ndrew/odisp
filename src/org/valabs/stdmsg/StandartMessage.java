@@ -10,9 +10,11 @@ import java.util.Map;
 import com.novel.odisp.common.Message;
 
 /** Реализация стандартного сообщения для стандартного диспетчера ODISP.
- * @author Валентин А. Алексеев
+ * 
+ * @author <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
+ * @author <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: StandartMessage.java,v 1.17 2004/06/09 14:19:38 valeks Exp $
+ * @version $Id: StandartMessage.java,v 1.18 2004/06/25 13:15:31 dron Exp $
  */
 public class StandartMessage implements Message, Serializable {
   /** Флаг маршрутизации. */
@@ -211,10 +213,7 @@ public class StandartMessage implements Message, Serializable {
       String key = (String) it.next();
       fieldDump += "\n(" + key + ") " + getField(key);
     }
-    return "stdmessage id=" + myId + " replyto=" + inReplyTo
-      + " action=" + action + ", destination=" + destination
-      + ", origin=" + origin + ", fields.size()=" + fields.size()
-      + stackTraceMessage + fieldDump;
+    return toString() + stackTraceMessage + fieldDump;
   }
 
   /** Проверка корректности сообщения.

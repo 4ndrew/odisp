@@ -2,15 +2,22 @@ package com.novel.stdobj.console;
 
 import com.novel.odisp.common.Message;
 import com.novel.odisp.common.StandartODObject;
+
 /** Объект ODISP реализующий консольный интерфейс доступа к менеджеру.
-* @author Валентин А. Алексеев
-* @author (C) 2003, НПП "Новел-ИЛ"
-* @version $Id: ConsoleObject.java,v 1.18 2004/05/13 09:25:46 valeks Exp $
-*/
+ * 
+ * @author <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
+ * @author <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
+ * @author (C) 2003, НПП "Новел-ИЛ"
+ * @version $Id: ConsoleObject.java,v 1.19 2004/06/25 13:15:31 dron Exp $
+ */
 public class ConsoleObject extends StandartODObject {
+  /** Имя объекта */
+  public final static String NAME = "console"; 
   /** Поток читающий ввод с консоли. */
   private ConsoleReader reader;
+
   /** Обработчик входящих сообщений.
+   * 
    * @param msg сообщение
    */
   public final void handleMessage(final Message msg) {
@@ -22,19 +29,13 @@ public class ConsoleObject extends StandartODObject {
       cleanUp(0);
     } else {
       System.out.println("Received:");
-      System.out.println(msg.toString());
-      if (msg.getFieldsCount() > 0) {
-
-	System.out.println("Fields dump:");
-      }
-      for (int i = 0; i < msg.getFieldsCount(); i++) {
-	System.out.print(i + ":");
-	System.out.println(msg.getField("" + i));
-      }
+      System.out.println(msg.toString(true));
     }
     return;
   }
+  
   /** Выход.
+   * 
    * @param type признак выхода
    * @return код возврата
    */
@@ -45,26 +46,30 @@ public class ConsoleObject extends StandartODObject {
     }
     return 0;
   }
+  
   /** Конструктор объекта с заданным порядковым номером.
+   * 
    * @param id номер
    */
   public ConsoleObject(final Integer id) {
-    super("console" + id);
+    super(NAME + id);
   }
+  
   /** Вернуть список сервисов.
+   * 
    * @return список сервисов
    */
   public final String[] getProviding() {
-    String[] res = {"console"};
+    String[] res = { NAME };
     return res;
   }
+  
   /** Вернуть список зависимостей.
+   * 
    * @return список зависимостей
    */
   public final String[] getDepends() {
-    String[] res = {
-      "dispatcher"
-    };
+    String[] res = { "dispatcher" };
     return res;
   }
 }
