@@ -1,8 +1,13 @@
 package org.valabs.stdobj.translator;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import org.valabs.odisp.common.Resource;
 
@@ -10,15 +15,26 @@ import org.valabs.odisp.common.Resource;
  *
  * @author <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
  * @author (C) 2004 НПП "Новел-ИЛ"
- * @version $Id: Translator.java,v 1.12 2004/08/23 07:42:38 valeks Exp $
+ * @version $Id: Translator.java,v 1.13 2004/08/31 12:22:21 dron Exp $
  */
 public class Translator extends Properties implements Resource {
-  /** Имя параметра, который содержит имя файла для загрузки */
-  public final static String LanguageFile = "LanguageFile";
-  /** Имя файла, в дальнейшем пранируется использование начального
-   * конфигурирования объектов Odisp
-   */
-  private final String DefaultLanguageFile = "resources/language/Default.lng";
+  /** Путь к корневой папке транляций */
+  public static final String LanguageRootDir 	= "LanguageRootDir";
+  /** Идентификатор языка */
+  public static final String LanguageId 			= "LanguageId";
+  /** Автозагрузка */
+  public static final String AutoLoad  				= "Autoload";
+  /** Путь к корневой папке транляций по-умолчанию */
+  private final String DefaultLanguageDir = "resources/language";
+  /** Идентификатор языка по-умолчанию */
+  private final String DefaultLanguageId = "en";
+  /** Корневой каталог для трансляций */
+  private String rootDir = null;
+  /** Идентификатор языка */
+  private String langId = null;
+  
+  /** Логгер! */
+  private static final Logger logger = Logger.getLogger(Translator.class.getName()); 
   
   /** Конструктор транслятора
    */
@@ -33,7 +49,7 @@ public class Translator extends Properties implements Resource {
    * @param string Входная строка.
    * @return Преобразованная строка.
    */
-  public static String convertUTFString(String string) {
+  public final static String convertUTFString(String string) {
     char curr;
     int len = string.length();
     StringBuffer resultBuff = new StringBuffer(len);
@@ -107,36 +123,63 @@ public class Translator extends Properties implements Resource {
     return 0;
   }
   
+  /** Получение текущего корневого каталога.
+   * 
+   * @return Путь к корневому каталогу трансляций. Возможен null, только
+   * если у dispatcher'а башню снесло.
+   */
+  public String getRootDir() {
+    return rootDir;
+  }
+  
+  /** Получение текущего идентификатора языка.
+   * 
+   * @return 2 буковки для трансляции. 
+   */
+  public String getLangId() {
+    return langId;
+  }
+  
   /** Установка конфигурации ресурса.
    * 
    * @param cfg конфигурация
    */
   public void setConfiguration(final Map cfg) {
-    try {
-      String fileName = DefaultLanguageFile;
-      int counter = 0;
-      if (cfg != null) {
-        while (cfg.containsKey(LanguageFile + counter)) {
-          fileName = (String) cfg.get(LanguageFile + counter++);
-          FileInputStream inputStream = new FileInputStream(fileName);
-          load(inputStream);
-          inputStream.close();
+    rootDir = DefaultLanguageDir;
+    langId = DefaultLanguageId;
+    boolean autoLoad = true;
+    if (cfg != null) {
+      rootDir = (cfg.get(LanguageRootDir) != null)
+      	? (String) cfg.get(LanguageRootDir) : rootDir;
+      langId = (cfg.get(LanguageId) != null)
+        ? (String) cfg.get(LanguageId) : langId;
+      String tmp = (String) cfg.get(AutoLoad);
+      if (tmp != null)
+        autoLoad = tmp.equals("1") || tmp.equals("yes") || tmp.equals("yo"); 
+    }
+    
+    if (!autoLoad) return;
+    
+    logger.info("i'm here!");
+    File f = new File(rootDir + File.separator + langId);
+    if (f.canRead() && f.isDirectory()) {
+      String[] files = f.list(new FilenameFilter() {
+        public boolean accept(final File dir, final String name) {
+          return name.endsWith("lng");
         }
-        
-        // Совместимость с прошлыми версиями.
-        if (counter == 0 && cfg.containsKey(LanguageFile)) {
-          fileName = (String) cfg.get(LanguageFile);
-          FileInputStream inputStream = new FileInputStream(fileName);
-          load(inputStream);
-          inputStream.close();
+      });
+      for (int i = 0; i < files.length; i++) {
+        try {
+          load(new FileInputStream(f.getAbsolutePath() + File.separator
+              + files[i]));
+        } catch (FileNotFoundException e) {
+          logger.warning("File not found: " + files[i]);
+        } catch (IOException e) {
+          logger.warning("Input/Output error while reading " + files[i]);
         }
-      } else {
-        FileInputStream inputStream = new FileInputStream(fileName);
-        load(inputStream);
-        inputStream.close();
       }
-    } catch (Exception e) {
-//      logger.warning("Exception: " + e);
+    } else {
+      logger.warning("Directory could not be read: " + f);
     }
   }
 }
