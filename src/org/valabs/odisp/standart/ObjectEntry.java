@@ -2,12 +2,13 @@ package com.novel.odisp;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Arrays;
 
 import com.novel.odisp.common.ODObject;
 /** Запись об объекте в таблице объектов.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ObjectEntry.java,v 1.3 2004/03/31 12:00:21 dron Exp $
+ * @version $Id: ObjectEntry.java,v 1.4 2004/03/31 12:43:35 valeks Exp $
  */
 
 public class ObjectEntry {
@@ -95,17 +96,27 @@ public class ObjectEntry {
     return depends;
   }
 
+  /** Поиск зависимости в списке.
+   * @return номер в списке или -1 если элемент отсутствует
+   */
+  private int depContains(final String depName) {
+    return Arrays.asList(depends).indexOf(depName);
+  }
+
   /** Убрать определенную зависимость из списка.
    * @param toRemove зависимость
    */
   public final void removeDepend(final String toRemove) {
-    List newDeps = new ArrayList();
-    for (int i = 0; i < depends.length; i++) {
-      if (!depends[i].equals(toRemove)) {
-	newDeps.add(new String(depends[i]));
+    if (depContains(toRemove) > 0) {
+      String[] newDeps = new String[depends.length - 1];
+      int count = 0;
+      for (int i = 0; i < depends.length; i++) {
+	if (!depends[i].equals(toRemove)) {
+	  newDeps[count++] = depends[i];
+	}
       }
+      depends = newDeps;
     }
-    depends = (String []) newDeps.toArray();
   }
   
   /** Список сервисов. */

@@ -27,7 +27,7 @@ import com.novel.odisp.common.Dispatcher;
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.36 2004/03/26 21:53:37 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.37 2004/03/31 12:43:35 valeks Exp $
  */
 public class StandartDispatcher implements Dispatcher {
   /** Журнал. */
@@ -165,7 +165,7 @@ public class StandartDispatcher implements Dispatcher {
 	}
       };
     t.start();
-    runthr.addField(t);
+    runthr.addField("0", t);
     oman.send(runthr);
     Iterator it = docTag.getChild().iterator();
     while (it.hasNext()) {

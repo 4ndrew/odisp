@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 
 /** Менеджер ресурсных объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceManager.java,v 1.16 2004/03/31 10:17:27 dron Exp $
+ * @version $Id: ResourceManager.java,v 1.17 2004/03/31 12:43:35 valeks Exp $
  */
 public class StandartResourceManager implements ResourceManager {
   /** Ссылка на диспетчер объектов. */
@@ -52,10 +52,10 @@ public class StandartResourceManager implements ResourceManager {
    * @param msg сообщение о захвате
    */
   public final void acquireRequest(final Message msg) {
-    String className = (String) msg.getField(0);
+    String className = (String) msg.getField("0");
     boolean willBlockState = false;
     if (msg.getFieldsCount() == 2) {
-      willBlockState = ((Boolean) msg.getField(1)).booleanValue();
+      willBlockState = ((Boolean) msg.getField("1")).booleanValue();
     }
     log.fine("resource acquientance request from " + msg.getOrigin() + " to " + className);
     dataThread.addRequest(new AcquireResourceRequest(msg.getOrigin(), msg.getId(), className, willBlockState));
@@ -69,8 +69,8 @@ public class StandartResourceManager implements ResourceManager {
       return;
     }
     // разбор сообщения
-    String className = (String) msg.getField(0);
-    Resource res = (Resource) msg.getField(1);
+    String className = (String) msg.getField("0");
+    Resource res = (Resource) msg.getField("1");
     dataThread.addRequest(new ReleaseResourceRequest(msg.getOrigin(), className, res));
   }
 
@@ -360,7 +360,7 @@ public class StandartResourceManager implements ResourceManager {
     /** Добавление запроса в очередь.
      * @param req запрос
      */
-    public synchronized void addRequest(RequestListEntry req) {
+    public void addRequest(RequestListEntry req) {
       synchronized (requestList) {
 	requestList.add(req);
       }

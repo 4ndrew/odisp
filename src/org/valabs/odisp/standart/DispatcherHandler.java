@@ -22,7 +22,7 @@ import java.util.Set;
 
 /** Обработчик сообщений диспетчера ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: DispatcherHandler.java,v 1.10 2004/03/31 10:15:09 dron Exp $
+ * @version $Id: DispatcherHandler.java,v 1.11 2004/03/31 12:43:35 valeks Exp $
  */
 
 public class StandartDispatcherHandler extends CallbackODObject {
@@ -60,7 +60,7 @@ public class StandartDispatcherHandler extends CallbackODObject {
 	public final void messageReceived(final Message msg) {
 	  if (msg.getOrigin().equals("G0D")) {
 	    // наш личный 0xdeadbeaf
-	    runThread = (Thread) msg.getField(0);
+	    runThread = (Thread) msg.getField("0");
 	  }
 	}
     });
@@ -69,7 +69,7 @@ public class StandartDispatcherHandler extends CallbackODObject {
 	  if (msg.getFieldsCount() != 1) {
 	    return;
 	  }
-	  String objname = (String) msg.getField(0);
+	  String objname = (String) msg.getField("0");
 	  oman.unloadObject(objname, 1);
 	}
       });
@@ -78,7 +78,7 @@ public class StandartDispatcherHandler extends CallbackODObject {
 	  if (msg.getFieldsCount() != 1) {
 	    return;
 	  }
-	  String objname = (String) msg.getField(0);
+	  String objname = (String) msg.getField("0");
 	  oman.loadObject(objname, null);
 	  oman.loadPending();
 	}
@@ -88,7 +88,7 @@ public class StandartDispatcherHandler extends CallbackODObject {
 	  int exitCode = 0;
 	  log.info(toString() + " shutting down...");
 	  if (msg.getFieldsCount() == 1) {
-	    exitCode = ((Integer) msg.getField(0)).intValue();
+	    exitCode = ((Integer) msg.getField("0")).intValue();
 	  }
 	  // харакири
 	  oman.unloadObject(getObjectName(), exitCode);
@@ -134,8 +134,9 @@ public class StandartDispatcherHandler extends CallbackODObject {
 	  Message m = dispatcher.getNewMessage("resource_list", msg.getOrigin(), getObjectName(), msg.getId());
 	  List resStat = rman.statRequest();
 	  Iterator it = resStat.iterator();
+	  int count = 0;
 	  while (it.hasNext()) {
-	    m.addField(it.next());
+	    m.addField("" + (count++), it.next());
 	  }
 	  m.setRoutable(false);
 	  dispatcher.send(m);
@@ -147,7 +148,7 @@ public class StandartDispatcherHandler extends CallbackODObject {
 	    return;
 	  }
 	  ObjectEntry oe = (ObjectEntry) oman.getObjects().get(msg.getOrigin());
-	  oe.removeDepend((String) msg.getField(0));
+	  oe.removeDepend((String) msg.getField("0"));
 	}
       });
     addHandler(ODGetProvidingMessage.NAME, new MessageHandler() {
