@@ -9,7 +9,7 @@ import javax.swing.*;
 /** Объект ODISP реализующий графический интерфейс доступа к менеджеру
  * @author Андрей А. Порохин
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: GUIConsole.java,v 1.2 2003/10/15 20:33:10 dron Exp $
+ * @version $Id: GUIConsole.java,v 1.3 2003/10/16 22:10:20 dron Exp $
  */
 public class GUIConsole extends PollingODObject {
    JFrame mFrame;
@@ -40,6 +40,8 @@ public class GUIConsole extends PollingODObject {
    */
    public int cleanUp(int type) {
       mFrame.setVisible(false);
+      mFrame.hide();
+      // mFrame.postEvent(Event.WINDOW_DESTROY);
       try {
          synchronized(this) {
             wait(1000);
@@ -83,6 +85,7 @@ public class GUIConsole extends PollingODObject {
    public GUIConsole(Integer id) {
       super("guiconsole"+id);
       mFrame = new JFrame("GUIConsole");
+      mFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
       mFrame.setSize(600, 400);
       mTextArea1 = new JTextArea();
       mEdit1 = new JTextField(20);
