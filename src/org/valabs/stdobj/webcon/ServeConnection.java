@@ -1,12 +1,30 @@
 package com.novel.stdobj.webcon;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.text.DateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.StringTokenizer;
+import java.util.TimeZone;
+import java.util.Vector;
 import java.util.regex.Pattern;
-import java.util.*;
-import java.net.*;
-import com.novel.stdobj.webcon.servlet.*;
-import com.novel.stdobj.webcon.servlet.http.*;
+
+import com.novel.stdobj.webcon.servlet.Servlet;
+import com.novel.stdobj.webcon.servlet.ServletException;
+import com.novel.stdobj.webcon.servlet.ServletInputStream;
+import com.novel.stdobj.webcon.servlet.ServletOutputStream;
+import com.novel.stdobj.webcon.servlet.http.Cookie;
+import com.novel.stdobj.webcon.servlet.http.HttpServlet;
+import com.novel.stdobj.webcon.servlet.http.HttpServletRequest;
+import com.novel.stdobj.webcon.servlet.http.HttpServletResponse;
+import com.novel.stdobj.webcon.servlet.http.HttpSession;
 
 class ServeConnection extends Thread implements HttpServletRequest, HttpServletResponse {
   private Socket socket;

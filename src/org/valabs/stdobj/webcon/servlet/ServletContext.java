@@ -41,7 +41,7 @@ package com.novel.stdobj.webcon.servlet;
 // <P>
 // @see com.novel.stdobj.webcon.servlet.Servlet
 
-import java.util.*;
+import java.util.Enumeration;
 
 public interface ServletContext
     {

@@ -1,25 +1,24 @@
 package com.novel.odisp;
 
-import java.io.InputStream;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.FileNotFoundException;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.logging.Logger;
-import java.util.Map;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 
-import org.valeks.xlang.parser.Tag;
 import org.valeks.xlang.parser.Parser;
+import org.valeks.xlang.parser.Tag;
 import org.valeks.xlang.parser.XLangException;
 
-import com.novel.stdmsg.StandartMessage;
-import com.novel.odisp.common.Message;
-import com.novel.odisp.common.ResourceManager;
-import com.novel.odisp.common.ObjectManager;
 import com.novel.odisp.common.Dispatcher;
+import com.novel.odisp.common.Message;
+import com.novel.odisp.common.ObjectManager;
+import com.novel.odisp.common.ResourceManager;
+import com.novel.stdmsg.StandartMessage;
 //import com.novel.stdmsg.*;
 
 /** Стандартный диспетчер ODISP.
@@ -27,7 +26,7 @@ import com.novel.odisp.common.Dispatcher;
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.37 2004/03/31 12:43:35 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.38 2004/03/31 12:54:48 dron Exp $
  */
 public class StandartDispatcher implements Dispatcher {
   /** Журнал. */
@@ -224,8 +223,6 @@ public class StandartDispatcher implements Dispatcher {
 	    new StandartDispatcher(p.getRootTag());
       } catch (FileNotFoundException e) {
 	    log.severe("configuration file " + args[0] + " not found.");
-      } catch (IOException e) {
-	    log.severe("unable to read configuration file.");
       } catch (XLangException e) {
         log.severe("configuration file " + args[0] + " contains unrecoverable errors: " + e);
       }

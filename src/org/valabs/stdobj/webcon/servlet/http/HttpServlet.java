@@ -30,8 +30,13 @@
 
 package com.novel.stdobj.webcon.servlet.http;
 
-import java.io.*;
-import com.novel.stdobj.webcon.servlet.*;
+import java.io.IOException;
+import java.io.Serializable;
+
+import com.novel.stdobj.webcon.servlet.GenericServlet;
+import com.novel.stdobj.webcon.servlet.ServletException;
+import com.novel.stdobj.webcon.servlet.ServletRequest;
+import com.novel.stdobj.webcon.servlet.ServletResponse;
 
 /// The HTTP servlet class.
 // <P>

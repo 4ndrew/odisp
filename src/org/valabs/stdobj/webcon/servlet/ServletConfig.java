@@ -30,7 +30,7 @@
 
 package com.novel.stdobj.webcon.servlet;
 
-import java.util.*;
+import java.util.Enumeration;
 
 /// This interface is used by the server to pass initialization information
 // to a servlet when it is first loaded.  It contains methods to get the

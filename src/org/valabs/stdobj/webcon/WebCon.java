@@ -1,31 +1,30 @@
 package com.novel.stdobj.webcon;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+
 import com.novel.odisp.common.CallbackODObject;
 import com.novel.odisp.common.Message;
 import com.novel.odisp.common.MessageHandler;
-import com.novel.stdmsg.ODObjectLoadedMessage;
 import com.novel.stdmsg.ODCleanupMessage;
+import com.novel.stdmsg.ODObjectLoadedMessage;
 import com.novel.stdmsg.webcon.WCAddServletMessage;
-import com.novel.stdmsg.webcon.WCRemoveServletMessage;
 import com.novel.stdmsg.webcon.WCListServletsMessage;
 import com.novel.stdmsg.webcon.WCListServletsReplyMessage;
+import com.novel.stdmsg.webcon.WCRemoveServletMessage;
 import com.novel.stdobj.webcon.servlet.Servlet;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Enumeration;
-
-// для IndexServlet
+import com.novel.stdobj.webcon.servlet.ServletException;
+import com.novel.stdobj.webcon.servlet.ServletOutputStream;
 import com.novel.stdobj.webcon.servlet.http.HttpServlet;
 import com.novel.stdobj.webcon.servlet.http.HttpServletRequest;
 import com.novel.stdobj.webcon.servlet.http.HttpServletResponse;
-import com.novel.stdobj.webcon.servlet.ServletException;
-import com.novel.stdobj.webcon.servlet.ServletOutputStream;
-import java.io.IOException;
 
 /** ODISP-интерфейс к ACME серверу.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2004, НПП "Новел-ИЛ"
- * @version $Id: WebCon.java,v 1.2 2004/03/27 23:20:59 valeks Exp $
+ * @version $Id: WebCon.java,v 1.3 2004/03/31 12:54:48 dron Exp $
  */
 
 public class WebCon extends CallbackODObject implements MessageHandler {

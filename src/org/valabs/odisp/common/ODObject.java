@@ -1,16 +1,16 @@
 package com.novel.odisp.common;
 
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /** Базовый класс реализующий почтовый ящик для сообщений
 * посылаемых диспетчером ODISP.
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: ODObject.java,v 1.14 2004/03/26 21:53:38 valeks Exp $
+* @version $Id: ODObject.java,v 1.15 2004/03/31 12:54:48 dron Exp $
 */
 public abstract class ODObject extends Thread {
   /** Журнал. */

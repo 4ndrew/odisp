@@ -30,7 +30,6 @@
 
 package com.novel.stdobj.webcon.servlet.http;
 
-import com.novel.stdobj.webcon.servlet.*;
 
 /// An association of HTTP interactions.
 // <P>

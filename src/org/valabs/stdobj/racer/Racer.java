@@ -1,17 +1,17 @@
 package com.novel.stdobj.racer;
 
+import com.novel.odisp.common.Message;
 import com.novel.odisp.common.PollingODObject;
-import com.novel.stdmsg.ODResourceAcquiredMessage;
+import com.novel.odisp.common.Resource;
 import com.novel.stdmsg.ODAcquireMessage;
-import com.novel.stdmsg.ODReleaseMessage;
 import com.novel.stdmsg.ODCleanupMessage;
 import com.novel.stdmsg.ODObjectLoadedMessage;
-import com.novel.odisp.common.Message;
-import com.novel.odisp.common.Resource;
+import com.novel.stdmsg.ODReleaseMessage;
+import com.novel.stdmsg.ODResourceAcquiredMessage;
 
 /** Объект, который пытается воспроизвести быстрые асинхронные запросы на захват и высвобождение ресурса.
  * @author (C) 2004 <a href="valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: Racer.java,v 1.3 2004/03/26 21:53:38 valeks Exp $
+ * @version $Id: Racer.java,v 1.4 2004/03/31 12:54:48 dron Exp $
  */
 public class Racer extends PollingODObject {
   private int acquireCount = 0;

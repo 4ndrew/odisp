@@ -28,9 +28,11 @@
 
 package com.novel.stdobj.webcon.servlet.http;
 
-import java.io.*;
-import java.util.*;
-import com.novel.stdobj.webcon.servlet.*;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.util.Vector;
 
 /// An OutputStream that implements HTTP/1.1 chunking.
 // <P>

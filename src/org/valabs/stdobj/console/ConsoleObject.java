@@ -1,11 +1,11 @@
 package com.novel.stdobj.console;
 
-import com.novel.odisp.common.PollingODObject;
 import com.novel.odisp.common.Message;
+import com.novel.odisp.common.PollingODObject;
 /** Объект ODISP реализующий консольный интерфейс доступа к менеджеру.
 * @author Валентин А. Алексеев
 * @author (C) 2003, НПП "Новел-ИЛ"
-* @version $Id: ConsoleObject.java,v 1.14 2004/03/17 11:58:06 dron Exp $
+* @version $Id: ConsoleObject.java,v 1.15 2004/03/31 12:54:48 dron Exp $
 */
 public class ConsoleObject extends PollingODObject {
   /** Поток читающий ввод с консоли. */

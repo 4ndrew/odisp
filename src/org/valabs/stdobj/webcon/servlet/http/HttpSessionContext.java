@@ -30,8 +30,7 @@
 
 package com.novel.stdobj.webcon.servlet.http;
 
-import com.novel.stdobj.webcon.servlet.*;
-import java.util.*;
+import java.util.Enumeration;
 
 /// An association of HTTP sessions.
 // <P>

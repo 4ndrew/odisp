@@ -1,7 +1,7 @@
 package com.novel.stdmsg.webcon;
 
-import com.novel.stdmsg.StandartMessage;
 import com.novel.odisp.common.Message;
+import com.novel.stdmsg.StandartMessage;
 
 /** Добавление сервлета в контейнер WebCon.
  * <p> Для того, что бы не далеть дополнительных зависимостей в качестве обработчика на данный момент
@@ -10,7 +10,7 @@ import com.novel.odisp.common.Message;
  * <p>Сообщение не является маршрутизируемым, так как не имеет смысл добавлять сервлеты в удаленный контейнер.</p>
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2004, НПП "Новел-ИЛ"
- * @version $Id: WCAddServletMessage.java,v 1.2 2004/03/27 21:59:50 valeks Exp $
+ * @version $Id: WCAddServletMessage.java,v 1.3 2004/03/31 12:54:47 dron Exp $
  */
 
 public class WCAddServletMessage extends StandartMessage {

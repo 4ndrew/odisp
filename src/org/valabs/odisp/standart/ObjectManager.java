@@ -1,24 +1,24 @@
 package com.novel.odisp;
 
-import com.novel.odisp.common.ObjectManager;
-
-import java.util.Map;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Collections;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.Map;
 import java.util.logging.Logger;
+
 import com.novel.odisp.common.Dispatcher;
-import com.novel.odisp.common.ODObject;
 import com.novel.odisp.common.Message;
-import com.novel.stdmsg.ODObjectLoadedMessage;
+import com.novel.odisp.common.ODObject;
+import com.novel.odisp.common.ObjectManager;
 import com.novel.stdmsg.ODCleanupMessage;
-import java.lang.reflect.InvocationTargetException;
+import com.novel.stdmsg.ODObjectLoadedMessage;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@valeks.novel.local">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.14 2004/03/31 10:16:26 dron Exp $
+ * @version $Id: ObjectManager.java,v 1.15 2004/03/31 12:54:48 dron Exp $
  */
 
 public class StandartObjectManager implements ObjectManager {

@@ -39,7 +39,8 @@ package com.novel.stdobj.webcon.servlet;
 // <P>
 // @see com.novel.stdobj.webcon.servlet.Servlet
 
-import java.io.*;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 public interface ServletResponse
     {

@@ -1,16 +1,17 @@
 package com.novel.stdobj.simpleconfig;
 
-import com.novel.odisp.common.Resource;
-import java.io.IOException;
-import java.io.FileNotFoundException;
 import java.io.FileInputStream;
-import java.util.logging.Logger;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Properties;
+import java.util.logging.Logger;
+
+import com.novel.odisp.common.Resource;
 
 /** Ресурс ODISP реализующий доступ к конфигурационным файлам  формата [имя]=[значение].
 * @author Валентин А. Алексеев
 * @author (C) 2003, НПП "Новел-ИЛ"
-* @version $Id: SimpleConfig.java,v 1.11 2004/03/26 21:53:38 valeks Exp $
+* @version $Id: SimpleConfig.java,v 1.12 2004/03/31 12:54:48 dron Exp $
 */
 public class SimpleConfig extends Properties implements Resource {
   /** Имя конфигурационного файла по-умолчанию.*/

@@ -1,21 +1,22 @@
 package com.novel.odisp;
 
-import com.novel.odisp.common.Resource;
-import com.novel.odisp.common.Dispatcher;
-import com.novel.odisp.common.ResourceManager;
-import com.novel.odisp.common.Message;
-import com.novel.stdmsg.ODResourceAcquiredMessage;
-import java.util.Collections;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
+
+import com.novel.odisp.common.Dispatcher;
+import com.novel.odisp.common.Message;
+import com.novel.odisp.common.Resource;
+import com.novel.odisp.common.ResourceManager;
+import com.novel.stdmsg.ODResourceAcquiredMessage;
 
 /** Менеджер ресурсных объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceManager.java,v 1.17 2004/03/31 12:43:35 valeks Exp $
+ * @version $Id: ResourceManager.java,v 1.18 2004/03/31 12:54:48 dron Exp $
  */
 public class StandartResourceManager implements ResourceManager {
   /** Ссылка на диспетчер объектов. */

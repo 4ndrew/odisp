@@ -30,7 +30,7 @@
 
 package com.novel.stdobj.webcon.servlet;
 
-import java.io.*;
+import java.io.IOException;
 
 /// The servlet interface.
 // <P>

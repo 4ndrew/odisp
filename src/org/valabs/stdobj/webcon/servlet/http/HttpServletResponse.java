@@ -30,8 +30,9 @@
 
 package com.novel.stdobj.webcon.servlet.http;
 
-import java.io.*;
-import com.novel.stdobj.webcon.servlet.*;
+import java.io.IOException;
+
+import com.novel.stdobj.webcon.servlet.ServletResponse;
 
 /// This interface represents an HTTP response.
 // <P>

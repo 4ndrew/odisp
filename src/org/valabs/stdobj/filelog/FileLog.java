@@ -1,32 +1,33 @@
 package com.novel.stdobj.filelog;
 
-import com.novel.odisp.common.PollingODObject;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.regex.Pattern;
+
 import com.novel.odisp.common.Message;
-import com.novel.stdobj.simpleconfig.SimpleConfig;
+import com.novel.odisp.common.PollingODObject;
+import com.novel.stdmsg.ODAcquireMessage;
 import com.novel.stdmsg.ODCleanupMessage;
 import com.novel.stdmsg.ODObjectLoadedMessage;
-import com.novel.stdmsg.ODResourceAcquiredMessage;
-import com.novel.stdmsg.ODAcquireMessage;
 import com.novel.stdmsg.ODReleaseMessage;
 import com.novel.stdmsg.ODRemoveDepMessage;
-import java.io.PrintWriter;
-import java.io.IOException;
-import java.io.FileNotFoundException;
-import java.io.BufferedReader;
-import java.io.FileWriter;
-import java.io.FileReader;
-import java.io.FileInputStream;
-import java.io.File;
-import java.util.Date;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.regex.Pattern;
+import com.novel.stdmsg.ODResourceAcquiredMessage;
+import com.novel.stdobj.simpleconfig.SimpleConfig;
 
 /** Объект реализующий простейшую журнализацию событий согласно файлу шаблонов.
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: FileLog.java,v 1.17 2004/02/27 10:56:22 valeks Exp $
+* @version $Id: FileLog.java,v 1.18 2004/03/31 12:54:48 dron Exp $
 */
 public class FileLog extends PollingODObject {
   /** Поток вывода. */

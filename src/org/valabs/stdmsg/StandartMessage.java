@@ -1,18 +1,18 @@
 package com.novel.stdmsg;
 
-import com.novel.odisp.common.Message;
-
-import java.util.Iterator;
-import java.util.Map;
-import java.util.List;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.io.Serializable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import com.novel.odisp.common.Message;
 
 /** Реализация стандартного сообщения для стандартного диспетчера ODISP.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: StandartMessage.java,v 1.11 2004/03/23 13:18:54 dron Exp $
+ * @version $Id: StandartMessage.java,v 1.12 2004/03/31 12:54:47 dron Exp $
  */
 public class StandartMessage implements Message, Serializable {
   /** Флаг маршрутизации. */

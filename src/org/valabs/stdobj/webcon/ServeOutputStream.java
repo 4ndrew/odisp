@@ -1,8 +1,10 @@
 package com.novel.stdobj.webcon;
 
-import java.io.*;
-import com.novel.stdobj.webcon.servlet.*;
-import com.novel.stdobj.webcon.servlet.http.*;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+
+import com.novel.stdobj.webcon.servlet.ServletOutputStream;
 
 class ServeOutputStream extends ServletOutputStream {
 

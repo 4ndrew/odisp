@@ -30,8 +30,8 @@
 
 package com.novel.stdobj.webcon.servlet;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.util.Enumeration;
 
 /// Convenience class for Servlet implementors.
 // <P>

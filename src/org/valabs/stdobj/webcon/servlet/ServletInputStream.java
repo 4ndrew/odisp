@@ -30,7 +30,8 @@
 
 package com.novel.stdobj.webcon.servlet;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 
 /// Special InputStream used by servlets.
 // <P>

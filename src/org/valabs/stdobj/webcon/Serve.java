@@ -29,23 +29,30 @@
  */
 package com.novel.stdobj.webcon;
 
-import java.io.*;
-import java.util.*;
-import java.util.regex.Pattern;
-import java.net.*;
-import java.text.*;
-import com.novel.stdobj.webcon.servlet.*;
-import com.novel.stdobj.webcon.servlet.http.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.security.GeneralSecurityException;
+import java.security.KeyStore;
+import java.security.SecureRandom;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
 
-// JSSE SSL Support
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
-import java.security.GeneralSecurityException;
-import java.security.KeyStore;
-import java.security.SecureRandom;
+
+import com.novel.stdobj.webcon.servlet.Servlet;
+import com.novel.stdobj.webcon.servlet.ServletContext;
+import com.novel.stdobj.webcon.servlet.ServletException;
 
 /** Minimal Java HTTP server class.
  * <P>
@@ -93,7 +100,7 @@ import java.security.SecureRandom;
  * @see com.novel.stdobj.webcon.servlet.http.HttpServlet
  * @author (C) 1996,1998 by Jef Poskanzer <jef@acme.com>
  * @author (C) 2004 Valentin A. Alekseev
- * @version $Id: Serve.java,v 1.5 2004/03/27 23:20:59 valeks Exp $
+ * @version $Id: Serve.java,v 1.6 2004/03/31 12:54:48 dron Exp $
  */
 
 public class Serve implements ServletContext {

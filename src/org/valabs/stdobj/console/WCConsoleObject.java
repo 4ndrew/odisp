@@ -1,26 +1,25 @@
 package com.novel.stdobj.console;
 
-import com.novel.odisp.common.PollingODObject;
-import com.novel.odisp.common.Message;
-import com.novel.stdmsg.webcon.WCAddServletMessage;
-import com.novel.stdmsg.ODObjectLoadedMessage;
-import com.novel.stdmsg.ODCleanupMessage;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-// Для WCConsoleServlet
+import com.novel.odisp.common.Message;
+import com.novel.odisp.common.PollingODObject;
+import com.novel.stdmsg.ODCleanupMessage;
+import com.novel.stdmsg.ODObjectLoadedMessage;
+import com.novel.stdmsg.webcon.WCAddServletMessage;
+import com.novel.stdobj.webcon.servlet.ServletException;
+import com.novel.stdobj.webcon.servlet.ServletOutputStream;
 import com.novel.stdobj.webcon.servlet.http.HttpServlet;
 import com.novel.stdobj.webcon.servlet.http.HttpServletRequest;
 import com.novel.stdobj.webcon.servlet.http.HttpServletResponse;
-import com.novel.stdobj.webcon.servlet.ServletException;
-import com.novel.stdobj.webcon.servlet.ServletOutputStream;
-import java.io.IOException;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 /** Объект ODISP реализующий WebCon интерфейс доступа к менеджеру.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: WCConsoleObject.java,v 1.1 2004/03/27 23:20:59 valeks Exp $
+ * @version $Id: WCConsoleObject.java,v 1.2 2004/03/31 12:54:48 dron Exp $
  */
 public class WCConsoleObject extends PollingODObject {
   /** Собственно сервлет-обработчик. */

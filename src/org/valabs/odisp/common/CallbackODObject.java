@@ -1,10 +1,10 @@
 package com.novel.odisp.common;
 
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /** Базовый класс реализующий почтовый ящик для сообщений
@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 * по мере прихода.
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: CallbackODObject.java,v 1.12 2004/02/13 20:13:23 valeks Exp $
+* @version $Id: CallbackODObject.java,v 1.13 2004/03/31 12:54:48 dron Exp $
 */
 public abstract class CallbackODObject extends ODObject {
   /** Карта обработчиков сообщений. */

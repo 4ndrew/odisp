@@ -1,11 +1,11 @@
 package com.novel.odisp.common;
 
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 /** Интерфейс менеджера объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@valeks.novel.local">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.4 2004/03/27 19:40:18 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.5 2004/03/31 12:54:48 dron Exp $
  */
 
 public interface ObjectManager {

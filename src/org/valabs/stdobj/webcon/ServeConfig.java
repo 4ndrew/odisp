@@ -1,8 +1,10 @@
 package com.novel.stdobj.webcon;
 
-import java.util.*;
-import com.novel.stdobj.webcon.servlet.*;
-import com.novel.stdobj.webcon.servlet.http.*;
+import java.util.Enumeration;
+import java.util.Vector;
+
+import com.novel.stdobj.webcon.servlet.ServletConfig;
+import com.novel.stdobj.webcon.servlet.ServletContext;
 
 class ServeConfig implements ServletConfig {
   private ServletContext context;

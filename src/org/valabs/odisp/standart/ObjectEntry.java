@@ -1,14 +1,12 @@
 package com.novel.odisp;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Arrays;
 
 import com.novel.odisp.common.ODObject;
 /** Запись об объекте в таблице объектов.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ObjectEntry.java,v 1.4 2004/03/31 12:43:35 valeks Exp $
+ * @version $Id: ObjectEntry.java,v 1.5 2004/03/31 12:54:48 dron Exp $
  */
 
 public class ObjectEntry {

@@ -1,12 +1,13 @@
 package com.novel.stdmsg;
 
-import com.novel.odisp.common.Message;
 import java.util.List;
+
+import com.novel.odisp.common.Message;
 
 /** Запрос на динамическое изменение списка сервисов.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2004, НПП "Новел-ИЛ"
- * @version $Id: ODGetProvidingReplyMessage.java,v 1.2 2004/03/27 20:07:56 valeks Exp $
+ * @version $Id: ODGetProvidingReplyMessage.java,v 1.3 2004/03/31 12:54:47 dron Exp $
  */
 
 public class ODGetProvidingReplyMessage extends StandartMessage {

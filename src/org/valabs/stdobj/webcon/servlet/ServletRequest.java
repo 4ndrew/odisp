@@ -39,8 +39,9 @@ package com.novel.stdobj.webcon.servlet;
 // <P>
 // @see com.novel.stdobj.webcon.servlet.Servlet
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.Enumeration;
 
 public interface ServletRequest
     {

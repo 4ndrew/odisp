@@ -30,9 +30,9 @@
 
 package com.novel.stdobj.webcon.servlet.http;
 
-import java.io.*;
-import java.util.*;
-import com.novel.stdobj.webcon.servlet.*;
+import java.util.Enumeration;
+
+import com.novel.stdobj.webcon.servlet.ServletRequest;
 
 /// This interface represents an HTTP request.
 // <P>

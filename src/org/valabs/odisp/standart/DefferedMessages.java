@@ -1,14 +1,15 @@
 package com.novel.odisp;
 
-import com.novel.odisp.common.Message;
-import java.util.Map;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.Map;
+
+import com.novel.odisp.common.Message;
 /**
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: DefferedMessages.java,v 1.2 2004/02/15 21:55:56 valeks Exp $
+ * @version $Id: DefferedMessages.java,v 1.3 2004/03/31 12:54:48 dron Exp $
  */
 /** Коллекция отложенных сообщений. */
 public class DefferedMessages {

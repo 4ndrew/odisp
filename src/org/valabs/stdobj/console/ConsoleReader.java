@@ -1,11 +1,12 @@
 package com.novel.stdobj.console;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.logging.Logger;
+
 import com.novel.odisp.common.Dispatcher;
 import com.novel.odisp.common.Message;
-import java.io.IOException;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 
 
 /** Класс читающий данные с консоли.
@@ -13,7 +14,7 @@ import java.io.InputStreamReader;
  * @author <a href="valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author <a href="dron@novel-il.ru">Андрей А. Порохин</a>
  * @author (C) 2003-2004 НПП "Новел-ИЛ"
- * @version $Id: ConsoleReader.java,v 1.7 2004/03/17 11:58:06 dron Exp $
+ * @version $Id: ConsoleReader.java,v 1.8 2004/03/31 12:54:48 dron Exp $
  */
 
 public class ConsoleReader extends Thread {

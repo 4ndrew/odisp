@@ -28,10 +28,13 @@
 
 package com.novel.stdobj.webcon;
 
-import java.io.*;
-import java.util.*;
-import com.novel.stdobj.webcon.servlet.*;
-import com.novel.stdobj.webcon.servlet.http.*;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.util.StringTokenizer;
+
+import com.novel.stdobj.webcon.servlet.http.HttpServletRequest;
+import com.novel.stdobj.webcon.servlet.http.HttpServletResponse;
 
 /// Static utilities for minimal Java HTTP server.
 // <P>

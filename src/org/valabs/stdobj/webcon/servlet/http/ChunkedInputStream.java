@@ -28,9 +28,14 @@
 
 package com.novel.stdobj.webcon.servlet.http;
 
-import java.io.*;
-import java.util.*;
-import com.novel.stdobj.webcon.servlet.*;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.FilterInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Enumeration;
+import java.util.Vector;
 
 /// An InputStream that implements HTTP/1.1 chunking.
 // <P>

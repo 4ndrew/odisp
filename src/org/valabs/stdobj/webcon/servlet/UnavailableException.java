@@ -28,7 +28,6 @@
 
 package com.novel.stdobj.webcon.servlet;
 
-import java.io.*;
 
 /// An exception for Servlets.
 // <P>

@@ -1,13 +1,13 @@
 package com.novel.stdmsg.webcon;
 
-import com.novel.stdmsg.StandartMessage;
 import com.novel.odisp.common.Message;
+import com.novel.stdmsg.StandartMessage;
 
 /** Удаление сервлета из контейнера.
  * Производится удаление ссылки на обработчик запросов из записей контейнера.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2004, НПП "Новел-ИЛ"
- * @version $Id: WCRemoveServletMessage.java,v 1.1 2004/03/27 21:27:40 valeks Exp $
+ * @version $Id: WCRemoveServletMessage.java,v 1.2 2004/03/31 12:54:48 dron Exp $
  */
 
 public class WCRemoveServletMessage extends StandartMessage {

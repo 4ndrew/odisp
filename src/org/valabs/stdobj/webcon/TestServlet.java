@@ -28,10 +28,14 @@
 
 package com.novel.stdobj.webcon;
 
-import java.io.*;
-import java.util.*;
-import com.novel.stdobj.webcon.servlet.*;
-import com.novel.stdobj.webcon.servlet.http.*;
+import java.io.IOException;
+import java.util.Enumeration;
+
+import com.novel.stdobj.webcon.servlet.ServletException;
+import com.novel.stdobj.webcon.servlet.ServletOutputStream;
+import com.novel.stdobj.webcon.servlet.http.HttpServlet;
+import com.novel.stdobj.webcon.servlet.http.HttpServletRequest;
+import com.novel.stdobj.webcon.servlet.http.HttpServletResponse;
 
 /// Simple servlet that tests the Servlet API.
 // Sample output:
