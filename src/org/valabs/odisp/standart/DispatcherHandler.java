@@ -31,7 +31,7 @@ import com.novel.stdmsg.ODShutdownMessage;
  * 
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev
  *               </a>
- * @version $Id: DispatcherHandler.java,v 1.25 2004/08/17 08:19:57 valeks Exp $
+ * @version $Id: DispatcherHandler.java,v 1.26 2004/08/18 08:23:50 valeks Exp $
  */
 
 public class DispatcherHandler extends StandartODObject {
@@ -55,7 +55,7 @@ public class DispatcherHandler extends StandartODObject {
     private String VERSION = "0.1.0";
 
     /** Дополнительная информация о модуле. */
-    private String AI = "(C) 2004 Valentin A. Alekseev";
+    private String COPYRIGHT = "(C) 2004 Valentin A. Alekseev";
 
     /**
      * Вернуть список сервисов.
@@ -171,7 +171,7 @@ public class DispatcherHandler extends StandartODObject {
                 ModuleAboutReplyMessage.setName(m,
                         "Standart Object Dispatcher Core");
                 ModuleAboutReplyMessage.setVersion(m, VERSION);
-                ModuleAboutReplyMessage.setAI(m, AI);
+                ModuleAboutReplyMessage.setCopyright(m, COPYRIGHT);
                 dispatcher.send(m);
             }
         });
