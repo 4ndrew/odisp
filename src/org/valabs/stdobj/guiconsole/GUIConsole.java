@@ -1,6 +1,7 @@
 package com.novel.stdobj.guiconsole;
 
 import com.novel.odisp.common.PollingODObject;
+import com.novel.odisp.common.Message;
 import java.util.*;
 import java.io.*;
 import java.awt.*;
@@ -12,7 +13,7 @@ import javax.swing.text.html.*;
 /** Объект ODISP реализующий графический интерфейс доступа к менеджеру
  * @author Андрей А. Порохин
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: GUIConsole.java,v 1.7 2003/11/15 20:00:54 valeks Exp $
+ * @version $Id: GUIConsole.java,v 1.8 2003/11/17 12:56:55 dron Exp $
  */
 public class GUIConsole extends PollingODObject {
   JFrame mFrame;
