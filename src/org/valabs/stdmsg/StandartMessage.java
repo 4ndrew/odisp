@@ -8,7 +8,7 @@ import java.io.Serializable;
 /** Реализация стандартного сообщения для стандартного диспетчера ODISP.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: StandartMessage.java,v 1.7 2004/02/24 00:35:14 valeks Exp $
+ * @version $Id: StandartMessage.java,v 1.8 2004/02/25 08:36:58 dron Exp $
  */
 public class StandartMessage implements Message, Serializable {
   /** Флаг маршрутизации. */
@@ -62,6 +62,7 @@ public class StandartMessage implements Message, Serializable {
     fields = new ArrayList(msg.getFields());
     routable = msg.isRoutable();
     myId = id++;
+    setCE(msg.isCorrect());
   }
 
   /** Добавление произвольного объекта в тело сообщения.
