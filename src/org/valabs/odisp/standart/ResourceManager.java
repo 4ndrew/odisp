@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 
 /** Менеджер ресурсных объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceManager.java,v 1.9 2004/02/23 14:43:00 valeks Exp $
+ * @version $Id: ResourceManager.java,v 1.10 2004/02/23 14:45:07 valeks Exp $
  */
 public class StandartResourceManager implements ResourceManager {
   /** Список запросов на ресурсы. */
@@ -294,7 +294,7 @@ public class StandartResourceManager implements ResourceManager {
       }
       ResourceRequest result = null;
       if (resourceRequests.containsKey(className) 
-	  && ((List) resoureRequests.get(className)).size() != 0) {
+	  && ((List) resourceRequests.get(className)).size() != 0) {
 	List rrl = (List) resourceRequests.get(className);
 	synchronized (rrl) {
 	  try {
