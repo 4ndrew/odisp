@@ -3,18 +3,19 @@ package com.novel.stdobj.echo;
 import com.novel.odisp.common.Message;
 import com.novel.odisp.common.MessageHandler;
 import com.novel.odisp.common.StandartODObject;
+import com.novel.stdmsg.ODCleanupMessage;
 
 /** Простейший ODISP объект реализующий автоответчик на приходящие сообщения.
 * @author Валентин А. Алексеев
 * @author (C) 2003, НПП "Новел-ИЛ"
-* @version $Id: EchoObject.java,v 1.14 2004/07/16 12:11:27 boris Exp $
+* @version $Id: EchoObject.java,v 1.15 2004/08/17 07:50:26 valeks Exp $
 */
 public class EchoObject extends StandartODObject {
   /** Регистрация обработчиков. */
   protected final void registerHandlers() {
-    addHandler("od_cleanup", new MessageHandler() {
+    addHandler(ODCleanupMessage.NAME, new MessageHandler() {
 	public final void messageReceived(final Message msg) {
-	  cleanUp(((Integer) msg.getField("0")).intValue());
+	  cleanUp(ODCleanupMessage.getReason(msg).intValue());
 	}
       });
     addHandler("echo", new MessageHandler() {
