@@ -5,7 +5,7 @@ import com.novel.odisp.common.Message;
 /** Объект ODISP реализующий консольный интерфейс доступа к менеджеру.
 * @author Валентин А. Алексеев
 * @author (C) 2003, НПП "Новел-ИЛ"
-* @version $Id: ConsoleObject.java,v 1.13 2004/01/16 14:31:57 valeks Exp $
+* @version $Id: ConsoleObject.java,v 1.14 2004/03/17 11:58:06 dron Exp $
 */
 public class ConsoleObject extends PollingODObject {
   /** Поток читающий ввод с консоли. */
@@ -29,7 +29,7 @@ public class ConsoleObject extends PollingODObject {
       }
       for (int i = 0; i < msg.getFieldsCount(); i++) {
 	System.out.print(i + ":");
-	System.out.println(msg.getField(i));
+	System.out.println(msg.getField("" + i));
       }
     }
     return;

@@ -9,9 +9,11 @@ import java.io.InputStreamReader;
 
 
 /** Класс читающий данные с консоли.
- * @author Валентин А. Алексеев
- * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ConsoleReader.java,v 1.6 2004/02/12 18:16:11 valeks Exp $
+ * 
+ * @author <a href="valeks@novel-il.ru">Валентин А. Алексеев</a>
+ * @author <a href="dron@novel-il.ru">Андрей А. Порохин</a>
+ * @author (C) 2003-2004 НПП "Новел-ИЛ"
+ * @version $Id: ConsoleReader.java,v 1.7 2004/03/17 11:58:06 dron Exp $
  */
 
 public class ConsoleReader extends Thread {
@@ -26,7 +28,9 @@ public class ConsoleReader extends Thread {
   /** Поток ввода. */
   private BufferedReader inp
     = new BufferedReader(new InputStreamReader(System.in));
+
   /** Конструктор объекта слушающего ввод с консоли.
+   * 
    * @param oName имя ODISP-объекта
    * @param disp диспетчер ODISP
    * @param log ссылка на журнал
@@ -40,7 +44,7 @@ public class ConsoleReader extends Thread {
     objectName = oName;
   }
 
-  /**
+  /** Точка входа потока обработки ввода-вывода.
    */
   public final void run() {
     try {
@@ -51,15 +55,21 @@ public class ConsoleReader extends Thread {
 	Message m
 	  = dispatcher.getNewMessage(action, inp.readLine(), objectName, 0);
 	System.out.print("params? ");
+        int paramCount = 0;
 	while (!inp.readLine().equals("")) {
 	  System.out.print("int|str? ");
 	  tmp = inp.readLine();
 	  System.out.print("value> ");
 	  if (tmp.startsWith("i")) {
-	    m.addField(new Integer(inp.readLine()));
+            try {
+	      m.addField("" + paramCount, new Integer(inp.readLine()));
+            } catch (NumberFormatException e) {
+              System.out.println("(ConsoleReader) NumberFormatException: please, retry.");
+            }
 	  } else {
-	    m.addField(new String(inp.readLine()));
+	    m.addField("" + paramCount, new String(inp.readLine()));
 	  }
+          paramCount++;
 	  System.out.print("more? ");
 	}
 	dispatcher.send(m);
@@ -74,12 +84,12 @@ public class ConsoleReader extends Thread {
     return;
   }
 
-  /** Завершение работы. */
+  /** Завершение работы.
+   */
   public final synchronized void exit() {
-    //    logger.finest("ConsoleReader: normal shutdown.");
     try {
       inp.close();
     } catch (IOException e) { /*NOP*/ }
     doExit = true;
   }
-} // ConsoleReader
+}
