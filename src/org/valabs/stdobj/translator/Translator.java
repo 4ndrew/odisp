@@ -15,7 +15,7 @@ import org.valabs.odisp.common.Resource;
  *
  * @author <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
  * @author (C) 2004 НПП "Новел-ИЛ"
- * @version $Id: Translator.java,v 1.13 2004/08/31 12:22:21 dron Exp $
+ * @version $Id: Translator.java,v 1.14 2004/09/11 13:35:45 dron Exp $
  */
 public class Translator extends Properties implements Resource {
   /** Путь к корневой папке транляций */
@@ -105,7 +105,9 @@ public class Translator extends Properties implements Resource {
    * умолчанию.
    */
   public synchronized String translate(String key, String defaultValue) {
-    String tmp = getProperty(key, defaultValue);
+    String tmp = defaultValue;
+    if (key != null)
+      tmp = getProperty(key, defaultValue);
     return tmp;
   }
   
