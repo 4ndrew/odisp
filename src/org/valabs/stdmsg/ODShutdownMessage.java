@@ -6,7 +6,7 @@ package com.novel.stdmsg;
  * рассылатся объектам.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODShutdownMessage.java,v 1.7 2004/02/24 00:35:14 valeks Exp $
+ * @version $Id: ODShutdownMessage.java,v 1.8 2004/03/04 13:31:38 dron Exp $
  */
 
 public class ODShutdownMessage extends StandartMessage {
@@ -23,7 +23,7 @@ public class ODShutdownMessage extends StandartMessage {
    * @param replyTo индекс сообщения на которое производится ответ
    */
   public ODShutdownMessage(final String origin, final int replyTo) {
-    super("od_shutdown", origin, "stddispatcher", replyTo);
+    super("od_shutdown", "stddispatcher", origin, replyTo);
   }
 
   /** Вернуть значение кода выхода.
