@@ -27,8 +27,7 @@ import com.novel.odisp.common.MessageHandler; // --''--
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @fixme в случае если на одиночный ресурс поступает одновременно два запроса -- будет отработан только один, в то время как второй будет просто игнорирован
- * @version $Id: Dispatcher.java,v 1.18 2003/11/27 00:26:51 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.19 2003/11/30 16:32:57 valeks Exp $
  */
 public class StandartDispatcher implements Dispatcher {
   /** Интерфейс к службе сообщений*/
@@ -304,13 +303,19 @@ public class StandartDispatcher implements Dispatcher {
   }
   /** Установка статуса блокировки объекта по ресурсу 
    * @param objName имя объекта
-   * @param state новый статус блокировки
+   * @param state новый уровень блокировки
    */
-  private void setBlockedState(String objName, boolean state) {
+  private void setBlockedState(String objName, int state) {
     if (!objects.containsKey(objName)) {
       return;
     }
     ((ObjectEntry) objects.get(objName)).setBlockedState(state);
+  }
+  private int getBlockedState(String objName) {
+    if (!objects.containsKey(objName)) {
+      return 0;
+    }
+    return ((ObjectEntry) objects.get(objName)).getBlockedState();
   }
   /** Сброс записанных сообщений при снятии блокировки с объекта 
    * @param objectName имя объекта
@@ -435,18 +440,26 @@ public class StandartDispatcher implements Dispatcher {
       className = newClassName;
     }
     /** Состояние блокировки */
-    private boolean blockedState;
+    private int blockedState;
     /** Вернуть состояние блокировки объекта
      * @return состояние блокировки
      */
-    public boolean isBlockedState() {
+    public int getBlockedState() {
       return blockedState;
+    }
+
+    public boolean isBlockedState() {
+      return (blockedState > 0);
     }
     /** Установить состояние блокировки 
      * @param newBlockedState новое состояние блокировки
      */
-    public void setBlockedState(boolean newBlockedState) {
-      blockedState = newBlockedState;
+    public void setBlockedState(int newBlockedState) {
+      if (newBlockedState < 0) {
+	blockedState = 0;
+      } else {
+	blockedState = newBlockedState;
+      }
     }
     /** Ссылка на объект */
     private ODObject object;
@@ -574,6 +587,7 @@ public class StandartDispatcher implements Dispatcher {
   }
   /** Обработчик сообщений диспетчера */
   private class StandartDispatcherHandler extends CallbackODObject {
+    Map resourceRequests = new HashMap();
     /** Имя объекта */
     private String name = "stddispatcher";
     /** Вернуть список сервисов
@@ -625,6 +639,7 @@ public class StandartDispatcher implements Dispatcher {
 		willBlockState = ((Boolean) msg.getField(1)).booleanValue();
 	      }
 	      Iterator it = resources.keySet().iterator();
+	      boolean found = false;
 	      while (it.hasNext()) { // first hit
 		String curClassName = (String) it.next();
 		if (Pattern.matches(className + ":\\d+", curClassName) && ((ResourceEntry) resources.get(curClassName)).loaded) {
@@ -633,9 +648,22 @@ public class StandartDispatcher implements Dispatcher {
 		  m.addField(((ResourceEntry) resources.get(curClassName)).resource);
 		  resources.remove(curClassName);
 		  sendMessage(m);
-		  setBlockedState(msg.getOrigin(), willBlockState);
+		  if (willBlockState) {
+		    setBlockedState(msg.getOrigin(), getBlockedState(msg.getOrigin()) + 1);
+		  }
+		  found = true;
 		  break;
 		}
+	      }
+	      // allow concurent request for the resource
+	      if (!found) {
+		/* we maintin list of ODISP objects that require some specific resource
+		 * each resource has corresponding queue of objects that wanted to acquire it
+		 */
+		if (!resourceRequests.containsKey(className)) {
+		  resourceRequests.put(className, new ArrayList());
+		}
+		((List) resourceRequests.get(className)).add(msg.getOrigin() + (willBlockState ? "!" : ""));
 	      }
 	    }
 	  }
@@ -647,9 +675,26 @@ public class StandartDispatcher implements Dispatcher {
 	    }
 	    String className = (String) msg.getField(0);
 	    Resource res = (Resource) msg.getField(1);
-	    resources.put(className, new ResourceEntry(className.substring(0, className.length() - className.indexOf(":"))));
-	    flushDefferedMessages(msg.getOrigin());
-	    setBlockedState(msg.getOrigin(), false);
+	    // now we should check if there are any objects sitting in resourceRequest queues
+	    if (resourceRequests.containsKey(className)) {
+	      List resQueue = ((List) resourceRequests.get(className));
+	      /* construct od_acquire message and send it to the first object that is on the queue
+	       * object's name may contain ! modifier if acquiring should made blocking
+	       */
+	      String odObjectName = (String) resQueue.get(0);
+	      if (odObjectName.endsWith("!")) {
+		odObjectName = odObjectName.substring(0, odObjectName.length() - 1);
+		setBlockingState(odObjectName, getBlockingState(odObjectName) + 1);
+	      }
+	      Message m = getNewMessage("resource_acquired", odObjectName, "stddispatcher", msg.getId());
+	      m.addField(className);
+	      m.addField(res);
+	      sendMessage(m);
+	    } else {
+	      resources.put(className, new ResourceEntry(className.substring(0, className.length() - className.indexOf(":"))));
+	    }
+	    // decrease blocking state counter in case acquire was blocking
+	    setBlockedState(msg.getOrigin(), getBlockedState(msg.getOrigin()) - 1); 
 	  }
 	});
       addHandler("od_list_objects", new MessageHandler() {
