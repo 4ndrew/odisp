@@ -8,14 +8,14 @@ import com.novel.stdmsg.ODCleanupMessage;
 import com.novel.stdmsg.ODObjectLoadedMessage;
 import com.novel.stdmsg.ODReleaseMessage;
 import com.novel.stdmsg.ODResourceAcquiredMessage;
-import com.novel.stdobj.simpleconfig.SimpleConfig;
+import com.novel.stdobj.translator.Translator;
 
 /** Объект, который пытается воспроизвести быстрые асинхронные запросы на
  * захват и высвобождение ресурса.
  * 
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author (C) 2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: Racer.java,v 1.16 2004/08/18 12:48:40 valeks Exp $
+ * @version $Id: Racer.java,v 1.17 2004/08/20 07:33:50 valeks Exp $
  */
 public class Racer extends StandartODObject {
   /** Счётчик запросов */
@@ -31,7 +31,7 @@ public class Racer extends StandartODObject {
     if (ODObjectLoadedMessage.equals(msg)) {
       Message m = dispatcher.getNewMessage();
       ODAcquireMessage.setup(m, getObjectName(), msg.getId());
-      ODAcquireMessage.setResourceName(m, SimpleConfig.class.getName());
+      ODAcquireMessage.setResourceName(m, Translator.class.getName());
 
       synchronized (requested) {
         requested = new Boolean(true);
@@ -70,7 +70,7 @@ public class Racer extends StandartODObject {
 
       Message m1 = dispatcher.getNewMessage();
       ODAcquireMessage.setup(m1, getObjectName(), msg.getId());
-      ODAcquireMessage.setResourceName(m1, SimpleConfig.class.getName());
+      ODAcquireMessage.setResourceName(m1, Translator.class.getName());
       synchronized (requested) {
         requested = new Boolean(true);
         dispatcher.send(m1);
@@ -89,7 +89,7 @@ public class Racer extends StandartODObject {
   public String[] getDepends() {
     String[] result = {
       "dispatcher",
-      SimpleConfig.class.getName()
+      Translator.class.getName()
     };
     return result;
   }

@@ -2,7 +2,6 @@ package com.novel.stdobj.filelog;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -16,19 +15,16 @@ import java.util.regex.Pattern;
 
 import com.novel.odisp.common.Message;
 import com.novel.odisp.common.StandartODObject;
-import com.novel.stdmsg.ODAcquireMessage;
 import com.novel.stdmsg.ODCleanupMessage;
 import com.novel.stdmsg.ODObjectLoadedMessage;
-import com.novel.stdmsg.ODReleaseMessage;
-import com.novel.stdmsg.ODRemoveDepMessage;
-import com.novel.stdmsg.ODResourceAcquiredMessage;
-import com.novel.stdobj.simpleconfig.SimpleConfig;
 
 /** Объект реализующий простейшую журнализацию событий согласно файлу шаблонов.
 * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
-* @version $Id: FileLog.java,v 1.30 2004/08/18 12:48:40 valeks Exp $
+* @version $Id: FileLog.java,v 1.31 2004/08/20 07:33:50 valeks Exp $
 */
 public class FileLog extends StandartODObject {
+	/** Имя объекта. */
+	public static String NAME = "log";
   /** Поток вывода. */
   private PrintWriter out;
   /** Список шаблонов действий. */
@@ -44,29 +40,14 @@ public class FileLog extends StandartODObject {
     }
     if (ODObjectLoadedMessage.equals(msg)
 	&& msg.getDestination().equals(getObjectName())) {
-      setMatch(".*");
-      Message m = dispatcher.getNewMessage();
-      ODAcquireMessage.setup(m, getObjectName(), 0);
-      ODAcquireMessage.setResourceName(m, "com.novel.stdobj.simpleconfig.SimpleConfig");
-      dispatcher.send(m);
-      return;
-    }
-    if (ODResourceAcquiredMessage.equals(msg)
-	&& msg.getDestination().equals(getObjectName())) {
-      // we acquired SimpleConfig resource
-      String className = ODResourceAcquiredMessage.getResourceName(msg);
-      if (className.startsWith(SimpleConfig.class.getName())) {
-	SimpleConfig scfg = (SimpleConfig) ODResourceAcquiredMessage.getResource(msg);
-	try {
-	  scfg.load(new FileInputStream(SimpleConfig.DEFAULT_CONFIG));
 	  try {
-	    File hLogFile = new File(scfg.getProperty("log_logfile", "odisp.log"));
+	    File hLogFile = new File(getParameter("logfile", "odisp.log"));
 	    if (!hLogFile.exists()) {
 	      hLogFile.createNewFile();
 	    }
 	    out = new PrintWriter(new FileWriter(hLogFile, true));
 	    BufferedReader pfile
-	      = new BufferedReader(new FileReader(scfg.getProperty("log_patternfile", "odisp-log.ptn")));
+	      = new BufferedReader(new FileReader(getParameter("patternfile", "odisp-log.ptn")));
 	    String s;
 	    patterns = new ArrayList();
 	    while ((s = pfile.readLine()) != null) {
@@ -78,22 +59,6 @@ public class FileLog extends StandartODObject {
 	  } catch (IOException e) {
 	    logger.warning("unable to read either log file or pattern file");
 	  }
-	} catch (FileNotFoundException e) {
-	  logger.warning("unable to find config file: " + SimpleConfig.DEFAULT_CONFIG);
-	} catch (IOException e) {
-	  logger.warning("unable to read config file " + SimpleConfig.DEFAULT_CONFIG);
-	}
-	Message[] m = {
-	  dispatcher.getNewMessage(),
-	  dispatcher.getNewMessage(),
-	};
-	ODReleaseMessage.setup(m[0], getObjectName(), msg.getId());
-	ODReleaseMessage.setResourceName(m[0], className);
-	ODReleaseMessage.setResource(m[0], scfg);
-	ODRemoveDepMessage.setup(m[1], getObjectName(), msg.getId());
-	ODRemoveDepMessage.setDepName(m[1], SimpleConfig.class.getName());
-	dispatcher.send(m);
-      }
       return;
     }
     if (patterns == null || out == null) {
@@ -126,14 +91,15 @@ public class FileLog extends StandartODObject {
    * @param id номер объекта
    */
   public FileLog(final Integer id) {
-    super("log" + id);
+    super(NAME + id);
+    setMatch(".*");
   }
   /** Получить список сервисов объекта.
    * @return список сервисов
    */
   public final String[] getProviding() {
     String[] res = {
-      "log"
+      NAME
     };
     return res;
   }
@@ -144,7 +110,6 @@ public class FileLog extends StandartODObject {
   public final String[] getDepends() {
     String[] res = {
       "dispatcher",
-      SimpleConfig.class.getName()
     };
     return res;
   }
