@@ -22,7 +22,7 @@ import org.valabs.stdmsg.StandartMessage;
 
 /** Диспетчер-заглушка для тестирования ODISP объектов.
  * @author (С) 2004 <a href="mailto:valeks@novel-il.ru">Алексеев Валентин А.</a>
- * @version $Id: DispatcherFake.java,v 1.4 2005/01/26 08:22:53 valeks Exp $
+ * @version $Id: DispatcherFake.java,v 1.5 2005/01/27 14:16:22 valeks Exp $
  */
 public class DispatcherFake extends TestCase implements Dispatcher, ObjectManager, ResourceManager, SecurityManager, ConfigurationManager, ExceptionHandler {
 
@@ -166,7 +166,7 @@ public class DispatcherFake extends TestCase implements Dispatcher, ObjectManage
   public List getResourceList() {
     return null;
   }
-  public void setCommandLineArguments(String[] args) {
+  public void setCommandLineArguments(List args) {
   }
   public boolean supportComponentListing() {
     return false;
