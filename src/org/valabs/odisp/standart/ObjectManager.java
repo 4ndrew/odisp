@@ -18,7 +18,7 @@ import java.lang.reflect.InvocationTargetException;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@valeks.novel.local">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.11 2004/03/27 23:13:33 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.12 2004/03/29 12:42:54 dron Exp $
  */
 
 public class StandartObjectManager implements ObjectManager {
@@ -279,25 +279,35 @@ public class StandartObjectManager implements ObjectManager {
 	|| !message.isCorrect()) {
       return;
     }
-    Iterator it = null;
-    // в случае если получатель смахивает на имя сервиса -- разослать только провайдерам, а не всем подряд
+    // Получатели, ибо использовать глобольный итератор без глобальной
+    // блокировки объекта по меньшей мере - наивно ;-))) 
+    List recipients = null;
+    // в случае если получатель смахивает на имя сервиса
+    // -- разослать только провайдерам, а не всем подряд
     if (hasProviders(message.getDestination())) {
       List providers = getProviders(message.getDestination());
       if (providers != null) {
-	it = providers.iterator();
+	recipients = providers;
       }
     }
-    if (it == null){
+    if (recipients == null){
+      recipients = new ArrayList();
       synchronized (objects) {
-	it = Collections.synchronizedSet(objects.keySet()).iterator();
+        Iterator it =
+          Collections.synchronizedSet(objects.keySet()).iterator();
+        while (it.hasNext()) {
+          recipients.add(it.next());
+        }
       }
     }
+    Iterator it = recipients.iterator();
     while (it.hasNext()) {
       String objectName = (String) it.next();
-      message.setDestination(objectName);
+      // message.setDestination(objectName);
       sendToObject(objectName, message);
     }
   }
+
   /** Установка статуса блокировки объекта по ресурсу.
    * @param objName имя объекта
    * @param state новый уровень блокировки
