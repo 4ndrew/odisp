@@ -15,6 +15,7 @@ import java.io.FileNotFoundException;
 import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.File;
 import java.util.Date;
 import java.util.List;
@@ -25,7 +26,7 @@ import java.util.regex.Pattern;
 /** Объект реализующий простейшую журнализацию событий согласно файлу шаблонов.
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: FileLog.java,v 1.14 2004/01/16 14:31:57 valeks Exp $
+* @version $Id: FileLog.java,v 1.15 2004/02/12 17:54:33 valeks Exp $
 */
 public class FileLog extends PollingODObject {
   /** Поток вывода. */
@@ -47,7 +48,7 @@ public class FileLog extends PollingODObject {
       ODAcquireMessage m = new ODAcquireMessage(getObjectName(), 0);
       m.setResourceName("com.novel.stdobj.simpleconfig.SimpleConfig");
       m.setWillBlock(true);
-      dispatcher.sendMessage(m);
+      dispatcher.send(m);
       return;
     }
     if (msg instanceof ODResourceAcquiredMessage
@@ -58,25 +59,31 @@ public class FileLog extends PollingODObject {
       if (className.startsWith("com.novel.stdobj.simpleconfig.SimpleConfig")) {
 	SimpleConfig scfg
 	  = (SimpleConfig) ((ODResourceAcquiredMessage) msg).getResource();
-	scfg.readConfig("simpleconfig.dat");
 	try {
-	  File hLogFile = new File(scfg.getValue("log_logfile", "odisp.log"));
-	  if (!hLogFile.exists()) {
-	    hLogFile.createNewFile();
+	  scfg.load(new FileInputStream(scfg.DEFAULT_CONFIG));
+	  try {
+	    File hLogFile = new File(scfg.getProperty("log_logfile", "odisp.log"));
+	    if (!hLogFile.exists()) {
+	      hLogFile.createNewFile();
+	    }
+	    out = new PrintWriter(new FileWriter(hLogFile, true));
+	    BufferedReader pfile
+	      = new BufferedReader(new FileReader(scfg.getProperty("log_patternfile", "odisp-log.ptn")));
+	    String s;
+	    patterns = new ArrayList();
+	    while ((s = pfile.readLine()) != null) {
+	      patterns.add(s);
+	    }
+	    pfile.close();
+	  } catch (FileNotFoundException e) {
+	    logger.warning("unable to open logfile.");
+	  } catch (IOException e) {
+	    logger.warning("unable to read either log file or pattern file");
 	  }
-	  out = new PrintWriter(new FileWriter(hLogFile, true));
-	  BufferedReader pfile
-	    = new BufferedReader(new FileReader(scfg.getValue("log_patternfile", "odisp-log.ptn")));
-	  String s;
-	  patterns = new ArrayList();
-	  while ((s = pfile.readLine()) != null) {
-	    patterns.add(s);
-	  }
-	  pfile.close();
 	} catch (FileNotFoundException e) {
-	  logger.warning("unable to open logfile.");
+	  logger.warning("unable to find config file: " + scfg.DEFAULT_CONFIG);
 	} catch (IOException e) {
-	  logger.warning("unable to read either log file or pattern file");
+	  logger.warning("unable to read config file " + scfg.DEFAULT_CONFIG);	  
 	}
 	Message[] m = {
 	  new ODReleaseMessage(getObjectName(), msg.getId()),
@@ -84,7 +91,7 @@ public class FileLog extends PollingODObject {
 	};
 	((ODReleaseMessage) m[0]).setResourceName(className).setResource(scfg);
 	((ODRemoveDepMessage) m[1]).setDepName("com.novel.stdobj.simpleconfig.SimpleConfig");
-	dispatcher.sendMessages(m);
+	dispatcher.send(m);
       }
       return;
     }
