@@ -25,11 +25,11 @@ import org.valabs.stdmsg.StandartMessage;
  * и управление ресурсными объектами.
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: Dispatcher.java,v 1.51 2004/08/23 13:20:00 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.52 2004/08/26 11:12:23 valeks Exp $
  */
 public class Dispatcher implements org.valabs.odisp.common.Dispatcher, ExceptionHandler {
   /** Журнал. */
-  private static Logger log = Logger.getLogger("org.valabs.odisp.standart.Dispatcher");
+  private static Logger log = Logger.getLogger(Dispatcher.class.getName());
   /** Менеджер ресурсов. */
   private ResourceManager rman = new org.valabs.odisp.standart.ResourceManager(this);
   /** Менеджер объектов. */
