@@ -12,3 +12,4 @@ ModuleStatusMessage.java
 ModuleStatusReplyMessage.java
 TranslatorGetTranslationMessage.java
 TranslatorGetTranslationReplyMessage.java
+BugSignalMessage.java
