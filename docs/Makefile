@@ -1,6 +1,6 @@
 # Makefile for all documents
 #
-# $Id: Makefile,v 1.11 2003/12/08 19:59:26 valeks Exp $
+# $Id: Makefile,v 1.12 2003/12/08 21:53:20 valeks Exp $
 
 # folders & files
 TEXDOCS=impl.tex \
@@ -9,17 +9,23 @@ TEXDOCS=impl.tex \
 			style-9.tex \
 			odisp-style.tex
 TEXDVIS=$(TEXDOCS:.tex=.dvi)
+TEXPDFS=$(TEXDOCS:.tex=.pdf)
 TOOLS=../tools
 
 # tools
 TEXPROC=latex
+PDFPROC=dvipdfm
 FIND=find
 RM=rm -rf
 
-all: texdocs xmldocs 
+all: texdocs
 
 texdocs: $(TEXDVIS)
 
+pdfdocs: $(TEXPDFS)
+
+${TEXPDFS}: ${TEXDVIS}
+	dvipdfm ${.TARGET:.pdf=}
 
 $(TEXDOCS:.tex=.dvi): $(@:.dvi=.tex)
 	@echo Generating TeX docs...
@@ -32,4 +38,4 @@ clean:
 
 distclean: clean
 	@echo Full clean...
-	$(RM) $(TEXDOCS:.tex=.dvi) $(TEXDOCS:.tex=.toc)
+	$(RM) $(TEXDVIS) $(TEXDOCS:.tex=.toc) $(TEXPDFS)
