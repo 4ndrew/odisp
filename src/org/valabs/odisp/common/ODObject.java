@@ -1,14 +1,18 @@
 package com.novel.odisp.common;
+
 import java.util.*;
 import java.util.regex.*;
+import java.util.logging.Logger;
 
 /** Базовый класс реализующий почтовый ящик для сообщений
 * посылаемых диспетчером ODISP.
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: ODObject.java,v 1.9 2003/10/21 12:35:04 valeks Exp $
+* @version $Id: ODObject.java,v 1.10 2003/10/22 21:21:33 valeks Exp $
 */
 public abstract class ODObject extends Thread {
+	/** Журнал */
+	protected Logger logger;
 	/** Диспетчер работающий с этим объектом */
 	protected Dispatcher dispatcher;
 	/** Список сообщений к обработке */
@@ -34,6 +38,7 @@ public abstract class ODObject extends Thread {
 	    messages = new ArrayList();
 	    this.name = name;
 	    this.match = name;
+	    logger = Logger.getLogger(name);
 	}
 	/** Доступ к диспетчеру 
 	@return ссылка на диспетчер
@@ -84,8 +89,7 @@ public abstract class ODObject extends Thread {
 	@param msg сообщение
 	*/
 	protected void log(String place, String msg){
-	    if(false)
-		System.out.println("[D] "+getObjectName()+"."+place+": "+msg);
+		logger.fine(getObjectName()+"."+place+": "+msg);
 	}
 	/** Выдача списка зависимостей
 	    @return массив зависимостей
