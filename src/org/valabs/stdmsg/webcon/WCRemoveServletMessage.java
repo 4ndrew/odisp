@@ -4,9 +4,8 @@ import com.novel.odisp.common.Message;
 
 /** Удаление сервлета из контейнера.
  * Производится удаление ссылки на обработчик запросов из записей контейнера.
- * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @author (C) 2004, НПП "Новел-ИЛ"
- * @version $Id: WCRemoveServletMessage.java,v 1.3 2004/06/09 21:07:36 valeks Exp $
+ * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
+ * @version $Id: WCRemoveServletMessage.java,v 1.4 2004/08/18 12:48:39 valeks Exp $
  */
 
 public class WCRemoveServletMessage {

@@ -1,9 +1,8 @@
 package com.novel.odisp.common;
 
 /** Интерфейс обработчика сообщения ядра ODISP системы.
- * @author Валентин А. Алексеев
- * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: MessageHandler.java,v 1.3 2004/01/16 14:31:57 valeks Exp $
+ * @author (C) <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
+ * @version $Id: MessageHandler.java,v 1.4 2004/08/18 12:48:39 valeks Exp $
  */
 public interface MessageHandler {
   /** Метод вызывается при получении базовым классом сообщения.

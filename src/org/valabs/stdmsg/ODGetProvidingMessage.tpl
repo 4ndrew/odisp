@@ -1,4 +1,4 @@
 $Id$
 NAME com.novel.stdmsg ODGetProvidingMessage od_get_providing
 DESC Запрос списка доступных сервисов.
-AUTHOR <a href="valeks@novel-il.ru">Valentin A. Alekseev</a>
+AUTHOR (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>

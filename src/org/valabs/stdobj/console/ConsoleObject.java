@@ -13,9 +13,9 @@ import com.novel.stdmsg.ODObjectLoadedMessage;
 
 /** Объект ODISP реализующий консольный интерфейс доступа к менеджеру.
  * 
- * @author <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
- * @author <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: ConsoleObject.java,v 1.20 2004/08/17 11:39:43 valeks Exp $
+ * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
+ * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
+ * @version $Id: ConsoleObject.java,v 1.21 2004/08/18 12:48:40 valeks Exp $
  */
 public class ConsoleObject extends StandartODObject {
   /** Имя объекта */

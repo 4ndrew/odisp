@@ -5,9 +5,8 @@ import com.novel.odisp.common.ODObject;
 
 /** Запись о посылаемом сообщении.
  * Содержит ссылку на отправляемое сообщение и на объект-получатель.
- * @author <a href="valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @author (C) 2004 НПП "Новел-ИЛ"
- * @version $Id: SendRecord.java,v 1.2 2004/07/21 08:05:42 valeks Exp $
+ * @author (C) 2004 <a href="valeks@novel-il.ru">Valentin A. Alekseev</a>
+ * @version $Id: SendRecord.java,v 1.3 2004/08/18 12:48:40 valeks Exp $
  */
 class SendRecord {
 	private Message message;

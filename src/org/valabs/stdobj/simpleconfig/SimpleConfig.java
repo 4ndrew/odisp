@@ -9,9 +9,9 @@ import java.util.logging.Logger;
 import com.novel.odisp.common.Resource;
 
 /** Ресурс ODISP реализующий доступ к конфигурационным файлам  формата [имя]=[значение].
-* @author Валентин А. Алексеев
-* @author (C) 2003, НПП "Новел-ИЛ"
-* @version $Id: SimpleConfig.java,v 1.12 2004/03/31 12:54:48 dron Exp $
+* @author (C) 2003 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
+* @version $Id: SimpleConfig.java,v 1.13 2004/08/18 12:48:40 valeks Exp $
+* @deprecated необходимо использовать конфигурацию посредством classes.cfg.
 */
 public class SimpleConfig extends Properties implements Resource {
   /** Имя конфигурационного файла по-умолчанию.*/

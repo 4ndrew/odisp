@@ -3,12 +3,11 @@ package com.novel.odisp.standart;
 import java.util.Arrays;
 
 import com.novel.odisp.common.ODObject;
-/** Запись об объекте в таблице объектов.
- * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ObjectEntry.java,v 1.8 2004/07/21 08:05:42 valeks Exp $
- */
 
+/** Запись об объекте в таблице объектов.
+ * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
+ * @version $Id: ObjectEntry.java,v 1.9 2004/08/18 12:48:40 valeks Exp $
+ */
 class ObjectEntry {
   /** Определяет загружен ли объект. */
   private boolean loaded;

@@ -4,9 +4,8 @@ import java.util.List;
 
 /** Стандартный интерфейс диспетчера, который должен реализовывать
  * класс, который выступает в качестве ODISP диспетчера.
- * @author Валентин А. Алексеев
- * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.12 2004/07/12 09:57:04 valeks Exp $
+ * @author (C) 2003 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
+ * @version $Id: Dispatcher.java,v 1.13 2004/08/18 12:48:39 valeks Exp $
  */
 public interface Dispatcher {
   /** Посылка одиночного сообщения.

@@ -4,9 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 /** Интерфейс сообщения ядра ODISP системы.
- * @author Валентин А. Алексеев
- * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Message.java,v 1.14 2004/07/20 11:55:24 valeks Exp $
+ * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
+ * @version $Id: Message.java,v 1.15 2004/08/18 12:48:39 valeks Exp $
  */
 public interface Message {
 

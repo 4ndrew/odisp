@@ -11,10 +11,9 @@ import com.novel.odisp.common.Message;
 
 /** Класс читающий данные с консоли.
  * 
- * @author <a href="valeks@novel-il.ru">Валентин А. Алексеев</a>
- * @author <a href="dron@novel-il.ru">Андрей А. Порохин</a>
- * @author (C) 2003-2004 НПП "Новел-ИЛ"
- * @version $Id: ConsoleReader.java,v 1.13 2004/07/13 20:50:44 dron Exp $
+ * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
+ * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
+ * @version $Id: ConsoleReader.java,v 1.14 2004/08/18 12:48:40 valeks Exp $
  */
 
 public class ConsoleReader extends Thread {

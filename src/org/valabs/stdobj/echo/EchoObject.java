@@ -6,9 +6,8 @@ import com.novel.odisp.common.StandartODObject;
 import com.novel.stdmsg.ODCleanupMessage;
 
 /** Простейший ODISP объект реализующий автоответчик на приходящие сообщения.
-* @author Валентин А. Алексеев
-* @author (C) 2003, НПП "Новел-ИЛ"
-* @version $Id: EchoObject.java,v 1.15 2004/08/17 07:50:26 valeks Exp $
+* @author (C) 2003 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
+* @version $Id: EchoObject.java,v 1.16 2004/08/18 12:48:40 valeks Exp $
 */
 public class EchoObject extends StandartODObject {
   /** Регистрация обработчиков. */

@@ -7,9 +7,8 @@ import com.novel.odisp.common.Message;
  * можно указать произвольный объект. Проверка на соответствие типов производится при обработке, а не
  * во время isCorrect().</p>
  * <p>Сообщение не является маршрутизируемым, так как не имеет смысл добавлять сервлеты в удаленный контейнер.</p>
- * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @author (C) 2004, НПП "Новел-ИЛ"
- * @version $Id: WCAddServletMessage.java,v 1.4 2004/06/09 21:07:36 valeks Exp $
+ * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
+ * @version $Id: WCAddServletMessage.java,v 1.5 2004/08/18 12:48:39 valeks Exp $
  */
 
 public class WCAddServletMessage {

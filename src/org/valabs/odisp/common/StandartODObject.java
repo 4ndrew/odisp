@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 /** Стандартный объект ODISP.
- * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: StandartODObject.java,v 1.6 2004/07/12 06:38:48 valeks Exp $
+ * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
+ * @version $Id: StandartODObject.java,v 1.7 2004/08/18 12:48:40 valeks Exp $
  */
 
 public abstract class StandartODObject implements ODObject {

@@ -23,9 +23,9 @@ import com.novel.stdmsg.StandartMessage;
 /** Стандартный диспетчер ODISP.
  * Стандартный диспетчер реализует пересылку сообщений между объектами ядра
  * и управление ресурсными объектами.
- * @author Валентин А. Алексеев
- * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.48 2004/07/21 08:05:42 valeks Exp $
+ * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
+ * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
+ * @version $Id: Dispatcher.java,v 1.49 2004/08/18 12:48:40 valeks Exp $
  */
 public class Dispatcher implements com.novel.odisp.common.Dispatcher, ExceptionHandler {
   /** Журнал. */

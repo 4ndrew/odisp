@@ -7,9 +7,8 @@ import java.util.Map;
 
 import com.novel.odisp.common.Message;
 /**
- * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: DefferedMessages.java,v 1.4 2004/07/21 08:05:42 valeks Exp $
+ * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
+ * @version $Id: DefferedMessages.java,v 1.5 2004/08/18 12:48:40 valeks Exp $
  */
 /** Коллекция отложенных сообщений. */
 class DefferedMessages {

@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 /** Интерфейс менеджера ресурсов ODISP.
- * @author (C) 2004 <a href="mailto:valeks@valeks.novel.local">Valentin A. Alekseev</a>
- * @version $Id: ResourceManager.java,v 1.6 2004/03/26 21:53:38 valeks Exp $
+ * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
+ * @version $Id: ResourceManager.java,v 1.7 2004/08/18 12:48:40 valeks Exp $
  */
 
 public interface ResourceManager {

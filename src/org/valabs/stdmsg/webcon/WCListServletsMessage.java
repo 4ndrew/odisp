@@ -3,9 +3,8 @@ package com.novel.stdmsg.webcon;
 import com.novel.odisp.common.Message;
 
 /** Получение списка сервлетов в контейнере.
- * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @author (C) 2004, НПП "Новел-ИЛ"
- * @version $Id: WCListServletsMessage.java,v 1.3 2004/06/09 21:07:36 valeks Exp $
+ * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
+ * @version $Id: WCListServletsMessage.java,v 1.4 2004/08/18 12:48:39 valeks Exp $
  */
 
 public class WCListServletsMessage {

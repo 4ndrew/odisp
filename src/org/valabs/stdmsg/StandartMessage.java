@@ -11,10 +11,9 @@ import com.novel.odisp.common.Message;
 
 /** Реализация стандартного сообщения для стандартного диспетчера ODISP.
  * 
- * @author <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
- * @author <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: StandartMessage.java,v 1.19 2004/06/29 07:51:49 valeks Exp $
+ * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
+ * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
+ * @version $Id: StandartMessage.java,v 1.20 2004/08/18 12:48:39 valeks Exp $
  */
 public class StandartMessage implements Message, Serializable {
   /** Флаг маршрутизации. */

@@ -7,10 +7,12 @@ import com.novel.odisp.common.SecurityManager;
 import com.novel.odisp.common.StandartODObject;
 import com.novel.stdmsg.ODObjectLoadedMessage;
 
-/**
- * @author valeks
- * @author (C) 2004 НПП "Новел-ИЛ"
- * @version $Id: NullAuth.java,v 1.1 2004/07/01 13:45:39 valeks Exp $
+/** Менеджер безопасности по-умолчанию.
+ * Настройка прав производится статически при помощи установки параметра модуля в
+ * файле classes.cfg. Возможно лишь два варианта поведения -- default to deny или
+ * default to accept.
+ * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
+ * @version $Id: NullAuth.java,v 1.2 2004/08/18 12:48:40 valeks Exp $
  */
 public class NullAuth extends StandartODObject implements SecurityManager {
 	public static final String NAME = "nullauth";

@@ -4,9 +4,8 @@ import java.util.Map;
 
 /** Базовый класс реализующий почтовый ящик для сообщений
 * посылаемых диспетчером ODISP.
-* @author Валентин А. Алексеев
-* @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: ODObject.java,v 1.19 2004/05/21 20:27:20 valeks Exp $
+* @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
+* @version $Id: ODObject.java,v 1.20 2004/08/18 12:48:39 valeks Exp $
 */
 public interface ODObject {
   /** Возвращает внутреннее ODISP имя объекта.

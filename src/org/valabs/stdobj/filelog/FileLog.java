@@ -25,9 +25,8 @@ import com.novel.stdmsg.ODResourceAcquiredMessage;
 import com.novel.stdobj.simpleconfig.SimpleConfig;
 
 /** Объект реализующий простейшую журнализацию событий согласно файлу шаблонов.
-* @author Валентин А. Алексеев
-* @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: FileLog.java,v 1.29 2004/07/12 09:59:41 valeks Exp $
+* @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
+* @version $Id: FileLog.java,v 1.30 2004/08/18 12:48:40 valeks Exp $
 */
 public class FileLog extends StandartODObject {
   /** Поток вывода. */

@@ -1,7 +1,7 @@
-$Id: ODAddProviderMessage.tpl,v 1.3 2004/07/20 11:55:24 valeks Exp $
+$Id: ODAddProviderMessage.tpl,v 1.4 2004/08/18 12:48:39 valeks Exp $
 NAME com.novel.stdmsg ODAddProviderMessage od_add_provider
 DESC Запрос на динамическое изменение списка сервисов.
-AUTHOR <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
+AUTHOR (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
 FIELD ServiceName String
 FDESC ServiceName Имя сервиса
 DEFDEST dispatcher

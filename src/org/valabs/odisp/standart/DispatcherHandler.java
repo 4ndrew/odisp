@@ -29,9 +29,8 @@ import com.novel.stdmsg.ODShutdownMessage;
 /**
  * Обработчик сообщений диспетчера ODISP.
  * 
- * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev
- *               </a>
- * @version $Id: DispatcherHandler.java,v 1.26 2004/08/18 08:23:50 valeks Exp $
+ * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
+ * @version $Id: DispatcherHandler.java,v 1.27 2004/08/18 12:48:40 valeks Exp $
  */
 
 public class DispatcherHandler extends StandartODObject {
@@ -55,7 +54,7 @@ public class DispatcherHandler extends StandartODObject {
     private String VERSION = "0.1.0";
 
     /** Дополнительная информация о модуле. */
-    private String COPYRIGHT = "(C) 2004 Valentin A. Alekseev";
+    private String COPYRIGHT = "(C) 2003-2004 Valentin A. Alekseev, Andrew A. Porohin";
 
     /**
      * Вернуть список сервисов.

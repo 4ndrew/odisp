@@ -4,9 +4,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Logger;
 
 /** Прокси-ресурс для доступа к произвольным внешним объектам.
-* @author Валентин А. Алексеев
-* @author (C) 2003, НПП "Новел-ИЛ"
-* @version $Id: ProxyResource.java,v 1.5 2004/03/26 21:53:38 valeks Exp $
+* @author (C) 2003 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
+* @version $Id: ProxyResource.java,v 1.6 2004/08/18 12:48:40 valeks Exp $
 */
 public class ProxyResource implements Resource {
   /** Собственно ресурс. */

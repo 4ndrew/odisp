@@ -13,9 +13,9 @@ import com.novel.stdobj.simpleconfig.SimpleConfig;
 /** Объект, который пытается воспроизвести быстрые асинхронные запросы на
  * захват и высвобождение ресурса.
  * 
- * @author (C) 2004 <a href="valeks@novel-il.ru">Валентин А. Алексеев</a>
- * @author <a href="dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: Racer.java,v 1.15 2004/07/16 12:11:27 boris Exp $
+ * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
+ * @author (C) 2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
+ * @version $Id: Racer.java,v 1.16 2004/08/18 12:48:40 valeks Exp $
  */
 public class Racer extends StandartODObject {
   /** Счётчик запросов */

@@ -8,9 +8,8 @@ import java.util.logging.Logger;
 import com.novel.odisp.common.Resource;
 
 /** Запись об однотипных ресурах в таблице ресурсов.
- * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ResourceEntry.java,v 1.10 2004/07/21 08:05:42 valeks Exp $
+ * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
+ * @version $Id: ResourceEntry.java,v 1.11 2004/08/18 12:48:40 valeks Exp $
  */
 class ResourceEntry {
   /** Журнал. */

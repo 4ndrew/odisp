@@ -43,9 +43,8 @@ import com.novel.odisp.common.MessageHandler;
  * }
  * </pre>
  * 
- * @author <a href="dron@novel-il.ru">Андрей А. Порохин</a>
- * @author (C) 2004 НПП "Новел-ИЛ"
- * @version $Id: SessionManager.java,v 1.4 2004/07/12 12:31:00 valeks Exp $ 
+ * @author (C) 2004 <a href="dron@novel-il.ru">Андрей А. Порохин</a>
+ * @version $Id: SessionManager.java,v 1.5 2004/08/18 12:48:39 valeks Exp $ 
  */
 public class SessionManager {
   /** Ссылка на ODSessionManager */
