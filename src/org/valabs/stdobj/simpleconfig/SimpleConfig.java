@@ -9,7 +9,7 @@ import java.util.logging.*;
 /** Ресурс ODISP реализующий доступ к конфигурационным файлам формата [имя]=[значение]
 * @author Валентин А. Алексеев
 * @author (C) 2003, НПП "Новел-ИЛ"
-* @version $Id: SimpleConfig.java,v 1.7 2003/11/15 20:03:59 valeks Exp $
+* @version $Id: SimpleConfig.java,v 1.8 2003/11/27 02:00:01 valeks Exp $
 */
 public class SimpleConfig implements Resource {
   String cfgName;
@@ -19,7 +19,6 @@ public class SimpleConfig implements Resource {
    * @param cfgName имя файла конфигурации
    */
   public void readConfig(String cfgName) {
-    logger.finest("SimpleConfig.readConfig(" + cfgName + ")");    
     try {
       BufferedReader in = new BufferedReader(new FileReader(cfgName));
       String s;
@@ -44,7 +43,6 @@ public class SimpleConfig implements Resource {
    * @return значение параметра или '-undef-' в случае если параметр не определен
    */
   public String getValue(String name) {
-    logger.finer("SimpleConfig.getValue(" + name + ")");
     if (!contents.containsKey(name)) {
       return "-undef-";
     }

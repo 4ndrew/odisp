@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 /** Объект реализующий простейшую журнализацию событий согласно файлу шаблонов
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: FileLog.java,v 1.9 2003/11/22 14:04:10 valeks Exp $
+* @version $Id: FileLog.java,v 1.10 2003/11/27 02:00:01 valeks Exp $
 */
 public class FileLog extends PollingODObject {
   /** Поток вывода */
@@ -56,7 +56,6 @@ public class FileLog extends PollingODObject {
 	    patterns = new ArrayList();
 	    while ((s = pfile.readLine()) != null) {
 	      patterns.add(s);
-	      logger.finer("adding pattern " + s);
 	    }
 	    pfile.close();
 	  } catch (FileNotFoundException e) { logger.warning("unable to open logfile.");
