@@ -10,9 +10,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,331 +26,282 @@ import org.valabs.odisp.common.ODObject;
 import org.valabs.stdmsg.ODObjectLoadedMessage;
 import org.valabs.stdmsg.ODShutdownMessage;
 
-/** Менеджер объектов ODISP.
- * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.47 2005/01/26 22:17:49 valeks Exp $
+/**
+ * Менеджер объектов ODISP.
+ * 
+ * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev </a>
+ * @version $Id: ObjectManager.java,v 1.48 2005/02/12 17:27:29 valeks Exp $
  */
 
 class ObjectManager implements org.valabs.odisp.common.ObjectManager {
-	/** Диспетчер объектов. */
-	private Dispatcher dispatcher;
-	/** Снапшот системы. */
+
+  /** Диспетчер объектов. */
+  private Dispatcher dispatcher;
+
+  /** Снапшот системы. */
   private DispatcherSnapshot ds = new DispatcherSnapshot();
-	/** Хранилище отложенных сообщений. */
-	private DefferedMessages messages = new DefferedMessages();
-	/** Список объектов. */
-	private Map objects = new HashMap();
-	/** Журнал. */
-	private Logger log = Logger
-			.getLogger(ObjectManager.class.getName());
-	/** Список сервисов менеджера. */
-	private Map provided = new HashMap();
-	/** Пул нитей отсылки. */
-	private List senderPool = new ArrayList();
-	/** Максимальное количество нитей создаваемых для отсылки изначально. */
-	public static final int SENDER_POOL_SIZE = 5;
-	/** Хранилище для сообщений. */
-	private List messageStorage = new ArrayList();
-	/** Статистика загрузки объектов. */
-	private List statLoadedOrder = new ArrayList();
-	/** Ранее загруженный файл hints. */
-	private List hints = null;
-	/** Кол-во объектов для загрузки. */
-	private int statToLoadCount = 0;
-	/** Статистика количества запусков loadPending. */
-	private int statLoadPendingFireCount = 0;
-	/** Добавление объекта как провайдера конкретного сервиса.
-	 * @param service название сервиса
-	 * @param objectName название объекта
-	 */
-	public void addProvider(final String service, final String objectName) {
-		if (!provided.containsKey(service)) {
-			provided.put(service, new ArrayList());
-		}
-		((List) provided.get(service)).add(objectName);
-	}
 
-	/** Удаление провайдера конкретного сервиса.
-	 * В случае если у сервиса не остается ни одного провайдера -- он автоматически будет удален.
-	 * @param service название сервиса
-	 * @param objectName название объекта
-	 */
-	public void removeProvider(final String service, final String objectName) {
-		if (provided.containsKey(service)) {
-			((List) provided.get(service)).remove(objectName);
-			if (((List) provided.get(service)).size() == 0) {
-				provided.remove(service);
-			}
-		}
-	}
+  /** Хранилище отложенных сообщений. */
+  private DefferedMessages messages = new DefferedMessages();
 
-	/** Проверка на существование провайдеров сервиса.
-	 * @param service название сервиса
-	 * @return флаг присутствия сервиса
-	 */
-	private boolean hasProviders(final String service) {
-		return provided.containsKey(service);
-	}
+  /** Список объектов. */
+  private Map objects = new HashMap();
 
-	/** Получить список объектов-провайдеров сервиса.
-	 * @param service имя сервиса
-	 * @return немодифицируемый thread-safe список объектов
-	 */
-	private List getProviders(final String service) {
-		if (provided.containsKey(service)) {
-			return Collections.unmodifiableList(Collections
-					.synchronizedList((List) provided.get(service)));
-		} else {
-			return null;
-		}
-	}
+  /** Журнал. */
+  private Logger log = Logger.getLogger(ObjectManager.class.getName());
 
-	/** Получить список сервисов диспетчера.
-	 * @return немодифицируемый список сервисов
-	 */
-	public List getProviding() {
-		return new ArrayList(Collections.unmodifiableSet(provided.keySet()));
-	}
+  /** Список сервисов менеджера. */
+  private Map provided = new HashMap();
 
-	/** Попытка подгрузки объектов в следствии изменения списка сервисов менеджера. */
-	public final void loadPending() {
-		statLoadPendingFireCount++;
-		// resources
-		Map resourceList = new HashMap(dispatcher.getResourceManager()
-				.getResources());
-		Iterator it = resourceList.keySet().iterator();
-		while (it.hasNext()) {
-			String objectName = (String) it.next();
-			if (!hasProviders(objectName)) {
-				// ресурсы считаются провайдерами сервиса с собственным именем
-				addProvider(objectName, objectName);
-				log.finest("added resource provider " + objectName);
-				statLoadedOrder.add(objectName);
-			}
-		}
-		int loaded = 0;
-		Map localObjects = loadHints();
-		it = localObjects.keySet().iterator();
-		while (it.hasNext()) {
-			String objectName = (String) it.next();
-			ObjectEntry oe = (ObjectEntry) objects.get(objectName);
-			if (oe.isLoaded()) {
-				continue;
-			}
-			log.finest("trying to load object " + objectName);
-			int numRequested = oe.getDepends().length;
-			for (int i = 0; i < oe.getDepends().length; i++) {
-				if (hasProviders(oe.getDepends()[i])) {
-					numRequested--;
-				} else {
-					log.finest("dependency not met: " + oe.getDepends()[i]);
-				}
-			}
-			// все условия зависимости удовлетворены
-			if (numRequested == 0) {
-			  // занесение в качестве провайдера для указанных сервисов
-				for (int i = 0; i < oe.getProvides().length; i++) {
-					log.finest("added as provider of " + oe.getProvides()[i]);
-					addProvider(oe.getProvides()[i], objectName);
-				}
-				// занесение в сервис RECIPIENT_ALL
-				addProvider(Message.RECIPIENT_ALL, objectName);
-				// если объект хочет получать все сообщения, то занести его в RECIPIENT_CATCHALL
-				if (oe.getObject().getMatchAll()) {
-				  addProvider(Message.RECIPIENT_CATCHALL, objectName);
-				}
-				// пометка объекта как работающего
-				oe.setLoaded(true);
-				log.config(" ok. loaded = " + objectName);
-				statLoadedOrder.add(oe.getObject().getClass().getName());
-				// восстановление данных из слепка если он был
-				if (ds.hasSnapshot()) {
-				  log.config("Restoring state from snapshot for " + objectName);
-				  oe.getObject().importState(ds.getObjectSnapshot(objectName));
-				}
-				// официальное уведомление объекта о загрузке
-				Message m = dispatcher.getNewMessage();
-				ODObjectLoadedMessage.setup(m, objectName, UUID.getNullUUID());
-				m.setDestination(objectName);
-				oe.getObject().handleMessage0(m);
-				// сброс накопившихся сообщений
-				flushDefferedMessages(objectName);
-				loaded++;
-				statToLoadCount--;
-			}
-		}
-		if (loaded > 0) {
-			loadPending();
-			if (statToLoadCount == 0) {
-				storeHints();
-				ds.clearSnapshot();
-			}
-		} 
-	}
+  /** Пул нитей отсылки. */
+  private List senderPool = new ArrayList();
 
-	/**
+  /** Максимальное количество нитей создаваемых для отсылки изначально. */
+  public static final int SENDER_POOL_SIZE = 5;
+
+  /** Хранилище для сообщений. */
+  private List messageStorage = new ArrayList();
+
+  /** Ранее загруженный файл hints. */
+  private Hints hints = null;
+
+  /** Кол-во объектов для загрузки. */
+  private int statToLoadCount = 0;
+
+  /** Статистика количества запусков loadPending. */
+  private int statLoadPendingFireCount = 0;
+
+  /**
+   * Добавление объекта как провайдера конкретного сервиса.
    * 
+   * @param service название сервиса
+   * @param objectName название объекта
    */
-  private void storeHints() {
-    Iterator it;
-    // вывести удачный порядок загрузки.
-    String msg = "\n============================================\n";
-    msg += "loadPending() fire count: " + statLoadPendingFireCount;
-    msg += "Loaded order:\n";
-    it = statLoadedOrder.iterator();
-    while (it.hasNext()) {
-    	String elt = (String) it.next();
-    	msg += "\t" + elt + "\n";
+  public void addProvider(final String service, final String objectName) {
+    if (!provided.containsKey(service)) {
+      provided.put(service, new ArrayList());
     }
-    msg += "Total: " + statLoadedOrder.size() + "\n";
-    msg += "Preparing hints...\n";
-    List resultHints = new ArrayList();
-    synchronized (objects) {
-    	resultHints.addAll(dispatcher.getResourceManager().getResources().keySet());
-    	it = statLoadedOrder.iterator();
-    	while (it.hasNext()) {
-    		String className = (String) it.next();
-    		Iterator iit = objects.keySet().iterator();
-    		while (iit.hasNext()) {
-    			ObjectEntry element = (ObjectEntry) objects.get(iit.next());
-    			if (element.getObject().getClass().getName().equals(className)) {
-    				if (!element.isIntoHints()) {
-    					msg += "\t" + element.getObject().getObjectName() + " was not ordered to be placed into hints\n";
-    					break;
-    				} else if (!resultHints.contains(className)) {
-    					resultHints.add(className);
-    				}
-    			}
-    		}
-    	}
-    }
-    if (resultHints.size() > 0) { 
-    	msg += "Result hints file:\n";
-    	/** @todo. HACK файл hints пишется в текущий каталог, что не есть гут. */
-    	try {
-    		File hintsFile = new File("hints");
-    		hintsFile.createNewFile();
-    		PrintStream out = new PrintStream(new FileOutputStream(hintsFile));
-    		it = resultHints.iterator();
-    		while (it.hasNext()) {
-    			String elt = (String) it.next();
-    			out.println(elt);
-    			msg += "\t" + elt + "\n";
-    		}
-    	} catch (IOException e) {
-    		log.warning("Unable to write hints file.");
-    		dispatcher.getExceptionHandler().signalException(e);
-    	}
-    	msg += "Total: " + resultHints.size() + "\n";
-    	msg += "============================================\n";
-    	log.fine(msg);
+    ((List) provided.get(service)).add(objectName);
+  }
+
+  /**
+   * Удаление провайдера конкретного сервиса. В случае если у сервиса не остается ни одного провайдера -- он
+   * автоматически будет удален.
+   * 
+   * @param service название сервиса
+   * @param objectName название объекта
+   */
+  public void removeProvider(final String service, final String objectName) {
+    if (provided.containsKey(service)) {
+      ((List) provided.get(service)).remove(objectName);
+      if (((List) provided.get(service)).size() == 0) {
+        provided.remove(service);
+      }
     }
   }
 
   /**
-   * @return
+   * Проверка на существование провайдеров сервиса.
+   * 
+   * @param service название сервиса
+   * @return флаг присутствия сервиса
    */
-  private Map loadHints() {
-    Map localObjects;
-    synchronized (objects) {
-			if (hints == null) {
-				try {
-					List hints = new ArrayList();
-					File hintsFile = new File("hints");
-					BufferedReader in = new BufferedReader(new FileReader(hintsFile));
-					String s = in.readLine();
-					while (s != null) {
-						hints.add(s);
-						s = in.readLine();
-					}
-				} catch (IOException e) {
-					hints = null;
-				}
-			}
-			if (hints != null) {
-				localObjects = new TreeMap(new HintsOrderComparator(hints));
-				localObjects.putAll(objects);
-			} else {
-				localObjects = new HashMap(objects);
-			}
-		}
-    return localObjects;
+  private boolean hasProviders(final String service) {
+    return provided.containsKey(service);
   }
 
-  /** Динамическая загрузка объекта (с учётом зависимостей).
-	 * Сохранение порядка в hints включено.
-	 * @param cName имя загружаемого класса
-	 * @param configuration список параметров загрузки
-	 */
-	public final void loadObject(final String cName, final Map configuration) {
-		if (cName.equals(DispatcherHandler.class.getName())) {
-			/** @todo. плохой хак. */
-			loadObject(cName, configuration, false);
-			return;
-		}
-		loadObject(cName, configuration, true);
-	}
-	
-	/** Динамическая загрузка объекта (с учётом зависимостей).
-	 * @param cName имя загружаемого класса
-	 * @param configuration список параметров загрузки
-	 * @param intoHints сохранять ли запись в файл hints
-	 */
-	public final void loadObject(final String cName, final Map configuration, final boolean intoHints) {
-		log.config("loading object " + cName);
-		try {
-			ODObject load = (ODObject) Class.forName(cName).newInstance();
-			load.setDispatcher(dispatcher);
-			load.setConfiguration(configuration);
-			synchronized (objects) {
-				ObjectEntry oe = new ObjectEntry(cName, load.getDepends(), load
-						.getProviding());
-				oe.setObject(load);
-				oe.setLoaded(false);
-				oe.setIntoHints(intoHints);
-				objects.put(load.getObjectName(), oe);
-			}
-			statToLoadCount++;
-		} catch (Exception e) {
-			dispatcher.getExceptionHandler().signalException(e);
-		}
-	}
+  /**
+   * Получить список объектов-провайдеров сервиса.
+   * 
+   * @param service имя сервиса
+   * @return немодифицируемый thread-safe список объектов
+   */
+  private List getProviders(final String service) {
+    if (provided.containsKey(service)) {
+      return Collections.unmodifiableList(Collections.synchronizedList((List) provided.get(service)));
+    } else {
+      return null;
+    }
+  }
 
-	/** Принудительная выгрузка объекта и вызов сборщика.
-	 * мусора, так же учитываются зависимости:
-	 * <ul>
-	 * <li> Составление списка зависимых объектов
-	 * <li> Удаление зависимых объектов
-	 * <li> Удаление самого объекта
-	 * </ul>
-	 * @param objectName внутреннее имя объекта для удаления.
-	 * @param code код выхода (при code != 0 зависимые объекты
-	 * не удаляются).
-	 */
-	public synchronized final void unloadObject(final String objectName,
-			final int code) {
-		if (objects.containsKey(objectName)) {
-			ObjectEntry oe = (ObjectEntry) objects.get(objectName);
-			String[] provides = oe.getProvides();
-			Iterator it = objects.keySet().iterator();
-			List dependingObjs = new ArrayList();
+  /**
+   * Получить список сервисов диспетчера.
+   * 
+   * @return немодифицируемый список сервисов
+   */
+  public List getProviding() {
+    return new ArrayList(Collections.unmodifiableSet(provided.keySet()));
+  }
 
-			while (it.hasNext()) {
-				String className = (String) it.next();
-				String[] depends = ((ObjectEntry) objects.get(className))
-						.getDepends();
-				for (int i = 0; i < provides.length; i++) {
-					for (int j = 0; j < depends.length; j++) {
-						if (provides[i].equals(depends[j])
-								&& !dependingObjs.contains(className)) {
-							dependingObjs.add(className);
-						}
-					}
-					// не забываем удалить объект из списков провайдеров
-					removeProvider(provides[i], objectName);
-				}
-			}
-			it = dependingObjs.iterator();
+  /** Попытка подгрузки объектов в следствии изменения списка сервисов менеджера. */
+  public final void loadPending() {
+    statLoadPendingFireCount++;
+    // resources
+    Map resourceList = new HashMap(dispatcher.getResourceManager().getResources());
+    Iterator it = resourceList.keySet().iterator();
+    while (it.hasNext()) {
+      String objectName = (String) it.next();
+      if (!hasProviders(objectName)) {
+        // ресурсы считаются провайдерами сервиса с собственным именем
+        addProvider(objectName, objectName);
+        log.finest("added resource provider " + objectName);
+        hints.addNewHint(objectName);
+      }
+    }
+    int loaded = 0;
+    Map localObjects = hints.getHintedOrder(objects);
+    it = localObjects.keySet().iterator();
+    while (it.hasNext()) {
+      String objectName = (String) it.next();
+      ObjectEntry oe = (ObjectEntry) objects.get(objectName);
+      if (oe.isLoaded()) {
+        continue;
+      }
+      log.finest("trying to load object " + objectName);
+      // проверка на удовлетворение всех зависимостей
+      int totalDependencies = oe.getDepends().size();
+      Iterator dit = oe.getDepends().iterator();
+      while (dit.hasNext()) {
+        String dependency = (String) dit.next();
+        if (hasProviders(dependency)) {
+          totalDependencies--;
+        } else {
+          log.finest("dependency not met: " + dependency);
+        }
+
+      }
+
+      // все условия зависимости удовлетворены
+      if (totalDependencies == 0) {
+        // занесение в качестве провайдера для указанных сервисов
+        Iterator pit = oe.getProvides().iterator();
+        while (pit.hasNext()) {
+          String providing = (String) pit.next();
+          log.finest("added as provider of " + providing);
+          addProvider(providing, objectName);
+
+        }
+
+        // занесение в сервис RECIPIENT_ALL
+        addProvider(Message.RECIPIENT_ALL, objectName);
+        // если объект хочет получать все сообщения, то занести его в RECIPIENT_CATCHALL
+        if (oe.getObject().getMatchAll()) {
+          addProvider(Message.RECIPIENT_CATCHALL, objectName);
+        }
+        // пометка объекта как работающего
+        oe.setLoaded(true);
+        log.config(" ok. loaded = " + objectName);
+        // восстановление данных из слепка если он был
+        if (ds.hasSnapshot()) {
+          log.config("Restoring state from snapshot for " + objectName);
+          oe.getObject().importState(ds.getObjectSnapshot(objectName));
+        }
+        // официальное уведомление объекта о загрузке
+        Message m = dispatcher.getNewMessage();
+        ODObjectLoadedMessage.setup(m, objectName, UUID.getNullUUID());
+        m.setDestination(objectName);
+        oe.getObject().handleMessage0(m);
+        // сброс накопившихся сообщений
+        flushDefferedMessages(objectName);
+        // запись в hints файл в случае необходимости
+        if (oe.isIntoHints()) {
+          hints.addNewHint(oe.getObject().getClass().getName());
+        }
+        loaded++;
+        statToLoadCount--;
+      }
+    }
+    if (loaded > 0) {
+      if (statToLoadCount == 0) {
+        hints.storeHints();
+        ds.clearSnapshot();
+      }
+      loadPending();
+    }
+  }
+
+  /**
+   * Динамическая загрузка объекта (с учётом зависимостей). Сохранение порядка в hints включено.
+   * 
+   * @param cName имя загружаемого класса
+   * @param configuration список параметров загрузки
+   */
+  public final void loadObject(final String cName, final Map configuration) {
+    if (cName.equals(DispatcherHandler.class.getName())) {
+      /** @todo. плохой хак. */
+      loadObject(cName, configuration, false);
+      return;
+    }
+    loadObject(cName, configuration, true);
+  }
+
+  /**
+   * Динамическая загрузка объекта (с учётом зависимостей).
+   * 
+   * @param cName имя загружаемого класса
+   * @param configuration список параметров загрузки
+   * @param intoHints сохранять ли запись в файл hints
+   */
+  public final void loadObject(final String cName, final Map configuration, final boolean intoHints) {
+    log.config("loading object " + cName);
+    try {
+      ODObject load = (ODObject) Class.forName(cName).newInstance();
+      load.setDispatcher(new SecureDispatcher(dispatcher, load.getObjectName()));
+      load.setConfiguration(configuration);
+      ObjectEntry oe = new ObjectEntry(cName, load.getDepends(), load.getProviding());
+      oe.setObject(load);
+      oe.setLoaded(false);
+      oe.setIntoHints(intoHints);
+      synchronized (objects) {
+        objects.put(load.getObjectName(), oe);
+      }
+      statToLoadCount++;
+    } catch (Exception e) {
+      dispatcher.getExceptionHandler().signalException(e);
+    }
+  }
+
+  /**
+   * Выгрузка объекта с учётом зависимых.
+   * <ul>
+   * <li>Составление списка зависимых объектов
+   * <li>Удаление зависимых объектов
+   * <li>Сохранение статуса объекта, в случае если происходит перезагрузка диспетчера
+   * <li>Удаление самого объекта
+   * </ul>
+   * 
+   * @param objectName внутреннее имя объекта для удаления.
+   * @param code код выхода (при code != 0 зависимые объекты не удаляются).
+   */
+  public synchronized final void unloadObject(final String objectName, final int code) {
+    if (objects.containsKey(objectName)) {
+      ObjectEntry oe = (ObjectEntry) objects.get(objectName);
+      Set provides = oe.getProvides();
+      Iterator it = objects.keySet().iterator();
+      Set dependingObjs = new HashSet();
+
+      // поиск зависимых объектов
+      while (it.hasNext()) {
+        String depObjectName = (String) it.next();
+        Set depends = ((ObjectEntry) objects.get(depObjectName)).getDepends();
+        Iterator pit = provides.iterator();
+        while (pit.hasNext()) {
+          String element = (String) pit.next();
+          if (depends.contains(element)) {
+            dependingObjs.add(depObjectName);
+          }
+        }
+      }
+
+      // удаление из списка сервисов
+      it = provides.iterator();
+      while (it.hasNext()) {
+        String element = (String) it.next();
+        removeProvider(element, objectName);
+      }
+
+      // выгрузка зависимых объектов
+      it = dependingObjs.iterator();
       while (it.hasNext()) {
         String className = (String) it.next();
         if (objects.containsKey(className)) {
@@ -356,83 +309,92 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
           unloadObject(className, code);
         }
       }
-			oe.getObject().cleanUp(code);
-			if (code == ODShutdownMessage.SHUTDOWN_RESTART) {
-			  if (ds == null) {
-			    ds = new DispatcherSnapshot();
-			  }
-			  ds.addObjectSnapshot(objectName, oe.getObject().exportState());
-			}
-			objects.remove(objectName);
-			log.config("\tobject " + objectName + " unloaded");
-		}
-	}
 
-	/** Доступ к списку объектов. 
-	 * @return список объектов
-	 */
-	public final Map getObjects() {
-		return objects;
-	}
+      // сигнализация завершения работы
+      oe.getObject().cleanUp(code);
 
-	/** Констурктор менеджера.
-	 * @param newDispatcher диспетчер для которого производится управление ресурсами
-	 */
-	public ObjectManager(final Dispatcher newDispatcher) {
-		dispatcher = newDispatcher;
-		log.setLevel(Level.FINE);
-		for (int i = 0; i < SENDER_POOL_SIZE; i++) {
-			senderPool.add(new Sender(this));
-		}
-	}
+      // сохранение слепка объекта, в случае если происходит перезапуск диспетчера
+      if (code == ODShutdownMessage.SHUTDOWN_RESTART) {
+        if (ds == null) {
+          ds = new DispatcherSnapshot();
+        }
+        ds.addObjectSnapshot(objectName, oe.getObject().exportState());
+      }
 
-	/** Послать сообщение конкретному объекту.
-	 * @param objectName имя объекта
-	 * @param message сообщение
-	 */
-	private void sendToObject(final String objectName, final Message message) {
-		ObjectEntry oe = null;
-		// исключить модификацию списка дескрипторов объектов
-		synchronized (objects) {
-			oe = (ObjectEntry) objects.get(objectName);
-		}
-		if (oe == null) {
-			return;
-		}
-		ODObject objToSendTo = null;
-		// исключить модификацию дескриптора состояние объекта
-		synchronized (oe) {
-			if (!oe.isLoaded()) {
-				log.finest("deffered message " + message.getAction() + " for "
-						+ objectName);
-				messages.addMessage(objectName, message);
-				return;
-			}
-			objToSendTo = oe.getObject();
-		}
-		synchronized (messageStorage) {
-			if (message.isOOB()) {
-				log.finest("Sending OOB message " + message);
-				messageStorage.add(0, new SendRecord(message, objToSendTo));
-			} else {
-				messageStorage.add(new SendRecord(message, objToSendTo));
-			}
-		}
-	}
+      // удаление объекта
+      objects.remove(objectName);
+      log.config("object " + objectName + " unloaded");
+    }
+  }
 
-	/** Посылка сообщения всем объектам менеджера.
-	 * @param message сообщение
-	 */
-	public final void send(Message message) {
-		if (message == null || message.getAction().length() == 0
-				|| !message.isCorrect()) {
-			return;
-		}
-		
-		// рассылка реальным адресатам
-		Iterator it;
-		List recipients = getProviders(message.getDestination());
-		if (recipients != null) {
+  /**
+   * Доступ к списку объектов.
+   * 
+   * @return список объектов
+   */
+  public final Map getObjects() {
+    return objects;
+  }
+
+  /**
+   * Констурктор менеджера.
+   * 
+   * @param newDispatcher диспетчер для которого производится управление ресурсами
+   */
+  public ObjectManager(final Dispatcher newDispatcher) {
+    dispatcher = newDispatcher;
+    log.setLevel(Level.FINE);
+    for (int i = 0; i < SENDER_POOL_SIZE; i++) {
+      senderPool.add(new Sender(this));
+    }
+    hints = new Hints();
+  }
+
+  /**
+   * Послать сообщение конкретному объекту.
+   * 
+   * @param objectName имя объекта
+   * @param message сообщение
+   */
+  private void sendToObject(final String objectName, final Message message) {
+    ObjectEntry oe = null;
+    // исключить модификацию списка дескрипторов объектов
+    synchronized (objects) {
+      oe = (ObjectEntry) objects.get(objectName);
+    }
+    if (oe == null) { return; }
+    ODObject objToSendTo = null;
+    // исключить модификацию дескриптора состояние объекта
+    synchronized (oe) {
+      if (!oe.isLoaded()) {
+        log.finest("deffered message " + message.getAction() + " for " + objectName);
+        messages.addMessage(objectName, message);
+        return;
+      }
+      objToSendTo = oe.getObject();
+    }
+    synchronized (messageStorage) {
+      if (message.isOOB()) {
+        log.finest("Sending OOB message " + message);
+        messageStorage.add(0, new SendRecord(message, objToSendTo));
+      } else {
+        messageStorage.add(new SendRecord(message, objToSendTo));
+      }
+    }
+  }
+
+  /**
+   * Посылка сообщения всем объектам менеджера.
+   * 
+   * @param message сообщение
+   */
+  public final void send(Message message) {
+    if (message == null || message.getAction().length() == 0 || !message.isCorrect()) { return; }
+
+    // рассылка реальным адресатам
+    Iterator it;
+    List recipients = getProviders(message.getDestination());
+    if (recipients != null) {
       it = recipients.iterator();
       Message actualMessage;
       while (it.hasNext()) {
@@ -442,82 +404,142 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
         sendToObject(objectName, actualMessage);
       }
     }
-		// рассылка тем, кто хочет получать все сообщения
-		recipients = getProviders(Message.RECIPIENT_CATCHALL);
-		if (recipients != null) {
-		  it = recipients.iterator();
-		  Message actualMessage;
-		  while (it.hasNext()) {
-		    String objectName = (String) it.next();
+    // рассылка тем, кто хочет получать все сообщения
+    recipients = getProviders(Message.RECIPIENT_CATCHALL);
+    if (recipients != null) {
+      it = recipients.iterator();
+      Message actualMessage;
+      while (it.hasNext()) {
+        String objectName = (String) it.next();
         actualMessage = message.cloneMessage();
         actualMessage.setDestination(objectName);
-		    sendToObject(objectName, actualMessage);
-		  }
-		}
-	}
+        sendToObject(objectName, actualMessage);
+      }
+    }
+  }
 
-	/** Сброс записанных сообщений при снятии блокировки с объекта.
-	 * @param objectName имя объекта
-	 */
-	private void flushDefferedMessages(final String objectName) {
-		if (!objects.containsKey(objectName)) {
-			return;
-		}
-		List toFlush = messages.flush(objectName);
-		Iterator it = toFlush.iterator();
-		while (it.hasNext()) {
-			sendToObject(objectName, (Message) it.next());
-		}
-		loadPending();
-	}
+  /**
+   * Сброс записанных сообщений при снятии блокировки с объекта.
+   * 
+   * @param objectName имя объекта
+   */
+  private void flushDefferedMessages(final String objectName) {
+    if (!objects.containsKey(objectName)) { return; }
+    List toFlush = messages.flush(objectName);
+    Iterator it = toFlush.iterator();
+    while (it.hasNext()) {
+      sendToObject(objectName, (Message) it.next());
+    }
+    loadPending();
+  }
 
-	/** Получение следующего сообщения для обработки. */
-	public final SendRecord getNextPendingMessage() {
-		SendRecord toSend = null;
-		synchronized (messageStorage) {
-			if (messageStorage.size() > 0) {
-				toSend = (SendRecord) messageStorage.get(0);
-				messageStorage.remove(0);
-			}
-			if (ds != null) {
-			  // XXX: проблема -- ds создаётся только после запуска всех объектов
-			  // но к этому моменту уже могут существовать сообщения кроме ODObjectLoaded!
-			  ds.setMessageQueue(messageStorage);
-			}
-		}
-		return toSend;
-	}
-	public final void signalException(Exception e) {
-		dispatcher.getExceptionHandler().signalException(e);
-	}
-	
-	class HintsOrderComparator implements Comparator {
-		private List hints;
-		public HintsOrderComparator(final List hintsList) {
-			hints = hintsList;
-		}
-		public int compare(Object _o1, Object _o2) {
-			String o1 = ((ObjectEntry) objects.get(_o1)).getClassName();
-			String o2 = ((ObjectEntry) objects.get(_o2)).getClassName();
-			if (o1.equals(o2)) {
-				return 0;
-			}
-			if (o1.equals(DispatcherHandler.class.getName())) {
-				return 1;
-			}
-			if (o2.equals(DispatcherHandler.class.getName())) {
-				return -1;
-			}
-			if (hints != null) {
-				if (hints.contains(o1) && hints.contains(o2)) {
-					return (hints.indexOf(o1) < hints.indexOf(o2)) ? -1 : 1;
-				} else if (hints.contains(o1)) {
-					return 1;
-				} else if (hints.contains(o2)) {
-					return -1;
-				}
-			}
-			return 0;
-		}
-}
+  /** Получение следующего сообщения для обработки. */
+  final SendRecord getNextPendingMessage() {
+    SendRecord toSend = null;
+    synchronized (messageStorage) {
+      if (messageStorage.size() > 0) {
+        toSend = (SendRecord) messageStorage.get(0);
+        messageStorage.remove(0);
+      }
+      if (ds != null) {
+        // XXX: проблема -- ds создаётся только после запуска всех объектов
+        // но к этому моменту уже могут существовать сообщения кроме ODObjectLoaded!
+        ds.setMessageQueue(messageStorage);
+      }
+    }
+    return toSend;
+  }
+
+  public final void signalException(Exception e) {
+    dispatcher.getExceptionHandler().signalException(e);
+  }
+
+  class Hints {
+
+    private List oldHints = new ArrayList();
+    private List newHints = new ArrayList();
+
+    public void addNewHint(String object) {
+      newHints.add(object);
+    }
+    
+    public Hints() {
+      try {
+        BufferedReader in = new BufferedReader(new FileReader("hints"));
+        String s = in.readLine();
+        while (s != null) {
+          oldHints.add(s);
+          s = in.readLine();
+        }
+      } catch (IOException e) {
+      }
+    }
+
+    public Map getHintedOrder(Map objects) {
+      Map localObjects;
+      if (oldHints.size() > 0) {
+        localObjects = new TreeMap(new HintsOrderComparator(oldHints));
+      } else {
+        localObjects = new HashMap();
+      }
+      synchronized (objects) {
+        localObjects.putAll(objects);
+      }
+      return localObjects;
+    }
+
+    /**
+     * 
+     */
+    public void storeHints() {
+      Iterator it;
+      // вывести удачный порядок загрузки.
+      String msg = "\n============================================\n";
+      if (newHints.size() > 0) {
+        msg += "Result hints file:\n";
+        /** @todo. HACK файл hints пишется в текущий каталог, что не есть гут. */
+        try {
+          File hintsFile = new File("hints");
+          hintsFile.createNewFile();
+          PrintStream out = new PrintStream(new FileOutputStream(hintsFile));
+          it = newHints.iterator();
+          while (it.hasNext()) {
+            String elt = (String) it.next();
+            out.println(elt);
+            msg += "\t" + elt + "\n";
+          }
+        } catch (IOException e) {
+          log.warning("Unable to write hints file.");
+          dispatcher.getExceptionHandler().signalException(e);
+        }
+        msg += "Total: " + newHints.size() + "\n";
+        msg += "============================================\n";
+        log.fine(msg);
+      }
+    }
+
+    class HintsOrderComparator implements Comparator {
+      private List hints;
+      
+      public HintsOrderComparator(List _hints) {
+        hints = _hints;
+      }
+      
+      public int compare(Object _o1, Object _o2) {
+        String o1 = ((ObjectEntry) objects.get(_o1)).getClassName();
+        String o2 = ((ObjectEntry) objects.get(_o2)).getClassName();
+        if (o1.equals(o2)) { return 0; }
+        if (o1.equals(DispatcherHandler.class.getName())) { return 1; }
+        if (o2.equals(DispatcherHandler.class.getName())) { return -1; }
+        if (hints != null) {
+          if (hints.contains(o1) && hints.contains(o2)) {
+            return (hints.indexOf(o1) < hints.indexOf(o2)) ? -1 : 1;
+          } else if (hints.contains(o1)) {
+            return 1;
+          } else if (hints.contains(o2)) { return -1; }
+        }
+        return 0;
+      }
+    }
+  }
 } // StandartObjectManager

@@ -1,12 +1,14 @@
 package org.valabs.odisp.standart;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.valabs.odisp.common.ODObject;
 
 /** Запись об объекте в таблице объектов.
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ObjectEntry.java,v 1.11 2004/08/23 13:20:00 valeks Exp $
+ * @version $Id: ObjectEntry.java,v 1.12 2005/02/12 17:27:29 valeks Exp $
  */
 class ObjectEntry {
 	/** Определяет загружен ли объект. */
@@ -58,43 +60,27 @@ class ObjectEntry {
 	}
 
 	/** Список зависимостей. */
-	private String[] depends;
+	private Set depends;
 	/** Вернуть список зависимостей.
 	 * @return список зависимостей
 	 */
-	public final String[] getDepends() {
+	public final Set getDepends() {
 		return depends;
-	}
-
-	/** Поиск зависимости в списке.
-	 * @return номер в списке или -1 если элемент отсутствует
-	 */
-	private int depContains(final String depName) {
-		return Arrays.asList(depends).indexOf(depName);
 	}
 
 	/** Убрать определенную зависимость из списка.
 	 * @param toRemove зависимость
 	 */
 	public final void removeDepend(final String toRemove) {
-		if (depContains(toRemove) > 0) {
-			String[] newDeps = new String[depends.length - 1];
-			int count = 0;
-			for (int i = 0; i < depends.length; i++) {
-				if (!depends[i].equals(toRemove)) {
-					newDeps[count++] = depends[i];
-				}
-			}
-			depends = newDeps;
-		}
+	  depends.remove(toRemove);
 	}
 
 	/** Список сервисов. */
-	private String[] provides;
+	private Set provides;
 	/** Вернуть список сервисов.
 	 * @return список сервисов
 	 */
-	public final String[] getProvides() {
+	public final Set getProvides() {
 		return provides;
 	}
 
@@ -106,8 +92,8 @@ class ObjectEntry {
 	public ObjectEntry(final String cn, final String[] newDepends,
 			final String[] newProvides) {
 		className = cn;
-		depends = newDepends;
-		provides = newProvides;
+		depends = new HashSet(Arrays.asList(newDepends));
+		provides = new HashSet(Arrays.asList(newProvides));
 	}
 
 	private boolean intoHints = true;

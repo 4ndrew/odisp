@@ -1,7 +1,6 @@
 package org.valabs.odisp.standart;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -27,7 +26,7 @@ import org.valabs.stdmsg.ODShutdownMessage;
  * Обработчик сообщений диспетчера ODISP.
  * 
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: DispatcherHandler.java,v 1.36 2005/01/27 14:15:43 valeks Exp $
+ * @version $Id: DispatcherHandler.java,v 1.37 2005/02/12 17:27:29 valeks Exp $
  */
 
 class DispatcherHandler extends StandartODObject {
@@ -165,7 +164,7 @@ class DispatcherHandler extends StandartODObject {
                     if (oe.isLoaded()) {
                         running.add(objName);
                     } else {
-                        failed.add(objName + " not loaded. Dependencies not met: " + Arrays.asList(oe.getDepends()));
+                        failed.add(objName + " not loaded. Dependencies not met: " + oe.getDepends());
                         runningState = "Warning. Not all pre-requested objects are loaded. Some dependencies aren't met.";
                     }
                 }
