@@ -3,36 +3,91 @@ package org.valabs.odisp.common;
 import java.util.List;
 import java.util.Map;
 
-/** Интерфейс менеджера ресурсов ODISP.
- * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceManager.java,v 1.8 2004/08/23 07:42:37 valeks Exp $
+/**
+ * Интерфейс менеджера ресурсов ODISP.
+ * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev
+ *         </a>
+ * @version $Id: ResourceManager.java,v 1.9 2004/10/28 22:53:16 valeks Exp $
  */
 
 public interface ResourceManager {
-  /** Загрузка ресурса.
+  /**
+   * Загрузка ресурса.
    * @param className имя класса
    * @param mult множитель
    */
   void loadResource(String className, int mult, Map params);
-  /** Выгрузка ресурса.
+
+  /**
+   * Выгрузка ресурса.
    * @param name имя класса
    * @param code код выхода
    */
   void unloadResource(String name, int code);
-  /** Получить список ресурсов.
+
+  /**
+   * Получить список ресурсов.
    * @return карта ресурсов
    */
   Map getResources();
-  /** Запрос на захват ресурса.
+
+  /**
+   * Запрос на захват ресурса.
    * @param msg сообщение о захвате
    */
   void acquireRequest(Message msg);
-  /** Запрос на высвобождение ресурса.
+
+  /**
+   * Запрос на высвобождение ресурса.
    * @param msg сообщение о захвате
    */
   void releaseRequest(Message msg);
-  /** Вернуть статистику по ресурсам.
+
+  /**
+   * Вернуть статистику по ресурсам.
    * @return Список строк.
    */
   List statRequest();
+
+  /**
+   * Блокирующая попытка захвата ресурса напрямую. <b>ВНИМАНИЕ! </b> так как,
+   * обычно, захваты производятся в контексте обработчиков сообщений (а,
+   * соответственно, в нитях Sender), блокирующий вызов должен использоваться
+   * чрезвычайно осторожно иначе возможна ситуация полной блокировки системы в
+   * случае одновременных невыполнимых запросов. Для того, что бы попытаться
+   * избежать этих проблем, а так же не занимать попусту нитки Sender,
+   * необходимо либо пользоваться неблокирующим вызовом, либо реализовывать
+   * захват ресурса в отдельной нити, например так: 
+   * <pre>
+   * ...
+   * SomeResource res = null;
+   * new Thread() {
+   *   public void run() {
+   * 		setBlockedState(true);
+   * 		res = dispatcher.resourceAcquire(SomeResource.class.getName());
+   * 		setBlockedState(false);
+   * 	}
+   * }.start();
+   * ...
+   * </pre>
+   * Таким образом собственно захват ресурса производится в отдельном потоке при
+   * заблокированном состоянии объекта.
+   * @param className имя ресурса
+   * @return ссылка на ресурс
+   */
+  Resource resourceAcquire(String className);
+
+  /**
+   * Неблокирующая попытка захвата ресурса напрямую.
+   * @param className имя ресурса
+   * @return ссылка не ресурс или null если ресурс заблокирован
+   */
+  Resource resourceTryAcquire(String className);
+
+  /**
+   * Высвобождение ресурса.
+   * @param className имя ресурса
+   * @param resource ссылка на ресурс
+   */
+  void releaseResource(String className, Resource resource);
 } // ResourceManager

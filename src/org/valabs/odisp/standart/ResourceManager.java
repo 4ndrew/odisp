@@ -17,11 +17,11 @@ import org.valabs.stdmsg.ODResourceAcquiredMessage;
 
 /** Менеджер ресурсных объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceManager.java,v 1.28 2004/08/25 08:50:57 valeks Exp $
+ * @version $Id: ResourceManager.java,v 1.29 2004/10/28 22:53:16 valeks Exp $
  */
 class ResourceManager implements org.valabs.odisp.common.ResourceManager {
   /** Ссылка на диспетчер объектов. */
-  //  private Dispatcher dispatcher;
+  private Dispatcher dispatcher;
   /** Нить обработки запросов. */
   private DataThread dataThread = null;
   /** Журнал. */
@@ -76,6 +76,7 @@ class ResourceManager implements org.valabs.odisp.common.ResourceManager {
    */
   public ResourceManager(final Dispatcher newDispatcher) {
     log.setLevel(java.util.logging.Level.ALL);
+    dispatcher = newDispatcher;
     dataThread = new DataThread(newDispatcher);
   }
 
@@ -148,8 +149,6 @@ class ResourceManager implements org.valabs.odisp.common.ResourceManager {
     private String origin = null;
     /** Индекс сообщения инициировавшего запрос. */
     private int msgid = -1;
-    /** Флаг попытки запроса. */
-    private boolean checkOnly = false;
     /** Конструирование нового запроса.
      * @param nclassName имя ресурса
      * @param norigin отправитель запроса
@@ -179,7 +178,6 @@ class ResourceManager implements org.valabs.odisp.common.ResourceManager {
 	  ODResourceAcquiredMessage.setResource(m, res);
 	  dt.getDispatcher().send(m);
 	} else {
-	  checkOnly = true;
 	  return false;
 	}
       } else {
@@ -369,4 +367,50 @@ class ResourceManager implements org.valabs.odisp.common.ResourceManager {
       }
     }
   } // DataThread
+
+  /**
+   * @see org.valabs.odisp.common.ResourceManager#resourceAcquire(java.lang.String)
+   */
+  public Resource resourceAcquire(String className) {
+    Resource result = null;
+    while (result == null) {
+      result = resourceTryAcquire(className);
+      try {
+        Thread.sleep(10);
+      } catch (InterruptedException e) {
+        dispatcher.getExceptionHandler().signalException(e);
+      }
+    }
+    return result;
+  }
+
+  /**
+   * @see org.valabs.odisp.common.ResourceManager#resourceTryAcquire(java.lang.String)
+   */
+  public Resource resourceTryAcquire(String className) {
+    synchronized (dataThread) {
+      Map resources = dataThread.getResources();
+      if (resources.containsKey(className)) {
+        ResourceEntry re = (ResourceEntry) resources.get(className);
+        if (re.isAvailable()) {
+          Resource result = re.acquireResource("whom-ever"); // XXX
+          return result;
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
+   * @see org.valabs.odisp.common.ResourceManager#releaseResource(java.lang.String, org.valabs.odisp.common.Resource)
+   */
+  public void releaseResource(String className, Resource resource) {
+    synchronized (dataThread) {
+      Map resources = dataThread.getResources();
+      if (resources.containsKey(className)) {
+        ResourceEntry re = (ResourceEntry) resources.get(className);
+        re.releaseResource(resource);
+      }
+    }
+  }
 } // StandartResourceManager
