@@ -4,3 +4,4 @@ build
 .externalToolBuilders
 hints
 odisp.log
+release
