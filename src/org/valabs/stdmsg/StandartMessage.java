@@ -1,14 +1,16 @@
 package com.novel.stdmsg;
 
 import com.novel.odisp.common.Message;
+import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.io.Serializable;
 
 /** Реализация стандартного сообщения для стандартного диспетчера ODISP.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: StandartMessage.java,v 1.9 2004/02/25 08:54:11 valeks Exp $
+ * @version $Id: StandartMessage.java,v 1.10 2004/03/03 14:02:54 valeks Exp $
  */
 public class StandartMessage implements Message, Serializable {
   /** Флаг маршрутизации. */
@@ -16,17 +18,19 @@ public class StandartMessage implements Message, Serializable {
   /** Внутренний уникальный счетчик сообщения. */
   private static int id = 0;
   /** Уникальный индекс сообщения в системе. */
-  private int myId;
+  private int myId = -1;
   /** Список полей сообщения. */
-  private List fields = new ArrayList();
+  private Map fields = new HashMap();
   /** Действие. */
-  private String action;
+  private String action = null;
   /** Точка назначения. */
-  private String destination;
+  private String destination = null;
   /** Отправитель. */
-  private String origin;
+  private String origin = null;
   /** Идентификатор сообщения на которое производится ответ. */
-  private int inReplyTo;
+  private int inReplyTo = -1;
+  /** Индекс последнего добавленного поля. */
+  private int lastIdx = 0;
   /** Флаг проведения проверки. */
   private boolean ce = false;
   /** Реализация конструктора сообщения.
@@ -59,7 +63,7 @@ public class StandartMessage implements Message, Serializable {
     destination = msg.getDestination();
     inReplyTo = msg.getReplyTo();
     origin = msg.getOrigin();
-    fields = new ArrayList(msg.getFields());
+    fields = new HashMap(msg.getContents());
     routable = msg.isRoutable();
     myId = id++;
     setCE(msg.isCorrect());
@@ -69,7 +73,7 @@ public class StandartMessage implements Message, Serializable {
    * @param field объект который будет добавлен сообщение
    */
   public final void addField(final Object field) {
-    fields.add(field);
+    addField((new Integer(lastIdx++)).toString(), field);
   }
 
   /** Выборка сохраненного в теле сообщения объекта по индексу.
@@ -77,7 +81,7 @@ public class StandartMessage implements Message, Serializable {
    * @return поле сообщения
    */
   public final Object getField(final int field) {
-    return fields.get(field);
+    return getField((new Integer(field)).toString());
   }
 
   /** Возвращает действие которое несет сообщение.
@@ -204,6 +208,10 @@ public class StandartMessage implements Message, Serializable {
    * @return список полей
    */
   public final List getFields() {
+    return new ArrayList(fields.values());
+  }
+
+  public final Map getContents() {
     return fields;
   }
 
@@ -225,5 +233,16 @@ public class StandartMessage implements Message, Serializable {
   }
   public void setRoutable(final boolean newRoutable) {
     routable = newRoutable;
+  }
+
+  public void addField(final String name, final Object value) {
+    if (fields.containsKey(name)) {
+      fields.remove(name);
+    }
+    fields.put(name, value);
+  }
+
+  public Object getField(final String name) {
+    return fields.get(name);
   }
 }
