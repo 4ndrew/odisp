@@ -1,6 +1,0 @@
-# $Id: simpleconfig.dat,v 1.1 2003/10/02 23:16:29 valeks Exp $
-sql_dbserver=127.0.0.1
-sql_dbuser=valeks
-sql_dbpasswd=cZpFrki
-log_logfile=odisp.log
-log_patternfile=odisp-log.ptn
