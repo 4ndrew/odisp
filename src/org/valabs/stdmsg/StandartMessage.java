@@ -8,7 +8,7 @@ import java.io.Serializable;
 /** Реализация стандартного сообщения для стандартного диспетчера ODISP.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: StandartMessage.java,v 1.4 2004/02/13 15:16:03 valeks Exp $
+ * @version $Id: StandartMessage.java,v 1.5 2004/02/13 22:24:10 valeks Exp $
  */
 public class StandartMessage implements Message, Serializable {
   /** Внутренний уникальный счетчик сообщения. */
@@ -151,7 +151,7 @@ public class StandartMessage implements Message, Serializable {
   /** Проверка корректности сообщения.
    * @return флаг корректности
    */
-  public final boolean isCorrect() {
+  public boolean isCorrect() {
     ce = true;
     return true;
   }
