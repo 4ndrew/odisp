@@ -28,7 +28,7 @@ import com.novel.stdmsg.*;
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.24 2004/01/16 14:31:57 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.25 2004/02/12 17:45:21 valeks Exp $
  */
 public class StandartDispatcher implements Dispatcher {
   /** Интерфейс к службе сообщений. */
@@ -238,9 +238,23 @@ public class StandartDispatcher implements Dispatcher {
   /** Интерфейс для объектов ядра для отсылки сообщений.
    * Реализует multicast рассылку сообщений
    * @param message сообщение для отсылки
+   * @deprecated необходимо использовать send(Message)
    */
   public final void sendMessage(final Message message) {
-    if (message.getAction().length() == 0 || !message.isCorrect()) {
+    send(message);
+  }
+  /** Интерфейс для объектов ядра для отсылки сообщений.
+   * @param messageList список сообщений для отсылки
+   * @deprecated необходимо использовать send(Message[])
+   */
+  public final void sendMessages(final Message[] messageList) {
+    send(messageList);
+  }
+
+  public final void send(Message message) {
+    if (message == null || 
+	message.getAction().length() == 0 || 
+	!message.isCorrect()) {
       return;
     }
     synchronized (objects) {
@@ -262,19 +276,24 @@ public class StandartDispatcher implements Dispatcher {
       }
     }
   }
-  /** Интерфейс для объектов ядра для отсылки сообщений.
-   * Реализует multicast рассылку нескольких сообщений
-   * @param messageList список сообщений для отсылки
-   */
-  public final void sendMessages(final Message[] messageList) {
-    if (messageList.length == 0) {
+
+  public final void send(Message[] messageList) {
+    if (messageList == null || messageList.length == 0) {
       return;
     }
     for (int i = 0; i < messageList.length; i++) {
       Message message = messageList[i];
-      sendMessage(message);
+      send(message);
     }
   }
+
+  public final void send(List messageList) {
+    Iterator it = messageList.iterator();
+    while (it.hasNext()) {
+      send((Message) it.next());
+    }
+  }
+
   /** Интерфейс создания нового сообщения для сокрытия конкретной реализации
    * сообщений.
    * @param action действие которое несет сообщение

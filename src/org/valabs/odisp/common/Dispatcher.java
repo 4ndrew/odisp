@@ -1,20 +1,38 @@
 package com.novel.odisp.common;
 
+import java.util.List;
+
 /** Стандартный интерфейс диспетчера, который должен реализовывать
  * класс, который выступает в качестве ODISP диспетчера.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.6 2004/01/16 14:31:57 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.7 2004/02/12 17:45:21 valeks Exp $
  */
 public interface Dispatcher {
   /** Посылка одиночного сообщения.
    * @param message сообщение
+   * @deprecated необходимо использовать send(Message)
    */
   void sendMessage(Message message);
   /** Посылка списка сообщений.
    * @param messageList список сообщений
+   * @deprecated необходимо использовать send(Message[])
    */
   void sendMessages(Message[] messageList);
+  /** Посылка одиночного сообщения.
+   * @param message сообщение
+   */
+  void send(Message message);
+  /** Посылка списка сообщений.
+   * @param messageList список сообщений
+   */
+  void send(Message[] messageList);
+  /** Посылка списка сообщений.
+   * @param messageList список сообщений
+   */
+  void send(List messageList);
+
+
   /** Генерация нового сообщения с заданными параметрами.
    * @param action действие
    * @param destination получатель
