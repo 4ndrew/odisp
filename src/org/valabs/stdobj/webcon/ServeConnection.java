@@ -2,8 +2,9 @@ package org.valabs.stdobj.webcon;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -11,6 +12,8 @@ import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
 import java.util.Vector;
@@ -48,16 +51,18 @@ class ServeConnection
   private String reqMethod = null;
   private String reqUriPath = null;
   private String reqProtocol = null;
+  private String pathInfo = null;
   private boolean oneOne; // HTTP/1.1 or better
   private boolean reqMime;
   String reqQuery = null;
-  private Vector reqHeaderNames = new Vector();
-  private Vector reqHeaderValues = new Vector();
+  private Map reqHeader = new HashMap();
+  /*private Vector reqHeaderNames = new Vector();
+  private Vector reqHeaderValues = new Vector();*/
 
   public void run() {
     try {
       // Get the streams.
-      in = new ServeInputStream(socket.getInputStream());
+      in = new ServletInputStream(new InputStreamReader(socket.getInputStream()));
       out = new ServeOutputStream(socket.getOutputStream(), this);
     } catch (IOException e) {
       problem("Getting streams: " + e.getMessage(), SC_BAD_REQUEST);
@@ -70,18 +75,15 @@ class ServeConnection
   }
 
   private void parseRequest() {
-    byte[] lineBytes = new byte[4096];
-    int len;
     String line;
 
     try {
       // Read the first line of the request.
-      len = in.readLine(lineBytes, 0, lineBytes.length);
-      if (len == -1 || len == 0) {
+      line = in.readLine();
+      if (line.length() < 1) {
         problem("Empty request", SC_BAD_REQUEST);
         return;
       }
-      line = new String(lineBytes, 0, len);
       StringTokenizer st = new StringTokenizer(line);
       if (st.countTokens() < 2) {
         problem("Malformed request line", SC_BAD_REQUEST);
@@ -97,17 +99,15 @@ class ServeConnection
         reqMime = true;
       }
       while (true) {
-        len = in.readLine(lineBytes, 0, lineBytes.length);
-        if (len == -1 || len == 0) {
+        line = in.readLine();
+        if (line.length() < 1) {
           break;
         }
-        line = new String(lineBytes, 0, len);
         int colonBlank = line.indexOf(": ");
         if (colonBlank != -1) {
           String name = line.substring(0, colonBlank);
           String value = line.substring(colonBlank + 2);
-          reqHeaderNames.addElement(name.toLowerCase());
-          reqHeaderValues.addElement(value);
+          reqHeader.put(name.toLowerCase(), value);
         }
       }
 
@@ -126,13 +126,18 @@ class ServeConnection
         reqQuery = reqUriPath.substring(qmark + 1);
         reqUriPath = reqUriPath.substring(0, qmark);
       }
+      parseQuery();
 
       // Decode %-sequences.
       reqUriPath = decode(reqUriPath);
-
-      Servlet servlet = (Servlet) serve.registry.get(reqUriPath);
+      pathInfo = reqUriPath;
+      Servlet servlet = (Servlet) serve.registry.get(pathInfo);
+      pathInfo = reqUriPath.substring(pathInfo.length());
+      
       if (servlet != null) {
         runServlet((HttpServlet) servlet);
+      } else {
+        problem("Not Found: " + reqUriPath, SC_NOT_FOUND);
       }
     } catch (IOException e) {
       problem("Reading request: " + e.getMessage(), SC_BAD_REQUEST);
@@ -149,12 +154,15 @@ class ServeConnection
       servlet.service(this, this);
     } catch (IOException e) {
       problem("IO problem running servlet: " + e.toString(), SC_BAD_REQUEST);
+      e.printStackTrace();
     } catch (ServletException e) {
       problem("problem running servlet: " + e.toString(), SC_BAD_REQUEST);
+      e.printStackTrace();
     } catch (Exception e) {
       problem(
         "unexpected problem running servlet: " + e.toString(),
         SC_INTERNAL_SERVER_ERROR);
+      e.printStackTrace();
     }
   }
 
@@ -303,34 +311,36 @@ class ServeConnection
     return null;
   }
 
-  Vector queryNames = null;
-  Vector queryValues = null;
+  
+  Map query = null;
 
   /** Returns the parameter names for this request. */
   public Enumeration getParameterNames() {
-    if (queryNames == null) {
-      queryNames = new Vector();
-      queryValues = new Vector();
-      String qs = getQueryString();
-      if (qs != null) {
-        Enumeration en = new StringTokenizer(qs, "&");
-        while (en.hasMoreElements()) {
-          String nv = (String) en.nextElement();
-          int eq = nv.indexOf('=');
-          String name, value;
-          if (eq == -1) {
-            name = nv;
-            value = "";
-          } else {
-            name = nv.substring(0, eq);
-            value = nv.substring(eq + 1);
-          }
-          queryNames.addElement(name);
-          queryValues.addElement(value);
+    return (Enumeration) query.keySet();
+  }
+
+  /**
+   * 
+   */
+  private void parseQuery() {
+    query = new HashMap();
+    String qs = getQueryString();
+    if (qs != null) {
+      Enumeration en = new StringTokenizer(qs, "&");
+      while (en.hasMoreElements()) {
+        String nv = (String) en.nextElement();
+        int eq = nv.indexOf('=');
+        String name, value;
+        if (eq == -1) {
+          name = nv;
+          value = "";
+        } else {
+          name = nv.substring(0, eq);
+          value = nv.substring(eq + 1);
         }
+        query.put(name, value);
       }
     }
-    return queryNames.elements();
   }
 
   /** Returns the value of the specified query string parameter, or null
@@ -338,31 +348,14 @@ class ServeConnection
    * @param name the parameter name
    */
   public String getParameter(String name) {
-    int i = queryNames.indexOf(name);
-    if (i == -1) {
-      return null;
-    } else {
-      return (String) queryValues.elementAt(i);
-    }
+    return (String) query.get(name);
   }
 
   /** Returns the values of the specified parameter for the request as an
    * array of strings, or null if the named parameter does not exist.
    */
   public String[] getParameterValues(String name) {
-    Vector v = new Vector();
-    for (int i = 0; i < queryNames.size(); ++i) {
-      String n = (String) queryNames.elementAt(i);
-      if (name.equals(n)) {
-        v.addElement(queryValues.elementAt(i));
-      }
-    }
-    if (v.size() == 0) {
-      return null;
-    }
-    String[] vArray = new String[v.size()];
-    v.copyInto(vArray);
-    return vArray;
+    return (String[]) query.values().toArray();
   }
 
   /** Returns the value of the named attribute of the request, or null if
@@ -422,10 +415,7 @@ class ServeConnection
    * Same as the CGI variable PATH_INFO.
    */
   public String getPathInfo() {
-    // In this server, the entire path is regexp-matched against the
-    // servlet pattern, so there's no good way to distinguish which
-    // part refers to the servlet.
-    return null;
+    return pathInfo;
   }
 
   /** Returns extra path information translated to a real path.  Returns
@@ -468,11 +458,7 @@ class ServeConnection
    * @param name the header field name
    */
   public String getHeader(String name) {
-    int i = reqHeaderNames.indexOf(name.toLowerCase());
-    if (i == -1) {
-      return null;
-    }
-    return (String) reqHeaderValues.elementAt(i);
+    return (String) reqHeader.get(name);
   }
 
   /** Returns the value of an integer header field.
@@ -525,7 +511,7 @@ class ServeConnection
 
   /** Returns an Enumeration of the header names. */
   public Enumeration getHeaderNames() {
-    return reqHeaderNames.elements();
+    return (Enumeration) reqHeader.keySet();
   }
 
   // Session stuff.  Not implemented, but the API is here for compatibility.
@@ -926,49 +912,4 @@ class ServeConnection
     return url;
   }
 
-}
-
-class ServeInputStream extends ServletInputStream {
-  private InputStream in;
-  public ServeInputStream(InputStream in) {
-    this.in = in;
-  }
-
-  public int readLine(byte[] b, int off, int len) throws IOException {
-    int off2 = off;
-    while (off2 - off < len) {
-      int r = read();
-      if (r == -1) {
-        if (off2 == off) {
-          return -1;
-        }
-        break;
-      }
-      if (r == 13) {
-        continue;
-      }
-      if (r == 10) {
-        break;
-      }
-      b[off2] = (byte) r;
-      ++off2;
-    }
-    return off2 - off;
-  }
-
-  public int read() throws IOException {
-    return in.read();
-  }
-
-  public int read(byte[] b, int off, int len) throws IOException {
-    return in.read(b, off, len);
-  }
-
-  public int available() throws IOException {
-    return in.available();
-  }
-
-  public void close() throws IOException {
-    in.close();
-  }
 }
