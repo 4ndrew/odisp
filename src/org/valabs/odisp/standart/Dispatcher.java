@@ -12,7 +12,7 @@ import com.novel.odisp.common.*;
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.11 2003/10/21 12:14:57 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.12 2003/10/21 12:30:49 valeks Exp $
  */
 public class StandartDispatcher implements Dispatcher {
 	
@@ -44,8 +44,11 @@ public class StandartDispatcher implements Dispatcher {
 		System.out.println("[D] trying to load object "+od_n);
 		int requested = oe.depends.length;
 		for(int i = 0;i<oe.depends.length;i++)
-		    if(provided.contains(oe.depends[i]))
+		    if(provided.contains(oe.depends[i])){
 			requested--;
+                    } else {
+                        System.out.println("[D] dependency not met: "+oe.depends[i]);
+                    }
 		if(requested == 0){
 		    oe.object.start();
 		    oe.loaded = true;
@@ -130,12 +133,12 @@ public class StandartDispatcher implements Dispatcher {
          ODObject load = (ODObject)Class.forName(className).getConstructor(declParams).newInstance(params);
          Message m = getNewMessage("od_object_loaded",load.getObjectName(),"stddispatcher",0);
          load.setDispatcher(this);
-         load.start();
+//         load.start();
          load.addMessage(m);
          synchronized(objects){
             ObjectEntry oe = new ObjectEntry(className, false, load.getDepends(), load.getProviding());
             oe.object = load;
-            oe.loaded = true;
+            oe.loaded = false;
             objects.put(load.getObjectName(), oe);
          }
       } catch(InvocationTargetException e){
@@ -280,6 +283,7 @@ public class StandartDispatcher implements Dispatcher {
 	    ODObject cl_send = oe.object;
 	    cl_send.addMessages(messages.flush(cl_n));
 	    synchronized(cl_send){cl_send.notify();}
+            loadPending();
 	}
 	/** Конструктор загружающий первоначальный набор объектов
 	 * на основе списка
