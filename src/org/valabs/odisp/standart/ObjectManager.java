@@ -18,7 +18,7 @@ import com.novel.stdmsg.ODObjectLoadedMessage;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@valeks.novel.local">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.19 2004/05/12 14:46:34 dron Exp $
+ * @version $Id: ObjectManager.java,v 1.20 2004/05/13 09:19:54 valeks Exp $
  */
 
 public class StandartObjectManager implements ObjectManager {
@@ -105,37 +105,39 @@ public class StandartObjectManager implements ObjectManager {
       }
     }
     int loaded = 0;
+    Map localObjects = null;
     synchronized (objects) {
-      it = objects.keySet().iterator();
-      while (it.hasNext()) {
-	String objectName = (String) it.next();
-	ObjectEntry oe = (ObjectEntry) objects.get(objectName);
-	if (oe.isLoaded()) {
-	  continue;
+      localObjects = new HashMap(objects);
+    }
+    it = localObjects.keySet().iterator();
+    while (it.hasNext()) {
+      String objectName = (String) it.next();
+      ObjectEntry oe = (ObjectEntry) objects.get(objectName);
+      if (oe.isLoaded()) {
+	continue;
+      }
+      log.config("trying to load object " + objectName);
+      int numRequested = oe.getDepends().length;
+      for (int i = 0; i < oe.getDepends().length; i++) {
+	if (hasProviders(oe.getDepends()[i])) {
+	  numRequested--;
+	} else {
+	  log.finer("dependency not met: " + oe.getDepends()[i]);
 	}
-	log.config("trying to load object " + objectName);
-	int numRequested = oe.getDepends().length;
-	for (int i = 0; i < oe.getDepends().length; i++) {
-	  if (hasProviders(oe.getDepends()[i])) {
-	    numRequested--;
-	  } else {
-	    log.finer("dependency not met: " + oe.getDepends()[i]);
+      }
+      if (numRequested == 0) {
+	oe.setLoaded(true);
+	flushDefferedMessages(oe.getObject().getObjectName());
+	for (int i = 0; i < oe.getProvides().length; i++) {
+	  if (!hasProviders(oe.getProvides()[i])) {
+	    log.fine("added as provider of " + oe.getProvides()[i]);
+	    addProvider(oe.getProvides()[i], oe.getObject().getObjectName());
 	  }
 	}
-	if (numRequested == 0) {
-	  oe.setLoaded(true);
-          flushDefferedMessages(oe.getObject().getObjectName());
-	  for (int i = 0; i < oe.getProvides().length; i++) {
-	    if (!hasProviders(oe.getProvides()[i])) {
-	      log.fine("added as provider of " + oe.getProvides()[i]);
-	      addProvider(oe.getProvides()[i], oe.getObject().getObjectName());
-	    }
-	  }
-	  log.config(" ok. loaded = " + objectName);
-	  Message m = new ODObjectLoadedMessage(objectName);
-	  oe.getObject().addMessage(m);
-	  loaded++;
-	}
+	log.config(" ok. loaded = " + objectName);
+	Message m = new ODObjectLoadedMessage(objectName);
+	oe.getObject().addMessage(m);
+	loaded++;
       }
     }
     if (loaded > 0) {
@@ -166,7 +168,8 @@ public class StandartObjectManager implements ObjectManager {
 	objects.put(load.getObjectName(), oe);
       }
     } catch (InvocationTargetException e) {
-      log.warning(" failed: " + e);
+      log.warning(" failed: " + e + " cause: " + e.getTargetException());
+      e.getTargetException().printStackTrace();
     } catch (NoSuchMethodException e) {
       log.warning(" failed: " + e);
     } catch (ClassNotFoundException e) {
@@ -385,7 +388,11 @@ public class StandartObjectManager implements ObjectManager {
 		return;
     }
     ODObject objectRef = oe.getObject();
-    objectRef.addMessages(messages.flush(objectName));
+    List toFlush = messages.flush(objectName);
+    Iterator it = toFlush.iterator();
+    while (it.hasNext()) {
+      objectRef.addMessage((Message) it.next());
+    }
     synchronized (objectRef) {
       objectRef.notify();
     }
