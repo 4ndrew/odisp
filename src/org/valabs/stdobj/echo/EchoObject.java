@@ -1,13 +1,12 @@
-/*
- * $Id: EchoObject.java,v 1.1 2003/10/02 23:16:31 valeks Exp $
- *	EchoObject.java
- *	Simple testing object that reflects any message it receives
- *      (C) 2003, JTT Novel-IL
- */
 package com.novel.stdobj.echo;
 import com.novel.odisp.common.*;
 import java.util.regex.Pattern;
 
+/** Простейший ODISP объект реализующий автоответчик на приходящие сообщения
+* @author Валентин А. Алексеев
+* @author (C) 2003, НПП "Новел-ИЛ"
+* @version $Id: EchoObject.java,v 1.2 2003/10/04 12:55:44 valeks Exp $
+*/
 public class EchoObject extends ODObject {
 	public String name = "echo";
 	public void handleMessage(Message msg){
@@ -26,5 +25,5 @@ public class EchoObject extends ODObject {
 	public int cleanUp(int type){
 	    return 0;
 	}
-	public String getName(){return name;}
+	public String getObjectName(){return name;}
 }
