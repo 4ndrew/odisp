@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 /** Объект реализующий простейшую журнализацию событий согласно файлу шаблонов
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: FileLog.java,v 1.8 2003/11/15 19:54:10 valeks Exp $
+* @version $Id: FileLog.java,v 1.9 2003/11/22 14:04:10 valeks Exp $
 */
 public class FileLog extends PollingODObject {
   /** Поток вывода */
@@ -27,7 +27,6 @@ public class FileLog extends PollingODObject {
   /** Список шаблонов действий */
   private List patterns;
   public void handleMessage(Message msg) {
-    logger.finest("processing " + msg);	
     if (msg.getAction().equals("od_cleanup") && msg.getDestination().equals(getObjectName())) {
       cleanUp(((Integer) msg.getField(0)).intValue());
       return;
