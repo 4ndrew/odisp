@@ -1,7 +1,6 @@
 package com.novel.odisp;
 
 import com.novel.odisp.common.Resource;
-import com.novel.odisp.common.ProxyResource;
 import com.novel.odisp.common.Dispatcher;
 import com.novel.odisp.common.ResourceManager;
 import com.novel.odisp.common.Message;
@@ -12,11 +11,10 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 
 /** Менеджер ресурсных объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceManager.java,v 1.10 2004/02/23 14:45:07 valeks Exp $
+ * @version $Id: ResourceManager.java,v 1.11 2004/02/27 10:56:34 valeks Exp $
  */
 public class StandartResourceManager implements ResourceManager {
   /** Список запросов на ресурсы. */
