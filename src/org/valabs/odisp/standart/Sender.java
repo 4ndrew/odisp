@@ -3,7 +3,7 @@ package org.valabs.odisp.standart;
 
 /** Реализация единого потока рассылки и обработки сообщений.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: Sender.java,v 1.11 2004/08/23 07:42:37 valeks Exp $
+ * @version $Id: Sender.java,v 1.12 2005/01/26 22:17:49 valeks Exp $
  */
 class Sender extends Thread {
 	/** Счетчик сообщений, которые были обработаны нитью. */
@@ -40,7 +40,7 @@ class Sender extends Thread {
 			}
 			if (toSend != null) {
 				try {
-					toSend.getObject().handleMessage(toSend.getMessage());
+					toSend.getObject().handleMessage0(toSend.getMessage());
 					messageCounter++;
 					//System.err.println("Sender [" + getName() + "] message processed: " + toSend);
 				} catch (Exception e) {

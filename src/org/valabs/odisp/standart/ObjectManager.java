@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 
 import org.doomdark.uuid.UUID;
 import org.valabs.odisp.common.Dispatcher;
@@ -27,7 +26,7 @@ import org.valabs.stdmsg.ODShutdownMessage;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.46 2005/01/26 13:23:05 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.47 2005/01/26 22:17:49 valeks Exp $
  */
 
 class ObjectManager implements org.valabs.odisp.common.ObjectManager {
@@ -145,24 +144,35 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
 					log.finest("dependency not met: " + oe.getDepends()[i]);
 				}
 			}
+			// все условия зависимости удовлетворены
 			if (numRequested == 0) {
+			  // занесение в качестве провайдера для указанных сервисов
 				for (int i = 0; i < oe.getProvides().length; i++) {
 					log.finest("added as provider of " + oe.getProvides()[i]);
-					addProvider(oe.getProvides()[i], oe.getObject()
-							.getObjectName());
+					addProvider(oe.getProvides()[i], objectName);
 				}
+				// занесение в сервис RECIPIENT_ALL
+				addProvider(Message.RECIPIENT_ALL, objectName);
+				// если объект хочет получать все сообщения, то занести его в RECIPIENT_CATCHALL
+				if (oe.getObject().getMatchAll()) {
+				  addProvider(Message.RECIPIENT_CATCHALL, objectName);
+				}
+				// пометка объекта как работающего
 				oe.setLoaded(true);
-				flushDefferedMessages(oe.getObject().getObjectName());
 				log.config(" ok. loaded = " + objectName);
 				statLoadedOrder.add(oe.getObject().getClass().getName());
+				// восстановление данных из слепка если он был
 				if (ds.hasSnapshot()) {
-				  log.config("Restoring state from snapshot for " + oe.getObject().getObjectName());
-				  oe.getObject().importState(ds.getObjectSnapshot(oe.getObject().getObjectName()));
+				  log.config("Restoring state from snapshot for " + objectName);
+				  oe.getObject().importState(ds.getObjectSnapshot(objectName));
 				}
+				// официальное уведомление объекта о загрузке
 				Message m = dispatcher.getNewMessage();
 				ODObjectLoadedMessage.setup(m, objectName, UUID.getNullUUID());
 				m.setDestination(objectName);
-				oe.getObject().handleMessage(m);
+				oe.getObject().handleMessage0(m);
+				// сброс накопившихся сообщений
+				flushDefferedMessages(objectName);
 				loaded++;
 				statToLoadCount--;
 			}
@@ -418,44 +428,31 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
 				|| !message.isCorrect()) {
 			return;
 		}
-		// Получатели, ибо использовать глобольный итератор без глобальной
-		// блокировки объекта по меньшей мере - наивно ;-))) 
-		List recipients = null;
-		// Посылка производится сервису.
-		boolean serviceMatch = true;
-		// в случае если получатель смахивает на имя сервиса
-		// -- разослать только провайдерам, а не всем подряд
-		if (hasProviders(message.getDestination())) {
-			List providers = new ArrayList(getProviders(message
-					.getDestination()));
-			if (providers != null) {
-				recipients = providers;
-			}
-		}
-		if (recipients == null) {
-			serviceMatch = false;
-			recipients = new ArrayList();
-			synchronized (objects) {
-				Iterator it = objects.keySet().iterator();
-				while (it.hasNext()) {
-					String key = (String) it.next();
-					ObjectEntry oe = (ObjectEntry) objects.get(key);
-					if (Pattern.matches(oe.getObject().getMatch(), message
-							.getDestination())
-							|| Pattern.matches(message.getDestination(), oe
-									.getObject().getObjectName())) {
-						recipients.add(key);
-					}
-				}
-			}
-		}
-		Iterator it = recipients.iterator();
-		while (it.hasNext()) {
-			String objectName = (String) it.next();
-			if (serviceMatch) {
-				message.setDestination(objectName);
-			}
-			sendToObject(objectName, message);
+		
+		// рассылка реальным адресатам
+		Iterator it;
+		List recipients = getProviders(message.getDestination());
+		if (recipients != null) {
+      it = recipients.iterator();
+      Message actualMessage;
+      while (it.hasNext()) {
+        String objectName = (String) it.next();
+        actualMessage = message.cloneMessage();
+        actualMessage.setDestination(objectName);
+        sendToObject(objectName, actualMessage);
+      }
+    }
+		// рассылка тем, кто хочет получать все сообщения
+		recipients = getProviders(Message.RECIPIENT_CATCHALL);
+		if (recipients != null) {
+		  it = recipients.iterator();
+		  Message actualMessage;
+		  while (it.hasNext()) {
+		    String objectName = (String) it.next();
+        actualMessage = message.cloneMessage();
+        actualMessage.setDestination(objectName);
+		    sendToObject(objectName, actualMessage);
+		  }
 		}
 	}
 

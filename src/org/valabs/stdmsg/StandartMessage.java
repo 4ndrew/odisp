@@ -20,9 +20,9 @@ import org.valabs.odisp.common.Message;
  * 
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: StandartMessage.java,v 1.24 2005/01/24 13:01:54 valeks Exp $
+ * @version $Id: StandartMessage.java,v 1.25 2005/01/26 22:17:49 valeks Exp $
  */
-public class StandartMessage implements Message, Serializable {
+public class StandartMessage implements Message, Serializable, Cloneable {
   private static MessageGraphWriter debugMGW = new MessageGraphWriter();
   /** Флаг маршрутизации. */
   private boolean routable = true;
@@ -385,5 +385,16 @@ public class StandartMessage implements Message, Serializable {
         output.println("  \"n" + msg.getReplyTo() + "\" -> " + " \"n" + msg.getId() + "\";");
       }
     }
+  }
+
+  /* (non-Javadoc)
+   * @see org.valabs.odisp.common.Message#cloneMessage()
+   */
+  public Message cloneMessage() {
+    try {
+      return (Message) this.clone();
+    } catch (CloneNotSupportedException e) {
+    }
+    return null;
   }
 }

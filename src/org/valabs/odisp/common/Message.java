@@ -7,10 +7,14 @@ import org.doomdark.uuid.UUID;
 
 /** Интерфейс сообщения ядра ODISP системы.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
- * @version $Id: Message.java,v 1.18 2004/11/05 14:11:29 valeks Exp $
+ * @version $Id: Message.java,v 1.19 2005/01/26 22:17:49 valeks Exp $
  */
 public interface Message {
 
+  public Message cloneMessage();
+  public static final String RECIPIENT_ALL = ".*";
+  public static final String RECIPIENT_CATCHALL = "catch-all-service";
+  
   /** Выбор поля по имени.
    * @param name имя поля
    * @return содержимое поля

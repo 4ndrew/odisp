@@ -17,7 +17,7 @@ import org.valabs.stdmsg.ModuleStatusReplyMessage;
  * Стандартный объект ODISP.
  * 
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev </a>
- * @version $Id: StandartODObject.java,v 1.14 2005/01/25 19:03:33 valeks Exp $
+ * @version $Id: StandartODObject.java,v 1.15 2005/01/26 22:17:49 valeks Exp $
  */
 
 public abstract class StandartODObject implements ODObject {
@@ -35,9 +35,9 @@ public abstract class StandartODObject implements ODObject {
   private Map configuration;
 
   /**
-   * Regex маска принимаемых сообщений. По умолчанию инициализируется именем объекта.
+   * Есть ли необходимость обрабатывать все сообщения.
    */
-  private String match;
+  private boolean matchAll = false;
 
   /** Внутреннее имя объекта в ядре ODISP. */
   private String name;
@@ -57,21 +57,17 @@ public abstract class StandartODObject implements ODObject {
   private String fullName;
 
   /**
-   * Изменить маску принимаемых сообщений.
-   * 
-   * @param newMatch новая маска
+   * Обрабатывать ли все сообщения.
    */
-  protected final void setMatch(final String newMatch) {
-    match = newMatch;
+  protected final void setMatchAll(final boolean newMatch) {
+    matchAll = newMatch;
   }
 
   /**
-   * Доступ к RegEx выражению совпадения адреса получателя.
-   * 
-   * @return строка с regex
+   * Обрабатываются ли все сообщения.
    */
-  public final String getMatch() {
-    return match;
+  public final boolean getMatchAll() {
+    return matchAll;
   }
 
   /**
@@ -106,7 +102,6 @@ public abstract class StandartODObject implements ODObject {
     version = newVersion;
     copyright = newCopyright;
     fullName = newFullName;
-    match = newName;
     logger = Logger.getLogger(newName);
     logger.setLevel(java.util.logging.Level.ALL);
     handlers = new HashMap();
@@ -182,45 +177,72 @@ public abstract class StandartODObject implements ODObject {
 
   /**
    * Обработка сообщения.
-   * 
+   * Возможны три группы сообщений:
+   * сообщения объекту,
+   * сообщение посланное другому объекту или сервису в случае если стоит matchAll
    * @param msg сообщение для обработки
    */
-  public void handleMessage(final Message msg) {
-    if (ModuleAboutMessage.equals(msg)) {
-      Message m = dispatcher.getNewMessage();
-      ModuleAboutReplyMessage.setup(m, msg.getOrigin(), getObjectName(), msg
-          .getId());
-      ModuleAboutReplyMessage.setName(m, fullName);
-      ModuleAboutReplyMessage.setVersion(m, version);
-      ModuleAboutReplyMessage.setCopyright(m, copyright);
-      dispatcher.send(m);
-      return;
-    } else if (ModuleStatusMessage.equals(msg)) {
-      Message m = dispatcher.getNewMessage();
-      ModuleStatusReplyMessage.setup(m, msg.getOrigin(), getObjectName(), msg.getId());
-      objectStatus.setupStatusReply(m);
-      dispatcher.send(m);
-      return;
-    }
+  public final void handleMessage0(final Message msg) {
     if (blockedState && !msg.isOOB()) {
       // пропускать лишь OOB сообщения
       messages.add(msg);
       return;
     }
+
+    if (msg.getDestination().equals(name)) {
+      if (!handleMessageInternal(msg)) {
+        handleMessageByObject(msg);
+      }
+    } else if (matchAll) {
+      handleMessageByObject(msg);
+    }
+  }
+  
+  /**
+   * @param msg
+   */
+  private void handleMessageByObject(final Message msg) {
     boolean handled = false;
 
-    if (SessionManager.getSessionManager().processMessage(msg)) {
+    if (msg.getDestination().equals(name) && SessionManager.getSessionManager().processMessage(msg)) {
       handled = true;
     }
-    if (handlers.containsKey(msg.getAction())) {
+    if (msg.getDestination().equals(name) && handlers.containsKey(msg.getAction())) {
       if (!handled) {
         ((MessageHandler) handlers.get(msg.getAction())).messageReceived(msg);
         handled = true;
       }
     }
+        
     if (!handled) {
-      logger.finer(" (" + getObjectName() + ") there is no handler for message " + msg.getAction());
+      handleMessage(msg);
     }
+  }
+
+  /**
+   * @param msg
+   */
+  private boolean handleMessageInternal(final Message msg) {
+    if (ModuleAboutMessage.equals(msg)) {
+      Message m = dispatcher.getNewMessage();
+      ModuleAboutReplyMessage.setup(m, msg.getOrigin(), name, msg.getId());
+      ModuleAboutReplyMessage.setName(m, fullName);
+      ModuleAboutReplyMessage.setVersion(m, version);
+      ModuleAboutReplyMessage.setCopyright(m, copyright);
+      dispatcher.send(m);
+      return true;
+    } else if (ModuleStatusMessage.equals(msg)) {
+      Message m = dispatcher.getNewMessage();
+      ModuleStatusReplyMessage.setup(m, msg.getOrigin(), name, msg.getId());
+      objectStatus.setupStatusReply(m);
+      dispatcher.send(m);
+      return true;
+    }
+    return false;
+  }
+
+  public void handleMessage(final Message msg) {
+    logger.fine("There is no handler for message " + msg.getAction() + " in " + name);
   }
 
   /**
