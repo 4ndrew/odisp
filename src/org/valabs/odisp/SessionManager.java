@@ -51,7 +51,7 @@ import org.valabs.odisp.common.MessageHandler;
  * </pre>
  * 
  * @author (C) 2004 <a href="dron@novel-il.ru">Андрей А. Порохин </a>
- * @version $Id: SessionManager.java,v 1.11 2004/12/01 10:32:59 boris Exp $
+ * @version $Id: SessionManager.java,v 1.12 2004/12/02 22:16:45 valeks Exp $
  */
 public class SessionManager {
 
@@ -124,20 +124,6 @@ public class SessionManager {
       }
     }
 
-    //    List tmp;
-    //    synchronized (handlers) {
-    //      tmp = new ArrayList(handlers);
-    //    }
-    //    Iterator it = tmp.iterator();
-    //    while (it.hasNext()) {
-    //      SessionRecord rec = (SessionRecord) it.next();
-    //      if (rec.getMsgId().equals(messageId) && rec.getMessageHandler().equals(messageHandler)) {
-    //        it.remove();
-    //      }
-    //    }
-    //    synchronized (handlers) {
-    //      handlers = tmp;
-    //    }
   }
 
   /**
@@ -171,25 +157,6 @@ public class SessionManager {
         ((MessageHandler) toPerform.get(i)).messageReceived(msg);
       }
     }
-
-    //    List toPerform;
-    //    synchronized (handlers) {
-    //      toPerform = new ArrayList(handlers);
-    //    }
-    //    Iterator it = toPerform.iterator();
-    //    while (it.hasNext()) {
-    //      SessionRecord arecord = (SessionRecord) it.next();
-    //      if (arecord.getMsgId().equals(msg.getReplyTo())) {
-    //        arecord.getMessageHandler().messageReceived(msg);
-    //        if (!arecord.isMultiply()) {
-    //          it.remove();
-    //        }
-    //        matched = true;
-    //      }
-    //    } // while
-    //    synchronized (handlers) {
-    //      handlers = toPerform;
-    //    }
 
     return matched;
   }
