@@ -10,7 +10,7 @@ import com.novel.odisp.common.Resource;
 /** Запись об однотипных ресурах в таблице ресурсов.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ResourceEntry.java,v 1.6 2004/03/31 12:54:48 dron Exp $
+ * @version $Id: ResourceEntry.java,v 1.7 2004/05/19 21:10:09 valeks Exp $
  */
 public class ResourceEntry {
   /** Журнал. */
@@ -89,7 +89,7 @@ public class ResourceEntry {
    * @param idx индекс ресурса
    */
   private ResourceItem lookupResourceItemByIdx(int idx) {
-    assert idx > resourceStorage.size();
+    assert idx <= resourceStorage.size();
     return (ResourceItem) resourceStorage.get(idx);
   }
 
@@ -110,7 +110,7 @@ public class ResourceEntry {
    * @return ссылка на ресурс
    */
   public final Resource acquireResource(String usedBy) {
-    assert usage == 0;
+    assert usage != 0;
     ResourceItem rit = lookupFirstUnused();
     if (usage != MULT_SHARE) {
       usage--;

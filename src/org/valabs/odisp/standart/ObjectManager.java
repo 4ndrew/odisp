@@ -18,7 +18,7 @@ import com.novel.stdmsg.ODObjectLoadedMessage;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.23 2004/05/19 13:14:01 dron Exp $
+ * @version $Id: ObjectManager.java,v 1.24 2004/05/19 21:10:09 valeks Exp $
  */
 
 public class StandartObjectManager implements ObjectManager {
@@ -343,7 +343,8 @@ public class StandartObjectManager implements ObjectManager {
    * @return значения уровня блокировки
    */
   public final int getBlockedState(final String objName) {
-    assert !objects.containsKey(objName);
+    boolean hasObject = objects.containsKey(objName);
+    assert objects.containsKey(objName) : "object.containsKey(\"" + objName + "\") == false";
     return ((ObjectEntry) objects.get(objName)).getBlockedState();
   }
   /** Сброс записанных сообщений при снятии блокировки с объекта.
