@@ -18,7 +18,7 @@ import org.valeks.xlang.parser.XLangException;
 
 /** Реализация менеджера конфигурации.
  * @author (C) 2004 <a href="valeks@valabs.spb.ru">Валентин А. Алексеев</a>
- * @version $Id: ConfigurationManager.java,v 1.2 2004/11/28 18:47:56 valeks Exp $
+ * @version $Id: ConfigurationManager.java,v 1.3 2004/11/30 07:42:09 boris Exp $
  */
 class ConfigurationManager implements org.valabs.odisp.common.ConfigurationManager {
   List objects = new ArrayList();
@@ -147,6 +147,9 @@ class ConfigurationManager implements org.valabs.odisp.common.ConfigurationManag
     }
     
     public void putAllPrefixed(final String domainName, final String prefix, final Map params) {
+      //Не стоит забывать что параметров может и не быть ;)
+      if(params == null)return;
+
       Map domain = getDomain(domainName);
       Iterator keyIt = params.keySet().iterator();
       while (keyIt.hasNext()) {
