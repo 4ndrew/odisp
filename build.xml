@@ -1,0 +1,35 @@
+<!-- $Id: build.xml,v 1.1 2003/10/04 12:54:45 valeks Exp $ -->
+<project name="nms" default="all" basedir=".">
+    <property name="odisp-src" location="./"/>
+    <path id="odisp-src">
+	<pathelement location="${odisp-src}"/>
+    </path>
+    <property name="odisp-doc" location="../docs/javadoc"/>
+    <property name="build-dir" location="../build"/>
+    <target name="odisp-doc">
+	<javadoc
+	    destdir="${odisp-doc}" 
+	    sourcepathref="odisp-src" 
+	    encoding="koi8-r" 
+	    author="yes" 
+	    version="yes" 
+	    packagenames="com.novel.odisp.*,com.novel.stdobj.*"
+	    verbose="no"/>
+    </target>
+    <target name="build-dir-setup">
+	<mkdir dir="${build-dir}"/>    
+    </target>
+    <target name="doc-dir-setup">
+	<mkdir dir="${odisp-doc}"/>    
+    </target>
+    <target name="odisp">
+	<javac srcdir="${odisp-src}" destdir="${build-dir}"/>
+    </target>
+    <target name="clean">
+	<delete dir="${build-dir}"/>
+	<delete dir="${odisp-doc}"/>
+    </target>
+    <target name="nms" depends="odisp"/>
+    <target name="doc" depends="odisp-doc"/>
+    <target name="all" depends="build-dir-setup, doc-dir-setup, nms, doc"/>
+</project>
