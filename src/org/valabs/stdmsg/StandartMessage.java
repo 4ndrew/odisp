@@ -12,7 +12,7 @@ import com.novel.odisp.common.Message;
 /** Реализация стандартного сообщения для стандартного диспетчера ODISP.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: StandartMessage.java,v 1.12 2004/03/31 12:54:47 dron Exp $
+ * @version $Id: StandartMessage.java,v 1.13 2004/03/31 13:15:22 dron Exp $
  */
 public class StandartMessage implements Message, Serializable {
   /** Флаг маршрутизации. */
@@ -73,16 +73,18 @@ public class StandartMessage implements Message, Serializable {
 
   /** Добавление произвольного объекта в тело сообщения.
    * @param field объект который будет добавлен сообщение
+   * @deprecated используйте addField(String, Object)
    */
-  public final void addField(final Object field) {
+  protected final void addField(final Object field) {
     addField((new Integer(lastIdx++)).toString(), field);
   }
 
   /** Выборка сохраненного в теле сообщения объекта по индексу.
    * @param field индекс объекта
    * @return поле сообщения
+   * @deprecated используйте getField(String)
    */
-  public final Object getField(final int field) {
+  protected final Object getField(final int field) {
     return getField((new Integer(field)).toString());
   }
 
@@ -210,8 +212,9 @@ public class StandartMessage implements Message, Serializable {
 
   /** Доступ ко всему списку полей.
    * @return список полей
+   * @deprecated Используйте getContents()
    */
-  public final List getFields() {
+  protected final List getFields() {
     return new ArrayList(fields.values());
   }
 
