@@ -12,7 +12,7 @@ import com.novel.odisp.common.*;
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.10 2003/10/15 13:06:24 dron Exp $
+ * @version $Id: Dispatcher.java,v 1.11 2003/10/21 12:14:57 valeks Exp $
  */
 public class StandartDispatcher implements Dispatcher {
 	
@@ -61,16 +61,22 @@ public class StandartDispatcher implements Dispatcher {
 	/** Динамическая загрузка ресурсных объектов
 	    @param className имя загружаемого класса
 	    @param mult количество загружаемых объектов
+            @param param параметр загрузки
 	    @return void
 	*/
-	private void loadResource(String className, int mult){
+	private void loadResource(String className, int mult, String param){
 	    System.err.print("\tloading resource "+className);
 	    for(int i = 0; i < mult; i++){
 		try {
 		    Resource r = (Resource)Class.forName(className).newInstance();
 		    ResourceEntry re = new ResourceEntry(className);
 		    re.resource = r;
-		    resources.put(className+":"+i, re);
+
+                    if(r instanceof ProxyResource){
+                        ((ProxyResource)r).setResource(param);
+                        resources.put(param+":"+i, re);
+                    } else
+		        resources.put(className+":"+i, re);
 		    System.out.print("+");
 		} catch(ClassNotFoundException e){
 		    System.err.println(" failed: "+e);
@@ -287,19 +293,26 @@ public class StandartDispatcher implements Dispatcher {
 	    objects.put("stddispatcher", oe);
 	    loadPending();
 	    Iterator it = objs.iterator();
-	    Pattern p = Pattern.compile("(o:|(r:)(\\d+:)?)(.+)");	    
+	    Pattern p = Pattern.compile("(o:|(r:)(\\d+:)?)([^:]+)(:(.*))?");
+            //                            type    mult     class  param
 	    while(it.hasNext()){
 		int mult = 1;
+                String param = "";
 		String cl_n = (String)it.next();
 		Matcher m = p.matcher(cl_n);
 		m.find();
-		if(m.groupCount() == 4){
+                for(int i = 0; i != m.groupCount(); i++)
+                        System.out.print(i+"='"+m.group(i)+"' ");
+                System.out.println();
+		if(m.groupCount() == 6){
 		    if(m.group(1).equals("o:"))
 			loadObject(m.group(4));
 		    if(m.group(1).startsWith("r:")){
 			if(m.group(3) != null)
 			    mult = new Integer(m.group(3).substring(0,m.group(3).length()-1)).intValue();
-			loadResource(m.group(4), mult);
+                        if(m.group(5) != null)
+                            param = m.group(5).substring(1);
+			loadResource(m.group(4), mult, param);
 		    }
 		    loadPending();
 		}
@@ -397,6 +410,15 @@ public class StandartDispatcher implements Dispatcher {
 			    String name = (String)msg.getField(0);
 			    unloadObject(name, 1);
 			    objects.remove(name);
+			}
+		    });
+		    addHandler("load_object", new MessageHandler(){
+			public void messageReceived(Message msg){
+			    if(msg.getFieldsCount() != 1)
+				return;
+			    String name = (String)msg.getField(0);
+			    loadObject(name);
+                            loadPending();
 			}
 		    });
 		    addHandler("od_shutdown", new MessageHandler(){
