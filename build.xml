@@ -1,4 +1,4 @@
-<!-- $Id: build.xml,v 1.7 2003/11/25 12:48:36 valeks Exp $ -->
+<!-- $Id: build.xml,v 1.8 2003/12/03 19:19:50 valeks Exp $ -->
 <project name="nms" default="all" basedir=".">
     <property file="build.properties"/>
 
@@ -6,7 +6,7 @@
 	<javac srcdir="${src-dir}/odisp" destdir="${work-dir}/build" debug="yes"/>
     </target>
     <target name="odisp-jar" depends="odisp">
-	<jar destfile="${work-dir}/release/odisp.jar" basedir="${work-dir}/build" includes="com/novel/odisp/** com/novel/stdobj/**"/>
+	<jar destfile="${work-dir}/release/odisp.jar" basedir="${work-dir}/build" includes="com/novel/odisp/** com/novel/stdobj/** com/novel/stdmsg/**"/>
     </target>
     <target name="jar" depends="odisp-jar"/>
     <target name="all" depends="odisp"/>
