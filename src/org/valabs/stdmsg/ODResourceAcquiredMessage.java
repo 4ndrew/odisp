@@ -1,12 +1,10 @@
 package com.novel.stdmsg;
 
-import com.novel.odisp.*;
-import com.novel.odisp.common.*;
-
+import com.novel.odisp.common.Resource;
 /**
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, îðð "îÏ×ÅÌ-éì"
- * @version $Id: ODResourceAcquiredMessage.java,v 1.1 2003/12/01 22:19:29 valeks Exp $
+ * @version $Id: ODResourceAcquiredMessage.java,v 1.2 2003/12/03 19:17:53 valeks Exp $
  */
 
 public class ODResourceAcquiredMessage extends StandartMessage {
@@ -15,11 +13,11 @@ public class ODResourceAcquiredMessage extends StandartMessage {
   }
 
   public String getClassName() {
-    return getField(0);
+    return (String) getField(0);
   }
 
   public ODResourceAcquiredMessage setClassName(String newClassName) {
-    fields.set(0, newClassName);
+    fields.add(0, newClassName);
     return this;
   }
 
@@ -29,7 +27,7 @@ public class ODResourceAcquiredMessage extends StandartMessage {
   }
   
   public ODResourceAcquiredMessage setResource(Resource newResource) {
-    fields.set(1, newResource);
+    fields.add(1, newResource);
     return this;
   }
 

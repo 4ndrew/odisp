@@ -1,14 +1,11 @@
 package com.novel.stdmsg;
 
-import com.novel.odisp.*;
-import com.novel.odisp.common.*;
-
 /** Класс реализующий сообщение диспетчеру ODISP об останове.
  * Это сообщение должно обрабатыватся только диспетчером.
  * В качестве параметра можно указать код выхода который будет рассылатся объектам.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODShutdownMessage.java,v 1.2 2003/12/02 14:47:20 valeks Exp $
+ * @version $Id: ODShutdownMessage.java,v 1.3 2003/12/03 19:17:53 valeks Exp $
  */
 
 public class ODShutdownMessage extends StandartMessage {
@@ -34,9 +31,10 @@ public class ODShutdownMessage extends StandartMessage {
   /** Установить значение кода выхода
    * @param newExitCode новое значение кода выхода
    */
-  public void setExitCode(int newExitCode) {
-    fields.removeAllItems();
+  public ODShutdownMessage setExitCode(int newExitCode) {
+    fields.clear();
     addField(new Integer(newExitCode));
+    return this;
   }
   
 }// ODShutdownMessage
