@@ -18,7 +18,7 @@ import com.novel.stdmsg.ODObjectLoadedMessage;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.22 2004/05/18 12:33:04 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.23 2004/05/19 13:14:01 dron Exp $
  */
 
 public class StandartObjectManager implements ObjectManager {
@@ -128,14 +128,14 @@ public class StandartObjectManager implements ObjectManager {
 	}
       }
       if (numRequested == 0) {
-	oe.setLoaded(true);
-	flushDefferedMessages(oe.getObject().getObjectName());
 	for (int i = 0; i < oe.getProvides().length; i++) {
-	  if (!hasProviders(oe.getProvides()[i])) {
+	  //if (!hasProviders(oe.getProvides()[i])) {
 	    log.fine("added as provider of " + oe.getProvides()[i]);
 	    addProvider(oe.getProvides()[i], oe.getObject().getObjectName());
-	  }
+	  //}
 	}
+        oe.setLoaded(true);
+        flushDefferedMessages(oe.getObject().getObjectName());
 	log.config(" ok. loaded = " + objectName);
 	Message m = new ODObjectLoadedMessage(objectName);
 	oe.getObject().addMessage(m);
