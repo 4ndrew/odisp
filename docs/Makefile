@@ -1,35 +1,38 @@
-# Makefile for TeX-documents
+# Makefile for all documents
 #
-# $Id: Makefile,v 1.4 2003/10/03 20:04:24 dron Exp $
+# $Id: Makefile,v 1.5 2003/10/03 21:56:54 valeks Exp $
+
+JAVAPACKAGES= com.novel.odisp 
+JAVAPACKAGES+= com.novel.odisp.common
 
 TEXDOCS=impl.tex \
         tz.tex
 
-TEXDVIS=impl.dvi \
-        tz.dvi
+TEXDVIS=$(TEXDOCS:.tex=.dvi)
 
 TEXPROC=latex
+JAVADOC=javadoc
+JAVADOC_FOLDER= javadoc
+JAVADOC_FLAGS= -version -author -d $(JAVADOC_FOLDER)
 
 RM=rm -rf
 
-all: pre-compile $(TEXDVIS)
+all: $(TEXDVIS) javadoc
 
-pre-compile:
-	@echo Start LaTeX.
+javadoc:
+	@echo Generating javadoc...
+	$(JAVADOC) $(JAVADOC_FLAGS) $(JAVAPACKAGES)
 
-impl.dvi: impl.tex
-	@echo "Compiling $<..."
-	$(TEXPROC) impl.tex
-    
-    
-tz.dvi: tz.tex
-	@echo "Compiling $<..."
-	$(TEXPROC) tz.tex
+$(TEXDOCS:.tex=.dvi): $(@:.dvi=.tex)
+	@echo Generating TeX docs...
+	$(TEXPROC) $>
+	$(TEXPROC) $>
 
 clean:
 	@echo Cleaning...
-	@$(RM) *.log *.aux *.toc
+	$(RM) $(TEXDOCS:.tex=.log) $(TEXDOCS:.tex=.aux) $(TEXDOCS:.tex=.toc)
 
 distclean: clean
 	@echo Full clean...
-	@$(RM) *.dvi *.toc
+	$(RM) $(TEXDOCS:.tex=.dvi) $(TEXDOCS:.tex=.toc)
+	$(RM) $(JAVADOC_FOLDER)
