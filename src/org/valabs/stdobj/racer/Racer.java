@@ -11,7 +11,7 @@ import com.novel.odisp.common.Resource;
 
 /** Объект, который пытается воспроизвести быстрые асинхронные запросы на захват и высвобождение ресурса.
  * @author (C) 2004 <a href="valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: Racer.java,v 1.1 2004/02/20 00:19:44 valeks Exp $
+ * @version $Id: Racer.java,v 1.2 2004/03/17 11:59:23 dron Exp $
  */
 public class Racer extends PollingODObject {
   public Racer(Integer id) {
@@ -29,8 +29,8 @@ public class Racer extends PollingODObject {
 	sleep((int)Math.random() * 100);
       } catch (InterruptedException e) {}
       ODReleaseMessage m = new ODReleaseMessage(getObjectName(), msg.getId());
-      m.setResourceName((String) msg.getField(0));
-      m.setResource((Resource) msg.getField(1));
+      m.setResourceName((String) msg.getField("0"));
+      m.setResource((Resource) msg.getField("1"));
       dispatcher.send(m);
       try {
 	sleep((int)Math.random() * 100);
