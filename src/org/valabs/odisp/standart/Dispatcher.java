@@ -5,10 +5,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 import java.util.logging.Logger;
 
 import com.novel.stdmsg.StandartMessage;
@@ -23,7 +22,7 @@ import com.novel.odisp.common.Dispatcher;
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.32 2004/02/18 09:42:49 dron Exp $
+ * @version $Id: Dispatcher.java,v 1.33 2004/02/23 14:46:11 valeks Exp $
  */
 public class StandartDispatcher implements Dispatcher {
   /** Журнал. */
@@ -146,35 +145,28 @@ public class StandartDispatcher implements Dispatcher {
     runthr.addField(t);
     oman.send(runthr);
     Iterator it = objs.iterator();
-    Pattern p = Pattern.compile("(o:|(r:)(\\d+:)?)([^:]+)(:(.*))?");
-    //                            type    mult     class  param
     while (it.hasNext()) {
       int mult = 1;
       String param = "";
-      String className = (String) it.next();
-      Matcher m = p.matcher(className);
-      m.find();
-      String parsedLine = "";
-      for (int i = 0; i != m.groupCount(); i++) {
-	parsedLine += i + "='" + m.group(i) + "' ";
+      String line = (String) it.next();
+      boolean type = true; // true -- object, false -- resource
+      StringTokenizer st = new StringTokenizer(line, ":");
+      if (st.countTokens() < 1) {
+	continue;
       }
-      log.finest(parsedLine);
-      if (m.groupCount() == 6) {
-	if (m.group(1).equals("o:")) {
-	  oman.loadObject(m.group(4));
-	}
-	if (m.group(1).startsWith("r:")) {
-	  if (m.group(3) != null) {
-	    int len = m.group(3).length() - 1;
-	    mult = new Integer(m.group(3).substring(0, len)).intValue();
-	  }
-	  if (m.group(5) != null) {
-	    param = m.group(5).substring(1);
-	  }
-	  rman.loadResource(m.group(4), mult, param);
-	}
-	oman.loadPending();
+      if (st.nextToken().equalsIgnoreCase("r")) {
+	type = false;
       }
+      String className = st.nextToken();
+      if (st.hasMoreTokens()) {
+	mult = new Integer(st.nextToken()).intValue();
+      }
+      if (type) { // объект
+	oman.loadObject(className);
+      } else { // ресурс
+	rman.loadResource(className, mult);
+      }
+      oman.loadPending();
     }
     try {
       t.join();
