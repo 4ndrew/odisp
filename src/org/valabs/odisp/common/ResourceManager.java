@@ -7,7 +7,7 @@ import java.util.Map;
  * Интерфейс менеджера ресурсов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev
  *         </a>
- * @version $Id: ResourceManager.java,v 1.9 2004/10/28 22:53:16 valeks Exp $
+ * @version $Id: ResourceManager.java,v 1.10 2004/11/28 09:37:21 valeks Exp $
  */
 
 public interface ResourceManager {
@@ -30,18 +30,6 @@ public interface ResourceManager {
    * @return карта ресурсов
    */
   Map getResources();
-
-  /**
-   * Запрос на захват ресурса.
-   * @param msg сообщение о захвате
-   */
-  void acquireRequest(Message msg);
-
-  /**
-   * Запрос на высвобождение ресурса.
-   * @param msg сообщение о захвате
-   */
-  void releaseRequest(Message msg);
 
   /**
    * Вернуть статистику по ресурсам.

@@ -8,17 +8,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import org.doomdark.uuid.UUID;
 import org.valabs.odisp.common.Dispatcher;
-import org.valabs.odisp.common.Message;
 import org.valabs.odisp.common.Resource;
-import org.valabs.stdmsg.ODAcquireMessage;
-import org.valabs.stdmsg.ODReleaseMessage;
-import org.valabs.stdmsg.ODResourceAcquiredMessage;
 
 /** Менеджер ресурсных объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceManager.java,v 1.31 2004/11/11 16:59:18 valeks Exp $
+ * @version $Id: ResourceManager.java,v 1.32 2004/11/28 09:37:21 valeks Exp $
  */
 class ResourceManager implements org.valabs.odisp.common.ResourceManager {
   /** Ссылка на диспетчер объектов. */
@@ -80,27 +75,6 @@ class ResourceManager implements org.valabs.odisp.common.ResourceManager {
     dataThread.addRequest(new UnloadResourceRequest(className, code));
   }
 
-  /** Обработка запроса на захват объекта.
-   * @param msg сообщение о захвате
-   */
-  public final void acquireRequest(final Message msg) {
-    String className = ODAcquireMessage.getResourceName(msg);
-    dataThread.addRequest(new AcquireResourceRequest(msg.getOrigin(), msg.getId(), className));
-  }
-
-  /** Обработка запроса на высвобождение ресурса.
-   * @param msg сообщение о высвобождении
-   */
-  public final void releaseRequest(final Message msg) {
-    if (msg.getFieldsCount() != 2) {
-      return;
-    }
-    // разбор сообщения
-    String className = ODReleaseMessage.getResourceName(msg);
-    Resource res = ODReleaseMessage.getResource(msg);
-    dataThread.addRequest(new ReleaseResourceRequest(msg.getOrigin(), className, res));
-  }
-
   /** Конструктор менеджера ресурсов.
    * @param newDispatcher ссылка на диспетчер ресурсами которого управляет менеджер
    */
@@ -137,89 +111,6 @@ class ResourceManager implements org.valabs.odisp.common.ResourceManager {
     /** Строковое описание класса. */
     public String toString();
   } // RequestListEntry
-
-  /** Запрос на высвобождение ресурса. */
-  private class ReleaseResourceRequest implements RequestListEntry {
-    /** Имя класса. */
-    private String className = null;
-    /** Ссылка на ресурс. */
-    private Resource resource = null;
-    /** Имя объекта высвободившего ресурс. */
-    private String origin = null;
-    /** Создание нового запроса на высвобождение.
-     * @param nclassName имя высвобождаемого ресурса
-     * @param nresource ссылка на ресурс
-     */
-    public ReleaseResourceRequest(final String norigin,
-				  final String nclassName,
-				  final Resource nresource) {
-      origin = norigin;
-      className = nclassName;
-      resource = nresource;
-    }
-
-    /** Выполнение действия на нити данных. */
-    public final boolean performAction(final DataThread dt) {
-      ResourceEntry re = (ResourceEntry) dt.getResources().get(className);
-      re.releaseResource(resource);
-      return true;
-    }
-
-    /** Описание класса для статистики. */
-    public final String toString() {
-      return "ReleaseResource from " + origin + " on " + className;
-    }
-  }
-
-  /** Запрос на захват ресурса. */
-  private class AcquireResourceRequest implements RequestListEntry {
-    /** Имя ресурса. */
-    private String className = null;
-    /** Имя отправителя. */
-    private String origin = null;
-    /** Индекс сообщения инициировавшего запрос. */
-    private UUID msgid = null;
-    /** Конструирование нового запроса.
-     * @param nclassName имя ресурса
-     * @param norigin отправитель запроса
-     * @param nmsgid индекс сообщения
-     */
-    public AcquireResourceRequest(final String norigin, final UUID nmsgId,
-				  final String nclassName) {
-      className = nclassName;
-      origin = norigin;
-      msgid = nmsgId;
-    }
-    /** Выполнение запроса.
-     * В случае если ресурс не найден запрос будет выброшен.
-     * @param dt нить данных
-     */
-    public boolean performAction(final DataThread dt) {
-      if (dt.getResources().containsKey(className)) {
-	ResourceEntry re = (ResourceEntry) dt.getResources().get(className);
-	if (re.isAvailable()) {
-	  log.fine(className + " resource is in free pool.");
-	  // получение ресурса из хранилища
-	  Resource res = re.acquireResource(origin);
-	  // конструирование и отправка сообщения
-	  Message m = dt.getDispatcher().getNewMessage();
-	  ODResourceAcquiredMessage.setup(m, origin, msgid);
-	  ODResourceAcquiredMessage.setResourceName(m, className);
-	  ODResourceAcquiredMessage.setResource(m, res);
-	  dt.getDispatcher().send(m);
-	} else {
-	  return false;
-	}
-      } else {
-	// нет такого ресурса -- просто удалить запрос. TODO: сообщение об ошибке?
-      }
-      return true;
-    }
-    /** Описание класса для статистики. */
-    public final String toString() {
-      return "AcquireResource from " + origin + " on " + className;
-    }
-  }
 
   /** Запрос на выгрузку ресурса. */
   private class UnloadResourceRequest implements RequestListEntry {

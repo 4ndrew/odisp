@@ -8,20 +8,18 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import org.valabs.stdmsg.ModuleAboutMessage;
-import org.valabs.stdmsg.ModuleAboutReplyMessage;
-import org.valabs.stdmsg.ModuleStatusMessage;
-import org.valabs.stdmsg.ModuleStatusReplyMessage;
 import org.valabs.odisp.common.Message;
 import org.valabs.odisp.common.MessageHandler;
 import org.valabs.odisp.common.ObjectManager;
 import org.valabs.odisp.common.ResourceManager;
 import org.valabs.odisp.common.StandartODObject;
-import org.valabs.stdmsg.ODAcquireMessage;
+import org.valabs.stdmsg.ModuleAboutMessage;
+import org.valabs.stdmsg.ModuleAboutReplyMessage;
+import org.valabs.stdmsg.ModuleStatusMessage;
+import org.valabs.stdmsg.ModuleStatusReplyMessage;
 import org.valabs.stdmsg.ODAddProviderMessage;
 import org.valabs.stdmsg.ODGetProvidingMessage;
 import org.valabs.stdmsg.ODGetProvidingReplyMessage;
-import org.valabs.stdmsg.ODReleaseMessage;
 import org.valabs.stdmsg.ODRemoveDepMessage;
 import org.valabs.stdmsg.ODRemoveProviderMessage;
 import org.valabs.stdmsg.ODShutdownMessage;
@@ -30,7 +28,7 @@ import org.valabs.stdmsg.ODShutdownMessage;
  * Обработчик сообщений диспетчера ODISP.
  * 
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: DispatcherHandler.java,v 1.29 2004/10/28 22:13:36 valeks Exp $
+ * @version $Id: DispatcherHandler.java,v 1.30 2004/11/28 09:37:21 valeks Exp $
  */
 
 public class DispatcherHandler extends StandartODObject {
@@ -114,20 +112,6 @@ public class DispatcherHandler extends StandartODObject {
                 // харакири
                 oman.unloadObject(getObjectName(), exitCode);
                 runThread.interrupt();
-            }
-        });
-        addHandler(ODAcquireMessage.NAME, new MessageHandler() {
-            public final void messageReceived(final Message msg) {
-                if (msg.getFieldsCount() > 0) {
-                    rman.acquireRequest(msg);
-                }
-            }
-        });
-        addHandler(ODReleaseMessage.NAME, new MessageHandler() {
-            public final void messageReceived(final Message msg) {
-                if (msg.getFieldsCount() > 0) {
-                    rman.releaseRequest(msg);
-                }
             }
         });
         addHandler(ODRemoveDepMessage.NAME, new MessageHandler() {
