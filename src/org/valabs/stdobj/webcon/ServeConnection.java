@@ -718,31 +718,11 @@ class ServeConnection extends Thread implements HttpServletRequest, HttpServletR
 
   /// Converts a Date into an RFC-1123 string.
   private static String to1123String( Date date ) {
-    // We have to go through some machinations here to get the
-    // correct day of the week in GMT.  getDay() gives the day in
-    // local time.  getDate() gives the day of the month in local
-    // time.  toGMTString() gives a formatted string in GMT.  So, we
-    // extract the day of the month from the GMT string, and if it
-    // doesn't match the local one we change the local day of the
-    // week accordingly.
-    //
-    // The Date class sucks.
     Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
     c.setTime(date);
     int localDay = c.get(Calendar.DAY_OF_WEEK);
     int localDate = c.get(Calendar.DATE);
     String gmtStr = c.toString();
-/*    int blank = gmtStr.indexOf( ' ' );
-    int gmtDate = Integer.parseInt( gmtStr.substring( 0, blank ) );
-    int gmtDay;
-    if ( gmtDate > localDate || ( gmtDate < localDate && gmtDate == 1 ) ) {
-      gmtDay = ( localDay + 1 ) % 7;
-    } else if ( localDate > gmtDate || ( localDate < gmtDate && localDate == 1 ) ) {
-      gmtDay = ( localDay + 6 ) % 7;
-    } else {
-      gmtDay = localDay;
-    }
-    return weekdays[gmtDay] + ( gmtDate < 10 ? ", 0" : ", " ) + gmtStr;*/
     return gmtStr;
   }
 
