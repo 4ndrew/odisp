@@ -1,4 +1,4 @@
-% $Id: todo.tex,v 1.3 2004/03/05 22:06:12 valeks Exp $
+% $Id: todo.tex,v 1.4 2004/03/27 23:39:52 valeks Exp $
 \documentclass[a4paper]{article}
 \usepackage[koi8-r]{inputenc}
 \usepackage[T2C,T1]{fontenc}
@@ -11,7 +11,7 @@
 %\frenchspacing
 \begin{document}
 \chead{\bfseries НПП ``Новел-ИЛ''}
-\lhead{$Revision: 1.3 $}
+\lhead{$Revision: 1.4 $}
 \chead{}
 \rhead{Список текущих задач.}
 \maketitle
@@ -182,8 +182,22 @@ ODISP и 2NMS не позволяется обеспечивать удобную раздельную сборку
 виде. Так же на базе этой стратегии можно реализовать кеширование
 отдельных запросов для ускорения их обработки.
 
+\subsection{Конфигурация объектов и ресурсов}
+{\bfseries ODISP. Решено: StandartDispatcher.java:1.36 и др.}
+
+{\bfseries Проблема:} многие объекты и ресурсы ODISP и NMS требуют некоторую
+начальную конфигурацию.
+
+{\bfseries Локализация: } изменения затронут механизм загрузки объектов и ресурсов
+в \verb+StandartDispatcher.java+, а так же интерфейсы и методы \verb+ODObject+
+и \verb+Resource+.
+
+
+{\bfseries Подходы к решению:} необходимо использовать какой-либо расширяемый
+формат представления файла \verb+classes.cfg+, например XML.
+
 \subsection{Сервис разрешения имен}
-{\bfseries ODISP}
+{\bfseries ODISP, Решено: StandartObjectManager.java:1.11 и др. Коммит запись \No 904.}
 
 {\bfseries Проблема:} текущая реализация алгоритма отправки сообщения
 не дает возможности объекту отослать сообщения не зная адресата (за
