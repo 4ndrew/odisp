@@ -5,6 +5,7 @@ import com.novel.odisp.common.Dispatcher;
 import com.novel.odisp.common.ResourceManager;
 import com.novel.odisp.common.Message;
 import com.novel.stdmsg.ODResourceAcquiredMessage;
+import java.util.Collections;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
@@ -14,95 +15,37 @@ import java.util.logging.Logger;
 
 /** Менеджер ресурсных объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceManager.java,v 1.11 2004/02/27 10:56:34 valeks Exp $
+ * @version $Id: ResourceManager.java,v 1.12 2004/03/05 21:25:53 valeks Exp $
  */
 public class StandartResourceManager implements ResourceManager {
-  /** Список запросов на ресурсы. */
-  private RequestQueue resourceQueue = new RequestQueue();
   /** Ссылка на диспетчер объектов. */
-  private Dispatcher dispatcher;
+  //  private Dispatcher dispatcher;
+  /** Нить обработки запросов. */
+  private DataThread dataThread = null;
   /** Журнал. */
   private Logger log = Logger.getLogger("com.novel.odisp.ResourceManager");
-  /** Список ресурсов. */
-  private Map resources = new HashMap();
 
   /** Доступ к ресурсам.
    * @return список ресурсов
    */
   public final Map getResources() {
-    return resources;
+    return dataThread.getResources();
   }
 
   /** Динамическая загрузка ресурсных объектов.
    * @param className имя загружаемого класса
    * @param mult количество загружаемых объектов
-   * @param param параметр загрузки
    */
   public final void loadResource(final String className, int mult) {
-    String logMessage = mult + " loading resource ";
-    ResourceEntry re = new ResourceEntry(className);
-    re.setMaxUsage(mult);
-    if (mult == ResourceEntry.MULT_SHARE) {
-      logMessage+= "shared ";
-      mult = 1;
-    }
-    logMessage+= className;
-    int realMult = mult;
-    for (int i = 0; i < mult; i++) {
-      try {
-	Resource r = (Resource) Class.forName(className).newInstance();
-	re.addResource(r);
-	logMessage += "+";
-      } catch (ClassNotFoundException e) {
-	log.warning(" failed: " + e);
-	return;
-      } catch (InstantiationException e) {
-	log.warning(" failed: " + e);
-	realMult--;
-      } catch (IllegalAccessException e) {
-	log.warning(" failed: " + e);
-	return;
-      }
-    }
-    resources.put(className, re);
-    logMessage += " ok";
-    log.config(logMessage);
+    dataThread.addRequest(new LoadResourceRequest(className, mult));
   }
 
   /** Выгрузка ресурсного объекта.
-   * @param name имя ресурсного объекта
+   * @param className имя ресурсного объекта
    * @param code код выхода
    */
-  public final void unloadResource(final String name, final int code) {
-    if (resources.containsKey(name)) {
-      ResourceEntry res = (ResourceEntry) resources.get(name);
-      List dependingObjs = new ArrayList();
-      Iterator it = dispatcher.getObjectManager().getObjects().keySet().iterator();
-      while (it.hasNext()) {
-	String className = (String) it.next();
-	String[] depends = ((ObjectEntry) dispatcher.getObjectManager().getObjects().get(className)).getDepends();
-	for (int i = 0; i < depends.length; i++) {
-	  if (depends[i].equals(name) && !dependingObjs.contains(name)) {
-	    dependingObjs.add(className);
-	  }
-	}
-      }
-      if (code == 0) {
-	it = dependingObjs.iterator();
-	while (it.hasNext()) {
-	  dispatcher.getObjectManager().unloadObject((String) it.next(), code);
-	}
-      }
-      res.cleanUp(code);
-      resources.remove(name);
-    }
-  }
-  /** Конструктор менеджера ресурсов.
-   * @param newDispatcher ссылка на диспетчер ресурсами которого управляет менеджер
-   */
-  public StandartResourceManager(final Dispatcher newDispatcher) {
-    dispatcher = newDispatcher;
-    log.setLevel(java.util.logging.Level.ALL);
+  public final void unloadResource(final String className, final int code) {
+    dataThread.addRequest(new UnloadResourceRequest(className, code));
   }
 
   /** Обработка запроса на захват объекта.
@@ -115,45 +58,7 @@ public class StandartResourceManager implements ResourceManager {
       willBlockState = ((Boolean) msg.getField(1)).booleanValue();
     }
     log.fine("resource acquientance request from " + msg.getOrigin() + " to " + className);
-    ResourceEntry re = (ResourceEntry) resources.get(className);
-    if (re != null) {
-      synchronized (re) {
-	// превентивный ядерный удар. синхронизировать обращение на всю запись о ресурсе
-	if (re.isAvailable()) {
-	  log.fine(className + " resource is in free pool.");
-	  // получение ресурса из хранилища
-	  Resource res = re.acquireResource(msg.getOrigin());
-	  // конструирование и отправка сообщения
-	  ODResourceAcquiredMessage m = new ODResourceAcquiredMessage(msg.getOrigin(), msg.getId());
-	  m.setResourceName(className);
-	  m.setResource(res);
-	  dispatcher.send(m);
-	  if (willBlockState) {
-	    log.fine("acquitentance of resource " + className + " by " + msg.getOrigin() + " will be blocking");
-	    // сохранение и изменение статуса блокировки объекта
-	    re.setBlockState(res, willBlockState);
-	    dispatcher.getObjectManager().setBlockedState(msg.getOrigin(),
-							  dispatcher.getObjectManager().getBlockedState(msg.getOrigin()) + 1);
-	  }
-	} else {
-	  log.finer(className + " resource busy -- putting request to queue");
-	  resourceQueue.addRequest(className, new ResourceRequest(msg.getOrigin(), msg.getId(), willBlockState));
-	}
-      }
-    }
-  }
-
-  public List statRequest() {
-    List result = new ArrayList();
-    String res = "";
-    Iterator it = resources.keySet().iterator();
-    while (it.hasNext()) {
-      String resname = (String) it.next();
-      res = ((ResourceEntry) resources.get(resname)).toString();
-      result.add(res);
-    }
-    result.add(resourceQueue.toString());
-    return result;
+    dataThread.addRequest(new AcquireResourceRequest(msg.getOrigin(), msg.getId(), className, willBlockState));
   }
 
   /** Обработка запроса на высвобождение ресурса.
@@ -166,159 +71,330 @@ public class StandartResourceManager implements ResourceManager {
     // разбор сообщения
     String className = (String) msg.getField(0);
     Resource res = (Resource) msg.getField(1);
-    synchronized (resourceQueue) {
-      ResourceRequest rr = resourceQueue.nextRequest(className);
-      if (rr != null) {
-	log.fine(className + " has request in its queue.");
-	ResourceEntry re = (ResourceEntry) resources.get(className);
-	synchronized (re) {
-	  // в добавок синхронизировать и доступ к записи о ресурсе
-	  if (re.isBlockState(res)) {
-	    // снятие блокировки если она была
-	    log.fine("releasing block for object " + msg.getOrigin());
-	    dispatcher.getObjectManager().setBlockedState(msg.getOrigin(),
-							  dispatcher.getObjectManager().getBlockedState(msg.getOrigin()) - 1);
-	  }
-	  re.setUsedBy(res, rr.getObjectName());
-	  if (rr.isBlockState()) {
-	    // сохранение нового статуса блокировки объекта
-	    log.finer("setting block for object " + rr.getObjectName());
-	    re.setBlockState(res, rr.isBlockState());
-	    dispatcher.getObjectManager().setBlockedState(msg.getOrigin(),
-							  dispatcher.getObjectManager().getBlockedState(msg.getOrigin()) + 1);
-	  }
-	}
-	// подготовка и посылка сообщения о захвате ресурса
-	ODResourceAcquiredMessage m = new ODResourceAcquiredMessage(rr.getObjectName(), rr.getMsgId());
-	m.setResourceName(className);
-	m.setResource(res);
-	dispatcher.send(m);
-      } else {
-	log.fine(className + " no requests in queue");
-	// если объект не требуется кем-то еще -- просто высвободить его
-	ResourceEntry re = (ResourceEntry) resources.get(className);
-	synchronized (re) {
-	  // синхронный доступ ко всей записи
-	  if (re.isBlockState(res)) {
-	    log.fine("releasing block for object " + msg.getOrigin());
-	    dispatcher.getObjectManager().setBlockedState(msg.getOrigin(),
-							  dispatcher.getObjectManager().getBlockedState(msg.getOrigin()) - 1);
-	  }
-	  re.releaseResource(res);
-	}
+    dataThread.addRequest(new ReleaseResourceRequest(msg.getOrigin(), className, res));
+  }
+
+  /** Конструктор менеджера ресурсов.
+   * @param newDispatcher ссылка на диспетчер ресурсами которого управляет менеджер
+   */
+  public StandartResourceManager(final Dispatcher newDispatcher) {
+    //    dispatcher = newDispatcher;
+    log.setLevel(java.util.logging.Level.ALL);
+    dataThread = new DataThread(newDispatcher);
+  }
+
+  public List statRequest() {
+    List result = new ArrayList();
+    Iterator it = dataThread.getResources().keySet().iterator();
+    while (it.hasNext()) {
+      String name = (String) it.next();
+      ResourceEntry re = (ResourceEntry) dataThread.getResources().get(name);
+      result.add(re.toString());
+    }
+    it = dataThread.getRequestList().iterator();
+    result.add("DataThread request queue...");
+    while (it.hasNext()) {
+      result.add(((RequestListEntry) it.next()).toString());
+    }
+    return result;
+  }
+
+
+  /** Интерфейс описывающий запрос выполняемый DataThread. */
+  private interface RequestListEntry {
+    /** Выполнение запроса.
+     * @param data нить данных на которой выполняется запрос
+     * @return флаг возможности удаления запроса
+     */
+    public boolean performAction(final DataThread data);
+    /** Строковое описание класса. */
+    public String toString();
+  } // RequestListEntry
+
+  /** Запрос на высвобождение ресурса. */
+  private class ReleaseResourceRequest implements RequestListEntry {
+    /** Имя класса. */
+    private String className = null;
+    /** Ссылка на ресурс. */
+    private Resource resource = null;
+    /** Имя объекта высвободившего ресурс. */
+    private String origin = null;
+    /** Создание нового запроса на высвобождение.
+     * @param nclassName имя высвобождаемого ресурса
+     * @param nresource ссылка на ресурс
+     */
+    public ReleaseResourceRequest(final String norigin,
+				  final String nclassName,
+				  final Resource nresource) {
+      origin = norigin;
+      className = nclassName;
+      resource = nresource;
+    }
+
+    /** Выполнение действия на нити данных. */
+    public final boolean performAction(final DataThread dt) {
+      ResourceEntry re = (ResourceEntry) dt.getResources().get(className);
+      // синхронный доступ ко всей записи
+      if (re.isBlockState(resource)) {
+	log.fine("releasing block for object " + origin);
+	dt.getDispatcher().getObjectManager().setBlockedState(origin,
+						      dt.getDispatcher().getObjectManager().getBlockedState(origin) - 1);
       }
+      re.releaseResource(resource);
+      dt.setReleaseCount(dt.getReleaseCount() + 1);
+      return true;
+    }
+
+    /** Описание класса для статистики. */
+    public final String toString() {
+      return "ReleaseResource from " + origin + " on " + className;
     }
   }
 
-  /** Запись о запросе на ресурс. */
-  private class ResourceRequest {
-    /** Имя объект. */
-    private String object;
-    /** Доступ к имени объекта.
-     * @return имя объекта
+  /** Запрос на захват ресурса. */
+  private class AcquireResourceRequest implements RequestListEntry {
+    /** Имя ресурса. */
+    private String className = null;
+    /** Имя отправителя. */
+    private String origin = null;
+    /** Индекс сообщения инициировавшего запрос. */
+    private int msgid = -1;
+    /** Статус блокировки объекта. */
+    private boolean willBlock = false;
+    /** Флаг попытки запроса. */
+    private boolean checkOnly = false;
+    /** Конструирование нового запроса.
+     * @param nclassName имя ресурса
+     * @param norigin отправитель запроса
+     * @param nmsgid индекс сообщения
+     * @param nwillBlock будет ли запрос блокирующим
      */
-    public String getObjectName() {
-      return object;
+    public AcquireResourceRequest(final String norigin, final int nmsgId,
+				  final String nclassName, final boolean nwillBlock) {
+      className = nclassName;
+      origin = norigin;
+      msgid = nmsgId;
+      willBlock = nwillBlock;
     }
-    /** Номер сообщения запроса. */
-    private int msgId;
-    /** Доступ к номеру сообщения
-     * @return номер сообщения
+    /** Выполнение запроса.
+     * В случае если ресурс не найден запрос будет выброшен.
+     * @param dt нить данных
      */
-    public int getMsgId() {
-      return msgId;
-    }
-    /** Состояние блокировки при захвате. */
-    private boolean willBlockState;
-    /** Доступ к состоянию блокировки.
-     * @return состояние блокировки
-     */
-    public boolean isBlockState() {
-      return willBlockState;
-    }
-    /** Конструктор новой записи.
-     * @param newObject имя объекта
-     * @param newMsgId номер сообщения
-     * @param newWillBlockState состояние блокировки
-     */
-    public ResourceRequest(final String newObject,
-			   final int newMsgId,
-			   final boolean newWillBlockState) {
-      object = newObject;
-      msgId = newMsgId;
-      willBlockState = newWillBlockState;
-      log.finer(newObject + " request is now on queue");
-    }
-  } // ResourceRequest
-
-  /** Класс инкапсулирующий очередь запросов к ресурсам. */
-  private class RequestQueue {
-    private Map tempReqs = new HashMap();
-    /** Список запросов. */
-    private Map resourceRequests = new HashMap();
-    /** Добавление нового запроса в очередь
-     * @param className имя класса ресурса
-     * @param rr запись о запросе
-     */
-    public final void addRequest(final String className, final ResourceRequest rr) {
-      List rrl;
-      if (!tempReqs.containsKey(className)) {
-	rrl = new ArrayList();
-	tempReqs.put(className, rrl);
-      } else {
-	rrl = (List) tempReqs.get(className);
+    public boolean performAction(final DataThread dt) {
+      if (checkOnly && dt.getReleaseCount() != 0) {
+	// перезапрашивать только в том случае если производились высвобождения
+	return false;
       }
-      rrl.add(rr);
+      if (dt.getResources().containsKey(className)) {
+	ResourceEntry re = (ResourceEntry) dt.getResources().get(className);
+	if (re != null) {
+	    if (re.isAvailable()) {
+	      log.fine(className + " resource is in free pool.");
+	      // получение ресурса из хранилища
+	      Resource res = re.acquireResource(origin);
+	      // конструирование и отправка сообщения
+	      ODResourceAcquiredMessage m = new ODResourceAcquiredMessage(origin, msgid);
+	      m.setResourceName(className);
+	      m.setResource(res);
+	      dt.getDispatcher().send(m);
+	      if (willBlock) {
+		log.fine("acquitentance of resource " + className + " by " + origin + " will be blocking");
+		// сохранение и изменение статуса блокировки объекта
+		re.setBlockState(res, willBlock);
+		dt.getDispatcher().getObjectManager().setBlockedState(origin,
+							      dt.getDispatcher().getObjectManager().getBlockedState(origin) + 1);
+	      }
+	      dt.setReleaseCount(dt.getReleaseCount() - 1);
+	    } else {
+	      checkOnly = true;
+	      return false;
+	    }
+	  }
+      } else {
+	// нет такого ресурса -- просто удалить запрос. TODO: сообщение об ошибке?
+      }
+      return true;
     }
-
-    /** Выборка следующего запроса на захват ресурса.
-     * @param className имя ресурса
-     * @return информация о захвате или null в случае если запросов нет.
+    /** Описание класса для статистики. */
+    public final String toString() {
+      return "AcquireResource from " + origin + " on " + className + " block state is " + willBlock;
+    }
+  }
+  /** Запрос на загрузку ресурса. */
+  private class LoadResourceRequest implements RequestListEntry {
+    /** Имя класса ресурса. */
+    private String className = null;
+    /** Мультипликатор. */
+    private int mult = ResourceEntry.MULT_SHARE;
+    /** Создание нового запроса на загрузку ресурса.
+     * @param nclassName имя класса для загрузки
+     * @param nmult множитель загрузки
      */
-    public final ResourceRequest nextRequest(final String className) {
-      synchronized (tempReqs) {
-	// переброска запросов из временной очереди
-	Iterator it = tempReqs.keySet().iterator();
+    public LoadResourceRequest(final String nclassName, final int nmult) {
+      className = nclassName;
+      mult = nmult;
+    }
+    /** Выполнение запроса.
+     * @param dt нить данных на которой выполняется запрос
+     */
+    public final boolean performAction(final DataThread dt) {
+      String logMessage = mult + " loading resource ";
+      ResourceEntry re = new ResourceEntry(className);
+      re.setMaxUsage(mult);
+      if (mult == ResourceEntry.MULT_SHARE) {
+	logMessage+= "shared ";
+	mult = 1;
+      }
+      logMessage+= className;
+      for (int i = 0; i < mult; i++) {
+	try {
+	  Resource r = (Resource) Class.forName(className).newInstance();
+	  re.addResource(r);
+	  logMessage += "+";
+	} catch (ClassNotFoundException e) {
+	  log.warning(" failed: " + e);
+	  return true;
+	} catch (InstantiationException e) {
+	  log.warning(" failed: " + e);
+	} catch (IllegalAccessException e) {
+	  log.warning(" failed: " + e);
+	  return true;
+	}
+      }
+      dt.getResources().put(className, re);
+      logMessage += " ok";
+      log.config(logMessage);
+      dt.getDispatcher().getObjectManager().loadPending();
+      return true;
+    }
+    /** Описание класса для статистики. */
+    public final String toString() {
+      return "LoadResource on " + className;
+    }
+  } // LoadResourceRequest
+
+  /** Запрос на выгрузку ресурса. */
+  private class UnloadResourceRequest implements RequestListEntry {
+    /** Имя класса ресурса для выгрузки. */
+    private String className = null;
+    /** Код выгрузки. */
+    private int code = 0;
+    /** Инициализация нового запроса на загрузку ресурса. */
+    public UnloadResourceRequest(final String nclassName, final int ncode) {
+      className = nclassName;
+      code = ncode;
+    }
+    /** Выполнение запроса на заданной нити данных.
+     * На данный момент в случае если в очереди имеются запросы к выгружаемому ресурсу они там и останутся.
+     * Необходимо выбрать из двух стратегий: либо не выполнять запрос на выгрузку пока запросы на захват не будут
+     * удовлетворены или удалять подобные ресурсы из очереди автоматически.
+     * Фактическая выгрузка зависимых объектов происходит только в том случае если код выгрузки равен 0.
+     * @param dt нить данных
+     */
+    public final boolean performAction(final DataThread dt) {
+      if (dt.getResources().containsKey(className)) {
+	ResourceEntry res = (ResourceEntry) dt.getResources().get(className);
+	List dependingObjs = new ArrayList();
+	Iterator it = dt.getDispatcher().getObjectManager().getObjects().keySet().iterator(); // TODO: убрать этот ужас
 	while (it.hasNext()) {
-	  String key = (String) it.next();
-	  List rrl = (List) tempReqs.get(key);
-	  if (resourceRequests.containsKey(key)) {
-	    ((List) resourceRequests.get(key)).addAll(rrl);
-	  } else {
-	    resourceRequests.put(key, rrl);
+	  String oclassName = (String) it.next();
+	  String[] depends = ((ObjectEntry) dt.getDispatcher().getObjectManager().getObjects().get(oclassName)).getDepends();
+	  for (int i = 0; i < depends.length; i++) {
+	    if (depends[i].equals(className) && !dependingObjs.contains(className)) {
+	      dependingObjs.add(oclassName);
+	    }
 	  }
 	}
-	tempReqs.clear();
+	if (code == 0) {
+	  it = dependingObjs.iterator();
+	  while (it.hasNext()) {
+	    dt.getDispatcher().getObjectManager().unloadObject((String) it.next(), code);
+	  }
+	}
+	res.cleanUp(code);
+	dt.getResources().remove(className);
       }
-      ResourceRequest result = null;
-      if (resourceRequests.containsKey(className) 
-	  && ((List) resourceRequests.get(className)).size() != 0) {
-	List rrl = (List) resourceRequests.get(className);
-	synchronized (rrl) {
-	  try {
-	    result = (ResourceRequest) rrl.get(0);
-	    rrl.remove(0);
-	  } catch (IndexOutOfBoundsException e) { /* злостный хак. */}
+      return true;
+    }
+    /** Описание класса для статистики. */
+    public final String toString() {
+      return "UnloadResource on " + className;
+    }
+  } // UnloadResourceRequest
+
+  /** Отдельная нить обработки запросов на захват-высвобождение в стиле DataThread,
+   * которая гарантирует синхронность обращение к списку ресурсов.
+   */
+  private class DataThread extends Thread {
+    /** Список ресурсов. */
+    private Map resources = new HashMap();
+    /** Доступ к списку ресурсов. */
+    public Map getResources() {
+      return resources;
+    }
+    /** Хранилище запросов. */
+    private List requestList = new ArrayList();
+    /** Доступ на чтение к списку запросов. */
+    public List getRequestList () {
+      return Collections.unmodifiableList(requestList);
+    }
+    /** Ссылка на диспетчера. */
+    private Dispatcher dispatcher = null;
+    /** Доступ для запросов к диспетчеру. */
+    public Dispatcher getDispatcher() {
+      return dispatcher;
+    }
+    /** Счетчик запросов на высвобождение. */
+    private int releaseCount = 0;
+    public int getReleaseCount() {
+      return releaseCount;
+    }
+    public void setReleaseCount(int nc) {
+      releaseCount = nc;
+    }
+    /** Добавление запроса в очередь.
+     * @param req запрос
+     */
+    public synchronized void addRequest(RequestListEntry req) {
+      synchronized (requestList) {
+	requestList.add(req);
+	synchronized (this) {
+	  notify();
 	}
       }
-      return result;
+    }
+    /** Конструктор инициализирующий и запускающий нить.
+     * @param nDispatcher ссылка на диспетчер
+     */
+    public DataThread(final Dispatcher nDispatcher) {
+      super("Resource requests handler");
+      dispatcher = nDispatcher;
+      setDaemon(true);
+      this.start();
     }
 
-    public final String toString() {
-      String result = "Acquire queue stats:\n";
-      Iterator it = resourceRequests.keySet().iterator();
-      while (it.hasNext()) {
-	String className = (String) it.next();
-	List rrl = (List) resourceRequests.get(className);
-	result += "  resource " + className + " has " + rrl.size() + " requests from: ";
-	Iterator rit = rrl.iterator();
-	while (rit.hasNext()) {
-	  ResourceRequest rr = (ResourceRequest) rit.next();
-	  result+= rr.getObjectName() + (rr.isBlockState() ? "(blocking) " : " ");
+    /** Метод, который циклически просматривает и выполняет запросы из очереди. */
+    public void run() {
+      while (true) {
+	try {
+	  synchronized (this) {
+	    wait(100);
+	  }
+	} catch (InterruptedException e) {}
+	synchronized (requestList) {
+	  /** TODO: переделать на несколько наборов так, что бы не пытатся исполнять заведомо невыполнимые запросы. */
+	  Iterator it = requestList.iterator();
+	  List toRemove = new ArrayList();
+	  while (it.hasNext()) {
+	    RequestListEntry rle = (RequestListEntry) it.next();
+	    if(rle.performAction(this)) {
+	      // сохранять в очередь на удаление только отработавшие запросы
+	      toRemove.add(rle);
+	    }
+	  }
+	  requestList.removeAll(toRemove);
 	}
-	result += "\n";
       }
-      return result;
     }
-  } // RequestQueue
-} // ResourceManager
+  } // DataThread
+} // StandartResourceManager
