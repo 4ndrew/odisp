@@ -12,7 +12,7 @@ import com.novel.odisp.common.Message;
 /** Реализация стандартного сообщения для стандартного диспетчера ODISP.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: StandartMessage.java,v 1.13 2004/03/31 13:15:22 dron Exp $
+ * @version $Id: StandartMessage.java,v 1.14 2004/04/02 10:15:48 valeks Exp $
  */
 public class StandartMessage implements Message, Serializable {
   /** Флаг маршрутизации. */
@@ -57,18 +57,33 @@ public class StandartMessage implements Message, Serializable {
     myId = id++;
   }
 
-  /** Копирующий конструктор создающий сообщение различающиеся лишь номером.
-   * @param msg сообещние с которого снимается копия
-   */
-  public StandartMessage(final Message msg) {
+  /** Копирование сообщения. */
+  private void copyFrom(final Message msg, final boolean noKeepId) {
     action = msg.getAction();
     destination = msg.getDestination();
     inReplyTo = msg.getReplyTo();
     origin = msg.getOrigin();
     fields = new HashMap(msg.getContents());
     routable = msg.isRoutable();
-    myId = id++;
+    if (noKeepId) {
+      myId = id++;
+    } else {
+      myId = msg.getId();
+    }
     setCE(msg.isCorrect());
+  }
+
+  /** Копирующий конструктор.
+   * @param msg сообещние с которого снимается копия
+   * @param noKeepId не восстанавливать идентификатор сообщения
+   */
+  public StandartMessage(final Message msg, final boolean noKeepId) {
+    copyFrom(msg, noKeepId);
+  }
+
+  /** Копирующий конструктор сохрянющий номер сообщения. */
+  public StandartMessage(final Message msg) {
+    copyFrom(msg, false);
   }
 
   /** Добавление произвольного объекта в тело сообщения.
