@@ -6,7 +6,7 @@ import java.util.regex.*;
 * посылаемых диспетчером ODISP и вызывающий обработчик сообщения по мере прихода.
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: CallbackODObject.java,v 1.1 2003/10/07 11:06:17 valeks Exp $
+* @version $Id: CallbackODObject.java,v 1.2 2003/10/12 20:02:49 valeks Exp $
 */
 public abstract class CallbackODObject extends ODObject {
 	private Map handlers; 
@@ -16,6 +16,10 @@ public abstract class CallbackODObject extends ODObject {
 	    handlers = new HashMap();
 
 	}
+	/** Добавление нового обработчика событий
+	@param message сообщение обрабатываемое обработчиком
+	@param handler класс-обработчик сообщения	
+	*/
 	protected void addHandler(String message, MessageHandler handler){
 	    if(handlers.containsKey(message))
 		return;
@@ -29,7 +33,7 @@ public abstract class CallbackODObject extends ODObject {
 	}
 	/** Интерфейс добавления сообщения в ящик */
 	public final void addMessage(Message msg){
-	    if(!Pattern.matches(msg.getDestination(), getObjectName()))
+	    if(!Pattern.matches(match, msg.getDestination()))
 		return;
 	    handleMessage(msg);
 	}
