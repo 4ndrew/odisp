@@ -25,7 +25,7 @@ import org.valabs.stdmsg.ODObjectLoadedMessage;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.40 2004/08/30 10:07:12 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.41 2004/10/28 22:17:05 valeks Exp $
  */
 
 class ObjectManager implements org.valabs.odisp.common.ObjectManager {
@@ -332,7 +332,6 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
 					}
 				}
 			}
-			ODObject obj = oe.getObject();
 			Message m = dispatcher.getNewMessage();
 			ODCleanupMessage.setup(m, objectName, 0);
 			ODCleanupMessage.setReason(m, new Integer(code));
