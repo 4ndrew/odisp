@@ -7,11 +7,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import com.novel.odisp.common.CallbackODObject;
+import com.novel.odisp.common.StandartODObject;
 import com.novel.odisp.common.Message;
 import com.novel.odisp.common.MessageHandler;
 import com.novel.odisp.common.ObjectManager;
 import com.novel.odisp.common.ResourceManager;
+import com.novel.stdmsg.ODObjectLoadedMessage;
 import com.novel.stdmsg.ODAcquireMessage;
 import com.novel.stdmsg.ODAddProviderMessage;
 import com.novel.stdmsg.ODGetProvidingMessage;
@@ -23,10 +24,10 @@ import com.novel.stdmsg.ODShutdownMessage;
 
 /** Обработчик сообщений диспетчера ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: DispatcherHandler.java,v 1.13 2004/04/02 09:54:49 valeks Exp $
+ * @version $Id: DispatcherHandler.java,v 1.14 2004/05/13 09:23:46 valeks Exp $
  */
 
-public class StandartDispatcherHandler extends CallbackODObject {
+public class StandartDispatcherHandler extends StandartODObject {
   /** Нитка heart-beat диспетчера. */
   private Thread runThread;
   /** Журнал. */
@@ -55,8 +56,12 @@ public class StandartDispatcherHandler extends CallbackODObject {
   }
   /** Зарегистрировать обработчики сообщений. */
   protected final void registerHandlers() {
-    oman = dispatcher.getObjectManager();
-    rman = dispatcher.getResourceManager();
+    addHandler(ODObjectLoadedMessage.NAME, new MessageHandler() {
+	public final void messageReceived(final Message msg) {
+	  oman = dispatcher.getObjectManager();
+	  rman = dispatcher.getResourceManager();
+	}
+      });
     addHandler("od_set_run_thread", new MessageHandler() {
 	public final void messageReceived(final Message msg) {
 	  if (msg.getOrigin().equals("G0D")) {
