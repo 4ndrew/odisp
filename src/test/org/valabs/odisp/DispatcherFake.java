@@ -18,7 +18,7 @@ import org.valabs.stdmsg.StandartMessage;
 
 /** Диспетчер-заглушка для тестирования ODISP объектов.
  * @author (С) 2004 <a href="mailto:valeks@novel-il.ru">Алексеев Валентин А.</a>
- * @version $Id: DispatcherFake.java,v 1.1 2004/12/02 22:53:31 valeks Exp $
+ * @version $Id: DispatcherFake.java,v 1.2 2004/12/02 22:58:24 valeks Exp $
  */
 public class DispatcherFake implements Dispatcher, ObjectManager, ResourceManager, SecurityManager, ConfigurationManager, ExceptionHandler {
 
@@ -66,35 +66,35 @@ public class DispatcherFake implements Dispatcher, ObjectManager, ResourceManage
    * @see org.valabs.odisp.common.Dispatcher#getObjectManager()
    */
   public ObjectManager getObjectManager() {
-    return null;
+    return this;
   }
 
   /* (non-Javadoc)
    * @see org.valabs.odisp.common.Dispatcher#getResourceManager()
    */
   public ResourceManager getResourceManager() {
-    return null;
+    return this;
   }
 
   /* (non-Javadoc)
    * @see org.valabs.odisp.common.Dispatcher#getSecurityManager()
    */
   public SecurityManager getSecurityManager() {
-    return null;
+    return this;
   }
 
   /* (non-Javadoc)
    * @see org.valabs.odisp.common.Dispatcher#getConfigurationManager()
    */
   public ConfigurationManager getConfigurationManager() {
-    return null;
+    return this;
   }
 
   /* (non-Javadoc)
    * @see org.valabs.odisp.common.Dispatcher#getExceptionHandler()
    */
   public ExceptionHandler getExceptionHandler() {
-    return null;
+    return this;
   }
 
   /* (non-Javadoc)
