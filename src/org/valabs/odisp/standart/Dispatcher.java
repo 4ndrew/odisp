@@ -22,7 +22,7 @@ import com.novel.odisp.common.Dispatcher;
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.34 2004/03/12 15:27:53 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.35 2004/03/12 21:29:30 dron Exp $
  */
 public class StandartDispatcher implements Dispatcher {
   /** Журнал. */
@@ -122,13 +122,7 @@ public class StandartDispatcher implements Dispatcher {
    */
   public StandartDispatcher(final List objs) {
     log.info(toString() + " starting up...");
-    StandartDispatcherHandler stdh
-      = new StandartDispatcherHandler(new Integer(0));
-    ObjectEntry oe
-      = new ObjectEntry(stdh.getClass().getName(), 0, stdh.getDepends(), stdh.getProviding());
-    stdh.setDispatcher(this);
-    oe.setObject(stdh);
-    oman.getObjects().put("stddispatcher", oe);
+    oman.loadObject(StandartDispatcherHandler.class.getName());
     oman.loadPending();
     Message runthr = getNewMessage("od_set_run_thread", "stddispatcher", "G0D", 0);
     Thread t = new Thread("alive thread") {
