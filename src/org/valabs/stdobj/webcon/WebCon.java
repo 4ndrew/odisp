@@ -25,7 +25,7 @@ import java.io.IOException;
 /** ODISP-интерфейс к ACME серверу.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2004, НПП "Новел-ИЛ"
- * @version $Id: WebCon.java,v 1.1 2004/03/27 21:27:41 valeks Exp $
+ * @version $Id: WebCon.java,v 1.2 2004/03/27 23:20:59 valeks Exp $
  */
 
 public class WebCon extends CallbackODObject implements MessageHandler {
@@ -43,6 +43,9 @@ public class WebCon extends CallbackODObject implements MessageHandler {
   /** Обработчик приходящих сообщений. */
   public final void messageReceived(final Message msg) {
     if (msg instanceof ODObjectLoadedMessage) {
+      if (acmeServe != null) {
+	return;
+      }
       acmeServe = new Serve();
       IndexServlet idx = new IndexServlet();
       acmeServe.addServlet("/", idx);

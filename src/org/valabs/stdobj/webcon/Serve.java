@@ -93,7 +93,7 @@ import java.security.SecureRandom;
  * @see com.novel.stdobj.webcon.servlet.http.HttpServlet
  * @author (C) 1996,1998 by Jef Poskanzer <jef@acme.com>
  * @author (C) 2004 Valentin A. Alekseev
- * @version $Id: Serve.java,v 1.4 2004/03/27 21:27:41 valeks Exp $
+ * @version $Id: Serve.java,v 1.5 2004/03/27 23:20:59 valeks Exp $
  */
 
 public class Serve implements ServletContext {
@@ -262,7 +262,8 @@ public class Serve implements ServletContext {
       try {
 	serverSocket = new ServerSocket(port, 5, InetAddress.getLocalHost());
       } catch (Exception e) {
-	log("Unable to create even non-SSL socket. Bailing out.");
+	log("Unable to create even non-SSL socket. Bailing out:" + e.toString());
+	e.printStackTrace();
 	return;
       }
     }
