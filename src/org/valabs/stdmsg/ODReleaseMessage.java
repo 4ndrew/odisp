@@ -14,12 +14,12 @@ import com.novel.odisp.common.Resource;
  * захват не более одного ресурса с установлением режима блокировки.</p>
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODReleaseMessage.java,v 1.5 2004/01/16 10:29:15 valeks Exp $
+ * @version $Id: ODReleaseMessage.java,v 1.6 2004/02/15 20:58:57 valeks Exp $
  */
 
 public class ODReleaseMessage extends StandartMessage {
   /** Символьное имя сообщения. */
-  public static final String NAME = "od_object_loaded";
+  public static final String NAME = "od_release";
 
   /** Имя ресурса. */
   private transient String resourceName = "";
