@@ -17,12 +17,10 @@ import java.lang.reflect.InvocationTargetException;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@valeks.novel.local">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.5 2004/02/15 21:55:56 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.5.2.1 2004/03/08 20:35:33 valeks Exp $
  */
 
 public class StandartObjectManager implements ObjectManager {
-  /** Карта запросов к ресурсам. */
-  private Map resourceRequests = new HashMap();
   /** Диспетчер объектов. */
   private Dispatcher dispatcher;
   /** Хранилище отложенных сообщений. */
@@ -35,9 +33,14 @@ public class StandartObjectManager implements ObjectManager {
   private List provided = new ArrayList();
   /** Общее число объектов. */
   private int objCount = 0;
-
+  /** Количество объектов ожидающих загрузки. */
+  private int countPending = 0;
   /** Попытка подгрузки объектов в следствии изменения списка сервисов менеджера. */
   public final void loadPending() {
+    if (countPending == 0) {
+      // проводить процедуру загрузки только в том случае если кто-то ожидает загрузки
+      return;
+    }
     // resources
     Iterator it = dispatcher.getResourceManager().getResources().keySet().iterator();
     while (it.hasNext()) {
@@ -45,34 +48,37 @@ public class StandartObjectManager implements ObjectManager {
       log.fine("added resource provider " + objectName);
       provided.add(objectName);
     }
-    it = objects.keySet().iterator();
-    while (it.hasNext()) {
-      String objectName = (String) it.next();
-      ObjectEntry oe = (ObjectEntry) objects.get(objectName);
-      if (oe.isLoaded()) {
-	continue;
-      }
-      log.config("trying to load object " + objectName);
-      int numRequested = oe.getDepends().length;
-      for (int i = 0; i < oe.getDepends().length; i++) {
-	if (provided.contains(oe.getDepends()[i])) {
-	  numRequested--;
-	} else {
-	  log.finer("dependency not met: " + oe.getDepends()[i]);
+    synchronized (objects) {
+      it = objects.keySet().iterator();
+      while (it.hasNext()) {
+	String objectName = (String) it.next();
+	ObjectEntry oe = (ObjectEntry) objects.get(objectName);
+	if (oe.isLoaded()) {
+	  continue;
 	}
-      }
-      if (numRequested == 0) {
-	oe.getObject().start();
-	oe.setLoaded(true);
-	for (int i = 0; i < oe.getProvides().length; i++) {
-	  if (!provided.contains(oe.getProvides()[i])) {
-	    log.fine("added provider of " + oe.getProvides()[i]);
-	    provided.add(oe.getProvides()[i]);
+	log.config("trying to load object " + objectName);
+	int numRequested = oe.getDepends().length;
+	for (int i = 0; i < oe.getDepends().length; i++) {
+	  if (provided.contains(oe.getDepends()[i])) {
+	    numRequested--;
+	  } else {
+	    log.finer("dependency not met: " + oe.getDepends()[i]);
 	  }
 	}
-	log.config(" ok. loaded = " + objectName);
-	Message m = new ODObjectLoadedMessage(objectName);
-	oe.getObject().addMessage(m);
+	if (numRequested == 0) {
+	  oe.getObject().start();
+	  oe.setLoaded(true);
+	  for (int i = 0; i < oe.getProvides().length; i++) {
+	    if (!provided.contains(oe.getProvides()[i])) {
+	      log.fine("added provider of " + oe.getProvides()[i]);
+	      provided.add(oe.getProvides()[i]);
+	    }
+	  }
+	  log.config(" ok. loaded = " + objectName);
+	  Message m = new ODObjectLoadedMessage(objectName);
+	  oe.getObject().addMessage(m);
+	  countPending--;
+	}
       }
     }
   }
@@ -110,6 +116,7 @@ public class StandartObjectManager implements ObjectManager {
     } catch (IllegalArgumentException e) {
       log.warning(" failed: " + e);
     }
+    countPending++;
   }
 
   /** Принудительная выгрузка объекта и вызов сборщика.
