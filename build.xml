@@ -1,5 +1,6 @@
-<!-- $Id: build.xml,v 1.4 2003/10/22 20:47:01 valeks Exp $ -->
+<!-- $Id: build.xml,v 1.5 2003/10/22 22:54:38 valeks Exp $ -->
 <project name="nms" default="all" basedir=".">
+    <property file="../build.properties"/>
     <property name="odisp-src" location="./"/>
     <path id="odisp-src">
 	<pathelement location="${odisp-src}"/>
@@ -17,6 +18,10 @@
     <target name="odisp">
 	<javac srcdir="${odisp-src}" destdir="${build-dir}" debug="yes"/>
     </target>
+    <target name="odisp-jar" depends="odisp">
+	<jar destfile="${release-dir}/odisp.jar" basedir="${build-dir}/" includes="com/novel/odisp/** com/novel/stdobj/**"/>
+    </target>
+    <target name="jar" depends="odisp-jar"/>
     <target name="doc" depends="odisp-doc"/>
     <target name="all" depends="odisp"/>
 </project>
