@@ -4,7 +4,7 @@ package com.novel.odisp.common;
  * класс, который выступает в качестве ODISP диспетчера.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.4 2003/11/15 19:04:24 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.5 2003/11/23 00:06:36 valeks Exp $
  */
 public interface Dispatcher {
   /** Посылка одиночного сообщения 
@@ -23,4 +23,5 @@ public interface Dispatcher {
    * @return сообщение
    */
   Message getNewMessage(String action, String destination, String origin, int inReplyTo);
+  Message getNewMessage();
 }

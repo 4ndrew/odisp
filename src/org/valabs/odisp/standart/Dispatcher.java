@@ -27,7 +27,7 @@ import com.novel.odisp.common.MessageHandler; // --''--
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.16 2003/11/15 18:39:59 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.17 2003/11/23 00:06:36 valeks Exp $
  */
 public class StandartDispatcher implements Dispatcher {
   /** Интерфейс к службе сообщений*/
@@ -297,6 +297,9 @@ public class StandartDispatcher implements Dispatcher {
    */
   public Message getNewMessage(String action, String destination, String origin, int inReplyTo) {
     return new StandartMessage(action, destination, origin, inReplyTo);
+  }
+  public Message getNewMessage() {
+    return new StandartMessage();
   }
   /** Установка статуса блокировки объекта по ресурсу 
    * @param objName имя объекта
