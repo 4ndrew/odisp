@@ -1,4 +1,4 @@
-<!-- $Id: build.xml,v 1.14 2004/08/26 06:55:56 valeks Exp $ mode: -*- --><!-- xsl -*- -->
+<!-- $Id: build.xml,v 1.15 2004/09/02 18:42:13 valeks Exp $ mode: -*- --><!-- xsl -*- -->
 <project name="odisp" default="all" basedir=".">
     <taskdef resource="checkstyletask.properties"
            classpath="/usr/local/share/java/classes/checkstyle.jar"/>
@@ -7,9 +7,12 @@
     <target name="build-dir-setup">
 	<mkdir dir="build"/>
     </target>
-    <target name="doc-dir-setup">
+    <target name="pre-doc-create-doc-dir">
 	<mkdir dir="docs"/>
     </target>
+    
+    <target name="pre-doc" depends="pre-doc-create-doc-dir"/>
+    
     <target name="release-dir-setup">
 	<mkdir dir="release"/>
     </target>
@@ -22,11 +25,11 @@
         </exec>
     </target>
 
-    <target name="log" depends="doc-dir-setup">
-	<cvschangelog destfile="docs/ChangeLog-odisp.xml"/>
-	<style in="docs/ChangeLog-odisp.xml" 
-               out="docs/ChangeLog-odisp.html"
-               style="docs/changelog.xsl">
+    <target name="doc-log" depends="pre-doc">
+	<cvschangelog destfile="docs/ChangeLog.xml"/>
+	<style in="docs/ChangeLog.xml" 
+               out="docs/ChangeLog.html"
+               style="tools/changelog.xsl">
           <param name="title" expression="ODISP ChangeLog"/>
           <param name="module" expression="odisp"/>
           <param name="cvsweb" expression="http://cvs.novel.local/cgi-bin/viewcvs.cgi/"/>
@@ -34,7 +37,7 @@
 	<delete file="docs/ChangeLog.xml"/>
     </target>
 
-    <target name="style">
+    <target name="doc-style" depends="pre-doc">
       <checkstyle config="docs/sun_checks.xml" failOnViolation="no">
         <fileset dir="messages" includes="**/*.java"/>
         <fileset dir="odisp" includes="**/*.java"/>
@@ -48,7 +51,7 @@
     </target>
 
     <!-- Javadoc and general documentation targets -->
-    <target name="javadoc" depends="doc-dir-setup, messages-rebuild-from-tpls">
+    <target name="doc-javadoc" depends="pre-doc, messages-rebuild-from-tpls">
 	<javadoc
             destdir="docs/javadoc"
             encoding="koi8-r"
@@ -65,13 +68,13 @@
 	</javadoc>
     </target>
     
-    <target name="doxygen" depends="doc-dir-setup">
+    <target name="doc-doxygen" depends="pre-doc">
         <exec executable="doxygen">
           <arg line="Doxyfile"/>
         </exec>
     </target>
     
-    <target name="doc" depends="javadoc, doxygen"/>
+    <target name="doc" depends="doc-javadoc, doc-doxygen"/>
     
     <target name="doc-general">
 	<exec executable="make" dir="docs">
