@@ -6,7 +6,7 @@ import java.util.regex.*;
 * посылаемых диспетчером ODISP.
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: ODObject.java,v 1.6 2003/10/12 20:03:33 valeks Exp $
+* @version $Id: ODObject.java,v 1.7 2003/10/14 09:38:34 valeks Exp $
 */
 public abstract class ODObject extends Thread {
 	/** Диспетчер работающий с этим объектом */
@@ -86,4 +86,15 @@ public abstract class ODObject extends Thread {
 	    if(false)
 		System.out.println("[D] "+getObjectName()+"."+place+": "+msg);
 	}
+	/** Выдача списка зависимостей
+	    @return массив зависимостей
+	*/
+	public String[] getDepends(){
+	    String res[] = new String[0];
+	    return res;
+	}
+	/** Список сервисов предоставляемых объектом
+	@return список сервисов
+	*/
+	public abstract String[] getProviding();
 }

@@ -5,7 +5,7 @@ import java.io.*;
 /** Объект ODISP реализующий консольный интерфейс доступа к менеджеру
 * @author Валентин А. Алексеев
 * @author (C) 2003, НПП "Новел-ИЛ"
-* @version $Id: ConsoleObject.java,v 1.4 2003/10/07 13:35:38 valeks Exp $
+* @version $Id: ConsoleObject.java,v 1.5 2003/10/14 09:39:49 valeks Exp $
 */
 public class ConsoleObject extends PollingODObject {
 	private Thread reader;
@@ -66,5 +66,16 @@ public class ConsoleObject extends PollingODObject {
 	    }    
 	});
 	reader.start();
+    }
+    public String[] getProviding(){
+	String res[] = {"console"};
+	return res;
+    }
+    public String[] getDepends(){
+	String res[] = {
+	    "stddispatcher",
+	    "log"
+	};
+	return res;
     }
 }
