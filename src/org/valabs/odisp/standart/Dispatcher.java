@@ -25,7 +25,7 @@ import org.valabs.stdmsg.StandartMessage;
  * и управление ресурсными объектами.
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: Dispatcher.java,v 1.50 2004/08/23 07:42:37 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.51 2004/08/23 13:20:00 valeks Exp $
  */
 public class Dispatcher implements org.valabs.odisp.common.Dispatcher, ExceptionHandler {
   /** Журнал. */
@@ -178,7 +178,17 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
         }
         Map params = getParamsForTag(curt);
         rman.loadResource(className, mult, params);
+        try {
+        	Thread.sleep(100);
+        } catch (InterruptedException e) {
+        	
+        }
       }
+    }
+    try {
+    	Thread.sleep(10);
+    } catch (InterruptedException e) {
+    	
     }
     oman.loadPending();
     t.start();
@@ -190,7 +200,7 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
   }
   /** Выводит сообщение об ошибке в случае некорректных параметров. */
   public static void usage() {
-    log.severe("Usage: java org.valabs.odisp.StandartDispatcher <config>");
+    log.severe("Usage: java org.valabs.odisp.standart.Dispatcher <config>");
     System.exit(0);
   }
   /** Точка входа в StandartDispatcher.

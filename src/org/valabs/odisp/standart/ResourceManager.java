@@ -17,7 +17,7 @@ import org.valabs.stdmsg.ODResourceAcquiredMessage;
 
 /** Менеджер ресурсных объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceManager.java,v 1.26 2004/08/23 07:42:37 valeks Exp $
+ * @version $Id: ResourceManager.java,v 1.27 2004/08/23 13:20:00 valeks Exp $
  */
 class ResourceManager implements org.valabs.odisp.common.ResourceManager {
   /** Ссылка на диспетчер объектов. */
@@ -242,8 +242,9 @@ class ResourceManager implements org.valabs.odisp.common.ResourceManager {
       dt.getResources().put(className, re);
       logMessage += " ok";
       log.config(logMessage);
-      // TODO: убрать строчку для новой схемы загрузки
-      dt.getDispatcher().getObjectManager().loadPending();
+      synchronized (dt.dispatcher) {
+      	dt.dispatcher.notify();
+      }
       return true;
     }
     /** Описание класса для статистики. */
