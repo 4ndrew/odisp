@@ -50,6 +50,7 @@ public class WildcardDictionary extends HashMap {
     while (it.hasNext()) {
       String tkey = (String) it.next();
       if (Pattern.matches((String) key, tkey)) {
+        key = tkey;
         return super.get(tkey);
       }
     }
