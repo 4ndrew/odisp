@@ -12,7 +12,7 @@ import com.novel.odisp.common.*;
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.9 2003/10/14 09:09:58 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.10 2003/10/15 13:06:24 dron Exp $
  */
 public class StandartDispatcher implements Dispatcher {
 	
@@ -84,103 +84,116 @@ public class StandartDispatcher implements Dispatcher {
 	}
 	/** Выгрузка ресурсного объекта
 	@param roName имя ресурсного объекта
-	@code код выхода
+	@param code код выхода
+   @return void
 	*/
-	private void unloadResource(String roName, int code){
-	    if(resources.containsKey(roName)){
-		ResourceEntry res = (ResourceEntry)resources.get(roName);
-		List dependingObjs = new ArrayList();
-		Iterator it = objects.keySet().iterator();
-		while(it.hasNext()){
-		    String cl_n = (String)it.next();
-		    String[] depends = ((ObjectEntry)objects.get(cl_n)).depends;
-		    for(int i = 0;i<depends.length;i++)
-			if(depends[i].equals(roName.substring(0, roName.length() - roName.indexOf(":"))) 
-			    && !dependingObjs.contains(roName))
-			    dependingObjs.add(cl_n);
-		}
-		if(code == 0){
-		    it = dependingObjs.iterator();
-		    while(it.hasNext())
-			unloadObject((String)it.next(), code);
-		}
-		res.resource.cleanUp(code);
-		resources.remove(roName);
-	    }
-	}
-	/** Динамическая загрузка объекта
+   private void unloadResource(String roName, int code){
+      if(resources.containsKey(roName)) {
+         ResourceEntry res = (ResourceEntry)resources.get(roName);
+         List dependingObjs = new ArrayList();
+         Iterator it = objects.keySet().iterator();
+         while(it.hasNext()) {
+            String cl_n = (String)it.next();
+            String[] depends = ((ObjectEntry)objects.get(cl_n)).depends;
+            for(int i = 0;i<depends.length;i++)
+               if(depends[i].equals(roName.substring(0, roName.length() - roName.indexOf(":"))) 
+      		      && !dependingObjs.contains(roName))
+                  dependingObjs.add(cl_n);
+         }
+         if(code == 0) {
+            it = dependingObjs.iterator();
+            while(it.hasNext()) {
+               unloadObject((String)it.next(), code);
+            }
+         }
+         res.resource.cleanUp(code);
+         resources.remove(roName);
+      }
+   }
+	/** Динамическая загрузка объекта (с учётом зависимостей)
 	 * @param className имя загружаемого класса
 	 * @return void
 	 */
-	private void loadObject(String className){
-	    System.err.print("\tloading object "+className);
-		try {
-		    Object params[] = new Object[1];
-		    params[0] = new Integer(obj_count++);
-		    Class declParams[] = new Class[1];
-		    declParams[0] = params[0].getClass();
-		    ODObject load = (ODObject)Class.forName(className).getConstructor(declParams).newInstance(params);
-		    Message m = getNewMessage("od_object_loaded",load.getObjectName(),"stddispatcher",0);
-		    load.setDispatcher(this);
-		    load.addMessage(m);
-		    synchronized(objects){
-			ObjectEntry oe = new ObjectEntry(className, false, load.getDepends(), load.getProviding());
-			oe.object = load;
-			objects.put(load.getObjectName(), oe);
-		    }
-		} catch(InvocationTargetException e){
-		    System.err.println(" failed: "+e);
-		} catch(NoSuchMethodException e){
-		    System.err.println(" failed: "+e);
-		} catch(ClassNotFoundException e){
-		    System.err.println(" failed: "+e);
-		} catch(InstantiationException e){
-	    	    System.err.println(" failed: "+e);
-		} catch(IllegalAccessException e){
-	    	    System.err.println(" failed: "+e);
-		} catch(IllegalArgumentException e){
-	    	    System.err.println(" failed: "+e);
-		}
-	}
-	/** Принудительная выгрузка объекта и
-	 * вызов сборщика мусора
-	 * @param objectName внутреннее имя объекта для удаления
+   private void loadObject(String className){
+      System.err.print("\tloading object "+className);
+      try {
+         Object params[] = new Object[1];
+         params[0] = new Integer(obj_count++);
+         Class declParams[] = new Class[1];
+         declParams[0] = params[0].getClass();
+         ODObject load = (ODObject)Class.forName(className).getConstructor(declParams).newInstance(params);
+         Message m = getNewMessage("od_object_loaded",load.getObjectName(),"stddispatcher",0);
+         load.setDispatcher(this);
+         load.start();
+         load.addMessage(m);
+         synchronized(objects){
+            ObjectEntry oe = new ObjectEntry(className, false, load.getDepends(), load.getProviding());
+            oe.object = load;
+            oe.loaded = true;
+            objects.put(load.getObjectName(), oe);
+         }
+      } catch(InvocationTargetException e){
+         System.err.println(" failed: "+e);
+      } catch(NoSuchMethodException e){
+         System.err.println(" failed: "+e);
+      } catch(ClassNotFoundException e){
+         System.err.println(" failed: "+e);
+      } catch(InstantiationException e){
+         System.err.println(" failed: "+e);
+      } catch(IllegalAccessException e){
+         System.err.println(" failed: "+e);
+      } catch(IllegalArgumentException e){
+         System.err.println(" failed: "+e);
+      }
+   }
+	/** Принудительная выгрузка объекта и вызов сборщика
+    * мусора, так же учитываются зависимости:
+    * <ul>
+    * <li> Составление списка зависимых объектов
+    * <li> Удаление зависимых объектов
+    * <li> Удаление самого объекта
+    * </ul>
+	 * @param objectName внутреннее имя объекта для удаления.
+    * @param code код выхода (при code != 0 зависимые объекты
+    * не удаляются).
 	 * @return void
 	 */
-	private void unloadObject(String objectName, int code){
-	    if(objects.containsKey(objectName)){
-		ObjectEntry oe = (ObjectEntry)objects.get(objectName);
-		String[] provides = oe.provides;
-		Iterator it = objects.keySet().iterator();
-		List dependingObjs = new ArrayList();
-		while(it.hasNext()){
-		    String cl_n = (String)it.next();
-		    String depends[] = ((ObjectEntry)objects.get(cl_n)).depends;
-		    for(int i=0;i<provides.length;i++){
-			for(int j=0;j<depends.length;j++)
-			    if(provides[i].equals(depends[j]) && !dependingObjs.contains(cl_n))
-				dependingObjs.add(cl_n);
-		    }
-		}
-		ODObject obj = oe.object;
-		Message m = getNewMessage("od_cleanup", objectName, "stddispatcher", 0);
-		m.addField(new Integer(code));
-		sendMessage(m);
-		obj.interrupt();
-		objects.remove(objectName);
-		if(code == 0){
-		    it = dependingObjs.iterator();
-		    while(it.hasNext()){
-			String cl_n = (String)it.next();
-			if(objects.containsKey(cl_n)){
-			    System.out.println("[D] removing "+objectName+"'s dependency "+cl_n);
-			    unloadObject(cl_n, code);
-			}
-		    }
-		}
-		System.out.println("\tobject "+objectName+" unloaded");
-	    }
-	}
+   private void unloadObject(String objectName, int code){
+      if(objects.containsKey(objectName)) {
+         ObjectEntry oe = (ObjectEntry)objects.get(objectName);
+         String[] provides = oe.provides;
+         Iterator it = objects.keySet().iterator();
+         List dependingObjs = new ArrayList();
+
+         while(it.hasNext()) {
+            String cl_n = (String)it.next();
+            String depends[] = ((ObjectEntry)objects.get(cl_n)).depends;
+            for(int i=0;i<provides.length;i++) {
+               for(int j=0;j<depends.length;j++)
+                  if(provides[i].equals(depends[j]) &&
+                     !dependingObjs.contains(cl_n))
+                     dependingObjs.add(cl_n);
+            }
+         }
+         if(code == 0) {
+            it = dependingObjs.iterator();
+            while(it.hasNext()) {
+               String cl_n = (String)it.next();
+      			if(objects.containsKey(cl_n)) {
+                  System.out.println("[D] removing "+objectName+"'s dependency "+cl_n);
+                  unloadObject(cl_n, code);
+               }
+            }
+         }
+         ODObject obj = oe.object;
+         Message m = getNewMessage("od_cleanup", objectName, "stddispatcher", 0);
+         m.addField(new Integer(code));
+         sendMessage(m);
+         obj.interrupt();
+         objects.remove(objectName);
+         System.out.println("\tobject "+objectName+" unloaded");
+      }
+   }
 	/** Интерфейс для объектов ядра для отсылки сообщений.
 	 * Реализует multicast рассылку сообщений
 	 * @param message сообщение для отсылки
