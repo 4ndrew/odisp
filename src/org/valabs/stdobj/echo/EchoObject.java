@@ -9,20 +9,21 @@ import org.valabs.odisp.common.StandartODObject;
 
 /** Простейший ODISP объект реализующий автоответчик на приходящие сообщения.
 * @author (C) 2003 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
-* @version $Id: EchoObject.java,v 1.19 2005/01/26 08:22:54 valeks Exp $
+* @version $Id: EchoObject.java,v 1.20 2005/01/26 13:22:29 valeks Exp $
 */
 public class EchoObject extends StandartODObject {
   private int replyCount = 0;
   /** Регистрация обработчиков. */
   protected final void registerHandlers() {
     addHandler("echo", new MessageHandler() {
-	public final void messageReceived(final Message msg) {
-	  Message m
-	    = dispatcher.getNewMessage("echo_reply", msg.getOrigin(), getObjectName(), msg.getId());
-	  m.addField("replyCount", new Integer(replyCount));
-	  dispatcher.send(m);
-	}
-      });
+      public final void messageReceived(final Message msg) {
+        logger.fine("Echo message received");
+        Message m = dispatcher.getNewMessage("echo_reply", msg.getOrigin(), getObjectName(), msg.getId());
+        m.addField("replyCount", new Integer(replyCount++));
+        m.setCorrect(true);
+        dispatcher.send(m);
+      }
+    });
   }
   /** Выход из объекта.
    * @param type код выхода
@@ -52,8 +53,7 @@ public class EchoObject extends StandartODObject {
    */
   public final String[] getDepends() {
     String[] res = {
-      "dispatcher",
-      "log"
+      "dispatcher"
     };
     return res;
   }
@@ -67,6 +67,7 @@ public class EchoObject extends StandartODObject {
   public void importState(Map state) {
     if (state != null) {
       replyCount = ((Integer) state.get("replyCount")).intValue();
+      logger.fine("Old replyCount [" + replyCount + "] restored.");
     }
   }
 }
