@@ -30,7 +30,7 @@ import org.valabs.stdmsg.ODShutdownMessage;
  * Обработчик сообщений диспетчера ODISP.
  * 
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: DispatcherHandler.java,v 1.28 2004/08/23 07:42:37 valeks Exp $
+ * @version $Id: DispatcherHandler.java,v 1.29 2004/10/28 22:13:36 valeks Exp $
  */
 
 public class DispatcherHandler extends StandartODObject {
@@ -48,7 +48,7 @@ public class DispatcherHandler extends StandartODObject {
     private ResourceManager rman;
 
     /** Имя объекта. */
-    private String name = "stddispatcher";
+    private static String NAME = "stddispatcher";
 
     /** Версия модуля. */
     private String VERSION = "0.1.0";
@@ -62,7 +62,7 @@ public class DispatcherHandler extends StandartODObject {
      * @return список сервисов
      */
     public final String[] getProviding() {
-        String[] res = { "dispatcher" };
+        String[] res = { "dispatcher", NAME };
         return res;
     }
 
@@ -198,9 +198,8 @@ public class DispatcherHandler extends StandartODObject {
                 }
                 List resStat = rman.statRequest();
                 it = resStat.iterator();
-                int count = 0;
                 while (it.hasNext()) {
-                    running.add(it.next());
+                    running.add(it.next().toString());
                 }
                 ModuleStatusReplyMessage.setRunningState(m, runningState);
                 ModuleStatusReplyMessage.setRunningTasks(m, running);
@@ -231,14 +230,14 @@ public class DispatcherHandler extends StandartODObject {
      * @return код возврата
      */
     public final int cleanUp(final int type) {
-        return 0;
+        return type;
     }
 
     /** Конструктор объекта.
      * @param id порядковый номер объекта
      */
     public DispatcherHandler(final Integer id) {
-        super("stddispatcher");
+        super(NAME + id);
     }
 
     /** Специальная обработка конфигурации.
