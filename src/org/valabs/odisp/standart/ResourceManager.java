@@ -13,10 +13,11 @@ import com.novel.odisp.common.Message;
 import com.novel.odisp.common.Resource;
 import com.novel.odisp.common.ResourceManager;
 import com.novel.stdmsg.ODResourceAcquiredMessage;
+import com.novel.stdmsg.ODAcquireMessage;
 
 /** Менеджер ресурсных объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceManager.java,v 1.20 2004/05/28 00:17:21 valeks Exp $
+ * @version $Id: ResourceManager.java,v 1.21 2004/06/09 14:19:38 valeks Exp $
  */
 public class StandartResourceManager implements ResourceManager {
   /** Ссылка на диспетчер объектов. */
@@ -53,7 +54,7 @@ public class StandartResourceManager implements ResourceManager {
    * @param msg сообщение о захвате
    */
   public final void acquireRequest(final Message msg) {
-    String className = (String) msg.getField("0");
+    String className = ODAcquireMessage.getResourceName(msg);
     log.fine("resource acquientance request from " + msg.getOrigin() + " to " + className);
     dataThread.addRequest(new AcquireResourceRequest(msg.getOrigin(), msg.getId(), className));
   }

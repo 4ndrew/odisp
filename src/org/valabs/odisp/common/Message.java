@@ -5,7 +5,7 @@ import java.util.Map;
 /** Интерфейс сообщения ядра ODISP системы.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Message.java,v 1.11 2004/05/22 15:43:49 valeks Exp $
+ * @version $Id: Message.java,v 1.12 2004/06/09 14:19:38 valeks Exp $
  */
 public interface Message {
 
@@ -74,6 +74,11 @@ public interface Message {
    * @return флаг корректности
    */
   boolean isCorrect();
+
+  /** Установка флага корректности сообщения.
+   * @param newCorrectFlag новое значение
+   */
+  void setCorrect(boolean newCorrectFlag);
 
   /** Вернуть описание сообщения включая список последних 5 вызовов.
    * @param willStackTrace

@@ -8,13 +8,14 @@ import com.novel.stdmsg.ODCleanupMessage;
 import com.novel.stdmsg.ODObjectLoadedMessage;
 import com.novel.stdmsg.ODReleaseMessage;
 import com.novel.stdmsg.ODResourceAcquiredMessage;
+import com.novel.stdobj.simpleconfig.SimpleConfig;
 
 /** Объект, который пытается воспроизвести быстрые асинхронные запросы на
  * захват и высвобождение ресурса.
  * 
  * @author (C) 2004 <a href="valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author <a href="dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: Racer.java,v 1.9 2004/06/09 00:28:48 valeks Exp $
+ * @version $Id: Racer.java,v 1.10 2004/06/09 14:19:38 valeks Exp $
  */
 public class Racer extends StandartODObject {
   /** Счётчик запросов */
@@ -28,8 +29,11 @@ public class Racer extends StandartODObject {
 
   public final void handleMessage(final Message msg) {
     if (ODObjectLoadedMessage.equals(msg)) {
-      ODAcquireMessage m = new ODAcquireMessage(getObjectName(), msg.getId());
-      m.setResourceName("com.novel.stdobj.simpleconfig.SimpleConfig");
+      Message m = dispatcher.getNewMessage();
+      m.setOrigin(getObjectName());
+      m.setReplyTo(msg.getId());
+      ODAcquireMessage.setup(m);
+      ODAcquireMessage.setResourceName(m, SimpleConfig.class.getName());
 
       synchronized (requested) {
         requested = new Boolean(true);
@@ -64,8 +68,12 @@ public class Racer extends StandartODObject {
       try {
       	wait((int)Math.random() * 100);
       } catch (Exception e) {}
-      ODAcquireMessage m1 = new ODAcquireMessage(getObjectName(), msg.getId());
-      m1.setResourceName("com.novel.stdobj.simpleconfig.SimpleConfig");
+
+      Message m1 = dispatcher.getNewMessage();
+      m1.setOrigin(getObjectName());
+      m1.setReplyTo(msg.getId());
+      ODAcquireMessage.setup(m1);
+      ODAcquireMessage.setResourceName(m1, SimpleConfig.class.getName());
       synchronized (requested) {
         requested = new Boolean(true);
         dispatcher.send(m1);

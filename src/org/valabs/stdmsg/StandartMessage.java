@@ -12,7 +12,7 @@ import com.novel.odisp.common.Message;
 /** Реализация стандартного сообщения для стандартного диспетчера ODISP.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: StandartMessage.java,v 1.16 2004/05/22 15:43:49 valeks Exp $
+ * @version $Id: StandartMessage.java,v 1.17 2004/06/09 14:19:38 valeks Exp $
  */
 public class StandartMessage implements Message, Serializable {
   /** Флаг маршрутизации. */
@@ -221,8 +221,7 @@ public class StandartMessage implements Message, Serializable {
    * @return флаг корректности
    */
   public boolean isCorrect() {
-    ce = true;
-    return true;
+    return ce;
   }
 
   /** Доступ ко всему списку полей.
@@ -239,13 +238,21 @@ public class StandartMessage implements Message, Serializable {
 
   /** Установить флаг корректности.
    * @param newCE новое значение
+   * @deprecated move to new-styled Typed Messages, use setCorrect
    */
   public final void setCE(final boolean newCE) {
+    setCorrect(newCE);
+  }
+
+  /** Установка флага корректности.
+   */
+  public final void setCorrect(final boolean newCE) {
     ce = newCE;
   }
 
   /** Проверить флаг корректности.
    * @return значение флага
+   * @deprecated move to new-styled Typed Messages, use isCorrect
    */
   public final boolean isCE() {
     return ce;
