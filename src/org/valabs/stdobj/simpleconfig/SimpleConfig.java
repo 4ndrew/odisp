@@ -1,23 +1,26 @@
 package com.novel.stdobj.simpleconfig;
+
 import com.novel.odisp.common.*;
 import java.io.*;
 import java.util.*;
 import java.util.regex.*;
+import java.util.logging.*;
 
 /** Ресурс ODISP реализующий доступ к конфигурационным файлам формата [имя]=[значение]
 * @author Валентин А. Алексеев
 * @author (C) 2003, НПП "Новел-ИЛ"
-* @version $Id: SimpleConfig.java,v 1.5 2003/10/12 20:06:15 valeks Exp $
+* @version $Id: SimpleConfig.java,v 1.6 2003/10/22 21:22:03 valeks Exp $
 */
 public class SimpleConfig implements Resource {
     String cfgName;
     Map contents = new HashMap();
+    private static Logger logger = Logger.getLogger("simpleconfig");
     /** Чтение конфигурационного файла в память
 	@param cfgName имя файла конфигурации
 	@return void
     */
     public void readConfig(String cfgName){
-	System.out.println("[D] SimpleConfig.readConfig("+cfgName+")");    
+	logger.finest("SimpleConfig.readConfig("+cfgName+")");    
         try {
 	    BufferedReader in = new BufferedReader(new FileReader(cfgName));
 	    String s;
@@ -30,7 +33,7 @@ public class SimpleConfig implements Resource {
 		if(m.groupCount() == 2){
 		    contents.put(m.group(1), m.group(2));
 		} else {
-		    System.err.println("[w] syntax error in line '"+s+"'. line ignored.");
+		    logger.finer("[w] syntax error in line '"+s+"'. line ignored.");
 		}
 	    }
 	    in.close();
@@ -41,7 +44,7 @@ public class SimpleConfig implements Resource {
 	@return значение параметра или '-undef-' в случае если параметр не определен
     */
     public String getValue(String name){
-	System.out.println("[D] SimpleConfig.getValue("+name+")");
+	logger.finer("SimpleConfig.getValue("+name+")");
 	if(!contents.containsKey(name))
 	    return "-undef-";
 	return (String)contents.get(name);

@@ -12,7 +12,7 @@ import javax.swing.text.html.*;
 /** Объект ODISP реализующий графический интерфейс доступа к менеджеру
  * @author Андрей А. Порохин
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: GUIConsole.java,v 1.5 2003/10/21 12:36:58 valeks Exp $
+ * @version $Id: GUIConsole.java,v 1.6 2003/10/22 21:22:03 valeks Exp $
  */
 public class GUIConsole extends PollingODObject {
    JFrame mFrame;
@@ -115,7 +115,7 @@ public class GUIConsole extends PollingODObject {
             wait(1000);
          }
       } catch(InterruptedException e) {
-         log("cleanUp", "Exception while wait: "+e);
+         logger.warning("Exception while wait: "+e);
       }
       synchronized(mFrame) {
          mFrame.dispose();

@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 /** Простейший ODISP объект реализующий автоответчик на приходящие сообщения
 * @author Валентин А. Алексеев
 * @author (C) 2003, НПП "Новел-ИЛ"
-* @version $Id: EchoObject.java,v 1.5 2003/10/14 09:40:02 valeks Exp $
+* @version $Id: EchoObject.java,v 1.6 2003/10/22 21:22:03 valeks Exp $
 */
 public class EchoObject extends CallbackODObject {
 	protected void registerHandlers(){
@@ -18,7 +18,6 @@ public class EchoObject extends CallbackODObject {
 		    Message m = dispatcher.getNewMessage("echo_reply",msg.getOrigin(),getObjectName(),msg.getId());
 		    for(int i = 0;i<msg.getFieldsCount();i++)
 			m.addField(msg.getField(i));
-		    log("handleMessage[echo_reply]",""+m);
 		    dispatcher.sendMessage(m);
 		}
 	    });

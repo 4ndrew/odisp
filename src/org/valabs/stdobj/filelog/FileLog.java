@@ -9,13 +9,13 @@ import java.util.regex.Pattern;
 /** Объект реализующий простейшую журнализацию событий согласно файлу шаблонов
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: FileLog.java,v 1.6 2003/10/14 09:41:08 valeks Exp $
+* @version $Id: FileLog.java,v 1.7 2003/10/22 21:22:03 valeks Exp $
 */
 public class FileLog extends PollingODObject {
     PrintWriter out;
     List patterns;
     public void handleMessage(Message msg){
-        log("handleMessage",""+msg);	
+        logger.finest("processing "+msg);	
         if(msg.getAction().equals("od_cleanup") && msg.getDestination().equals(getObjectName())){
 	    cleanUp(((Integer)msg.getField(0)).intValue());
 	    return;
@@ -44,11 +44,11 @@ public class FileLog extends PollingODObject {
 			patterns = new ArrayList();
 			while((s = pfile.readLine()) != null){
 			    patterns.add(s);
-			    log("patterns","adding pattern "+s);
+			    logger.finer("adding pattern "+s);
 			}
 			pfile.close();
-		    } catch (FileNotFoundException e) {System.err.println("[w] unable to open logfile.");
-		    } catch (IOException e) {System.err.println("[w] unable to read either log file or pattern file");}
+		    } catch (FileNotFoundException e) {logger.warning("unable to open logfile.");
+		    } catch (IOException e) {logger.warning("unable to read either log file or pattern file");}
 		    Message[] m = {
 			dispatcher.getNewMessage("od_release", "stddispatcher", getObjectName(), msg.getId()),
 			dispatcher.getNewMessage("od_remove_dep", "stddispatcher", getObjectName(), 0)
@@ -61,21 +61,17 @@ public class FileLog extends PollingODObject {
 	    }
 	    return;
 	}
-	log("doLog","1");
         if(patterns == null || out == null)
 	    return;
-	log("doLog","2");	    
 	boolean doMatch = false;
 	Iterator it = patterns.iterator();
 	while(it.hasNext())
 	    if(Pattern.matches((String)it.next(), msg.getAction()))
 		doMatch = true;
-	log("doLog","3");
 	if(doMatch){
 	    out.write(new Date().toString() + " -- "+msg+"\n");
 	    out.flush();
 	}
-	log("doLog","4");
     }
     public int cleanUp(int type){
 	if(out != null)

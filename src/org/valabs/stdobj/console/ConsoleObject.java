@@ -5,12 +5,12 @@ import java.io.*;
 /** Объект ODISP реализующий консольный интерфейс доступа к менеджеру
 * @author Валентин А. Алексеев
 * @author (C) 2003, НПП "Новел-ИЛ"
-* @version $Id: ConsoleObject.java,v 1.6 2003/10/21 12:29:33 valeks Exp $
+* @version $Id: ConsoleObject.java,v 1.7 2003/10/22 21:22:03 valeks Exp $
 */
 public class ConsoleObject extends PollingODObject {
 	private Thread reader;
 	public void handleMessage(Message msg){
-	    log("handleMessage","processing "+msg);
+	    logger.finest("processing "+msg);
             if(msg.getAction().equals("od_object_loaded")){
 	        reader = new Thread(new Runnable() {
 	        BufferedReader inp = new BufferedReader(new InputStreamReader(System.in));
@@ -38,9 +38,9 @@ public class ConsoleObject extends PollingODObject {
 			                System.out.print("action> ");
 		                }
 		        } catch(IOException e) {
-		                System.err.println("ConsoleReader: Terminal connection lost. Quitting.");
+		                logger.info("ConsoleReader: Terminal connection lost. Quitting.");
 		        } catch(InterruptedException e){
-		                System.out.println("ConsoleReader: closing console");
+		                logger.info("ConsoleReader: closing console");
 		        }
 	        }    
 	        });
