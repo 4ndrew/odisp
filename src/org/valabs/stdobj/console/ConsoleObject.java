@@ -3,46 +3,50 @@ package org.valabs.stdobj.console;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
+import org.valabs.odisp.common.Message;
+import org.valabs.odisp.common.StandartODObject;
 import org.valabs.stdmsg.ModuleAboutMessage;
 import org.valabs.stdmsg.ModuleAboutReplyMessage;
 import org.valabs.stdmsg.ModuleStatusMessage;
 import org.valabs.stdmsg.ModuleStatusReplyMessage;
-import org.valabs.stdmsg.TranslatorGetTranslationMessage;
-import org.valabs.stdmsg.TranslatorGetTranslationReplyMessage;
-import org.valabs.odisp.common.Message;
-import org.valabs.odisp.common.StandartODObject;
-import org.valabs.stdmsg.ODAcquireMessage;
 import org.valabs.stdmsg.ODCleanupMessage;
 import org.valabs.stdmsg.ODObjectLoadedMessage;
-import org.valabs.stdmsg.ODResourceAcquiredMessage;
+import org.valabs.stdmsg.TranslatorGetTranslationMessage;
+import org.valabs.stdmsg.TranslatorGetTranslationReplyMessage;
 import org.valabs.stdobj.translator.Translator;
 
-/** Объект ODISP реализующий консольный интерфейс доступа к менеджеру.
- * 
- * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
- * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: ConsoleObject.java,v 1.23 2004/08/23 07:42:37 valeks Exp $
+/**
+ * Объект ODISP реализующий консольный интерфейс доступа к менеджеру.
+ * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А.
+ *         Алексеев </a>
+ * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин
+ *         </a>
+ * @version $Id: ConsoleObject.java,v 1.24 2004/10/28 22:54:33 valeks Exp $
  */
 public class ConsoleObject extends StandartODObject {
   /** Имя объекта */
   public final static String NAME = "console";
+
   /** Полное название объекта. */
-  private static String FULLNAME = "ODISP Message Console"; 
+  private static String FULLNAME = "ODISP Message Console";
+
   /** Версия объекта. */
   private static String VERSION = "0.3.1";
+
   /** Дополнительная информация. */
   private static String COPYRIGHT = "(C) 2003-2004 Valentin A. Alekseev, Andrew A. Porohin";
 
   /** Выполнять ли трансляцию констант в сообщениях. */
-  private static boolean doTranslation = false; 
-  
+  private static boolean doTranslation = false;
+
   /** Поток читающий ввод с консоли. */
   private ConsoleReader reader;
+
   /** Транслятор. */
   private Translator tr;
 
-  /** Обработчик входящих сообщений.
-   * 
+  /**
+   * Обработчик входящих сообщений.
    * @param msg сообщение
    */
   public final void handleMessage(final Message msg) {
@@ -51,56 +55,57 @@ public class ConsoleObject extends StandartODObject {
       reader = new ConsoleReader(getObjectName(), dispatcher, logger);
       reader.start();
       if (getParameter("hasTranslator", "no").equals("yes")) {
-      	Message m = dispatcher.getNewMessage();
-      	ODAcquireMessage.setup(m, getObjectName(), msg.getId());
-      	ODAcquireMessage.setResourceName(m, Translator.class.getName());
-      	dispatcher.send(m);
+        tr = (Translator) dispatcher.getResourceManager().resourceAcquire(
+            Translator.class.getName());
+        Message m = dispatcher.getNewMessage();
+        TranslatorGetTranslationMessage.setup(m, "translator-server",
+            getObjectName(), msg.getId());
+        TranslatorGetTranslationMessage.setLanguage(m, getParameter("language",
+            "ru"));
+        dispatcher.send(m);
       }
     } else if (ODCleanupMessage.equals(msg)) {
       cleanUp(0);
-    } else if (ODResourceAcquiredMessage.equals(msg)) {
-    	tr = (Translator) ODResourceAcquiredMessage.getResource(msg);
-    	Message m = dispatcher.getNewMessage();
-    	TranslatorGetTranslationMessage.setup(m, "translator-server", getObjectName(), msg.getId());
-    	TranslatorGetTranslationMessage.setLanguage(m, getParameter("language", "ru"));
-    	dispatcher.send(m);
     } else if (TranslatorGetTranslationReplyMessage.equals(msg)) {
-    	tr.putAll(TranslatorGetTranslationReplyMessage.getTranslation(msg));
-    	doTranslation = true;
-    	logger.fine("Console translation enabled");
+      tr.putAll(TranslatorGetTranslationReplyMessage.getTranslation(msg));
+      doTranslation = true;
+      logger.fine("Console translation enabled");
     } else if (ModuleAboutMessage.equals(msg)) {
-    	Message m = dispatcher.getNewMessage();
-    	ModuleAboutReplyMessage.setup(m, msg.getOrigin(), getObjectName(), msg.getId());
-    	ModuleAboutReplyMessage.setName(m, FULLNAME);
-    	ModuleAboutReplyMessage.setVersion(m, VERSION);
-    	ModuleAboutReplyMessage.setCopyright(m, COPYRIGHT);
-    	dispatcher.send(m);
+      Message m = dispatcher.getNewMessage();
+      ModuleAboutReplyMessage.setup(m, msg.getOrigin(), getObjectName(), msg
+          .getId());
+      ModuleAboutReplyMessage.setName(m, FULLNAME);
+      ModuleAboutReplyMessage.setVersion(m, VERSION);
+      ModuleAboutReplyMessage.setCopyright(m, COPYRIGHT);
+      dispatcher.send(m);
     } else if (ModuleStatusMessage.equals(msg)) {
-    	Message m = dispatcher.getNewMessage();
-    	ModuleStatusReplyMessage.setup(m, msg.getOrigin(), getObjectName(), msg.getId());
-    	ModuleStatusReplyMessage.setRunningState(m, "noerror");
-    	ModuleStatusReplyMessage.setRunningTasks(m, new ArrayList());
-    	ModuleStatusReplyMessage.setCompletedTasks(m, new ArrayList());
-    	ModuleStatusReplyMessage.setFailedTasks(m, new ArrayList());
-    	dispatcher.send(m);
+      Message m = dispatcher.getNewMessage();
+      ModuleStatusReplyMessage.setup(m, msg.getOrigin(), getObjectName(), msg
+          .getId());
+      ModuleStatusReplyMessage.setRunningState(m, "noerror");
+      ModuleStatusReplyMessage.setRunningTasks(m, new ArrayList());
+      ModuleStatusReplyMessage.setCompletedTasks(m, new ArrayList());
+      ModuleStatusReplyMessage.setFailedTasks(m, new ArrayList());
+      dispatcher.send(m);
     } else {
       System.out.println("Received:");
       String msgToString = msg.toString(true);
       if (doTranslation) {
-      	Enumeration e = tr.keys();
-      	while (e.hasMoreElements()) {
-			String element = (String) e.nextElement();
-			String replacement = tr.translate(element, element);
-			msgToString = msgToString.replaceAll(element, replacement + "[" + element + "]");
-		}
+        Enumeration e = tr.keys();
+        while (e.hasMoreElements()) {
+          String element = (String) e.nextElement();
+          String replacement = tr.translate(element, element);
+          msgToString = msgToString.replaceAll(element, replacement + "["
+              + element + "]");
+        }
       }
       System.out.println(msgToString);
     }
     return;
   }
-  
-  /** Выход.
-   * 
+
+  /**
+   * Выход.
    * @param type признак выхода
    * @return код возврата
    */
@@ -111,39 +116,36 @@ public class ConsoleObject extends StandartODObject {
     }
     return 0;
   }
-  
-  /** Конструктор объекта с заданным порядковым номером.
-   * 
+
+  /**
+   * Конструктор объекта с заданным порядковым номером.
    * @param id номер
    */
   public ConsoleObject(final Integer id) {
     super(NAME + id);
   }
-  
-  /** Вернуть список сервисов.
-   * 
+
+  /**
+   * Вернуть список сервисов.
    * @return список сервисов
    */
   public final String[] getProviding() {
     String[] res = { NAME };
     return res;
   }
-  
-  /** Вернуть список зависимостей.
-   * 
+
+  /**
+   * Вернуть список зависимостей.
    * @return список зависимостей
    */
   public final String[] getDepends() {
-  	if (getParameter("hasTranslator", "no").equals("no")) {
-  		String[] res = { "dispatcher" };
-  		return res;
-  	} else {
-  		String[] res = {
-  				"dispatcher", 
-  				"translator-server", 
-				Translator.class.getName(), 
-		};
-  		return res;
-  	}
+    if (getParameter("hasTranslator", "no").equals("no")) {
+      String[] res = { "dispatcher" };
+      return res;
+    } else {
+      String[] res = { "dispatcher", "translator-server",
+          Translator.class.getName(), };
+      return res;
+    }
   }
 }
