@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 
 /** Менеджер ресурсных объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceManager.java,v 1.5 2004/02/15 21:55:13 valeks Exp $
+ * @version $Id: ResourceManager.java,v 1.6 2004/02/17 11:00:26 valeks Exp $
  */
 public class StandartResourceManager implements ResourceManager {
   /** Список запросов на ресурсы. */
@@ -124,7 +124,7 @@ public class StandartResourceManager implements ResourceManager {
     ResourceEntry re = (ResourceEntry) resources.get(className);
     if (re != null) {
       if (re.isAvailable()) {
-	log.fine(className + " resource is in free pool. will send it immediately to " + msg.getOrigin());
+	log.fine(className + " resource is in free pool.");
 	// получение ресурса из хранилища
 	Resource res = re.acquireResource();
 	// конструирование и отправка сообщения
@@ -140,7 +140,7 @@ public class StandartResourceManager implements ResourceManager {
 							dispatcher.getObjectManager().getBlockedState(msg.getOrigin()) + 1);
 	}
       } else {
-	log.finer(className + " was found but there were no free instances of it -- putting request to queue");
+	log.finer(className + " resource busy -- putting request to queue");
 	if (!resourceRequests.containsKey(className)) {
 	  log.fine("created request queue for " + className);
 	  resourceRequests.put(className, new ArrayList());
@@ -160,10 +160,10 @@ public class StandartResourceManager implements ResourceManager {
     }
     String className = (String) msg.getField(0);
     Resource res = (Resource) msg.getField(1);
-    log.fine("releasing resource " + className + " from " + msg.getOrigin());
+    log.finest(msg.toString(true));
     if (!resourceRequests.containsKey(className)
 	|| ((List) resourceRequests.get(className)).size() == 0) {
-      log.fine(className + " has no requests in it's queue -- releasing to pool");
+      log.fine(className + " no requests in queue");
       // если объект не требуется кем-то еще -- просто высвободить его
       ResourceEntry re = (ResourceEntry) resources.get(className);
       if (re.isBlockState(res)) {
@@ -173,7 +173,7 @@ public class StandartResourceManager implements ResourceManager {
       }
       re.releaseResource(res);
     } else {
-      log.fine(className + " has requests in it's queue -- transfering reference in FIFO order");
+      log.fine(className + " requests in queue");
       // реализация очереди (FIFO) -- выбор головного элемента
       List rrl = (List) resourceRequests.get(className);
       ResourceRequest rr = (ResourceRequest) rrl.get(0);
