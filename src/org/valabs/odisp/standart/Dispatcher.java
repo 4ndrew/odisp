@@ -12,7 +12,7 @@ import com.novel.odisp.common.*;
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.7 2003/10/12 20:01:12 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.8 2003/10/13 11:28:09 valeks Exp $
  */
 public class StandartDispatcher implements Dispatcher {
 	
@@ -116,11 +116,9 @@ public class StandartDispatcher implements Dispatcher {
 		    String cl_n = (String)it.next();
 		    ObjectEntry oe = (ObjectEntry)objects.get(cl_n);
 		    if(oe.blockedState){
-			System.out.println("[d] message deffered for "+cl_n);
 			messages.addMessage(cl_n, message);
 			continue;
 		    }
-		    System.out.println("[d] message sent for "+cl_n);		
 		    ODObject cl_send = oe.object;
 		    cl_send.addMessage(message);
 		    synchronized(cl_send){cl_send.notify();}
@@ -146,7 +144,6 @@ public class StandartDispatcher implements Dispatcher {
 	}
 	/** Сброс записанных сообщений при снятии блокировки с объекта */
 	private void flushDefferedMessages(String cl_n){
-	    System.out.println("[D] flushing messages for "+cl_n);
 	    if(!objects.containsKey(cl_n))
 		return;
 	    ObjectEntry oe = (ObjectEntry)objects.get(cl_n);
@@ -257,7 +254,10 @@ public class StandartDispatcher implements Dispatcher {
 		    });
 		    addHandler("od_shutdown", new MessageHandler(){
 			public void messageReceived(Message msg){
-			    System.out.println("[i] "+toString()+" shutting down...");	    
+			    int exitCode = 0;
+			    System.out.println("[i] "+toString()+" shutting down...");
+			    if(msg.getFieldsCount() == 1)
+				exitCode = ((Integer)msg.getField(0)).intValue();
 			    Iterator it = objects.keySet().iterator();
 			    while(it.hasNext())
 			    unloadObject((String)it.next(), 0);
@@ -275,7 +275,6 @@ public class StandartDispatcher implements Dispatcher {
 				while(it.hasNext()){ // first hit
 				    String cur_cl_n = (String)it.next();
 				    if(Pattern.matches(cl_n+":\\d+",cur_cl_n)){
-					System.out.println("[D] od_acquire of resource "+cur_cl_n+" by "+msg.getOrigin());
 					Message m = getNewMessage("resource_acquired", msg.getOrigin(), "stddispatcher", msg.getId());
 					m.addField(cur_cl_n);
 					m.addField(resources.get(cur_cl_n));
@@ -297,7 +296,20 @@ public class StandartDispatcher implements Dispatcher {
 			    resources.put(cl_n, res);
 			    flushDefferedMessages(msg.getOrigin());
 			    setBlockedState(msg.getOrigin(), false);
-			    System.out.println("[D] od_release of resource "+cl_n+" by "+msg.getOrigin());
+			}
+		    });
+		    addHandler("od_list_objects", new MessageHandler(){
+			public void messageReceived(Message msg){
+			    Message m = getNewMessage("object_list", msg.getOrigin(), "stddispatcher", msg.getId());
+			    m.addField(new ArrayList(objects.keySet()));
+			    sendMessage(m);
+			}
+		    });
+		    addHandler("od_list_resources", new MessageHandler(){
+			public void messageReceived(Message msg){
+			    Message m = getNewMessage("resource_list", msg.getOrigin(), "stddispatcher", msg.getId());
+			    m.addField(new ArrayList(resources.keySet()));
+			    sendMessage(m);
 			}
 		    });
 		}
