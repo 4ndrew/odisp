@@ -28,7 +28,7 @@ import com.novel.stdmsg.*;
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.21 2003/12/03 19:21:03 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.22 2003/12/10 09:49:05 dron Exp $
  */
 public class StandartDispatcher implements Dispatcher {
   /** Интерфейс к службе сообщений*/
@@ -645,7 +645,7 @@ public class StandartDispatcher implements Dispatcher {
 		String curClassName = (String) it.next();
 		if (Pattern.matches(className + ":\\d+", curClassName) && ((ResourceEntry) resources.get(curClassName)).loaded) {
 		  ODResourceAcquiredMessage m = new ODResourceAcquiredMessage(msg.getOrigin(), msg.getId());
-		  m.setClassName(curClassName);
+		  m.setResourceName(curClassName);
 		  m.setResource(((ResourceEntry) resources.get(curClassName)).resource);
 		  sendMessage(m);
 		  if (willBlockState) {
@@ -688,7 +688,7 @@ public class StandartDispatcher implements Dispatcher {
 		setBlockedState(odObjectName, getBlockedState(odObjectName) + 1);
 	      }
 	      ODResourceAcquiredMessage m = new ODResourceAcquiredMessage(odObjectName, msg.getId());
-	      m.setClassName(className);
+	      m.setResourceName(className);
 	      m.setResource(res);
 	      sendMessage(m);
 	    } else {
