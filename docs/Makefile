@@ -1,9 +1,9 @@
 # Makefile for all documents
 #
-# $Id: Makefile,v 1.17 2004/01/27 12:57:26 valeks Exp $
+# $Id: Makefile,v 1.18 2004/01/27 14:08:03 valeks Exp $
 
 # folders & files
-TEXDOCS=impl.tex gui_imp.tex tz.tex style-9.tex odisp-style.tex
+TEXDOCS=gui_imp.tex tz.tex style-9.tex odisp-style.tex
 TEXPDFS=$(TEXDOCS:.tex=.pdf)
 TEXHTMLS=$(TEXDOCS:.tex=.html)
 RELEASEDIR=/mnt/docs/Оборудование\ Новел/Проект\ МЦП-155\ Н/Документация/NMS/
