@@ -9,10 +9,11 @@ import javax.swing.*;
 * программы (тестовая версия).
 * @author Andrew A. Porohin
 * @author (C) 2003 НПП "Новел-ИЛ"
-* @version $Id: TestGUI.java,v 1.1 2003/10/13 21:43:44 dron Exp $
+* @version $Id: TestGUI.java,v 1.2 2003/10/13 22:50:27 dron Exp $
 */
 public class TestGUI extends CallbackODObject {
-   private JTextField txt1 = new JTextField(2);
+   private JTextField txt1 = new JTextField(20);
+   private JFrame mainFrame;
    public class ButtonOkListener implements ActionListener {
       public void actionPerformed(ActionEvent e) {
          String name = ((JButton)e.getSource()).getText();
@@ -25,15 +26,19 @@ public class TestGUI extends CallbackODObject {
      addHandler("od_cleanup",
                 new MessageHandler() {
                   public void messageReceived(Message msg) {
+                    txt1.setText("Ops... Shutdown!");
                     log("messageReceived", "");
-                    cleanUp();
+                    cleanUp(((Integer)msg.getField(0)).intValue());
                   }
                 });
    }
    
    /** Зачистка
    */
-   public int cleanUp() {
+   public int cleanUp(int type) {
+      mainFrame.hide();
+      // wait(1000);
+      mainFrame.dispose();
       return 0;
    }
    
@@ -41,7 +46,6 @@ public class TestGUI extends CallbackODObject {
    */
    public TestGUI(Integer id) {
      super("testGUI"+id);
-     JFrame mainFrame; /* Основной фрем программы */
      JButton buttonOk; /* Просто тестовый батон */
      ButtonOkListener bol = new ButtonOkListener();
      
@@ -50,7 +54,7 @@ public class TestGUI extends CallbackODObject {
      
      mainFrame = new JFrame("TestGUI::mainFrame");
      // temporarily...
-     mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+     mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
      Container cn = mainFrame.getContentPane();
      cn.setLayout(new FlowLayout());
      cn.add(buttonOk);
