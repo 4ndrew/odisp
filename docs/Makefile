@@ -1,6 +1,6 @@
 # Makefile for all documents
 #
-# $Id: Makefile,v 1.14 2003/12/08 22:45:16 valeks Exp $
+# $Id: Makefile,v 1.15 2003/12/15 12:13:48 valeks Exp $
 
 # folders & files
 TEXDOCS=impl.tex \
@@ -11,7 +11,7 @@ TEXDOCS=impl.tex \
 TEXDVIS=$(TEXDOCS:.tex=.dvi)
 TEXPDFS=$(TEXDOCS:.tex=.pdf)
 TEXHTMLS=$(TEXDOCS:.tex=.html)
-TOOLS=../tools
+RELEASEDIR=/mnt/docs/Оборудование\ Новел/Проект\ МЦП-155\ Н/Документация/NMS/
 
 # tools
 TEXPROC=latex
@@ -19,6 +19,7 @@ PDFPROC=dvipdfm
 HTMLPROC=latex2html
 FIND=find
 RM=rm -rf
+MV=mv
 
 all: tex pdf html
 
@@ -48,3 +49,7 @@ clean:
 distclean: clean
 	@echo Full clean...
 	$(RM) $(TEXDVIS) $(TEXDOCS:.tex=.toc) $(TEXPDFS)
+
+release: pdf
+	@echo Releasing all pdfs
+	$(MV) $(TEXPDFS) $(RELEASEDIR)
