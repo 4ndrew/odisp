@@ -15,13 +15,14 @@ import com.novel.stdmsg.ODRemoveProviderMessage;
 import com.novel.stdmsg.ODGetProvidingReplyMessage;
 import java.util.logging.Logger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Iterator;
 import java.util.Set;
 
 /** Обработчик сообщений диспетчера ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: DispatcherHandler.java,v 1.9 2004/03/27 19:40:18 valeks Exp $
+ * @version $Id: DispatcherHandler.java,v 1.10 2004/03/31 10:15:09 dron Exp $
  */
 
 public class StandartDispatcherHandler extends CallbackODObject {
@@ -116,10 +117,14 @@ public class StandartDispatcherHandler extends CallbackODObject {
 	  Iterator it = objs.iterator();
 	  while (it.hasNext()) {
 	    String objName = (String) it.next();
-	    objName+= oman.getBlockedState(objName) > 0 ? ":blocked" : "";
+	    objName += oman.getBlockedState(objName) > 0 ? ":blocked" : "";
+            ObjectEntry oe = (ObjectEntry) oman.getObjects().get(objName); 
+            objName += 
+              (!oe.isLoaded()) ?
+                  ":unloaded{" + Arrays.asList(oe.getDepends()) + "}" : "";
 	    reply.add(objName);
 	  }
-	  m.addField(reply);
+	  m.addField("0", reply);
 	  m.setRoutable(false);
 	  dispatcher.send(m);
 	}
