@@ -17,7 +17,7 @@ import java.util.Set;
 
 /** Обработчик сообщений диспетчера ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: DispatcherHandler.java,v 1.5 2004/02/17 11:00:00 valeks Exp $
+ * @version $Id: DispatcherHandler.java,v 1.6 2004/02/20 00:28:56 valeks Exp $
  */
 
 public class StandartDispatcherHandler extends CallbackODObject {
@@ -122,7 +122,11 @@ public class StandartDispatcherHandler extends CallbackODObject {
     addHandler("od_list_resources", new MessageHandler() {
 	public final void messageReceived(final Message msg) {
 	  Message m = dispatcher.getNewMessage("resource_list", msg.getOrigin(), getObjectName(), msg.getId());
-	  m.addField(new ArrayList(rman.getResources().keySet()));
+	  List resStat = rman.statRequest();
+	  Iterator it = resStat.iterator();
+	  while (it.hasNext()) {
+	    m.addField(it.next());
+	  }
 	  dispatcher.send(m);
 	}
       });
