@@ -6,9 +6,9 @@ import java.util.Map;
 * посылаемых диспетчером ODISP.
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: ODObject.java,v 1.17 2004/05/13 09:22:37 valeks Exp $
+* @version $Id: ODObject.java,v 1.18 2004/05/13 11:42:20 valeks Exp $
 */
-public interface ODObject /* extends Thread */ {
+public interface ODObject {
   /** Возвращает внутреннее ODISP имя объекта.
    * @return ODISP имя объекта
    */
