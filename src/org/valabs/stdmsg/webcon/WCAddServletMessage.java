@@ -10,7 +10,7 @@ import com.novel.odisp.common.Message;
  * <p>Сообщение не является маршрутизируемым, так как не имеет смысл добавлять сервлеты в удаленный контейнер.</p>
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2004, НПП "Новел-ИЛ"
- * @version $Id: WCAddServletMessage.java,v 1.1 2004/03/27 21:27:40 valeks Exp $
+ * @version $Id: WCAddServletMessage.java,v 1.2 2004/03/27 21:59:50 valeks Exp $
  */
 
 public class WCAddServletMessage extends StandartMessage {
@@ -58,7 +58,7 @@ public class WCAddServletMessage extends StandartMessage {
   }
 
   /** Установка обработчика. */
-  public final void setServletHandler(final String newServletHandler) {
+  public final void setServletHandler(final Object newServletHandler) {
     servletHandler = newServletHandler;
   }
 
