@@ -8,7 +8,7 @@ import java.io.Serializable;
 /** Реализация стандартного сообщения для стандартного диспетчера ODISP
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: StandartMessage.java,v 1.1 2003/12/03 19:16:52 valeks Exp $
+ * @version $Id: StandartMessage.java,v 1.2 2003/12/15 14:01:45 valeks Exp $
  */
 public class StandartMessage implements Message, Serializable {
   /** Внутренний уникальный счетчик сообщения */
@@ -25,6 +25,8 @@ public class StandartMessage implements Message, Serializable {
   private String origin;
   /** Идентификатор сообщения на которое производится ответ */
   private int inReplyTo;
+  /** Флаг проведения проверки */
+  protected boolean ce = false;
   /** Реализация конструктора сообщения
    * @param action действие которое несет сообщение
    * @param destination адресат сообщения
@@ -122,5 +124,10 @@ public class StandartMessage implements Message, Serializable {
    */
   public String toString() {
     return "stdmessage id=" + myId + " replyto=" + inReplyTo + " action=" + action + ", destination=" + destination + ", origin=" + origin + ", fields.size()=" + fields.size();
+  }
+
+  public boolean isCorrect() {
+    ce = true;
+    return true;
   }
 }
