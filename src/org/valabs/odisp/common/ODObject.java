@@ -6,7 +6,7 @@ import java.util.regex.*;
 * посылаемых диспетчером ODISP.
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: ODObject.java,v 1.4 2003/10/07 11:05:20 valeks Exp $
+* @version $Id: ODObject.java,v 1.5 2003/10/12 14:28:32 valeks Exp $
 */
 public abstract class ODObject extends Thread {
 	protected Dispatcher dispatcher;
@@ -42,6 +42,6 @@ public abstract class ODObject extends Thread {
 	public abstract int cleanUp(int type);
 	protected void log(String place, String msg){
 	    if(false)
-	    System.out.println("[D] "+getObjectName()+"."+place+": "+msg);
+		System.out.println("[D] "+getObjectName()+"."+place+": "+msg);
 	}
 }
