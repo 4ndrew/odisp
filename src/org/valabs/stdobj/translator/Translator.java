@@ -10,7 +10,7 @@ import com.novel.odisp.common.Resource;
  *
  * @author <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
  * @author (C) 2004 НПП "Новел-ИЛ"
- * @version $Id: Translator.java,v 1.9 2004/05/22 21:47:49 dron Exp $
+ * @version $Id: Translator.java,v 1.10 2004/08/18 12:53:28 dron Exp $
  */
 public class Translator extends Properties implements Resource {
   /** Имя параметра, который содержит имя файла для загрузки */
@@ -114,11 +114,27 @@ public class Translator extends Properties implements Resource {
   public void setConfiguration(final Map cfg) {
     try {
       String fileName = DefaultLanguageFile;
-      if (cfg != null && cfg.containsKey(LanguageFile)) {
-        fileName = (String) cfg.get(LanguageFile);
+      int counter = 0;
+      if (cfg != null) {
+        while (cfg.containsKey(LanguageFile + counter)) {
+          fileName = (String) cfg.get(LanguageFile + counter++);
+          FileInputStream inputStream = new FileInputStream(fileName);
+          load(inputStream);
+          inputStream.close();
+        }
+        
+        // Совместимость с прошлыми версиями.
+        if (counter == 0 && cfg.containsKey(LanguageFile)) {
+          fileName = (String) cfg.get(LanguageFile);
+          FileInputStream inputStream = new FileInputStream(fileName);
+          load(inputStream);
+          inputStream.close();
+        }
+      } else {
+        FileInputStream inputStream = new FileInputStream(fileName);
+        load(inputStream);
+        inputStream.close();
       }
-      FileInputStream inputStream = new FileInputStream(fileName);
-      load(inputStream);
     } catch (Exception e) {
 //      logger.warning("Exception: " + e);
     }
