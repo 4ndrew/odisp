@@ -4,57 +4,62 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 
-/** Объект ODISP реализующий доступ к конфигурационным файлам формата [имя]=[значение]
+/** Ресурс ODISP реализующий доступ к конфигурационным файлам формата [имя]=[значение]
 * @author Валентин А. Алексеев
 * @author (C) 2003, НПП "Новел-ИЛ"
-* @version $Id: SimpleConfig.java,v 1.4 2003/10/07 13:35:16 valeks Exp $
+* @version $Id: SimpleConfig.java,v 1.5 2003/10/12 20:06:15 valeks Exp $
 */
-public class SimpleConfig extends PollingODObject {
-	private Map contents = new HashMap();
-	public String name = "config";
-	public void handleMessage(Message msg){
-	    log("handleMessage","processing "+msg);
-	    if(msg.getAction().equals("od_object_loaded") || msg.getAction().equals("reload")){
-		contents.clear();
-		try {
-		    BufferedReader in = new BufferedReader(new FileReader("simpleconfig.dat"));
-		    String s;
-		    Pattern p = Pattern.compile("^(\\w+)=(.*)");
-		    while((s = in.readLine()) != null){
-			if(s.startsWith("#"))
-			    continue;
-			Matcher m = p.matcher(s);
-			m.find();
-			if(m.groupCount() == 2){
-			    contents.put(m.group(1), m.group(2));
-			} else {
-			    System.err.println("[w] syntax error in line '"+s+"'. line ignored.");
-			}
-		    }
-		    in.close();
-		} catch (FileNotFoundException e) {System.err.println("[w] SimpleConfig was unable to find data file simpleconfig.dat");}
-		  catch (IOException e){System.err.println("[e] error while reading config file simpleconfig.dat");}
-	    }
-	    if(msg.getAction().equals("get_value")){
-		if(msg.getFieldsCount() == 1){
-		    String key = (String)msg.getField(0);
-		    if(contents.containsKey(key)){
-			Message m = dispatcher.getNewMessage("config_value", msg.getOrigin(), toString(), msg.getId());
-			m.addField(contents.get(key));
-			dispatcher.sendMessage(m);
-		    }
+public class SimpleConfig implements Resource {
+    String cfgName;
+    Map contents = new HashMap();
+    /** Чтение конфигурационного файла в память
+	@param cfgName имя файла конфигурации
+	@return void
+    */
+    public void readConfig(String cfgName){
+	System.out.println("[D] SimpleConfig.readConfig("+cfgName+")");    
+        try {
+	    BufferedReader in = new BufferedReader(new FileReader(cfgName));
+	    String s;
+	    Pattern p = Pattern.compile("^(\\w+)=(.*)");
+	    while((s = in.readLine()) != null){
+		if(s.startsWith("#"))
+		    continue;
+		Matcher m = p.matcher(s);
+		m.find();
+		if(m.groupCount() == 2){
+		    contents.put(m.group(1), m.group(2));
+		} else {
+		    System.err.println("[w] syntax error in line '"+s+"'. line ignored.");
 		}
 	    }
-	    if(msg.getAction().equals("od_cleanup"))
-		if(msg.getFieldsCount() == 1)
-		    cleanUp(((Integer)msg.getField(0)).intValue());
-	}
-	public int cleanUp(int type){
-	    log("cleanUp","setting doExit");
-	    doExit = true;
-	    return 0;
-	}
-	public SimpleConfig(Integer id){
-	    super("config"+id);
-	}
+	    in.close();
+	} catch(IOException e){}
+    }
+    /** Возвращает значение переменной из конфигурационного файла 
+	@param name имя параметра
+	@return значение параметра или '-undef-' в случае если параметр не определен
+    */
+    public String getValue(String name){
+	System.out.println("[D] SimpleConfig.getValue("+name+")");
+	if(!contents.containsKey(name))
+	    return "-undef-";
+	return (String)contents.get(name);
+    }
+    /** Возвращает значение переменной из конфигурационного файла с учетом значения по умолчанию
+	@param name имя параметра
+	@param defaultValue значение по умолчанию
+	@return значение параметра или defaultValue если параметр не определен
+    */
+    public String getValue(String name, String defaultValue){
+	if(getValue(name).equals("-undef-"))
+	    return defaultValue;
+	return getValue(name);
+    }
+    public int cleanUp(int type){
+	return 0;
+    }
+    public int getMaxReferenceCount(){
+	return 0;
+    }
 }
