@@ -93,64 +93,11 @@ import java.security.SecureRandom;
  * @see com.novel.stdobj.webcon.servlet.http.HttpServlet
  * @author (C) 1996,1998 by Jef Poskanzer <jef@acme.com>
  * @author (C) 2004 Valentin A. Alekseev
- * @version $Id: Serve.java,v 1.3 2004/03/05 16:31:56 valeks Exp $
+ * @version $Id: Serve.java,v 1.4 2004/03/27 21:27:41 valeks Exp $
  */
 
 public class Serve implements ServletContext {
   private static final String progName = "Serve";
-  /** Main routine, if you want to run this directly as an application. */
-  public static void main( String[] args ) {
-    // Parse args.
-    int port = 9090;
-    String throttles = null;
-    int argc = args.length;
-    int argn;
-    for (argn = 0; argn < argc && args[argn].charAt( 0 ) == '-'; ++argn ) {
-      if ( args[argn].equals( "-p" ) && argn + 1 < argc ) {
-	++argn;
-	port = Integer.parseInt( args[argn] );
-      } else if ( args[argn].equals( "-t" ) && argn + 1 < argc ) {
-	++argn;
-	throttles = args[argn];
-      } else {
-	usage();
-      }
-    }
-    if ( argn != argc ) {
-      usage();
-    }
-    
-    // Create the server.
-    Serve serve = new Serve( port );
-    // Any custom Servlets should be added here.
-    serve.addServlet( "/SampleServlet", new com.novel.stdobj.webcon.SampleServlet() );
-    Servlet ts = new com.novel.stdobj.webcon.TestServlet();
-    serve.addServlet( "/TestServlet", ts );
-    serve.addServlet( "/TestServlet/*", ts );
-
-    // And add the standard Servlets.
-    if ( throttles == null ) {
-      serve.addDefaultServlets( true );
-    } else {
-      try {
-	serve.addDefaultServlets( true, throttles );
-      } catch ( IOException e ) {
-	System.err.println( "Problem reading throttles file: " + e );
-	System.exit( 1 );
-      }
-    }
-    // And run.
-    serve.serve();
-
-    System.exit( 0 );
-  }
-  
-  private static void usage() {
-    System.err.println( "usage:  " + progName + " [-p port]" );
-    System.exit( 1 );
-  }
-
-
   private int port;
   private PrintStream logStream;
   WildcardDictionary registry;
@@ -179,7 +126,6 @@ public class Serve implements ServletContext {
   public Serve() {
     this( 9090, System.err );
   }
-
 
   /** Register a Servlet by class name.  Registration consists of a URL
    * pattern, which can contain wildcards, and the class name of the Servlet
@@ -239,28 +185,11 @@ public class Serve implements ServletContext {
     }
   }
 
-  /** Register a standard set of Servlets.  These will return
-   * files or directory listings, and run CGI programs, much like a
-   * standard HTTP server.
-   * <P>
-   * Because of the pattern checking order, this should be called
-   * <B>after</B> you've added any custom Servlets.
-   * <P>
-   * The current set of default servlet mappings:
-   * <UL>
-   * <LI> If enabled, *.cgi goes to CgiServlet, and gets run as a CGI program.
-   * <LI> * goes to FileServlet, and gets served up as a file or directory.
-   * </UL>
-   * @param cgi whether to run CGI programs
-   */
-  public void addDefaultServlets( boolean cgi ) {
-  }
-
-  /** Register a standard set of Servlets, with throttles.
-   * @param cgi whether to run CGI programs
-   * @param throttles filename to read FileServlet throttle settings from
-   */
-  public void addDefaultServlets( boolean cgi, String throttles ) throws IOException {
+  /** Remove servlet by reference. */
+  public final void removeServlet(final Servlet servlet) {
+    registry.removeValue(servlet);
+    ((Servlet) servlets.get(servlet.getClass().getName())).destroy();
+    servlets.remove(servlet.getClass().getName());
   }
 
   /** Хранилище для клиентских ключей. */

@@ -44,7 +44,6 @@ import java.util.regex.Pattern;
 // <A HREF="/resources/classes/WildcardDictionary.java">Fetch the software.</A><BR>
 // <A HREF="/resources/classes/tar.gz">Fetch the entire package.</A>
 // <P>
-// @see Utils#match
 
 public class WildcardDictionary extends HashMap {
     /// Gets the object associated with the specified key in the dictionary.
@@ -64,4 +63,25 @@ public class WildcardDictionary extends HashMap {
         }
         return null;
     }
+
+  /** Удалить объект по значению.
+   * Удаляются все записи у которых значение совпадает с заданным.
+   * @param value значение
+   */
+  public void removeValue(final Object value) {
+    if (containsValue(value)) {
+      List toRemove = new ArrayList();
+      Iterator it = keySet().iterator();
+      while (it.hasNext()) {
+	Object tkey = (Object) it.next();
+	if (get(tkey).equals(value)) {
+	  toRemove.add(tkey);
+	}
+      }
+      it = toRemove.iterator();
+      while (it.hasNext()) {
+	remove(it.next());
+      }
+    }
+  }
 }
