@@ -10,10 +10,11 @@ import java.util.ArrayList;
 
 /** Обработчик сообщений диспетчера ODISP.
  * @author (C) 2004 <a href="mailto:valeks@valeks.novel.local">Valentin A. Alekseev</a>
- * @version $Id: DispatcherHandler.java,v 1.1 2004/02/13 13:15:17 valeks Exp $
+ * @version $Id: DispatcherHandler.java,v 1.2 2004/02/13 14:09:04 valeks Exp $
  */
 
 public class StandartDispatcherHandler extends CallbackODObject {
+  private Thread runThread;
   private Logger log = Logger.getLogger("com.novel.odisp.StandartDispatcherHandler");
   private ObjectManager oman;
   private ResourceManager rman;
@@ -40,7 +41,12 @@ public class StandartDispatcherHandler extends CallbackODObject {
   protected final void registerHandlers() {
     oman = dispatcher.getObjectManager();
     rman = dispatcher.getResourceManager();
-    addHandler("unload_object", new MessageHandler() {
+    addHandler("od_set_run_thread", new MessageHandler() {
+	public final void messageReceived(final Message msg) {
+	  runThread = (Thread) msg.getField(0);
+	}
+    });
+    addHandler("od_unload_object", new MessageHandler() {
 	public final void messageReceived(final Message msg) {
 	  if (msg.getFieldsCount() != 1) {
 	    return;
@@ -50,7 +56,7 @@ public class StandartDispatcherHandler extends CallbackODObject {
 	  oman.getObjects().remove(objname);
 	}
       });
-    addHandler("load_object", new MessageHandler() {
+    addHandler("od_load_object", new MessageHandler() {
 	public final void messageReceived(final Message msg) {
 	  if (msg.getFieldsCount() != 1) {
 	    return;
@@ -68,6 +74,7 @@ public class StandartDispatcherHandler extends CallbackODObject {
 	    exitCode = ((Integer) msg.getField(0)).intValue();
 	  }
 	  oman.unloadObject("stddispatcher", exitCode);
+	  runThread.interrupt();
 	}
       });
     addHandler("od_acquire", new MessageHandler() {
@@ -118,5 +125,6 @@ public class StandartDispatcherHandler extends CallbackODObject {
    */
   public StandartDispatcherHandler(final Integer id) {
     super("stddispatcher");
+    setDaemon(false);
   }
 }// StandartDispatcherHandler

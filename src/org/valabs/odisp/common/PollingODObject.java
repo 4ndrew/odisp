@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 * посылаемых диспетчером ODISP.
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: PollingODObject.java,v 1.11 2004/01/16 14:31:57 valeks Exp $
+* @version $Id: PollingODObject.java,v 1.12 2004/02/13 14:09:04 valeks Exp $
 */
 public abstract class PollingODObject extends ODObject {
   /** Конструктор задающий ODISP имя объекта.
@@ -17,6 +17,7 @@ public abstract class PollingODObject extends ODObject {
    */
   public PollingODObject(final String name) {
     super(name);
+    setDaemon(true);
   }
   /** Цикл обработки приходящих сообщений. */
   public final void run() {

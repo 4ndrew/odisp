@@ -29,7 +29,7 @@ import com.novel.stdmsg.*;
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.28 2004/02/13 13:15:17 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.29 2004/02/13 14:09:04 valeks Exp $
  */
 public class StandartDispatcher implements Dispatcher {
   /** Журнал. */
@@ -133,6 +133,20 @@ public class StandartDispatcher implements Dispatcher {
     oe.setObject(stdh);
     oman.getObjects().put("stddispatcher", oe);
     oman.loadPending();
+    Message runthr = getNewMessage("od_set_run_thread", "stddispatcher", "G0D", 0);
+    Thread t = new Thread("alive thread") {
+	public void run() {
+	  try {
+	    synchronized(this) { 
+	      wait();
+	    }
+	  } catch (InterruptedException e) {
+	  }
+	}
+      };
+    t.start();
+    runthr.addField(t);
+    oman.send(runthr);
     Iterator it = objs.iterator();
     Pattern p = Pattern.compile("(o:|(r:)(\\d+:)?)([^:]+)(:(.*))?");
     //                            type    mult     class  param
@@ -163,6 +177,11 @@ public class StandartDispatcher implements Dispatcher {
 	}
 	oman.loadPending();
       }
+    }
+    try {
+      t.join();
+    } catch (InterruptedException e) {
+
     }
   }
   /** Выводит сообщение об ошибке в случае некорректных параметров. */
