@@ -1,4 +1,4 @@
-<!-- $Id: build.xml,v 1.24 2005/01/27 14:17:00 valeks Exp $ mode: -*- --><!-- xsl -*- -->
+<!-- $Id: build.xml,v 1.25 2005/02/02 20:24:07 valeks Exp $ mode: -*- --><!-- xsl -*- -->
 <project name="odisp" default="all" basedir=".">
     <taskdef resource="checkstyletask.properties"
            classpath="/usr/local/share/java/classes/checkstyle.jar"/>
@@ -30,7 +30,7 @@
         classname="org.valabs.tplParser.TplParser"
         fork="true"
         dir=".">
-        <arg value="clean"/>
+        <arg value="-clean"/>
       </java>
     </target>
 
