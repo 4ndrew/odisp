@@ -16,7 +16,7 @@ import com.novel.stdmsg.ODResourceAcquiredMessage;
 
 /** Менеджер ресурсных объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceManager.java,v 1.18 2004/03/31 12:54:48 dron Exp $
+ * @version $Id: ResourceManager.java,v 1.19 2004/05/21 21:49:28 valeks Exp $
  */
 public class StandartResourceManager implements ResourceManager {
   /** Ссылка на диспетчер объектов. */
@@ -54,12 +54,8 @@ public class StandartResourceManager implements ResourceManager {
    */
   public final void acquireRequest(final Message msg) {
     String className = (String) msg.getField("0");
-    boolean willBlockState = false;
-    if (msg.getFieldsCount() == 2) {
-      willBlockState = ((Boolean) msg.getField("1")).booleanValue();
-    }
     log.fine("resource acquientance request from " + msg.getOrigin() + " to " + className);
-    dataThread.addRequest(new AcquireResourceRequest(msg.getOrigin(), msg.getId(), className, willBlockState));
+    dataThread.addRequest(new AcquireResourceRequest(msg.getOrigin(), msg.getId(), className));
   }
 
   /** Обработка запроса на высвобождение ресурса.
@@ -136,11 +132,6 @@ public class StandartResourceManager implements ResourceManager {
     public final boolean performAction(final DataThread dt) {
       ResourceEntry re = (ResourceEntry) dt.getResources().get(className);
       // синхронный доступ ко всей записи
-      if (re.isBlockState(resource)) {
-	log.fine("releasing block for object " + origin);
-	dt.getDispatcher().getObjectManager().setBlockedState(origin,
-						      dt.getDispatcher().getObjectManager().getBlockedState(origin) - 1);
-      }
       re.releaseResource(resource);
       dt.setReleaseCount(dt.getReleaseCount() + 1);
       return true;
@@ -160,22 +151,18 @@ public class StandartResourceManager implements ResourceManager {
     private String origin = null;
     /** Индекс сообщения инициировавшего запрос. */
     private int msgid = -1;
-    /** Статус блокировки объекта. */
-    private boolean willBlock = false;
     /** Флаг попытки запроса. */
     private boolean checkOnly = false;
     /** Конструирование нового запроса.
      * @param nclassName имя ресурса
      * @param norigin отправитель запроса
      * @param nmsgid индекс сообщения
-     * @param nwillBlock будет ли запрос блокирующим
      */
     public AcquireResourceRequest(final String norigin, final int nmsgId,
-				  final String nclassName, final boolean nwillBlock) {
+				  final String nclassName) {
       className = nclassName;
       origin = norigin;
       msgid = nmsgId;
-      willBlock = nwillBlock;
     }
     /** Выполнение запроса.
      * В случае если ресурс не найден запрос будет выброшен.
@@ -198,13 +185,6 @@ public class StandartResourceManager implements ResourceManager {
 	      m.setResourceName(className);
 	      m.setResource(res);
 	      dt.getDispatcher().send(m);
-	      if (willBlock) {
-		log.fine("acquitentance of resource " + className + " by " + origin + " will be blocking");
-		// сохранение и изменение статуса блокировки объекта
-		re.setBlockState(res, willBlock);
-		dt.getDispatcher().getObjectManager().setBlockedState(origin,
-							      dt.getDispatcher().getObjectManager().getBlockedState(origin) + 1);
-	      }
 	      dt.setReleaseCount(dt.getReleaseCount() - 1);
 	    } else {
 	      checkOnly = true;
@@ -218,7 +198,7 @@ public class StandartResourceManager implements ResourceManager {
     }
     /** Описание класса для статистики. */
     public final String toString() {
-      return "AcquireResource from " + origin + " on " + className + " block state is " + willBlock;
+      return "AcquireResource from " + origin + " on " + className;
     }
   }
   /** Запрос на загрузку ресурса. */
@@ -254,7 +234,7 @@ public class StandartResourceManager implements ResourceManager {
       for (int i = 0; i < mult; i++) {
 	try {
 	  Resource r = (Resource) Class.forName(className).newInstance();
-      r.setConfiguration(configuration);
+	  r.setConfiguration(configuration);
 	  re.addResource(r);
 	  logMessage += "+";
 	} catch (ClassNotFoundException e) {

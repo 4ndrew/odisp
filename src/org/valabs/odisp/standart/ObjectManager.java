@@ -19,7 +19,7 @@ import com.novel.stdmsg.ODObjectLoadedMessage;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.27 2004/05/21 21:35:34 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.28 2004/05/21 21:49:28 valeks Exp $
  */
 
 public class StandartObjectManager implements ObjectManager {
@@ -163,7 +163,7 @@ public class StandartObjectManager implements ObjectManager {
       load.setConfiguration(configuration);
       synchronized (objects) {
 	ObjectEntry oe =
-	  new ObjectEntry(cName, 0, load.getDepends(), load.getProviding());
+	  new ObjectEntry(cName, load.getDepends(), load.getProviding());
 	oe.setObject(load);
 	oe.setLoaded(false);
 	objects.put(load.getObjectName(), oe);
@@ -268,9 +268,8 @@ public class StandartObjectManager implements ObjectManager {
     ODObject objToSendTo = null;
     // исключить модификацию дескриптора состояние объекта
     synchronized (oe) {
-      if (oe.isBlockedState() || !oe.isLoaded()) {
-	log.finest("deffered message " + message.getAction() + " for " + objectName
-		   + " (loaded=" + oe.isLoaded() + ")");
+      if (!oe.isLoaded()) {
+	log.finest("deffered message " + message.getAction() + " for " + objectName);
 	messages.addMessage(objectName, message);
 	return;
       }
@@ -328,29 +327,6 @@ public class StandartObjectManager implements ObjectManager {
     }
   }
 
-  /** Установка статуса блокировки объекта по ресурсу.
-   * @param objName имя объекта
-   * @param state новый уровень блокировки
-   */
-  public final void setBlockedState(final String objName, final int state) {
-    if (!objects.containsKey(objName)) {
-      return;
-    }
-    ObjectEntry oe = (ObjectEntry) objects.get(objName);
-    oe.setBlockedState(state);
-    if (oe.getBlockedState() == 0) {
-      flushDefferedMessages(objName);
-    }
-  }
-  /** Получить статус блокировки объекта.
-   * @param objName имя объекта
-   * @return значения уровня блокировки
-   */
-  public final int getBlockedState(final String objName) {
-    boolean hasObject = objects.containsKey(objName);
-    assert !objects.containsKey(objName) : "object.containsKey(\"" + objName + "\") == false";
-    return ((ObjectEntry) objects.get(objName)).getBlockedState();
-  }
   /** Сброс записанных сообщений при снятии блокировки с объекта.
    * @param objectName имя объекта
    */

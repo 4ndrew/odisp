@@ -24,7 +24,7 @@ import com.novel.stdmsg.ODShutdownMessage;
 
 /** Обработчик сообщений диспетчера ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: DispatcherHandler.java,v 1.14 2004/05/13 09:23:46 valeks Exp $
+ * @version $Id: DispatcherHandler.java,v 1.15 2004/05/21 21:49:28 valeks Exp $
  */
 
 public class StandartDispatcherHandler extends StandartODObject {
@@ -123,7 +123,6 @@ public class StandartDispatcherHandler extends StandartODObject {
 	  Iterator it = objs.iterator();
 	  while (it.hasNext()) {
 	    String objName = (String) it.next();
-	    objName += oman.getBlockedState(objName) > 0 ? ":blocked" : "";
             ObjectEntry oe = (ObjectEntry) oman.getObjects().get(objName); 
             objName += 
               (!oe.isLoaded()) ?

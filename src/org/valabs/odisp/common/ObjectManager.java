@@ -5,7 +5,7 @@ import java.util.Map;
 
 /** Интерфейс менеджера объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@valeks.novel.local">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.5 2004/03/31 12:54:48 dron Exp $
+ * @version $Id: ObjectManager.java,v 1.6 2004/05/21 21:49:28 valeks Exp $
  */
 
 public interface ObjectManager {
@@ -29,16 +29,6 @@ public interface ObjectManager {
    * @param m сообщение
    */
   void send(Message m);
-  /** Получение состояния блокировки объекта.
-   * @param objName имя объекта
-   * @return состояние блокировки
-   */
-  int getBlockedState(String objName);
-  /** Установка состояния блокировки объекта.
-   * @param objName имя объекта
-   * @param newState новое состояние
-   */
-  void setBlockedState(String objName, int newState);
   /** Получить список сервисов.
    * @return немодифицируемый список сервисов
    */

@@ -6,7 +6,7 @@ import com.novel.odisp.common.ODObject;
 /** Запись об объекте в таблице объектов.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ObjectEntry.java,v 1.5 2004/03/31 12:54:48 dron Exp $
+ * @version $Id: ObjectEntry.java,v 1.6 2004/05/21 21:49:28 valeks Exp $
  */
 
 public class ObjectEntry {
@@ -40,33 +40,6 @@ public class ObjectEntry {
    */
   public final void setClassName(final String newClassName) {
     className = newClassName;
-  }
-
-  /** Состояние блокировки. */
-  private int blockedState;
-  /** Вернуть состояние блокировки объекта.
-   * @return состояние блокировки
-   */
-  public final int getBlockedState() {
-    return blockedState;
-  }
-
-  /** Проверка заблокирован объект или нет.
-   * @return статус блокировки
-   */
-  public final boolean isBlockedState() {
-    return (blockedState > 0);
-  }
-
-  /** Установить состояние блокировки.
-   * @param newBlockedState новое состояние блокировки
-   */
-  public final void setBlockedState(final int newBlockedState) {
-    if (newBlockedState < 0) {
-      blockedState = 0;
-    } else {
-      blockedState = newBlockedState;
-    }
   }
 
   /** Ссылка на объект. */
@@ -133,11 +106,9 @@ public class ObjectEntry {
    * @param newProvides список сервисов
    */
   public ObjectEntry(final String cn,
-		     final int bs,
 		     final String[] newDepends,
 		     final String[] newProvides) {
     className = cn;
-    blockedState = bs;
     depends = newDepends;
     provides = newProvides;
   }

@@ -10,7 +10,7 @@ import com.novel.odisp.common.Resource;
 /** Запись об однотипных ресурах в таблице ресурсов.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ResourceEntry.java,v 1.7 2004/05/19 21:10:09 valeks Exp $
+ * @version $Id: ResourceEntry.java,v 1.8 2004/05/21 21:49:28 valeks Exp $
  */
 public class ResourceEntry {
   /** Журнал. */
@@ -67,22 +67,6 @@ public class ResourceEntry {
     }
     assert true;
     return null; // never reached in case of error.
-  }
-
-  /** Проверка статуса блокировки объекта запросившего ресурс.
-   * @param res ссылка на ресурс
-   * @return состояние блокировки
-   */
-  public final boolean isBlockState(final Resource res) {
-    return lookupResourceItemByResource(res).isBlockState();
-  }
-
-  /** Установка состояния блокирования объекта при захвате данного ресурса.
-   * @param res ссылка на ресурс
-   * @param blockedState статус блокировки
-   */
-  public final void setBlockState(final Resource res, final boolean blockedState) {
-    lookupResourceItemByResource(res).setBlockState(blockedState);
   }
 
   /** Поиск ресурса по индексу.
@@ -206,20 +190,6 @@ public class ResourceEntry {
     }
     public final void setUsedBy(String newUsedBy) {
       usedBy = newUsedBy;
-    }
-    /** Флаг блокировки. */
-    private boolean blockState = false;
-    /** Вернуть флаг блокировки.
-     * @return флаг блокировки
-     */
-    public boolean isBlockState() {
-      return blockState;
-    }
-    /** Установить флаг блокировки.
-     * @param newUsed флаг блокировки
-     */
-    public final void setBlockState(final boolean newBlockState) {
-      blockState = newBlockState;
     }
     /** Ссылка на ресурс. */
     private Resource resource;
