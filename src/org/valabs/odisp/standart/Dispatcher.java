@@ -21,7 +21,7 @@ import org.valabs.stdmsg.StandartMessage;
  * и управление ресурсными объектами.
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: Dispatcher.java,v 1.57 2005/01/11 20:38:00 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.58 2005/01/24 12:57:59 valeks Exp $
  */
 public class Dispatcher implements org.valabs.odisp.common.Dispatcher, ExceptionHandler {
   /** Журнал. */
@@ -34,8 +34,8 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
   private ConfigurationManager cman = new MultiConfigurationManager();
   /** Менеджер безопасности. */
   private SecurityManager sman = null;
-  /** Обработчики исключений. */
-  private ExceptionHandler ehandler = new MultiExceptionHandler();
+  /** Обработчик исключений. */
+  private ExceptionHandler ehandler = null;
 
   /** Доступ к менеджеру объектов. 
    * @return ссылка на менеджер объектов
@@ -126,7 +126,6 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
         ConfigurationManager.ComponentConfiguration element = (ConfigurationManager.ComponentConfiguration) it.next();
         oman.loadObject(element.getClassName(), element.getConfiguration());
       }
-      addExceptionHandler(this);
       oman.loadPending();
       Thread t = new Thread("alive thread") {
         public final void run() {
@@ -191,13 +190,16 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
    * @see org.valabs.odisp.common.Dispatcher#addExceptionHandler(org.valabs.odisp.common.ExceptionHandler)
    */
   public void addExceptionHandler(ExceptionHandler ex) {
-    ((MultiExceptionHandler) ehandler).addExceptionHandler(ex);
+    ehandler = ex;
   }
 
   /* (non-Javadoc)
    * @see org.valabs.odisp.common.Dispatcher#getExceptionHandler()
    */
   public ExceptionHandler getExceptionHandler() {
+  		if(ehandler == null) {
+  		  return this;
+  		}
   		return ehandler;
   }
 
@@ -219,25 +221,6 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
 
   public ConfigurationManager getConfigurationManager() {
     return cman;
-  }
-  
-  class MultiExceptionHandler implements ExceptionHandler {
-    private List handlers = new ArrayList();
-    public void addExceptionHandler(ExceptionHandler eh) {
-      handlers.add(eh);
-    }
-    
-    public void removeExceptionHandler(ExceptionHandler eh) {
-      handlers.remove(eh);
-    }
-    
-    public void signalException(Exception e) {
-      Iterator it = handlers.iterator();
-      while (it.hasNext()) {
-        ExceptionHandler element = (ExceptionHandler) it.next();
-        element.signalException(e);
-      }
-    }
   }
   
   /** Мультиплексор менеджеров конфигурации. */

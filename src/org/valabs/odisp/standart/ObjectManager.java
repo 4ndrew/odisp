@@ -27,7 +27,7 @@ import org.valabs.stdmsg.ODObjectLoadedMessage;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.44 2005/01/11 20:47:15 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.45 2005/01/24 12:57:59 valeks Exp $
  */
 
 class ObjectManager implements org.valabs.odisp.common.ObjectManager {
@@ -58,8 +58,6 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
 	private int statToLoadCount = 0;
 	/** Статистика количества запусков loadPending. */
 	private int statLoadPendingFireCount = 0;
-	/** Менеджер загрузки классов. */
-	private ClassLoader loader;
 	/** Добавление объекта как провайдера конкретного сервиса.
 	 * @param service название сервиса
 	 * @param objectName название объекта
@@ -273,8 +271,7 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
 			params[0] = new Integer(objCount);
 			Class[] dParams = new Class[1];
 			dParams[0] = params[0].getClass();
-			loader = ReloadableClassLoader.getInstance("../build/");
-			ODObject load = (ODObject) loader.loadClass(cName).getConstructor(
+			ODObject load = (ODObject) Class.forName(cName).getConstructor(
 					dParams).newInstance(params);
 			load.setDispatcher(dispatcher);
 			load.setConfiguration(configuration);
@@ -362,7 +359,6 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
 		for (int i = 0; i < SENDER_POOL_SIZE; i++) {
 			senderPool.add(new Sender(this));
 		}
-		loader = ReloadableClassLoader.getInstance("../build/"); // XXX: Make modifyable
 	}
 
 	/** Послать сообщение конкретному объекту.
