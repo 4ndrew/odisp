@@ -19,7 +19,7 @@ import com.novel.stdmsg.ODObjectLoadedMessage;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.28 2004/05/21 21:49:28 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.29 2004/05/28 00:18:41 valeks Exp $
  */
 
 public class StandartObjectManager implements ObjectManager {
@@ -144,6 +144,26 @@ public class StandartObjectManager implements ObjectManager {
     if (loaded > 0) {
       loadPending();
     }
+    /* Новый алгоритм
+    synchronized (objects) {
+      log.fine("Penging objects: " + pendingObjects);
+      Iterator lit = pendingObjects.iterator();
+      while (lit.hasNext()) {
+	String objectName = (String) lit.next();
+	ObjectEntry oe = (ObjectEntry) objects.get(objectName);
+	for (int i = 0; i < oe.getProvides().length; i++) {
+	  log.fine(oe.getObject().getObjectName() + " added as provider of " + oe.getProvides()[i]);
+	  addProvider(oe.getProvides()[i], oe.getObject().getObjectName());
+	}
+        oe.setLoaded(true);
+        flushDefferedMessages(oe.getObject().getObjectName());
+	log.config(" ok. loaded = " + objectName);
+	Message m = new ODObjectLoadedMessage(objectName);
+	oe.getObject().handleMessage(m);
+      }
+      pendingObjects.clear();
+    }
+     */
   }
 
   /** Динамическая загрузка объекта (с учётом зависимостей).
@@ -167,6 +187,37 @@ public class StandartObjectManager implements ObjectManager {
 	oe.setObject(load);
 	oe.setLoaded(false);
 	objects.put(load.getObjectName(), oe);
+	/** Алгоритм приоритетов загрузки:
+	 * если у объекта нет зависимостей - помещаем его в голову списка
+	 * если у объекта есть зависимости и какой либо из зависимых объектов уже в списке - поместить за ним
+	 * -------------''------------ и нет зависимых объектов - поместить в конце списка
+	 * обработать случай загрузки объекта с невыполненными зависимостями имеющего зависимые объекты в списке (поиск по depends с начала)
+	 * сделать watermark для полностью свободных объектов
+	 */
+	/* Новый алгоритм
+	if (oe.getDepends().length == 0) {
+	  pendingObjects.add(0, load.getObjectName());
+	  log.fine("free object " + load.getObjectName() + " added at the top of pending list");
+	} else {
+	  boolean found = false;
+	  ListIterator lit = pendingObjects.listIterator(pendingObjects.size());
+	  while (lit.hasPrevious()) {
+	    String objectName = (String) lit.previous();
+	    ObjectEntry tmpoe = (ObjectEntry) objects.get(objectName);
+	    List waiting = new ArrayList(Arrays.asList(oe.getDepends()));
+	    waiting.retainAll(Arrays.asList(tmpoe.getProvides()));
+	    if (waiting.size() > 0) {
+	      log.fine("object " + load.getObjectName() + " added after it's last provider: " + tmpoe.getObject().getObjectName());
+	      lit.add(load.getObjectName());
+	      found = true;
+	      break;
+	    }
+	  }
+	  if (!found) {
+	    log.fine("non-free object " + load.getObjectName() + " added at the bottom of pending list");
+	    pendingObjects.add(load.getObjectName());
+	  }
+	 */
       }
     } catch (InvocationTargetException e) {
       log.warning(" failed: " + e + " cause: " + e.getTargetException());
