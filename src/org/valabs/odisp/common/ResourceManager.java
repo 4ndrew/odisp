@@ -1,10 +1,11 @@
 package com.novel.odisp.common;
 
+import java.util.List;
 import java.util.Map;
 
 /** Интерфейс менеджера ресурсов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@valeks.novel.local">Valentin A. Alekseev</a>
- * @version $Id: ResourceManager.java,v 1.3 2004/02/13 15:16:03 valeks Exp $
+ * @version $Id: ResourceManager.java,v 1.4 2004/02/20 00:30:37 valeks Exp $
  */
 
 public interface ResourceManager {
@@ -31,4 +32,8 @@ public interface ResourceManager {
    * @param msg сообщение о захвате
    */
   void releaseRequest(Message msg);
+  /** Вернуть статистику по ресурсам.
+   * @return Список строк.
+   */
+  List statRequest();
 } // ResourceManager
