@@ -1,31 +1,75 @@
-/*
- * $Id: ODObject.java,v 1.1 2003/10/02 23:16:30 valeks Exp $
- *	ODObject.java
- *	Common Dispatcher Object. Defined as base class
- *	that implements message passing routines
- *      (C) 2003, JTT Novel-IL
- */
 package com.novel.odisp.common;
+import java.util.*;
 
-public class ODObject {
-	protected Dispatcher dispatcher;
-	public String name;
+/** Базовый класс реализующий почтовый ящик для сообщений
+* посылаемых диспетчером ODISP.
+* @author Валентин А. Алексеев
+* @author (С) 2003, НПП "Новел-ИЛ"
+* @version $Id: ODObject.java,v 1.2 2003/10/03 21:23:04 valeks Exp $
+*/
+public abstract class ODObject extends Thread {
+	private Dispatcher dispatcher;
+	private List messages;
+	/** Признак окончания работы основного цикла обработки сообщений */
+	private boolean doExit;
+	/** Уникальный идентификатор экземпляра объекта*/
 	protected int quant = 0;
+	/** Внутреннее имя объекта в ядре ODISP */
+	public String name;
+	/** Конструктор инициализирующий почтовый ящик*/
+	public ODObject(){
+	    messages = new ArrayList();
+	}
+	/** Доступ к диспетчеру */
+	protected Dispatcher getDispatcher(){
+	    return dispatcher;
+	}
+	/** Установка индекса объекта для обеспечения работоспособности нескольких одинаковых объектов*/
 	public void setQuant(int quant){
 	    this.quant = quant;
 	}
-	public String getName(){
+	/** Возвращает внутреннее ODISP имя объекта */
+	public String getObjectName(){
 	    return name;
 	}
+	/** Устанавливает диспетчера для текущего объекта */
 	public void setDispatcher(Dispatcher d){
 	    this.dispatcher = d;
 	}
-	public Dispatcher getDispatcher(){
-	    return dispatcher;
-	}
+	/** Возвращает полное имя ODISP объекта */
 	public String toString(){
-	    return getName()+quant;
+	    return getObjectName()+quant;
 	}
-	public void handleMessage(Message msg){return;};
-	public int cleanUp(int type){return 0;};
+	/** Цикл обработки приходящих сообщений */
+	public final void run(){
+	    while(doExit!=true){
+		try {
+		    wait();
+		} catch(InterruptedException e){}
+		List localMessages;
+		synchronized (messages) {
+		    localMessages = new ArrayList(messages);
+		}
+		if(localMessages != null && localMessages.size() > 0){
+		    Iterator mIter = localMessages.iterator();
+		    while(mIter.hasNext())
+			handleMessage((Message)mIter.next());
+		}
+	    }
+	}
+	/** Интерфейс добавления сообщения в ящик */
+	public final void addMessage(Message msg){
+	    synchronized (messages) {
+		messages.add(msg);
+	    }
+	}
+	/** Метод который вызывает для обработки пришедшего сообщения.
+	* Подклассы обязаны реализовать этот метод для корректной работы.
+	*/
+	public abstract void handleMessage(Message msg);
+	/** Метод вызываемый для очистки данных класса */
+	public int cleanUp(int type){
+	    doExit = true;
+	    return 0;
+	}
 }
