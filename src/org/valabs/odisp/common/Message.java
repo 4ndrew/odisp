@@ -3,7 +3,7 @@ package com.novel.odisp.common;
 /** Интерфейс сообщения ядра ODISP системы
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Message.java,v 1.1 2003/12/03 19:16:17 valeks Exp $
+ * @version $Id: Message.java,v 1.2 2003/12/15 13:02:35 valeks Exp $
  */
 public interface Message {
   /** Добавление произволього объекта в тело сообщения
@@ -46,4 +46,7 @@ public interface Message {
   String getOrigin();
   /** Заменить отправитея */
   void setOrigin(String newOrigin);
+
+  /** Проверка корректности сообщения*/
+  boolean isCorrect();
 }
