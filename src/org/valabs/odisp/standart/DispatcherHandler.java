@@ -26,7 +26,7 @@ import org.valabs.stdmsg.ODShutdownMessage;
  * Обработчик сообщений диспетчера ODISP.
  * 
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: DispatcherHandler.java,v 1.34 2005/01/25 19:03:34 valeks Exp $
+ * @version $Id: DispatcherHandler.java,v 1.35 2005/01/26 08:22:53 valeks Exp $
  */
 
 class DispatcherHandler extends StandartODObject {
@@ -208,8 +208,8 @@ class DispatcherHandler extends StandartODObject {
     /** Конструктор объекта.
      * @param id порядковый номер объекта
      */
-    public DispatcherHandler(final Integer id) {
-        super(NAME + id, FULLNAME, VERSION, COPYRIGHT);
+    public DispatcherHandler() {
+        super(NAME, FULLNAME, VERSION, COPYRIGHT);
     }
 
     /** Специальная обработка конфигурации.

@@ -8,7 +8,6 @@ import java.util.List;
 import org.doomdark.uuid.UUID;
 import org.valabs.odisp.common.Message;
 import org.valabs.odisp.common.StandartODObject;
-import org.valabs.stdmsg.ODCleanupMessage;
 import org.valabs.stdmsg.ODObjectLoadedMessage;
 import org.valabs.stdmsg.webcon.WCAddServletMessage;
 import org.valabs.stdobj.webcon.servlet.ServletException;
@@ -19,7 +18,7 @@ import org.valabs.stdobj.webcon.servlet.http.HttpServletResponse;
 
 /** Объект ODISP реализующий WebCon интерфейс доступа к менеджеру.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
- * @version $Id: WCConsoleObject.java,v 1.13 2005/01/25 19:03:34 valeks Exp $
+ * @version $Id: WCConsoleObject.java,v 1.14 2005/01/26 08:22:53 valeks Exp $
  */
 public class WCConsoleObject extends StandartODObject {
   public static final String NAME = "wcconsole";
@@ -40,8 +39,6 @@ public class WCConsoleObject extends StandartODObject {
       WCAddServletMessage.setServletMask(m, "/wcconsole");
       WCAddServletMessage.setServletHandler(m, servlet);
       dispatcher.send(m);
-    } else if (ODCleanupMessage.equals(msg)) {
-      cleanUp(ODCleanupMessage.getReason(msg).intValue());
     } else {
       servlet.messageReceived(msg);
     }
@@ -52,14 +49,13 @@ public class WCConsoleObject extends StandartODObject {
    * @return код возврата
    */
   public final int cleanUp(final int type) {
-    logger.finest("Cleaning up...");
     return 0;
   }
   /** Конструктор объекта с заданным порядковым номером.
    * @param id номер
    */
-  public WCConsoleObject(final Integer id) {
-    super(NAME + id, FULLNAME, VERSION, COPYRIGHT);
+  public WCConsoleObject() {
+    super(NAME, FULLNAME, VERSION, COPYRIGHT);
   }
   /** Вернуть список сервисов.
    * @return список сервисов

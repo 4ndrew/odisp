@@ -5,7 +5,7 @@ import java.util.Map;
 /** Базовый класс реализующий почтовый ящик для сообщений
 * посылаемых диспетчером ODISP.
 * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
-* @version $Id: ODObject.java,v 1.21 2004/08/23 07:42:37 valeks Exp $
+* @version $Id: ODObject.java,v 1.22 2005/01/26 08:22:53 valeks Exp $
 */
 public interface ODObject {
   /** Возвращает внутреннее ODISP имя объекта.
@@ -45,4 +45,14 @@ public interface ODObject {
    * @return строка с regex выражением
    */
   public String getMatch();
+  
+  /** Экспортировать состояние объекта для сохранение при перезагрузке.
+   * @return данные, которые необходимо сохранить
+   */
+  public Map exportState();
+  
+  /** Импортировать состояние объекта после перезагрузки.
+   * @param oldState старое значение состояния
+   */
+  public void importState(Map oldState);
 }

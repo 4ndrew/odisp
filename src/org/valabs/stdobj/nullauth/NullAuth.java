@@ -12,7 +12,7 @@ import org.valabs.stdmsg.ODObjectLoadedMessage;
  * файле classes.cfg. Возможно лишь два варианта поведения -- default to deny или
  * default to accept.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
- * @version $Id: NullAuth.java,v 1.5 2005/01/25 19:03:34 valeks Exp $
+ * @version $Id: NullAuth.java,v 1.6 2005/01/26 08:22:54 valeks Exp $
  */
 public class NullAuth extends StandartODObject implements SecurityManager {
 
@@ -21,8 +21,8 @@ public class NullAuth extends StandartODObject implements SecurityManager {
   public static final String VERSION = "0.1.0";
   public static final String COPYRIGHT = "(C) 2004 Valentin A. Alekseev";
   
-  public NullAuth(final Integer id) {
-    super(NAME + id.toString(), FULLNAME, VERSION, COPYRIGHT);
+  public NullAuth() {
+    super(NAME, FULLNAME, VERSION, COPYRIGHT);
   }
 
   /* (non-Javadoc)

@@ -4,7 +4,6 @@ import java.util.Enumeration;
 
 import org.valabs.odisp.common.Message;
 import org.valabs.odisp.common.StandartODObject;
-import org.valabs.stdmsg.ODCleanupMessage;
 import org.valabs.stdmsg.ODObjectLoadedMessage;
 import org.valabs.stdmsg.TranslatorGetTranslationMessage;
 import org.valabs.stdmsg.TranslatorGetTranslationReplyMessage;
@@ -16,7 +15,7 @@ import org.valabs.stdobj.translator.Translator;
  *         Алексеев </a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин
  *         </a>
- * @version $Id: ConsoleObject.java,v 1.25 2005/01/25 19:03:34 valeks Exp $
+ * @version $Id: ConsoleObject.java,v 1.26 2005/01/26 08:22:52 valeks Exp $
  */
 public class ConsoleObject extends StandartODObject {
   /** Имя объекта */
@@ -59,8 +58,6 @@ public class ConsoleObject extends StandartODObject {
             "ru"));
         dispatcher.send(m);
       }
-    } else if (ODCleanupMessage.equals(msg)) {
-      cleanUp(0);
     } else if (TranslatorGetTranslationReplyMessage.equals(msg)) {
       tr.putAll(TranslatorGetTranslationReplyMessage.getTranslation(msg));
       doTranslation = true;
@@ -99,8 +96,8 @@ public class ConsoleObject extends StandartODObject {
    * Конструктор объекта с заданным порядковым номером.
    * @param id номер
    */
-  public ConsoleObject(final Integer id) {
-    super(NAME + id, FULLNAME, VERSION, COPYRIGHT);
+  public ConsoleObject() {
+    super(NAME, FULLNAME, VERSION, COPYRIGHT);
   }
 
   /**

@@ -23,7 +23,7 @@ import org.valabs.stdobj.webcon.servlet.http.HttpServletResponse;
 
 /** ODISP-интерфейс к ACME серверу.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: WebCon.java,v 1.15 2005/01/25 19:03:33 valeks Exp $
+ * @version $Id: WebCon.java,v 1.16 2005/01/26 08:22:52 valeks Exp $
  */
 
 public class WebCon extends StandartODObject implements MessageHandler {
@@ -36,7 +36,6 @@ public class WebCon extends StandartODObject implements MessageHandler {
   /** Регистрация обработчиков сообщений. */
   public void registerHandlers() {
     addHandler(ODObjectLoadedMessage.NAME, this);
-    addHandler(ODCleanupMessage.NAME, this);
     addHandler(WCAddServletMessage.NAME, this);
     addHandler(WCRemoveServletMessage.NAME, this);
     addHandler(WCListServletsMessage.NAME, this);
@@ -109,16 +108,14 @@ public class WebCon extends StandartODObject implements MessageHandler {
       }
       WCListServletsReplyMessage.setServletsList(m, result);
       dispatcher.send(m);
-    } else if (ODCleanupMessage.equals(msg)) {
-      cleanUp(ODCleanupMessage.getReason(msg).intValue());
     }
   }
 
   /** Конструктор объекта.
    * @param id порядковый номер
    */
-  public WebCon(Integer id) {
-    super(NAME + id, FULLNAME, VERSION, COPYRIGHT);
+  public WebCon() {
+    super(NAME, FULLNAME, VERSION, COPYRIGHT);
   }
 
   /** Вернуть список сервисов. */

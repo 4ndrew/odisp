@@ -23,13 +23,12 @@ import org.valabs.stdmsg.MDNSListServicesMessage;
 import org.valabs.stdmsg.MDNSListServicesReplyMessage;
 import org.valabs.stdmsg.MDNSRegisterTypeNotifyMessage;
 import org.valabs.stdmsg.MDNSTypeNotifyMessage;
-import org.valabs.stdmsg.ODCleanupMessage;
 import org.valabs.stdmsg.ODObjectLoadedMessage;
 
 
 /** Объект, который обеспечивает поддержку Zeroconf/Randezvous.
  * @author <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
- * @version $Id: MDNS.java,v 1.2 2005/01/25 19:03:34 valeks Exp $
+ * @version $Id: MDNS.java,v 1.3 2005/01/26 08:22:53 valeks Exp $
  */
 public class MDNS extends StandartODObject implements MessageHandler, ServiceListener {
   private Map listeners = new HashMap();
@@ -38,11 +37,9 @@ public class MDNS extends StandartODObject implements MessageHandler, ServiceLis
   public static final String VERSION = "0.1.0";
   public static final String COPYRIGHT = "(C) 2005 Valentin A. Alekseev";
   private JmDNS jmdns;
-  /**
-   * @param newName
-   */
-  public MDNS(Integer newName) {
-    super(NAME + newName, FULLNAME, VERSION, COPYRIGHT);
+
+  public MDNS() {
+    super(NAME, FULLNAME, VERSION, COPYRIGHT);
     setBlockedState(true);
   }
   
@@ -51,7 +48,6 @@ public class MDNS extends StandartODObject implements MessageHandler, ServiceLis
     addHandler(MDNSAdvertiseServiceMessage.NAME, this);
     addHandler(MDNSRegisterTypeNotifyMessage.NAME, this);
     addHandler(MDNSListServicesMessage.NAME, this);
-    addHandler(ODCleanupMessage.NAME, this);
   }
 
   /* (non-Javadoc)
@@ -104,8 +100,6 @@ public class MDNS extends StandartODObject implements MessageHandler, ServiceLis
       String type = MDNSRegisterTypeNotifyMessage.getType(msg);
       listeners.put(type, msg.getOrigin());
       jmdns.addServiceListener(type, this);
-    } else if (ODCleanupMessage.equals(msg)) {
-      jmdns.close();
     }
   }
 
@@ -153,5 +147,10 @@ public class MDNS extends StandartODObject implements MessageHandler, ServiceLis
     MDNSTypeNotifyMessage.initAll(m, si.getType(), si.getName(), new Integer(si.getPort()), si.getAddress().getHostName(), si.getTextString());
     dispatcher.send(m);
   }
-
+  
+  public int cleanUp(int code) {
+    logger.fine("Closing everything.");
+    jmdns.close();
+    return 0;
+  }
 }
