@@ -30,8 +30,6 @@
 
 package com.novel.stdobj.webcon.servlet.http;
 
-import java.io.*;
-import com.novel.stdobj.webcon.servlet.*;
 
 /// An HTTP cookie.
 // <P>
