@@ -19,7 +19,7 @@ import com.novel.stdmsg.ODObjectLoadedMessage;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.34 2004/07/01 13:45:39 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.35 2004/07/12 09:57:04 valeks Exp $
  */
 
 public class StandartObjectManager implements ObjectManager {
@@ -407,5 +407,8 @@ public class StandartObjectManager implements ObjectManager {
   		}
   	}
   	return toSend;
+  }
+  public final void signalException(Exception e) {
+  	dispatcher.getExceptionHandler().signalException(e);
   }
 } // StandartObjectManager

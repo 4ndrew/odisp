@@ -14,6 +14,7 @@ import org.valeks.xlang.parser.Tag;
 import org.valeks.xlang.parser.XLangException;
 
 import com.novel.odisp.common.Dispatcher;
+import com.novel.odisp.common.ExceptionHandler;
 import com.novel.odisp.common.Message;
 import com.novel.odisp.common.ObjectManager;
 import com.novel.odisp.common.ResourceManager;
@@ -25,9 +26,9 @@ import com.novel.stdmsg.StandartMessage;
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.45 2004/07/05 14:39:01 dron Exp $
+ * @version $Id: Dispatcher.java,v 1.46 2004/07/12 09:57:04 valeks Exp $
  */
-public class StandartDispatcher implements Dispatcher {
+public class StandartDispatcher implements Dispatcher, ExceptionHandler {
   /** Журнал. */
   private static Logger log = Logger.getLogger("com.novel.odisp.StandartDispatcher");
   /** Менеджер ресурсов. */
@@ -36,6 +37,8 @@ public class StandartDispatcher implements Dispatcher {
   private ObjectManager oman = new StandartObjectManager(this);
   /** Менеджер безопасности. */
   private SecurityManager sman = null;
+  /** Обработчик исключений. */
+  private ExceptionHandler ehandler = null;
 
   /** Доступ к менеджеру объектов. 
    * @return ссылка на менеджер объектов
@@ -225,6 +228,30 @@ public class StandartDispatcher implements Dispatcher {
   public SecurityManager getSecurityManager() {
     assert sman != null : "security manager is null! no one registered ever";
     return sman;
+  }
+ 
+  /* (non-Javadoc)
+   * @see com.novel.odisp.common.Dispatcher#addExceptionHandler(com.novel.odisp.common.ExceptionHandler)
+   */
+  public void addExceptionHandler(ExceptionHandler ex) {
+	ehandler = ex;
+  }
+
+  /* (non-Javadoc)
+   * @see com.novel.odisp.common.Dispatcher#getExceptionHandler()
+   */
+  public ExceptionHandler getExceptionHandler() {
+  	if(ehandler == null) {
+  		return this;
+  	}
+	return ehandler;
+  }
+
+  /* (non-Javadoc)
+   * @see com.novel.odisp.common.ExceptionHandler#signalException(java.lang.Exception)
+   */
+  public void signalException(Exception e) {
+  	log.throwing("unknown", "unknown", e);
   }
 
 } // StandartDispatcher
