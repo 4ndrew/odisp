@@ -26,7 +26,7 @@
 // Visit the ACME Labs Java page for up-to-date versions of this and other
 // fine Java utilities: http://www.acme.com/java/
 
-package com.novel.stdobj.webcon.servlet.http;
+package org.valabs.stdobj.webcon.servlet.http;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -58,7 +58,7 @@ import java.util.Vector;
 // ChunkedInputStreams.  This is in contrast with ChunkedOutputStream,
 // which Servlets have to call themselves if they want to use it.
 // <P>
-// <A HREF="/resources/classes/com.novel.stdobj.webcon/servlet/http/ChunkedInputStream.java">Fetch the software.</A><BR>
+// <A HREF="/resources/classes/org.valabs.stdobj.webcon/servlet/http/ChunkedInputStream.java">Fetch the software.</A><BR>
 // <A HREF="/resources/classes/tar.gz">Fetch the entire package.</A>
 
 public class ChunkedInputStream extends FilterInputStream

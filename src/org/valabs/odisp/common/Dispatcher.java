@@ -1,11 +1,11 @@
-package com.novel.odisp.common;
+package org.valabs.odisp.common;
 
 import java.util.List;
 
 /** Стандартный интерфейс диспетчера, который должен реализовывать
  * класс, который выступает в качестве ODISP диспетчера.
  * @author (C) 2003 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
- * @version $Id: Dispatcher.java,v 1.13 2004/08/18 12:48:39 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.14 2004/08/23 07:42:37 valeks Exp $
  */
 public interface Dispatcher {
   /** Посылка одиночного сообщения.

@@ -1,18 +1,18 @@
-package com.novel.stdobj.nullauth;
+package org.valabs.stdobj.nullauth;
 
 import java.util.Map;
 
-import com.novel.odisp.common.Message;
-import com.novel.odisp.common.SecurityManager;
-import com.novel.odisp.common.StandartODObject;
-import com.novel.stdmsg.ODObjectLoadedMessage;
+import org.valabs.odisp.common.Message;
+import org.valabs.odisp.common.SecurityManager;
+import org.valabs.odisp.common.StandartODObject;
+import org.valabs.stdmsg.ODObjectLoadedMessage;
 
 /** Менеджер безопасности по-умолчанию.
  * Настройка прав производится статически при помощи установки параметра модуля в
  * файле classes.cfg. Возможно лишь два варианта поведения -- default to deny или
  * default to accept.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
- * @version $Id: NullAuth.java,v 1.2 2004/08/18 12:48:40 valeks Exp $
+ * @version $Id: NullAuth.java,v 1.3 2004/08/23 07:42:38 valeks Exp $
  */
 public class NullAuth extends StandartODObject implements SecurityManager {
 	public static final String NAME = "nullauth";
@@ -21,7 +21,7 @@ public class NullAuth extends StandartODObject implements SecurityManager {
 		super(NAME + id.toString());
 	}
   /* (non-Javadoc)
-   * @see com.novel.odisp.common.SecurityManager#checkAccess(java.lang.String, java.lang.String, java.util.Map)
+   * @see org.valabs.odisp.common.SecurityManager#checkAccess(java.lang.String, java.lang.String, java.util.Map)
    */
   public boolean checkAccess(
     String userName,
@@ -35,7 +35,7 @@ public class NullAuth extends StandartODObject implements SecurityManager {
   }
 
   /* (non-Javadoc)
-   * @see com.novel.odisp.common.ODObject#getDepends()
+   * @see org.valabs.odisp.common.ODObject#getDepends()
    */
   public String[] getDepends() {
     String[] depends = {
@@ -45,7 +45,7 @@ public class NullAuth extends StandartODObject implements SecurityManager {
   }
 
   /* (non-Javadoc)
-   * @see com.novel.odisp.common.ODObject#getProviding()
+   * @see org.valabs.odisp.common.ODObject#getProviding()
    */
   public String[] getProviding() {
     String[] providing = { NAME, "authmanager"};

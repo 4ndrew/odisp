@@ -1,4 +1,4 @@
-package com.novel.stdmsg;
+package org.valabs.stdmsg;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -7,13 +7,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.novel.odisp.common.Message;
+import org.valabs.odisp.common.Message;
 
 /** Реализация стандартного сообщения для стандартного диспетчера ODISP.
  * 
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: StandartMessage.java,v 1.20 2004/08/18 12:48:39 valeks Exp $
+ * @version $Id: StandartMessage.java,v 1.21 2004/08/23 07:42:36 valeks Exp $
  */
 public class StandartMessage implements Message, Serializable {
   /** Флаг маршрутизации. */

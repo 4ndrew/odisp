@@ -1,4 +1,4 @@
-package com.novel.odisp.standart;
+package org.valabs.odisp.standart;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -13,27 +13,27 @@ import org.valeks.xlang.parser.Parser;
 import org.valeks.xlang.parser.Tag;
 import org.valeks.xlang.parser.XLangException;
 
-import com.novel.odisp.common.ExceptionHandler;
-import com.novel.odisp.common.Message;
-import com.novel.odisp.common.ObjectManager;
-import com.novel.odisp.common.ResourceManager;
-import com.novel.odisp.common.SecurityManager;
-import com.novel.stdmsg.StandartMessage;
+import org.valabs.odisp.common.ExceptionHandler;
+import org.valabs.odisp.common.Message;
+import org.valabs.odisp.common.ObjectManager;
+import org.valabs.odisp.common.ResourceManager;
+import org.valabs.odisp.common.SecurityManager;
+import org.valabs.stdmsg.StandartMessage;
 
 /** Стандартный диспетчер ODISP.
  * Стандартный диспетчер реализует пересылку сообщений между объектами ядра
  * и управление ресурсными объектами.
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: Dispatcher.java,v 1.49 2004/08/18 12:48:40 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.50 2004/08/23 07:42:37 valeks Exp $
  */
-public class Dispatcher implements com.novel.odisp.common.Dispatcher, ExceptionHandler {
+public class Dispatcher implements org.valabs.odisp.common.Dispatcher, ExceptionHandler {
   /** Журнал. */
-  private static Logger log = Logger.getLogger("com.novel.odisp.standart.Dispatcher");
+  private static Logger log = Logger.getLogger("org.valabs.odisp.standart.Dispatcher");
   /** Менеджер ресурсов. */
-  private ResourceManager rman = new com.novel.odisp.standart.ResourceManager(this);
+  private ResourceManager rman = new org.valabs.odisp.standart.ResourceManager(this);
   /** Менеджер объектов. */
-  private ObjectManager oman = new com.novel.odisp.standart.ObjectManager(this);
+  private ObjectManager oman = new org.valabs.odisp.standart.ObjectManager(this);
   /** Менеджер безопасности. */
   private SecurityManager sman = null;
   /** Обработчик исключений. */
@@ -190,7 +190,7 @@ public class Dispatcher implements com.novel.odisp.common.Dispatcher, ExceptionH
   }
   /** Выводит сообщение об ошибке в случае некорректных параметров. */
   public static void usage() {
-    log.severe("Usage: java com.novel.odisp.StandartDispatcher <config>");
+    log.severe("Usage: java org.valabs.odisp.StandartDispatcher <config>");
     System.exit(0);
   }
   /** Точка входа в StandartDispatcher.
@@ -215,14 +215,14 @@ public class Dispatcher implements com.novel.odisp.common.Dispatcher, ExceptionH
   }
   
   /* (non-Javadoc)
-   * @see com.novel.odisp.common.Dispatcher#addSecurityManager(com.novel.odisp.common.SecurityManager)
+   * @see org.valabs.odisp.common.Dispatcher#addSecurityManager(org.valabs.odisp.common.SecurityManager)
    */
   public void addSecurityManager(SecurityManager additionalSecurityManager) {
   	sman = additionalSecurityManager;
   }
 
   /* (non-Javadoc)
-   * @see com.novel.odisp.common.Dispatcher#getSecurityManager()
+   * @see org.valabs.odisp.common.Dispatcher#getSecurityManager()
    */
   public SecurityManager getSecurityManager() {
     assert sman != null : "security manager is null! no one registered ever";
@@ -230,14 +230,14 @@ public class Dispatcher implements com.novel.odisp.common.Dispatcher, ExceptionH
   }
  
   /* (non-Javadoc)
-   * @see com.novel.odisp.common.Dispatcher#addExceptionHandler(com.novel.odisp.common.ExceptionHandler)
+   * @see org.valabs.odisp.common.Dispatcher#addExceptionHandler(org.valabs.odisp.common.ExceptionHandler)
    */
   public void addExceptionHandler(ExceptionHandler ex) {
 	ehandler = ex;
   }
 
   /* (non-Javadoc)
-   * @see com.novel.odisp.common.Dispatcher#getExceptionHandler()
+   * @see org.valabs.odisp.common.Dispatcher#getExceptionHandler()
    */
   public ExceptionHandler getExceptionHandler() {
   	if(ehandler == null) {
@@ -247,7 +247,7 @@ public class Dispatcher implements com.novel.odisp.common.Dispatcher, ExceptionH
   }
 
   /* (non-Javadoc)
-   * @see com.novel.odisp.common.ExceptionHandler#signalException(java.lang.Exception)
+   * @see org.valabs.odisp.common.ExceptionHandler#signalException(java.lang.Exception)
    */
   public void signalException(Exception e) {
 	System.err.println("========================================================");

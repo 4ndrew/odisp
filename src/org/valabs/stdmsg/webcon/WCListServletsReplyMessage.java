@@ -1,12 +1,12 @@
-package com.novel.stdmsg.webcon;
+package org.valabs.stdmsg.webcon;
 
 import java.util.List;
 
-import com.novel.odisp.common.Message;
+import org.valabs.odisp.common.Message;
 
 /** Запрос на динамическое изменение списка сервисов.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: WCListServletsReplyMessage.java,v 1.4 2004/08/18 12:48:39 valeks Exp $
+ * @version $Id: WCListServletsReplyMessage.java,v 1.5 2004/08/23 07:42:36 valeks Exp $
  */
 
 public class WCListServletsReplyMessage {

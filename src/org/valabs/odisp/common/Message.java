@@ -1,11 +1,11 @@
-package com.novel.odisp.common;
+package org.valabs.odisp.common;
 
 import java.util.List;
 import java.util.Map;
 
 /** Интерфейс сообщения ядра ODISP системы.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
- * @version $Id: Message.java,v 1.15 2004/08/18 12:48:39 valeks Exp $
+ * @version $Id: Message.java,v 1.16 2004/08/23 07:42:36 valeks Exp $
  */
 public interface Message {
 

@@ -1,12 +1,12 @@
-package com.novel.odisp.standart;
+package org.valabs.odisp.standart;
 
 import java.util.Arrays;
 
-import com.novel.odisp.common.ODObject;
+import org.valabs.odisp.common.ODObject;
 
 /** Запись об объекте в таблице объектов.
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ObjectEntry.java,v 1.9 2004/08/18 12:48:40 valeks Exp $
+ * @version $Id: ObjectEntry.java,v 1.10 2004/08/23 07:42:37 valeks Exp $
  */
 class ObjectEntry {
   /** Определяет загружен ли объект. */

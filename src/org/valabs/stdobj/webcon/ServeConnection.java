@@ -1,4 +1,4 @@
-package com.novel.stdobj.webcon;
+package org.valabs.stdobj.webcon;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,15 +16,15 @@ import java.util.TimeZone;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
-import com.novel.stdobj.webcon.servlet.Servlet;
-import com.novel.stdobj.webcon.servlet.ServletException;
-import com.novel.stdobj.webcon.servlet.ServletInputStream;
-import com.novel.stdobj.webcon.servlet.ServletOutputStream;
-import com.novel.stdobj.webcon.servlet.http.Cookie;
-import com.novel.stdobj.webcon.servlet.http.HttpServlet;
-import com.novel.stdobj.webcon.servlet.http.HttpServletRequest;
-import com.novel.stdobj.webcon.servlet.http.HttpServletResponse;
-import com.novel.stdobj.webcon.servlet.http.HttpSession;
+import org.valabs.stdobj.webcon.servlet.Servlet;
+import org.valabs.stdobj.webcon.servlet.ServletException;
+import org.valabs.stdobj.webcon.servlet.ServletInputStream;
+import org.valabs.stdobj.webcon.servlet.ServletOutputStream;
+import org.valabs.stdobj.webcon.servlet.http.Cookie;
+import org.valabs.stdobj.webcon.servlet.http.HttpServlet;
+import org.valabs.stdobj.webcon.servlet.http.HttpServletRequest;
+import org.valabs.stdobj.webcon.servlet.http.HttpServletResponse;
+import org.valabs.stdobj.webcon.servlet.http.HttpSession;
 
 class ServeConnection
   extends Thread

@@ -1,9 +1,9 @@
-package com.novel.odisp.standart;
+package org.valabs.odisp.standart;
 
 
 /** Реализация единого потока рассылки и обработки сообщений.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: Sender.java,v 1.10 2004/07/21 08:05:42 valeks Exp $
+ * @version $Id: Sender.java,v 1.11 2004/08/23 07:42:37 valeks Exp $
  */
 class Sender extends Thread {
 	/** Счетчик сообщений, которые были обработаны нитью. */

@@ -1,4 +1,4 @@
-package com.novel.odisp.common;
+package org.valabs.odisp.common;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 /** Стандартный объект ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: StandartODObject.java,v 1.7 2004/08/18 12:48:40 valeks Exp $
+ * @version $Id: StandartODObject.java,v 1.8 2004/08/23 07:42:37 valeks Exp $
  */
 
 public abstract class StandartODObject implements ODObject {

@@ -1,11 +1,11 @@
-package com.novel.stdmsg.webcon;
+package org.valabs.stdmsg.webcon;
 
-import com.novel.odisp.common.Message;
+import org.valabs.odisp.common.Message;
 
 /** Удаление сервлета из контейнера.
  * Производится удаление ссылки на обработчик запросов из записей контейнера.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: WCRemoveServletMessage.java,v 1.4 2004/08/18 12:48:39 valeks Exp $
+ * @version $Id: WCRemoveServletMessage.java,v 1.5 2004/08/23 07:42:37 valeks Exp $
  */
 
 public class WCRemoveServletMessage {

@@ -1,4 +1,4 @@
-package com.novel.odisp;
+package org.valabs.odisp;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,8 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.novel.odisp.common.Message;
-import com.novel.odisp.common.MessageHandler;
+import org.valabs.odisp.common.Message;
+import org.valabs.odisp.common.MessageHandler;
 
 /** Класс для работы с Odisp сессиями ("запрос-ответ"). Временно помещён в
  * клиентскую часть проекта, в будующем (просле согласования) будет перенесён
@@ -44,7 +44,7 @@ import com.novel.odisp.common.MessageHandler;
  * </pre>
  * 
  * @author (C) 2004 <a href="dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: SessionManager.java,v 1.5 2004/08/18 12:48:39 valeks Exp $ 
+ * @version $Id: SessionManager.java,v 1.6 2004/08/23 07:42:37 valeks Exp $ 
  */
 public class SessionManager {
   /** Ссылка на ODSessionManager */
@@ -69,7 +69,7 @@ public class SessionManager {
   /** Добавить обработчик в список.
    * 
    * @param messageId Идентификатор сообщения, которое было послано.
-   * @see com.novel.odisp.common.Message#getId()
+   * @see org.valabs.odisp.common.Message#getId()
    * @param messageHandler Обработчик для сообщения.
    */
   public void addMessageListener(int messageId,

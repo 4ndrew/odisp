@@ -1,11 +1,11 @@
-package com.novel.odisp.common;
+package org.valabs.odisp.common;
 
 import java.util.List;
 import java.util.Map;
 
 /** Интерфейс менеджера ресурсов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceManager.java,v 1.7 2004/08/18 12:48:40 valeks Exp $
+ * @version $Id: ResourceManager.java,v 1.8 2004/08/23 07:42:37 valeks Exp $
  */
 
 public interface ResourceManager {

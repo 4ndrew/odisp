@@ -1,11 +1,11 @@
-package com.novel.odisp.common;
+package org.valabs.odisp.common;
 
 import java.util.Map;
 
 /** Базовый класс реализующий почтовый ящик для сообщений
 * посылаемых диспетчером ODISP.
 * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
-* @version $Id: ODObject.java,v 1.20 2004/08/18 12:48:39 valeks Exp $
+* @version $Id: ODObject.java,v 1.21 2004/08/23 07:42:37 valeks Exp $
 */
 public interface ODObject {
   /** Возвращает внутреннее ODISP имя объекта.

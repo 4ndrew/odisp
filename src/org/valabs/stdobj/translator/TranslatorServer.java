@@ -1,4 +1,4 @@
-package com.novel.stdobj.translator;
+package org.valabs.stdobj.translator;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,20 +9,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import com.novel.nms.messages.ModuleAboutMessage;
-import com.novel.nms.messages.ModuleAboutReplyMessage;
-import com.novel.nms.messages.ModuleStatusMessage;
-import com.novel.nms.messages.ModuleStatusReplyMessage;
-import com.novel.nms.messages.TranslatorGetTranslationMessage;
-import com.novel.nms.messages.TranslatorGetTranslationReplyMessage;
-import com.novel.odisp.common.Message;
-import com.novel.odisp.common.MessageHandler;
-import com.novel.odisp.common.StandartODObject;
+import org.valabs.stdmsg.ModuleAboutMessage;
+import org.valabs.stdmsg.ModuleAboutReplyMessage;
+import org.valabs.stdmsg.ModuleStatusMessage;
+import org.valabs.stdmsg.ModuleStatusReplyMessage;
+import org.valabs.stdmsg.TranslatorGetTranslationMessage;
+import org.valabs.stdmsg.TranslatorGetTranslationReplyMessage;
+import org.valabs.odisp.common.Message;
+import org.valabs.odisp.common.MessageHandler;
+import org.valabs.odisp.common.StandartODObject;
 
 /**
  * @author valeks
  * @author (C) 2004 îðð "îÏ×ÅÌ-éì"
- * @version $Id: TranslatorServer.java,v 1.1 2004/08/20 09:05:51 valeks Exp $
+ * @version $Id: TranslatorServer.java,v 1.2 2004/08/23 07:42:38 valeks Exp $
  */
 public class TranslatorServer extends StandartODObject
 		implements
@@ -97,7 +97,7 @@ public class TranslatorServer extends StandartODObject
 		addHandler(TranslatorGetTranslationMessage.NAME, this);
 	}
 	/**
-	 * @see com.novel.odisp.common.ODObject#getDepends()
+	 * @see org.valabs.odisp.common.ODObject#getDepends()
 	 */
 	public String[] getDepends() {
 		String[] depends = {"dispatcher"};
@@ -105,7 +105,7 @@ public class TranslatorServer extends StandartODObject
 	}
 
 	/**
-	 * @see com.novel.odisp.common.ODObject#getProviding()
+	 * @see org.valabs.odisp.common.ODObject#getProviding()
 	 */
 	public String[] getProviding() {
 		String[] providing = {NAME,};

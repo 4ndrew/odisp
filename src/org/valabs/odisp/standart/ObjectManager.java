@@ -1,4 +1,4 @@
-package com.novel.odisp.standart;
+package org.valabs.odisp.standart;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -10,18 +10,18 @@ import java.util.Map;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
-import com.novel.odisp.common.Dispatcher;
-import com.novel.odisp.common.Message;
-import com.novel.odisp.common.ODObject;
-import com.novel.stdmsg.ODCleanupMessage;
-import com.novel.stdmsg.ODObjectLoadedMessage;
+import org.valabs.odisp.common.Dispatcher;
+import org.valabs.odisp.common.Message;
+import org.valabs.odisp.common.ODObject;
+import org.valabs.stdmsg.ODCleanupMessage;
+import org.valabs.stdmsg.ODObjectLoadedMessage;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.36 2004/07/21 08:05:42 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.37 2004/08/23 07:42:37 valeks Exp $
  */
 
-class ObjectManager implements com.novel.odisp.common.ObjectManager {
+class ObjectManager implements org.valabs.odisp.common.ObjectManager {
   /** Диспетчер объектов. */
   private Dispatcher dispatcher;
   /** Хранилище отложенных сообщений. */
@@ -29,7 +29,7 @@ class ObjectManager implements com.novel.odisp.common.ObjectManager {
   /** Список объектов. */
   private Map objects = new HashMap();
   /** Журнал. */
-  private Logger log = Logger.getLogger("com.novel.odisp.StandartObjectManager");
+  private Logger log = Logger.getLogger("org.valabs.odisp.StandartObjectManager");
   /** Список сервисов менеджера. */
   private Map provided = new HashMap();
   /** Пул нитей отсылки. */

@@ -1,24 +1,24 @@
-package com.novel.stdobj.console;
+package org.valabs.stdobj.console;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.novel.odisp.common.Message;
-import com.novel.odisp.common.StandartODObject;
-import com.novel.stdmsg.ODCleanupMessage;
-import com.novel.stdmsg.ODObjectLoadedMessage;
-import com.novel.stdmsg.webcon.WCAddServletMessage;
-import com.novel.stdobj.webcon.servlet.ServletException;
-import com.novel.stdobj.webcon.servlet.ServletOutputStream;
-import com.novel.stdobj.webcon.servlet.http.HttpServlet;
-import com.novel.stdobj.webcon.servlet.http.HttpServletRequest;
-import com.novel.stdobj.webcon.servlet.http.HttpServletResponse;
+import org.valabs.odisp.common.Message;
+import org.valabs.odisp.common.StandartODObject;
+import org.valabs.stdmsg.ODCleanupMessage;
+import org.valabs.stdmsg.ODObjectLoadedMessage;
+import org.valabs.stdmsg.webcon.WCAddServletMessage;
+import org.valabs.stdobj.webcon.servlet.ServletException;
+import org.valabs.stdobj.webcon.servlet.ServletOutputStream;
+import org.valabs.stdobj.webcon.servlet.http.HttpServlet;
+import org.valabs.stdobj.webcon.servlet.http.HttpServletRequest;
+import org.valabs.stdobj.webcon.servlet.http.HttpServletResponse;
 
 /** Объект ODISP реализующий WebCon интерфейс доступа к менеджеру.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
- * @version $Id: WCConsoleObject.java,v 1.10 2004/08/18 12:48:40 valeks Exp $
+ * @version $Id: WCConsoleObject.java,v 1.11 2004/08/23 07:42:37 valeks Exp $
  */
 public class WCConsoleObject extends StandartODObject {
   /** Собственно сервлет-обработчик. */

@@ -1,15 +1,15 @@
-package com.novel.odisp.standart;
+package org.valabs.odisp.standart;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
-import com.novel.odisp.common.Resource;
+import org.valabs.odisp.common.Resource;
 
 /** Запись об однотипных ресурах в таблице ресурсов.
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceEntry.java,v 1.11 2004/08/18 12:48:40 valeks Exp $
+ * @version $Id: ResourceEntry.java,v 1.12 2004/08/23 07:42:37 valeks Exp $
  */
 class ResourceEntry {
   /** Журнал. */

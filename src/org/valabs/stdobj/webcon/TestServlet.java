@@ -26,16 +26,16 @@
 // Visit the ACME Labs Java page for up-to-date versions of this and other
 // fine Java utilities: http://www.acme.com/java/
 
-package com.novel.stdobj.webcon;
+package org.valabs.stdobj.webcon;
 
 import java.io.IOException;
 import java.util.Enumeration;
 
-import com.novel.stdobj.webcon.servlet.ServletException;
-import com.novel.stdobj.webcon.servlet.ServletOutputStream;
-import com.novel.stdobj.webcon.servlet.http.HttpServlet;
-import com.novel.stdobj.webcon.servlet.http.HttpServletRequest;
-import com.novel.stdobj.webcon.servlet.http.HttpServletResponse;
+import org.valabs.stdobj.webcon.servlet.ServletException;
+import org.valabs.stdobj.webcon.servlet.ServletOutputStream;
+import org.valabs.stdobj.webcon.servlet.http.HttpServlet;
+import org.valabs.stdobj.webcon.servlet.http.HttpServletRequest;
+import org.valabs.stdobj.webcon.servlet.http.HttpServletResponse;
 
 /** Simple servlet that tests the Servlet API.
  * Sample output:
@@ -64,7 +64,7 @@ import com.novel.stdobj.webcon.servlet.http.HttpServletResponse;
  *     accept: text/html, image/gif, image/jpeg, *; q=.2
  *     user-agent: Java1.0.2
  * </PRE>
- * <A HREF="/resources/classes/com.novel.stdobj.webcon/TestServlet.java">Fetch the software.</A><BR>
+ * <A HREF="/resources/classes/org.valabs.stdobj.webcon/TestServlet.java">Fetch the software.</A><BR>
  * <A HREF="/resources/classes/tar.gz">Fetch the entire package.</A>
  */
 public class TestServlet extends HttpServlet {

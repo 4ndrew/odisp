@@ -28,15 +28,15 @@
 // Visit the ACME Labs Java page for up-to-date versions of this and other
 // fine Java utilities: http://www.acme.com/java/
 
-package com.novel.stdobj.webcon.servlet.http;
+package org.valabs.stdobj.webcon.servlet.http;
 
 import java.io.IOException;
 import java.io.Serializable;
 
-import com.novel.stdobj.webcon.servlet.GenericServlet;
-import com.novel.stdobj.webcon.servlet.ServletException;
-import com.novel.stdobj.webcon.servlet.ServletRequest;
-import com.novel.stdobj.webcon.servlet.ServletResponse;
+import org.valabs.stdobj.webcon.servlet.GenericServlet;
+import org.valabs.stdobj.webcon.servlet.ServletException;
+import org.valabs.stdobj.webcon.servlet.ServletRequest;
+import org.valabs.stdobj.webcon.servlet.ServletResponse;
 
 /// The HTTP servlet class.
 // <P>
@@ -45,11 +45,11 @@ import com.novel.stdobj.webcon.servlet.ServletResponse;
 // <P>
 // This is taken from JavaSoft's Servlet API documentation.
 // <P>
-// <A HREF="/resources/classes/com.novel.stdobj.webcon/servlet/http/HttpServlet.java">Fetch the software.</A><BR>
+// <A HREF="/resources/classes/org.valabs.stdobj.webcon/servlet/http/HttpServlet.java">Fetch the software.</A><BR>
 // <A HREF="/resources/classes/tar.gz">Fetch the entire package.</A>
 // <P>
-// @see com.novel.stdobj.webcon.SampleServlet
-// @see com.novel.stdobj.webcon.Serve
+// @see org.valabs.stdobj.webcon.SampleServlet
+// @see org.valabs.stdobj.webcon.Serve
 
 public abstract class HttpServlet extends GenericServlet implements Serializable
     {

@@ -26,21 +26,21 @@
  * Visit the ACME Labs Java page for up-to-date versions of this and other
  * fine Java utilities: http://www.acme.com/java/
 */
-package com.novel.stdobj.webcon;
+package org.valabs.stdobj.webcon;
 
 import java.io.IOException;
 
-import com.novel.stdobj.webcon.servlet.ServletException;
-import com.novel.stdobj.webcon.servlet.ServletOutputStream;
-import com.novel.stdobj.webcon.servlet.http.HttpServlet;
-import com.novel.stdobj.webcon.servlet.http.HttpServletRequest;
-import com.novel.stdobj.webcon.servlet.http.HttpServletResponse;
+import org.valabs.stdobj.webcon.servlet.ServletException;
+import org.valabs.stdobj.webcon.servlet.ServletOutputStream;
+import org.valabs.stdobj.webcon.servlet.http.HttpServlet;
+import org.valabs.stdobj.webcon.servlet.http.HttpServletRequest;
+import org.valabs.stdobj.webcon.servlet.http.HttpServletResponse;
 
 /** Trivial servlet. */
 public class SampleServlet extends HttpServlet {
 
   /** Returns a string containing information about the author, version, and copyright of the servlet.
-   * @see com.novel.stdobj.webcon.servlet.Servlet#getServletInfo()
+   * @see org.valabs.stdobj.webcon.servlet.Servlet#getServletInfo()
    */
   public String getServletInfo() {
     return "trivial servlet";

@@ -28,7 +28,7 @@
  * fine Java utilities: http://www.acme.com/java/
 */
 
-package com.novel.stdobj.webcon;
+package org.valabs.stdobj.webcon;
 
 import java.util.ArrayList;
 import java.util.HashMap;

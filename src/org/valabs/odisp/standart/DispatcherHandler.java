@@ -1,4 +1,4 @@
-package com.novel.odisp.standart;
+package org.valabs.odisp.standart;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,29 +8,29 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import com.novel.nms.messages.ModuleAboutMessage;
-import com.novel.nms.messages.ModuleAboutReplyMessage;
-import com.novel.nms.messages.ModuleStatusMessage;
-import com.novel.nms.messages.ModuleStatusReplyMessage;
-import com.novel.odisp.common.Message;
-import com.novel.odisp.common.MessageHandler;
-import com.novel.odisp.common.ObjectManager;
-import com.novel.odisp.common.ResourceManager;
-import com.novel.odisp.common.StandartODObject;
-import com.novel.stdmsg.ODAcquireMessage;
-import com.novel.stdmsg.ODAddProviderMessage;
-import com.novel.stdmsg.ODGetProvidingMessage;
-import com.novel.stdmsg.ODGetProvidingReplyMessage;
-import com.novel.stdmsg.ODReleaseMessage;
-import com.novel.stdmsg.ODRemoveDepMessage;
-import com.novel.stdmsg.ODRemoveProviderMessage;
-import com.novel.stdmsg.ODShutdownMessage;
+import org.valabs.stdmsg.ModuleAboutMessage;
+import org.valabs.stdmsg.ModuleAboutReplyMessage;
+import org.valabs.stdmsg.ModuleStatusMessage;
+import org.valabs.stdmsg.ModuleStatusReplyMessage;
+import org.valabs.odisp.common.Message;
+import org.valabs.odisp.common.MessageHandler;
+import org.valabs.odisp.common.ObjectManager;
+import org.valabs.odisp.common.ResourceManager;
+import org.valabs.odisp.common.StandartODObject;
+import org.valabs.stdmsg.ODAcquireMessage;
+import org.valabs.stdmsg.ODAddProviderMessage;
+import org.valabs.stdmsg.ODGetProvidingMessage;
+import org.valabs.stdmsg.ODGetProvidingReplyMessage;
+import org.valabs.stdmsg.ODReleaseMessage;
+import org.valabs.stdmsg.ODRemoveDepMessage;
+import org.valabs.stdmsg.ODRemoveProviderMessage;
+import org.valabs.stdmsg.ODShutdownMessage;
 
 /**
  * Обработчик сообщений диспетчера ODISP.
  * 
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: DispatcherHandler.java,v 1.27 2004/08/18 12:48:40 valeks Exp $
+ * @version $Id: DispatcherHandler.java,v 1.28 2004/08/23 07:42:37 valeks Exp $
  */
 
 public class DispatcherHandler extends StandartODObject {
@@ -39,7 +39,7 @@ public class DispatcherHandler extends StandartODObject {
 
     /** Журнал. */
     private Logger log = Logger
-            .getLogger("com.novel.odisp.standart.DispatcherHandler");
+            .getLogger("org.valabs.odisp.standart.DispatcherHandler");
 
     /** Менеджер объектов. */
     private ObjectManager oman;

@@ -1,4 +1,4 @@
-package com.novel.odisp.standart;
+package org.valabs.odisp.standart;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,18 +8,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import com.novel.odisp.common.Dispatcher;
-import com.novel.odisp.common.Message;
-import com.novel.odisp.common.Resource;
-import com.novel.stdmsg.ODAcquireMessage;
-import com.novel.stdmsg.ODReleaseMessage;
-import com.novel.stdmsg.ODResourceAcquiredMessage;
+import org.valabs.odisp.common.Dispatcher;
+import org.valabs.odisp.common.Message;
+import org.valabs.odisp.common.Resource;
+import org.valabs.stdmsg.ODAcquireMessage;
+import org.valabs.stdmsg.ODReleaseMessage;
+import org.valabs.stdmsg.ODResourceAcquiredMessage;
 
 /** Менеджер ресурсных объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceManager.java,v 1.25 2004/07/21 08:05:42 valeks Exp $
+ * @version $Id: ResourceManager.java,v 1.26 2004/08/23 07:42:37 valeks Exp $
  */
-class ResourceManager implements com.novel.odisp.common.ResourceManager {
+class ResourceManager implements org.valabs.odisp.common.ResourceManager {
   /** Ссылка на диспетчер объектов. */
   //  private Dispatcher dispatcher;
   /** Нить обработки запросов. */

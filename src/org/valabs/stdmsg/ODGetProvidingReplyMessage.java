@@ -1,13 +1,13 @@
-package com.novel.stdmsg;
+package org.valabs.stdmsg;
 
 import java.util.List;
 
-import com.novel.odisp.common.Message;
+import org.valabs.odisp.common.Message;
 
 /** Запрос на динамическое изменение списка сервисов.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2004, НПП "Новел-ИЛ"
- * @version $Id: ODGetProvidingReplyMessage.java,v 1.7 2004/07/21 08:03:21 valeks Exp $
+ * @version $Id: ODGetProvidingReplyMessage.java,v 1.8 2004/08/23 07:42:36 valeks Exp $
  */
 
 public final class ODGetProvidingReplyMessage {

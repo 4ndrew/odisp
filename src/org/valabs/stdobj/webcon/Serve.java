@@ -27,7 +27,7 @@
  * Visit the ACME Labs Java page for up-to-date versions of this and other
  * fine Java utilities: http://www.acme.com/java/
  */
-package com.novel.stdobj.webcon;
+package org.valabs.stdobj.webcon;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -50,9 +50,9 @@ import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
-import com.novel.stdobj.webcon.servlet.Servlet;
-import com.novel.stdobj.webcon.servlet.ServletContext;
-import com.novel.stdobj.webcon.servlet.ServletException;
+import org.valabs.stdobj.webcon.servlet.Servlet;
+import org.valabs.stdobj.webcon.servlet.ServletContext;
+import org.valabs.stdobj.webcon.servlet.ServletException;
 
 /** Minimal Java HTTP server class by ACME.
  * <p> Being largerly abandoned ACME Java Serve was taken as the core of WebCon for ODISP project
@@ -60,10 +60,10 @@ import com.novel.stdobj.webcon.servlet.ServletException;
  * now useless ACME Labs packages which were replaced by the modern ones. Also SSL support via JSSE
  * was introduced.
  * </p>
- * @see com.novel.stdobj.webcon.servlet.http.HttpServlet
+ * @see org.valabs.stdobj.webcon.servlet.http.HttpServlet
  * @author (C) 1996,1998 by Jef Poskanzer <jef@acme.com>
  * @author (C) 2004 Valentin A. Alekseev
- * @version $Id: Serve.java,v 1.8 2004/07/20 11:54:25 valeks Exp $
+ * @version $Id: Serve.java,v 1.9 2004/08/23 07:42:38 valeks Exp $
  */
 
 public class Serve implements ServletContext {

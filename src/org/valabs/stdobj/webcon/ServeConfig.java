@@ -1,10 +1,10 @@
-package com.novel.stdobj.webcon;
+package org.valabs.stdobj.webcon;
 
 import java.util.Enumeration;
 import java.util.Vector;
 
-import com.novel.stdobj.webcon.servlet.ServletConfig;
-import com.novel.stdobj.webcon.servlet.ServletContext;
+import org.valabs.stdobj.webcon.servlet.ServletConfig;
+import org.valabs.stdobj.webcon.servlet.ServletContext;
 
 class ServeConfig implements ServletConfig {
   private ServletContext context;

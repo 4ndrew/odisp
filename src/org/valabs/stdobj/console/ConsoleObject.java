@@ -1,27 +1,27 @@
-package com.novel.stdobj.console;
+package org.valabs.stdobj.console;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
 
-import com.novel.nms.messages.ModuleAboutMessage;
-import com.novel.nms.messages.ModuleAboutReplyMessage;
-import com.novel.nms.messages.ModuleStatusMessage;
-import com.novel.nms.messages.ModuleStatusReplyMessage;
-import com.novel.nms.messages.TranslatorGetTranslationMessage;
-import com.novel.nms.messages.TranslatorGetTranslationReplyMessage;
-import com.novel.odisp.common.Message;
-import com.novel.odisp.common.StandartODObject;
-import com.novel.stdmsg.ODAcquireMessage;
-import com.novel.stdmsg.ODCleanupMessage;
-import com.novel.stdmsg.ODObjectLoadedMessage;
-import com.novel.stdmsg.ODResourceAcquiredMessage;
-import com.novel.stdobj.translator.Translator;
+import org.valabs.stdmsg.ModuleAboutMessage;
+import org.valabs.stdmsg.ModuleAboutReplyMessage;
+import org.valabs.stdmsg.ModuleStatusMessage;
+import org.valabs.stdmsg.ModuleStatusReplyMessage;
+import org.valabs.stdmsg.TranslatorGetTranslationMessage;
+import org.valabs.stdmsg.TranslatorGetTranslationReplyMessage;
+import org.valabs.odisp.common.Message;
+import org.valabs.odisp.common.StandartODObject;
+import org.valabs.stdmsg.ODAcquireMessage;
+import org.valabs.stdmsg.ODCleanupMessage;
+import org.valabs.stdmsg.ODObjectLoadedMessage;
+import org.valabs.stdmsg.ODResourceAcquiredMessage;
+import org.valabs.stdobj.translator.Translator;
 
 /** Объект ODISP реализующий консольный интерфейс доступа к менеджеру.
  * 
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: ConsoleObject.java,v 1.22 2004/08/20 11:20:49 valeks Exp $
+ * @version $Id: ConsoleObject.java,v 1.23 2004/08/23 07:42:37 valeks Exp $
  */
 public class ConsoleObject extends StandartODObject {
   /** Имя объекта */

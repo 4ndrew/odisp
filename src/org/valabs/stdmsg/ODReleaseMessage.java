@@ -1,12 +1,12 @@
-package com.novel.stdmsg;
+package org.valabs.stdmsg;
 
-import com.novel.odisp.common.Message;
-import com.novel.odisp.common.Resource;
+import org.valabs.odisp.common.Message;
+import org.valabs.odisp.common.Resource;
 
 /** Запрос диспетчера на высвобождение ресурса.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODReleaseMessage.java,v 1.12 2004/07/16 12:11:27 boris Exp $
+ * @version $Id: ODReleaseMessage.java,v 1.13 2004/08/23 07:42:36 valeks Exp $
  */
 
 public class ODReleaseMessage {

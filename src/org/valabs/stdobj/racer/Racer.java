@@ -1,21 +1,21 @@
-package com.novel.stdobj.racer;
+package org.valabs.stdobj.racer;
 
-import com.novel.odisp.common.Message;
-import com.novel.odisp.common.Resource;
-import com.novel.odisp.common.StandartODObject;
-import com.novel.stdmsg.ODAcquireMessage;
-import com.novel.stdmsg.ODCleanupMessage;
-import com.novel.stdmsg.ODObjectLoadedMessage;
-import com.novel.stdmsg.ODReleaseMessage;
-import com.novel.stdmsg.ODResourceAcquiredMessage;
-import com.novel.stdobj.translator.Translator;
+import org.valabs.odisp.common.Message;
+import org.valabs.odisp.common.Resource;
+import org.valabs.odisp.common.StandartODObject;
+import org.valabs.stdmsg.ODAcquireMessage;
+import org.valabs.stdmsg.ODCleanupMessage;
+import org.valabs.stdmsg.ODObjectLoadedMessage;
+import org.valabs.stdmsg.ODReleaseMessage;
+import org.valabs.stdmsg.ODResourceAcquiredMessage;
+import org.valabs.stdobj.translator.Translator;
 
 /** Объект, который пытается воспроизвести быстрые асинхронные запросы на
  * захват и высвобождение ресурса.
  * 
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author (C) 2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: Racer.java,v 1.17 2004/08/20 07:33:50 valeks Exp $
+ * @version $Id: Racer.java,v 1.18 2004/08/23 07:42:38 valeks Exp $
  */
 public class Racer extends StandartODObject {
   /** Счётчик запросов */

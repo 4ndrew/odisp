@@ -28,7 +28,7 @@
 // Visit the ACME Labs Java page for up-to-date versions of this and other
 // fine Java utilities: http://www.acme.com/java/
 
-package com.novel.stdobj.webcon.servlet;
+package org.valabs.stdobj.webcon.servlet;
 
 /// An interface for defining a servlet's environment.
 // It can be used by the servlet to obtain information about the
@@ -36,10 +36,10 @@ package com.novel.stdobj.webcon.servlet;
 // <P>
 // This is taken from JavaSoft's Servlet API documentation.
 // <P>
-// <A HREF="/resources/classes/com.novel.stdobj.webcon/servlet/ServletContext.java">Fetch the software.</A><BR>
+// <A HREF="/resources/classes/org.valabs.stdobj.webcon/servlet/ServletContext.java">Fetch the software.</A><BR>
 // <A HREF="/resources/classes/tar.gz">Fetch the entire package.</A>
 // <P>
-// @see com.novel.stdobj.webcon.servlet.Servlet
+// @see org.valabs.stdobj.webcon.servlet.Servlet
 
 import java.util.Enumeration;
 

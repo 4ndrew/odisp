@@ -1,10 +1,10 @@
-package com.novel.stdobj.webcon;
+package org.valabs.stdobj.webcon;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-import com.novel.stdobj.webcon.servlet.ServletOutputStream;
+import org.valabs.stdobj.webcon.servlet.ServletOutputStream;
 
 class ServeOutputStream extends ServletOutputStream {
 

@@ -26,7 +26,7 @@
 // Visit the ACME Labs Java page for up-to-date versions of this and other
 // fine Java utilities: http://www.acme.com/java/
 
-package com.novel.stdobj.webcon.servlet.http;
+package org.valabs.stdobj.webcon.servlet.http;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -56,7 +56,7 @@ import java.util.Vector;
 // is called, an empty chunk is sent, marking the end of the chunked
 // stream as per the chunking spec.
 // <P>
-// <A HREF="/resources/classes/com.novel.stdobj.webcon/servlet/http/ChunkedOutputStream.java">Fetch the software.</A><BR>
+// <A HREF="/resources/classes/org.valabs.stdobj.webcon/servlet/http/ChunkedOutputStream.java">Fetch the software.</A><BR>
 // <A HREF="/resources/classes/tar.gz">Fetch the entire package.</A>
 
 public class ChunkedOutputStream extends BufferedOutputStream

@@ -1,13 +1,13 @@
-package com.novel.stdobj.echo;
+package org.valabs.stdobj.echo;
 
-import com.novel.odisp.common.Message;
-import com.novel.odisp.common.MessageHandler;
-import com.novel.odisp.common.StandartODObject;
-import com.novel.stdmsg.ODCleanupMessage;
+import org.valabs.odisp.common.Message;
+import org.valabs.odisp.common.MessageHandler;
+import org.valabs.odisp.common.StandartODObject;
+import org.valabs.stdmsg.ODCleanupMessage;
 
 /** Простейший ODISP объект реализующий автоответчик на приходящие сообщения.
 * @author (C) 2003 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
-* @version $Id: EchoObject.java,v 1.16 2004/08/18 12:48:40 valeks Exp $
+* @version $Id: EchoObject.java,v 1.17 2004/08/23 07:42:37 valeks Exp $
 */
 public class EchoObject extends StandartODObject {
   /** Регистрация обработчиков. */

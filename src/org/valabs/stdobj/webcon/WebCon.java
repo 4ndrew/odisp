@@ -1,29 +1,29 @@
-package com.novel.stdobj.webcon;
+package org.valabs.stdobj.webcon;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-import com.novel.odisp.common.Message;
-import com.novel.odisp.common.MessageHandler;
-import com.novel.odisp.common.StandartODObject;
-import com.novel.stdmsg.ODCleanupMessage;
-import com.novel.stdmsg.ODObjectLoadedMessage;
-import com.novel.stdmsg.webcon.WCAddServletMessage;
-import com.novel.stdmsg.webcon.WCListServletsMessage;
-import com.novel.stdmsg.webcon.WCListServletsReplyMessage;
-import com.novel.stdmsg.webcon.WCRemoveServletMessage;
-import com.novel.stdobj.webcon.servlet.Servlet;
-import com.novel.stdobj.webcon.servlet.ServletException;
-import com.novel.stdobj.webcon.servlet.ServletOutputStream;
-import com.novel.stdobj.webcon.servlet.http.HttpServlet;
-import com.novel.stdobj.webcon.servlet.http.HttpServletRequest;
-import com.novel.stdobj.webcon.servlet.http.HttpServletResponse;
+import org.valabs.odisp.common.Message;
+import org.valabs.odisp.common.MessageHandler;
+import org.valabs.odisp.common.StandartODObject;
+import org.valabs.stdmsg.ODCleanupMessage;
+import org.valabs.stdmsg.ODObjectLoadedMessage;
+import org.valabs.stdmsg.webcon.WCAddServletMessage;
+import org.valabs.stdmsg.webcon.WCListServletsMessage;
+import org.valabs.stdmsg.webcon.WCListServletsReplyMessage;
+import org.valabs.stdmsg.webcon.WCRemoveServletMessage;
+import org.valabs.stdobj.webcon.servlet.Servlet;
+import org.valabs.stdobj.webcon.servlet.ServletException;
+import org.valabs.stdobj.webcon.servlet.ServletOutputStream;
+import org.valabs.stdobj.webcon.servlet.http.HttpServlet;
+import org.valabs.stdobj.webcon.servlet.http.HttpServletRequest;
+import org.valabs.stdobj.webcon.servlet.http.HttpServletResponse;
 
 /** ODISP-интерфейс к ACME серверу.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: WebCon.java,v 1.12 2004/08/18 12:48:40 valeks Exp $
+ * @version $Id: WebCon.java,v 1.13 2004/08/23 07:42:38 valeks Exp $
  */
 
 public class WebCon extends StandartODObject implements MessageHandler {

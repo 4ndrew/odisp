@@ -1,19 +1,19 @@
-package com.novel.stdobj.console;
+package org.valabs.stdobj.console;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.logging.Logger;
 
-import com.novel.odisp.common.Dispatcher;
-import com.novel.odisp.common.Message;
+import org.valabs.odisp.common.Dispatcher;
+import org.valabs.odisp.common.Message;
 
 
 /** Класс читающий данные с консоли.
  * 
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: ConsoleReader.java,v 1.14 2004/08/18 12:48:40 valeks Exp $
+ * @version $Id: ConsoleReader.java,v 1.15 2004/08/23 07:42:37 valeks Exp $
  */
 
 public class ConsoleReader extends Thread {

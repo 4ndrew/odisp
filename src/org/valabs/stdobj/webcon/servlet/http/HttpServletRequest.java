@@ -28,20 +28,20 @@
 // Visit the ACME Labs Java page for up-to-date versions of this and other
 // fine Java utilities: http://www.acme.com/java/
 
-package com.novel.stdobj.webcon.servlet.http;
+package org.valabs.stdobj.webcon.servlet.http;
 
 import java.util.Enumeration;
 
-import com.novel.stdobj.webcon.servlet.ServletRequest;
+import org.valabs.stdobj.webcon.servlet.ServletRequest;
 
 /// This interface represents an HTTP request.
 // <P>
 // This is taken from JavaSoft's Servlet API documentation.
 // <P>
-// <A HREF="/resources/classes/com.novel.stdobj.webcon/servlet/http/HttpServletRequest.java">Fetch the software.</A><BR>
+// <A HREF="/resources/classes/org.valabs.stdobj.webcon/servlet/http/HttpServletRequest.java">Fetch the software.</A><BR>
 // <A HREF="/resources/classes/tar.gz">Fetch the entire package.</A>
 // <P>
-// @see com.novel.stdobj.webcon.servlet.Servlet
+// @see org.valabs.stdobj.webcon.servlet.Servlet
 
 public interface HttpServletRequest extends ServletRequest
     {

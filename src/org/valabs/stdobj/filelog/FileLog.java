@@ -1,4 +1,4 @@
-package com.novel.stdobj.filelog;
+package org.valabs.stdobj.filelog;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,14 +13,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import com.novel.odisp.common.Message;
-import com.novel.odisp.common.StandartODObject;
-import com.novel.stdmsg.ODCleanupMessage;
-import com.novel.stdmsg.ODObjectLoadedMessage;
+import org.valabs.odisp.common.Message;
+import org.valabs.odisp.common.StandartODObject;
+import org.valabs.stdmsg.ODCleanupMessage;
+import org.valabs.stdmsg.ODObjectLoadedMessage;
 
 /** Объект реализующий простейшую журнализацию событий согласно файлу шаблонов.
 * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
-* @version $Id: FileLog.java,v 1.31 2004/08/20 07:33:50 valeks Exp $
+* @version $Id: FileLog.java,v 1.32 2004/08/23 07:42:38 valeks Exp $
 */
 public class FileLog extends StandartODObject {
 	/** Имя объекта. */

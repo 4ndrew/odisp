@@ -1,11 +1,11 @@
-package com.novel.odisp.common;
+package org.valabs.odisp.common;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Logger;
 
 /** Прокси-ресурс для доступа к произвольным внешним объектам.
 * @author (C) 2003 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
-* @version $Id: ProxyResource.java,v 1.6 2004/08/18 12:48:40 valeks Exp $
+* @version $Id: ProxyResource.java,v 1.7 2004/08/23 07:42:37 valeks Exp $
 */
 public class ProxyResource implements Resource {
   /** Собственно ресурс. */

@@ -1,16 +1,16 @@
-package com.novel.stdobj.translator;
+package org.valabs.stdobj.translator;
 
 import java.io.FileInputStream;
 import java.util.Map;
 import java.util.Properties;
 
-import com.novel.odisp.common.Resource;
+import org.valabs.odisp.common.Resource;
 
 /** Класс-транслятор строк
  *
  * @author <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
  * @author (C) 2004 НПП "Новел-ИЛ"
- * @version $Id: Translator.java,v 1.11 2004/08/18 13:01:09 dron Exp $
+ * @version $Id: Translator.java,v 1.12 2004/08/23 07:42:38 valeks Exp $
  */
 public class Translator extends Properties implements Resource {
   /** Имя параметра, который содержит имя файла для загрузки */

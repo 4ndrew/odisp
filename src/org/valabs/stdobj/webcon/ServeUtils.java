@@ -26,28 +26,28 @@
  * Visit the ACME Labs Java page for up-to-date versions of this and other
  * fine Java utilities: http://www.acme.com/java/
  */
-package com.novel.stdobj.webcon;
+package org.valabs.stdobj.webcon;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.StringTokenizer;
 
-import com.novel.stdobj.webcon.servlet.http.HttpServletRequest;
-import com.novel.stdobj.webcon.servlet.http.HttpServletResponse;
+import org.valabs.stdobj.webcon.servlet.http.HttpServletRequest;
+import org.valabs.stdobj.webcon.servlet.http.HttpServletResponse;
 
 /** Static utilities for minimal Java HTTP server.
  * <P>
- * <A HREF="/resources/classes/com.novel.stdobj.webcon/ServeUtils.java">Fetch the software.</A><BR>
+ * <A HREF="/resources/classes/org.valabs.stdobj.webcon/ServeUtils.java">Fetch the software.</A><BR>
  * <A HREF="/resources/classes/tar.gz">Fetch the entire package.</A>
  */
 public class ServeUtils {
 
   // Server identification.
-  public static final String serverName = "com.novel.stdobj.webcon";
-  public static final String serverVersion = "$Revision: 1.3 $";
+  public static final String serverName = "org.valabs.stdobj.webcon";
+  public static final String serverVersion = "$Revision: 1.4 $";
   public static final String serverUrl =
-    "http://www.acme.com/java/software/com.novel.stdobj.webcon.Serve.html";
+    "http://www.acme.com/java/software/org.valabs.stdobj.webcon.Serve.html";
 
   /** Write a standard-format HTML address for this server.
    * @param o
