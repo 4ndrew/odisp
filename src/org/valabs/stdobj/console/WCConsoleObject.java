@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.novel.odisp.common.Message;
-import com.novel.odisp.common.PollingODObject;
+import com.novel.odisp.common.StandartODObject;
 import com.novel.stdmsg.ODCleanupMessage;
 import com.novel.stdmsg.ODObjectLoadedMessage;
 import com.novel.stdmsg.webcon.WCAddServletMessage;
@@ -19,9 +19,9 @@ import com.novel.stdobj.webcon.servlet.http.HttpServletResponse;
 /** Объект ODISP реализующий WebCon интерфейс доступа к менеджеру.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: WCConsoleObject.java,v 1.4 2004/05/11 09:56:32 valeks Exp $
+ * @version $Id: WCConsoleObject.java,v 1.5 2004/05/13 09:25:46 valeks Exp $
  */
-public class WCConsoleObject extends PollingODObject {
+public class WCConsoleObject extends StandartODObject {
   /** Собственно сервлет-обработчик. */
   WCConsoleServlet servlet = null;
   /** Обработчик входящих сообщений.

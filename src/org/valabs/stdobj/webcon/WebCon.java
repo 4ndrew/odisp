@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-import com.novel.odisp.common.CallbackODObject;
+import com.novel.odisp.common.StandartODObject;
 import com.novel.odisp.common.Message;
 import com.novel.odisp.common.MessageHandler;
 import com.novel.stdmsg.ODCleanupMessage;
@@ -24,10 +24,10 @@ import com.novel.stdobj.webcon.servlet.http.HttpServletResponse;
 /** ODISP-интерфейс к ACME серверу.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2004, НПП "Новел-ИЛ"
- * @version $Id: WebCon.java,v 1.4 2004/04/02 09:54:49 valeks Exp $
+ * @version $Id: WebCon.java,v 1.5 2004/05/13 09:25:46 valeks Exp $
  */
 
-public class WebCon extends CallbackODObject implements MessageHandler {
+public class WebCon extends StandartODObject implements MessageHandler {
   /** Ссылка на сам сервер. */
   private Serve acmeServe = null;
   /** Регистрация обработчиков сообщений. */

@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import com.novel.odisp.common.Message;
-import com.novel.odisp.common.PollingODObject;
+import com.novel.odisp.common.StandartODObject;
 import com.novel.stdmsg.ODAcquireMessage;
 import com.novel.stdmsg.ODCleanupMessage;
 import com.novel.stdmsg.ODObjectLoadedMessage;
@@ -27,9 +27,9 @@ import com.novel.stdobj.simpleconfig.SimpleConfig;
 /** Объект реализующий простейшую журнализацию событий согласно файлу шаблонов.
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: FileLog.java,v 1.20 2004/05/11 09:56:32 valeks Exp $
+* @version $Id: FileLog.java,v 1.21 2004/05/13 09:25:46 valeks Exp $
 */
-public class FileLog extends PollingODObject {
+public class FileLog extends StandartODObject {
   /** Поток вывода. */
   private PrintWriter out;
   /** Список шаблонов действий. */

@@ -1,15 +1,15 @@
 package com.novel.stdobj.echo;
 
-import com.novel.odisp.common.CallbackODObject;
+import com.novel.odisp.common.StandartODObject;
 import com.novel.odisp.common.Message;
 import com.novel.odisp.common.MessageHandler;
 
 /** Простейший ODISP объект реализующий автоответчик на приходящие сообщения.
 * @author Валентин А. Алексеев
 * @author (C) 2003, НПП "Новел-ИЛ"
-* @version $Id: EchoObject.java,v 1.12 2004/04/02 09:54:49 valeks Exp $
+* @version $Id: EchoObject.java,v 1.13 2004/05/13 09:25:46 valeks Exp $
 */
-public class EchoObject extends CallbackODObject {
+public class EchoObject extends StandartODObject {
   /** Регистрация обработчиков. */
   protected final void registerHandlers() {
     addHandler("od_cleanup", new MessageHandler() {

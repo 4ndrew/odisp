@@ -14,7 +14,7 @@ import com.novel.odisp.common.Message;
  * @author <a href="valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author <a href="dron@novel-il.ru">Андрей А. Порохин</a>
  * @author (C) 2003-2004 НПП "Новел-ИЛ"
- * @version $Id: ConsoleReader.java,v 1.9 2004/05/11 09:56:32 valeks Exp $
+ * @version $Id: ConsoleReader.java,v 1.10 2004/05/13 09:25:46 valeks Exp $
  */
 
 public class ConsoleReader extends Thread {
@@ -74,7 +74,9 @@ public class ConsoleReader extends Thread {
           paramCount++;
 	  System.out.print("more? ");
 	}
+	logger.fine("before send");
 	dispatcher.send(m);
+	logger.fine("after send");
 	System.out.print("action> ");
       }
       if (doExit) {
