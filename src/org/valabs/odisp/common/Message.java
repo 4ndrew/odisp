@@ -6,7 +6,7 @@ import java.util.Map;
 /** Интерфейс сообщения ядра ODISP системы.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Message.java,v 1.13 2004/06/29 07:51:49 valeks Exp $
+ * @version $Id: Message.java,v 1.14 2004/07/20 11:55:24 valeks Exp $
  */
 public interface Message {
 
@@ -82,7 +82,7 @@ public interface Message {
   void setCorrect(boolean newCorrectFlag);
 
   /** Вернуть описание сообщения включая список последних 5 вызовов.
-   * @param willStackTrace
+   * @param willStackTrace будет ли генерироваться более полный дамп сообщения
    * @return сформатированное сообщение
    */
   String toString(boolean willStackTrace);
@@ -92,11 +92,11 @@ public interface Message {
    */
   boolean isRoutable();
 
-  /** Возможно ли маршрутизировать сообщение между диспетчерами (приложениями)
-   * @return флаг маршрутизации
+  /** Возможно ли маршрутизировать сообщение между диспетчерами (приложениями). 
+   * @param newRoutable новое значение флага маршрутизации
    */
   void setRoutable(boolean newRoutable);
-  
+
   /** Доступ к содержимому сообщения напрямую.
    * @return таблица полей
    */
@@ -107,11 +107,12 @@ public interface Message {
    * @param value значение поля
    */
   void addField(String name, Object value);
-  
+
   /** Доступ к подсообщениям.
- 	* @return список подсообщений
+   * @return список подсообщений
    */
   List getEnvelope();
+
   /** Добавление подсообщения.
    * @param envelopeMessage подсообщение
    */
