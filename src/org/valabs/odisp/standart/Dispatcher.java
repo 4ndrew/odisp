@@ -23,7 +23,7 @@ import com.novel.odisp.common.Dispatcher;
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.31 2004/02/13 22:22:50 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.32 2004/02/18 09:42:49 dron Exp $
  */
 public class StandartDispatcher implements Dispatcher {
   /** Журнал. */
@@ -201,7 +201,7 @@ public class StandartDispatcher implements Dispatcher {
 	List objs = new ArrayList();
 	String s;
 	while ((s = cfg.readLine()) != null) {
-	  if (!s.startsWith("#")) {
+	  if (!s.startsWith("#") && s.length() != 0) {
 	    objs.add(s);
 	  }
 	}
