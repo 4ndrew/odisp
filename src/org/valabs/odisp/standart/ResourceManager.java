@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 
 /** Менеджер ресурсных объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceManager.java,v 1.15 2004/03/26 21:53:38 valeks Exp $
+ * @version $Id: ResourceManager.java,v 1.16 2004/03/31 10:17:27 dron Exp $
  */
 public class StandartResourceManager implements ResourceManager {
   /** Ссылка на диспетчер объектов. */
@@ -363,9 +363,9 @@ public class StandartResourceManager implements ResourceManager {
     public synchronized void addRequest(RequestListEntry req) {
       synchronized (requestList) {
 	requestList.add(req);
-	synchronized (this) {
-	  notify();
-	}
+      }
+      synchronized (this) {
+        notify();
       }
     }
     /** Конструктор инициализирующий и запускающий нить.
