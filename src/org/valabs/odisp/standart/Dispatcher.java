@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 import java.lang.reflect.*;
 import java.util.regex.*;
+import java.util.logging.*;
 
 import com.novel.odisp.common.*;
 
@@ -12,10 +13,10 @@ import com.novel.odisp.common.*;
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.12 2003/10/21 12:30:49 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.13 2003/10/22 20:54:16 valeks Exp $
  */
 public class StandartDispatcher implements Dispatcher {
-	
+	private static Logger log = Logger.getLogger("com.novel.odisp");
 	Map objects = new HashMap();
 	Map resources = new HashMap();
 	List provided = new ArrayList();
@@ -32,7 +33,7 @@ public class StandartDispatcher implements Dispatcher {
 		if(re.loaded)
 		    continue;
 		re.loaded = true;
-		System.out.println("[D] added resource provider "+re.className);
+		log.fine("added resource provider "+re.className);
 		provided.add(re.className);
 	    }
 	    it = objects.keySet().iterator();
@@ -41,23 +42,23 @@ public class StandartDispatcher implements Dispatcher {
 		ObjectEntry oe = (ObjectEntry)objects.get(od_n);
 		if(oe.loaded)
 		    continue;
-		System.out.println("[D] trying to load object "+od_n);
+		log.config("trying to load object "+od_n);
 		int requested = oe.depends.length;
 		for(int i = 0;i<oe.depends.length;i++)
 		    if(provided.contains(oe.depends[i])){
 			requested--;
                     } else {
-                        System.out.println("[D] dependency not met: "+oe.depends[i]);
+                        log.finer("dependency not met: "+oe.depends[i]);
                     }
 		if(requested == 0){
 		    oe.object.start();
 		    oe.loaded = true;
 		    for(int i = 0;i<oe.provides.length; i++)
 			if(!provided.contains(oe.provides[i])){
-			    System.out.println("[D] added provider of "+oe.provides[i]);
+			    log.fine("added provider of "+oe.provides[i]);
 			    provided.add(oe.provides[i]);
 			}
-		    System.out.println(" ok. loaded = " + od_n);
+		    log.config(" ok. loaded = " + od_n);
 		}
 	    }
 	}
@@ -68,7 +69,7 @@ public class StandartDispatcher implements Dispatcher {
 	    @return void
 	*/
 	private void loadResource(String className, int mult, String param){
-	    System.err.print("\tloading resource "+className);
+	    String log_message = "loading resource "+className;
 	    for(int i = 0; i < mult; i++){
 		try {
 		    Resource r = (Resource)Class.forName(className).newInstance();
@@ -80,16 +81,17 @@ public class StandartDispatcher implements Dispatcher {
                         resources.put(param+":"+i, re);
                     } else
 		        resources.put(className+":"+i, re);
-		    System.out.print("+");
+		    log_message+="+";
 		} catch(ClassNotFoundException e){
-		    System.err.println(" failed: "+e);
+		    log.warning(" failed: "+e);
 		} catch(InstantiationException e){
-	    	    System.err.println(" failed: "+e);
+	    	    log.warning(" failed: "+e);
 		} catch(IllegalAccessException e){
-	    	    System.err.println(" failed: "+e);
+	    	    log.warning(" failed: "+e);
 		}	    
 	    }
-	    System.out.println(" ok.");
+	    log_message+=" ok.";
+	    log.config(log_message);
 	}
 	/** Выгрузка ресурсного объекта
 	@param roName имя ресурсного объекта
@@ -124,7 +126,7 @@ public class StandartDispatcher implements Dispatcher {
 	 * @return void
 	 */
    private void loadObject(String className){
-      System.err.print("\tloading object "+className);
+      log.config("loading object "+className);
       try {
          Object params[] = new Object[1];
          params[0] = new Integer(obj_count++);
@@ -133,7 +135,6 @@ public class StandartDispatcher implements Dispatcher {
          ODObject load = (ODObject)Class.forName(className).getConstructor(declParams).newInstance(params);
          Message m = getNewMessage("od_object_loaded",load.getObjectName(),"stddispatcher",0);
          load.setDispatcher(this);
-//         load.start();
          load.addMessage(m);
          synchronized(objects){
             ObjectEntry oe = new ObjectEntry(className, false, load.getDepends(), load.getProviding());
@@ -142,17 +143,17 @@ public class StandartDispatcher implements Dispatcher {
             objects.put(load.getObjectName(), oe);
          }
       } catch(InvocationTargetException e){
-         System.err.println(" failed: "+e);
+         log.warning(" failed: "+e);
       } catch(NoSuchMethodException e){
-         System.err.println(" failed: "+e);
+         log.warning(" failed: "+e);
       } catch(ClassNotFoundException e){
-         System.err.println(" failed: "+e);
+         log.warning(" failed: "+e);
       } catch(InstantiationException e){
-         System.err.println(" failed: "+e);
+         log.warning(" failed: "+e);
       } catch(IllegalAccessException e){
-         System.err.println(" failed: "+e);
+         log.warning(" failed: "+e);
       } catch(IllegalArgumentException e){
-         System.err.println(" failed: "+e);
+         log.warning(" failed: "+e);
       }
    }
 	/** Принудительная выгрузка объекта и вызов сборщика
@@ -189,7 +190,7 @@ public class StandartDispatcher implements Dispatcher {
             while(it.hasNext()) {
                String cl_n = (String)it.next();
       			if(objects.containsKey(cl_n)) {
-                  System.out.println("[D] removing "+objectName+"'s dependency "+cl_n);
+                  log.fine("removing "+objectName+"'s dependency "+cl_n);
                   unloadObject(cl_n, code);
                }
             }
@@ -200,7 +201,7 @@ public class StandartDispatcher implements Dispatcher {
          sendMessage(m);
          obj.interrupt();
          objects.remove(objectName);
-         System.out.println("\tobject "+objectName+" unloaded");
+         log.config("\tobject "+objectName+" unloaded");
       }
    }
 	/** Интерфейс для объектов ядра для отсылки сообщений.
@@ -217,7 +218,7 @@ public class StandartDispatcher implements Dispatcher {
 		    String cl_n = (String)it.next();
 		    ObjectEntry oe = (ObjectEntry)objects.get(cl_n);
 		    if(oe.blockedState || !oe.loaded){
-			System.out.println("[D] deffered message for "+cl_n+" (loaded="+oe.loaded+")");
+			log.finer("deffered message for "+cl_n+" (loaded="+oe.loaded+")");
 			messages.addMessage(cl_n, message);
 			continue;
 		    }
@@ -245,7 +246,7 @@ public class StandartDispatcher implements Dispatcher {
 			String cl_n = (String)it.next();
 			ObjectEntry oe = (ObjectEntry)objects.get(cl_n);
 			if(oe.blockedState || !oe.loaded){
-			    System.out.println("[D] deffered message for "+cl_n+" (loaded="+oe.loaded+")");
+			    log.finer("deffered message for "+cl_n+" (loaded="+oe.loaded+")");
 			    messages.addMessage(cl_n, message);
 			    continue;
 			}
@@ -290,7 +291,7 @@ public class StandartDispatcher implements Dispatcher {
 	 * @param objs список объектов для загрузки
 	 */
 	public StandartDispatcher(List objs){
-	    System.err.println("[i] "+toString()+" starting up...");
+	    log.info(toString()+" starting up...");
 	    StandartDispatcherHandler stdh = new StandartDispatcherHandler(new Integer(0));
 	    ObjectEntry oe = new ObjectEntry(stdh.getClass().getName(), false, stdh.getDepends(), stdh.getProviding());
 	    oe.object = stdh;
@@ -305,9 +306,10 @@ public class StandartDispatcher implements Dispatcher {
 		String cl_n = (String)it.next();
 		Matcher m = p.matcher(cl_n);
 		m.find();
+		String parsed_line="";
                 for(int i = 0; i != m.groupCount(); i++)
-                        System.out.print(i+"='"+m.group(i)+"' ");
-                System.out.println();
+                        parsed_line+=i+"='"+m.group(i)+"' ";
+		log.finest(parsed_line);
 		if(m.groupCount() == 6){
 		    if(m.group(1).equals("o:"))
 			loadObject(m.group(4));
@@ -325,13 +327,14 @@ public class StandartDispatcher implements Dispatcher {
 	/** Выводит сообщение об ошибке в случае некорректных параметров
 	 */
 	public static void usage(){
-	    System.err.println("Usage: java com.novel.odisp.StandartDispatcher <file-with-list-of-ODobjects-to-load>");
+	    log.severe("Usage: java com.novel.odisp.StandartDispatcher <file-with-list-of-ODobjects-to-load>");
 	    System.exit(0);
 	}
 	/** Точка входа в StandartDispatcher.
 	 * @param args по 0 должно содержать имя файла с перечислением классов, которые необходимо загрузить
 	 */
 	public static void main(String args[]){
+	    log.setLevel(Level.FINE);
 	    if(args.length != 1)
 		usage();
 	    else {
@@ -344,9 +347,9 @@ public class StandartDispatcher implements Dispatcher {
 			    objs.add(s);
 		    new StandartDispatcher(objs);
 		} catch (FileNotFoundException e){
-		    System.err.println("[e] configuration file "+args[0]+" not found.");
+		    log.severe("[e] configuration file "+args[0]+" not found.");
 		} catch (IOException e){
-		    System.err.println("[e] unable to read configuration file.");
+		    log.severe("[e] unable to read configuration file.");
 		}
 	    }
 	}
@@ -364,7 +367,7 @@ public class StandartDispatcher implements Dispatcher {
 		blockedState = bs;
 		this.depends = depends;
 		for(int i = 0;i<depends.length;i++)
-		System.out.println("[D] object "+cn+" depends on "+depends[i]);
+		log.fine("object "+cn+" depends on "+depends[i]);
 		this.provides = provides;
 	    }
 	}
@@ -428,7 +431,7 @@ public class StandartDispatcher implements Dispatcher {
 		    addHandler("od_shutdown", new MessageHandler(){
 			public void messageReceived(Message msg){
 			    int exitCode = 0;
-			    System.out.println("[i] "+toString()+" shutting down...");
+			    log.info(toString()+" shutting down...");
 			    if(msg.getFieldsCount() == 1)
 				exitCode = ((Integer)msg.getField(0)).intValue();
 			    unloadObject("stddispatcher", exitCode);
