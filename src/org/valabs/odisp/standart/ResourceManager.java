@@ -17,7 +17,7 @@ import org.valabs.stdmsg.ODResourceAcquiredMessage;
 
 /** Менеджер ресурсных объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceManager.java,v 1.27 2004/08/23 13:20:00 valeks Exp $
+ * @version $Id: ResourceManager.java,v 1.28 2004/08/25 08:50:57 valeks Exp $
  */
 class ResourceManager implements org.valabs.odisp.common.ResourceManager {
   /** Ссылка на диспетчер объектов. */
@@ -55,7 +55,6 @@ class ResourceManager implements org.valabs.odisp.common.ResourceManager {
    */
   public final void acquireRequest(final Message msg) {
     String className = ODAcquireMessage.getResourceName(msg);
-    log.fine("resource acquientance request from " + msg.getOrigin() + " to " + className);
     dataThread.addRequest(new AcquireResourceRequest(msg.getOrigin(), msg.getId(), className));
   }
 
