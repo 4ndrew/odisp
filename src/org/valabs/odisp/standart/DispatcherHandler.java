@@ -11,10 +11,13 @@ import com.novel.stdmsg.ODAcquireMessage;
 import com.novel.stdmsg.ODShutdownMessage;
 import java.util.logging.Logger;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Iterator;
+import java.util.Set;
 
 /** Обработчик сообщений диспетчера ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: DispatcherHandler.java,v 1.4 2004/02/15 21:53:40 valeks Exp $
+ * @version $Id: DispatcherHandler.java,v 1.5 2004/02/17 11:00:00 valeks Exp $
  */
 
 public class StandartDispatcherHandler extends CallbackODObject {
@@ -104,7 +107,15 @@ public class StandartDispatcherHandler extends CallbackODObject {
     addHandler("od_list_objects", new MessageHandler() {
 	public final void messageReceived(final Message msg) {
 	  Message m = dispatcher.getNewMessage("object_list", msg.getOrigin(), getObjectName(), msg.getId());
-	  m.addField(new ArrayList(oman.getObjects().keySet()));
+	  List reply = new ArrayList();
+	  Set objs = oman.getObjects().keySet();
+	  Iterator it = objs.iterator();
+	  while (it.hasNext()) {
+	    String objName = (String) it.next();
+	    objName+= oman.getBlockedState(objName) > 0 ? ":blocked" : "";
+	    reply.add(objName);
+	  }
+	  m.addField(reply);
 	  dispatcher.send(m);
 	}
       });
