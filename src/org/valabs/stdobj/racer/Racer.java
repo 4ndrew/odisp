@@ -15,7 +15,7 @@ import com.novel.stdobj.simpleconfig.SimpleConfig;
  * 
  * @author (C) 2004 <a href="valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author <a href="dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: Racer.java,v 1.13 2004/06/21 16:30:23 valeks Exp $
+ * @version $Id: Racer.java,v 1.14 2004/07/12 09:59:41 valeks Exp $
  */
 public class Racer extends StandartODObject {
   /** Счётчик запросов */
@@ -89,7 +89,7 @@ public class Racer extends StandartODObject {
   public String[] getDepends() {
     String[] result = {
       "dispatcher",
-      "com.novel.stdobj.simpleconfig.SimpleConfig"
+      SimpleConfig.class.getName()
     };
     return result;
   }
