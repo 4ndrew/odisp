@@ -28,10 +28,10 @@ import org.valabs.stdmsg.ODShutdownMessage;
  * Обработчик сообщений диспетчера ODISP.
  * 
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: DispatcherHandler.java,v 1.30 2004/11/28 09:37:21 valeks Exp $
+ * @version $Id: DispatcherHandler.java,v 1.31 2004/11/28 18:48:45 valeks Exp $
  */
 
-public class DispatcherHandler extends StandartODObject {
+class DispatcherHandler extends StandartODObject {
     /** Нитка heart-beat диспетчера. */
     private Thread runThread;
 
