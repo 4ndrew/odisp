@@ -1,22 +1,51 @@
-/*
- * $Id: ConsoleObject.java,v 1.1 2003/10/02 23:16:31 valeks Exp $
- *	CommonObject.java
- *	Common Dispatcher Object. Defined as base class
- *	that implements message passing routines
- *      (C) 2003, JTT Novel-IL 
- */
 package com.novel.stdobj.console;
 import com.novel.odisp.common.*;
 import java.util.regex.Pattern;
-
+import java.io.*;
+/** Объект ODISP реализующий консольный интерфейс доступа к менеджеру
+* @author Валентин А. Алексеев
+* @author (C) 2003, НПП "Новел-ИЛ"
+* @version $Id: ConsoleObject.java,v 1.2 2003/10/04 12:54:19 valeks Exp $
+*/
 public class ConsoleObject extends ODObject {
 	public String name = "console";
-	private ConsoleReader reader;
+	private Thread reader;
 	public void handleMessage(Message msg){
             if(!Pattern.matches(msg.getDestination(), toString()))
                 return;	
 	    if(msg.getAction().equals("od_object_loaded"))
-		reader = new ConsoleReader(this);
+		reader = new Thread(new Runnable() {
+		    BufferedReader inp = new BufferedReader(new InputStreamReader(System.in));
+		    public void run(){
+		    try {
+			sleep(100);
+			System.out.print("action> ");
+			String action, tmp;
+			while((action = inp.readLine()) != null){
+			    System.out.print("destination> ");
+			    Message m = getDispatcher().getNewMessage(action, inp.readLine(), getObjectName(), 0);
+			    System.out.print("params? ");
+			    while(!inp.readLine().equals("")){
+				System.out.print("int|str? ");
+				tmp = inp.readLine();
+				System.out.print("value> ");
+				if(tmp.startsWith("i"))
+				    m.addField(new Integer(inp.readLine()));
+				else 
+				    m.addField(new String(inp.readLine()));
+				System.out.print("more? ");
+			    }
+			    getDispatcher().sendMessage(m);
+			    sleep(1);
+	    		    System.out.print("action> ");
+			}
+		    } catch(IOException e) {
+			System.err.println("ConsoleReader: Terminal connection lost. Quitting.");
+		    } catch(InterruptedException e){
+			System.out.println("ConsoleReader: closing console");
+		    }
+		}    
+	    });
 	    else if(msg.getAction().equals("od_cleanup"))
 		cleanUp(((Integer)msg.getField(0)).intValue());
 	    else {
@@ -36,5 +65,5 @@ public class ConsoleObject extends ODObject {
 		reader.interrupt();
 	    return 0;
 	}
-	public String getName(){return name;}
+	public String getObjectName(){return name;}
 }
