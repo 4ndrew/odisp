@@ -18,7 +18,7 @@ import org.valabs.stdobj.webcon.servlet.http.HttpServletResponse;
 
 /** Объект ODISP реализующий WebCon интерфейс доступа к менеджеру.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
- * @version $Id: WCConsoleObject.java,v 1.14 2005/01/26 08:22:53 valeks Exp $
+ * @version $Id: WCConsoleObject.java,v 1.15 2005/01/31 10:23:16 valeks Exp $
  */
 public class WCConsoleObject extends StandartODObject {
   public static final String NAME = "wcconsole";
@@ -130,6 +130,7 @@ public class WCConsoleObject extends StandartODObject {
 	  String message = req.getParameter("message");
 	  objectName = objectName.replaceAll("%2A", "*");
 	  Message m = dispatcher.getNewMessage(message, objectName, getObjectName(), UUID.getNullUUID());
+	  m.setCorrect(true);
 	  dispatcher.send(m);
 	}
 	p.println("\t</head>");
