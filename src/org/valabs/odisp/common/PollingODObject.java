@@ -1,15 +1,12 @@
 package com.novel.odisp.common;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.regex.Pattern;
 
 /** Базовый класс реализующий почтовый ящик для сообщений
 * посылаемых диспетчером ODISP.
 * @author Валентин А. Алексеев
 * @author (С) 2003-2004, НПП "Новел-ИЛ"
-* @version $Id: PollingODObject.java,v 1.22 2004/05/12 08:41:39 dron Exp $
+* @version $Id: PollingODObject.java,v 1.23 2004/05/12 13:40:50 dron Exp $
 */
 public abstract class PollingODObject extends ODObject {
   /** Конструктор задающий ODISP имя объекта.
