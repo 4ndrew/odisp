@@ -1,19 +1,25 @@
-/*
- * $Id: StandartMessage.java,v 1.1 2003/10/02 23:16:30 valeks Exp $
- *	StandartMessage.java
- *	Implementation of ODISP message for StandartDispatcher
- *      (C) 2003, JTT Novel-IL 
- */
 package com.novel.odisp;
 import com.novel.odisp.common.*;
 import java.util.*;
 
+/** Реализация стандартного сообщения для стандартного диспетчера ODISP
+ * @author Валентин А. Алексеев
+ * @author (C) 2003, НПП "Новел-ИЛ"
+ * @version $Id: StandartMessage.java,v 1.2 2003/10/03 21:26:07 valeks Exp $
+ */
 public class StandartMessage implements Message {
+	/** Внутренний уникальный счетчик сообщения */
 	static int id = 0;
-	int my_id;
+	private int my_id;
 	private List fields = new ArrayList();
 	private String action, destination, origin;
 	private int inReplyTo;
+	/** Реализация конструктора сообщения
+	 * @param action действие которое несет сообщение
+	 * @param destination адресат сообщения
+	 * @param origin отправитель сообщения
+	 * @param inReplyTo идентификатор сообщения на которое производится ответ
+	 */
 	public StandartMessage(String action, String destination, String origin, int inReplyTo){
 		this.action = action;
 		this.destination = destination;
@@ -21,30 +27,33 @@ public class StandartMessage implements Message {
 		this.origin = origin;
 		my_id = id++;
 	}
+	/** Добавление произвольного объекта в тело сообщения
+	 * @param field объект который будет добавлен сообщение
+	 */
 	public void addField(Object field){
 		fields.add(field);
 	}
+	/** Выборка сохраненного в теле сообщения объекта по индексу
+	 * @param field индекс объекта
+	 */
 	public Object getField(int field){
 		return fields.get(field);
 	}
+	/** Возвращает действие которое несет сообщение */
 	public String getAction() { return action; }
+	/** Возвращает действие которое несет сообщение */	
 	public String getDestination() { return destination; }
+	/** Возвращает действие которое несет сообщение */
 	public String getOrigin() {return origin;}
+	/** Возвращает действие которое несет сообщение */
 	public int getReplyTo() {return inReplyTo;}
+	/** Возвращает действие которое несет сообщение */
 	public int getFieldsCount() { return fields.size();}
+	/** Возвращает действие которое несет сообщение */
 	public int getId(){ return my_id; };
-	public int cleanUp(int type){
-		int result = 0;
-		for(int i = fields.size(); i > 0; i++){
-			if(fields.get(i) instanceof ODObject)
-				result+=((ODObject)fields.get(i)).cleanUp(0);
-			if(fields.get(i) instanceof Resource)
-				result+=((Resource)fields.get(i)).cleanUp(0);
-			if(fields.get(i) instanceof Message)
-				result+=((Message)fields.get(i)).cleanUp(0);
-		}
-		return result;
-	}
+	/** Представление сообщения в виде текстовой строки 
+	 * @return строчное представление сообщения
+	*/
 	public String toString(){
 	    return "StandartMessage: id="+my_id+" replyto="+inReplyTo+" action=" + action + ", destination=" + destination + ", origin="+origin+", fields.size()=" + fields.size();
 	}
