@@ -12,7 +12,7 @@ import com.novel.odisp.common.*;
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.3 2003/10/04 12:53:05 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.4 2003/10/07 11:03:36 valeks Exp $
  */
 public class StandartDispatcher implements Dispatcher {
 	Map objects = new HashMap();
@@ -23,18 +23,27 @@ public class StandartDispatcher implements Dispatcher {
 	 * @return void
 	 */
 	private void loadObject(String className){
-	    System.err.print("  loading object "+className);
+	    System.err.print("\tloading object "+className);
 	    try {
-		ODObject load = (ODObject)Class.forName(className).newInstance();
+		Object params[] = new Object[1];
+		params[0] = new Integer(obj_count++);
+		Class declParams[] = new Class[1];
+		declParams[0] = params[0].getClass();
+		ODObject load = (ODObject)Class.forName(className).getConstructor(declParams).newInstance(params);
+		Message m = getNewMessage("od_object_loaded",load.getObjectName(),"stddispatcher",0);
 		load.setDispatcher(this);
-		load.setQuant(obj_count++);
-		Message m = getNewMessage("od_object_loaded",load.getObjectName()+(obj_count-1),toString(),0);
+		load.start();
 		load.addMessage(m);
 		synchronized (objects){
-		    objects.put(load.toString(),load);
+		    objects.put(load.getObjectName(),load);
 		}
-		System.err.println(" ok. loaded="+load.toString());
-		load.start();
+		System.err.println(" ok. loaded="+load.getObjectName());
+//		synchronized(load){load.notify();}
+
+	    } catch(InvocationTargetException e){
+		System.err.println(" failed: "+e);
+	    } catch(NoSuchMethodException e){
+		System.err.println(" failed: "+e);
 	    } catch(ClassNotFoundException e){
 		System.err.println(" failed: "+e);
 	    } catch(InstantiationException e){
@@ -44,6 +53,7 @@ public class StandartDispatcher implements Dispatcher {
 	        System.err.println(" failed: "+e);
 	    } catch(IllegalArgumentException e){
 	        System.err.println(" failed: "+e);
+		e.printStackTrace();
 	    }
 	}
 	/** Принудительная выгрузка объекта и
@@ -52,13 +62,21 @@ public class StandartDispatcher implements Dispatcher {
 	 * @return void
 	 */
 	private void unloadObject(String objectName){
+	    System.out.println("[i] "+toString()+" shutting down...");
 	    if(objects.containsKey(objectName)){
 		ODObject obj = (ODObject)objects.get(objectName);
-		Message m = getNewMessage("od_cleanup",toString(), obj.toString(), 0);
-		m.addField(new Integer(1));
-		obj.addMessage(m);
-		objects.remove(objectName); 
+//		obj.stop();
+		objects.remove(objectName);
+		System.out.println("\tobject "+objectName+" unloaded");
 		/* объект все еще может существовать, но сообщения ему доставлятся уже не будут */
+	    }
+	}
+	/** Обработчик сообщений для диспетчера объектов */
+	private void handleMessage(Message msg){
+	    if(msg.getAction().equals("od_cleanup")){
+		Iterator it = objects.keySet().iterator();
+		while(it.hasNext())
+		    unloadObject((String)it.next());
 	    }
 	}
 	/** Интерфейс для объектов ядра для отсылки сообщений.
@@ -68,8 +86,14 @@ public class StandartDispatcher implements Dispatcher {
 	 */
 	public void sendMessage(Message message){
 	    Iterator it = objects.keySet().iterator();
-	    while(it.hasNext())
-		((ODObject)it.next()).addMessage(message);
+	    while(it.hasNext()){
+		String cl_n = (String)it.next();
+		ODObject cl_send = (ODObject)objects.get(cl_n);
+		cl_send.addMessage(message);
+		synchronized(cl_send){cl_send.notify();}
+	    }
+	    if(message.getDestination().equals(".*") || message.getDestination().equals("stddispatcher"))
+		handleMessage(message);
 	}
 	/** Конструктор загружающий первоначальный набор объектов
 	 * на основе списка
@@ -77,7 +101,6 @@ public class StandartDispatcher implements Dispatcher {
 	 */
 	public StandartDispatcher(List objs){
 	    System.err.println("[i] "+toString()+" starting up...");
-	    objects.put(toString(), this);
 	    Iterator it = objs.iterator();
 	    while(it.hasNext()){
 		String cl_n = (String)it.next();
@@ -95,10 +118,6 @@ public class StandartDispatcher implements Dispatcher {
 	public Message getNewMessage(String action, String destination, String origin, int inReplyTo){
 	    return new StandartMessage(action, destination, origin, inReplyTo);
 	}
-	/** Именование объекта. Используется при доставке сообщения
-	 * @return String внутреннее имя объекта
-	 */
-	public String toString(){ return "dispatcher"; }
 	/** Выводит сообщение об ошибке в случае некорректных параметров
 	 */
 	public static void usage(){
