@@ -10,9 +10,9 @@ import java.util.logging.Logger;
 * посылаемых диспетчером ODISP.
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: ODObject.java,v 1.15 2004/03/31 12:54:48 dron Exp $
+* @version $Id: ODObject.java,v 1.16 2004/05/11 09:55:39 valeks Exp $
 */
-public abstract class ODObject extends Thread {
+public abstract class ODObject /* extends Thread */ {
   /** Журнал. */
   protected Logger logger;
   /** Диспетчер работающий с этим объектом. */
@@ -21,8 +21,6 @@ public abstract class ODObject extends Thread {
   protected List messages;
   /** Таблица конфигурационных параметров. */
   private Map configuration;
-  /** Признак окончания работы основного цикла обработки сообщений. */
-  protected boolean doExit;
   /** Regex маска принимаемых сообщений.
    * По умолчанию инициализируется именем объекта. */
   protected String match;
@@ -38,7 +36,6 @@ public abstract class ODObject extends Thread {
    * @param newName имя объекта
    */
   public ODObject(final String newName) {
-    super(newName);
     messages = new ArrayList();
     name = newName;
     match = newName;

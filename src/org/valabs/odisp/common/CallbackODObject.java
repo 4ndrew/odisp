@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 * по мере прихода.
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: CallbackODObject.java,v 1.13 2004/03/31 12:54:48 dron Exp $
+* @version $Id: CallbackODObject.java,v 1.14 2004/05/11 09:55:39 valeks Exp $
 */
 public abstract class CallbackODObject extends ODObject {
   /** Карта обработчиков сообщений. */
@@ -40,17 +40,7 @@ public abstract class CallbackODObject extends ODObject {
     logger.finest("registered handler for " + message);
     handlers.put(message, handler);
   }
-  /** Цикл обработки приходящих сообщений. */
-  public final void run() {
-    registerHandlers();
-    handlersRegistred = true;
-    ListIterator it = unhandledMessages.listIterator();
-    while (it.hasNext()) {
-      handleMessage((Message) it.next());
-    }
-    unhandledMessages.clear();
-    // we do not need message loop.
-  }
+
   /** Интерфейс добавления сообщения в ящик.
    * @param msg сообщение
    */
@@ -66,7 +56,7 @@ public abstract class CallbackODObject extends ODObject {
    */
   protected final void handleMessage(final Message msg) {
     if (!handlersRegistred) {
-      unhandledMessages.add(msg);
+      registerHandlers();
     }
     if (handlers.containsKey(msg.getAction())) {
       ((MessageHandler) handlers.get(msg.getAction())).messageReceived(msg);

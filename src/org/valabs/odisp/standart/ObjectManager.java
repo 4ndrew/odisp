@@ -18,7 +18,7 @@ import com.novel.stdmsg.ODObjectLoadedMessage;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@valeks.novel.local">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.16 2004/04/02 11:38:28 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.17 2004/05/11 09:55:39 valeks Exp $
  */
 
 public class StandartObjectManager implements ObjectManager {
@@ -32,6 +32,10 @@ public class StandartObjectManager implements ObjectManager {
   private Logger log = Logger.getLogger("com.novel.odisp.StandartObjectManager");
   /** Список сервисов менеджера. */
   private Map provided = new HashMap();
+  /** Пул нитей отсылки. */
+  private List senderPool = new ArrayList();
+  /** Максимальное количество нитей создаваемых для отсылки изначально. */
+  public static final int SENDER_POOL_SIZE = 5;
   /** Общее число объектов. */
   private int objCount = 0;
 
@@ -119,13 +123,12 @@ public class StandartObjectManager implements ObjectManager {
 	  }
 	}
 	if (numRequested == 0) {
-	  oe.getObject().start();
 	  oe.setLoaded(true);
-          flushDefferedMessages(oe.getObject().getName());
+          flushDefferedMessages(oe.getObject().getObjectName());
 	  for (int i = 0; i < oe.getProvides().length; i++) {
 	    if (!hasProviders(oe.getProvides()[i])) {
 	      log.fine("added as provider of " + oe.getProvides()[i]);
-	      addProvider(oe.getProvides()[i], oe.getObject().getName());
+	      addProvider(oe.getProvides()[i], oe.getObject().getObjectName());
 	    }
 	  }
 	  log.config(" ok. loaded = " + objectName);
@@ -223,7 +226,6 @@ public class StandartObjectManager implements ObjectManager {
       ODCleanupMessage m = new ODCleanupMessage(objectName, 0);
       m.setReason(code);
       dispatcher.send(m);
-      obj.interrupt();
       objects.remove(objectName);
       log.config("\tobject " + objectName + " unloaded");
     }
@@ -241,6 +243,9 @@ public class StandartObjectManager implements ObjectManager {
    */
   public StandartObjectManager(final Dispatcher newDispatcher) {
     dispatcher = newDispatcher;
+    for(int i = 0; i < SENDER_POOL_SIZE; i++) {
+      senderPool.add(new Sender());
+    }
   }
 
   /** Послать сообщение конкретному объекту.
@@ -253,6 +258,9 @@ public class StandartObjectManager implements ObjectManager {
     synchronized (objects) {
       oe = (ObjectEntry) objects.get(objectName);
     }
+    if(oe == null) {
+      return;
+    }
     ODObject objToSendTo = null;
     // исключить модификацию дескриптора состояние объекта
     synchronized (oe) {
@@ -264,7 +272,20 @@ public class StandartObjectManager implements ObjectManager {
       }
       objToSendTo = oe.getObject();
     }
-    objToSendTo.addMessage(message);
+    /* Выбор первой наименее загруженной нити отсылки.
+       Возможно в дальнейшем потребуется какой ни будь адаптивный алгоритм, который будет
+       расширять размер пула нитей в зависимости от нагрузки системы.
+     */
+    Sender victim = null;
+    int leastLoad = Integer.MAX_VALUE;
+    for(int i = 0; i < senderPool.size(); i++) {
+      Sender tmp = (Sender) senderPool.get(i);
+      if (tmp.getCounter() < leastLoad) {
+	leastLoad = tmp.getCounter();
+	victim = tmp;
+      }
+    }
+    victim.send(message, objToSendTo);
   }
 
   /** Посылка сообщения всем объектам менеджера.
