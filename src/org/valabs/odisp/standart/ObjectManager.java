@@ -17,7 +17,7 @@ import java.lang.reflect.InvocationTargetException;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@valeks.novel.local">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.8 2004/03/18 11:20:12 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.9 2004/03/26 21:53:38 valeks Exp $
  */
 
 public class StandartObjectManager implements ObjectManager {
@@ -87,8 +87,9 @@ public class StandartObjectManager implements ObjectManager {
 
   /** Динамическая загрузка объекта (с учётом зависимостей).
    * @param cName имя загружаемого класса
+   * @param configuration список параметров загрузки
    */
-  public final void loadObject(final String cName) {
+  public final void loadObject(final String cName, final Map configuration) {
     log.config("loading object " + cName);
     try {
       Object[] params = new Object[1];
@@ -98,6 +99,7 @@ public class StandartObjectManager implements ObjectManager {
       ODObject load =
 	(ODObject) Class.forName(cName).getConstructor(dParams).newInstance(params);
       load.setDispatcher(dispatcher);
+      load.setConfiguration(configuration);
       synchronized (objects) {
 	ObjectEntry oe =
 	  new ObjectEntry(cName, 0, load.getDepends(), load.getProviding());

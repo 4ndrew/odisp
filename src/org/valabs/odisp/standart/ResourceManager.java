@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 
 /** Менеджер ресурсных объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceManager.java,v 1.14 2004/03/18 10:25:49 dron Exp $
+ * @version $Id: ResourceManager.java,v 1.15 2004/03/26 21:53:38 valeks Exp $
  */
 public class StandartResourceManager implements ResourceManager {
   /** Ссылка на диспетчер объектов. */
@@ -36,8 +36,8 @@ public class StandartResourceManager implements ResourceManager {
    * @param className имя загружаемого класса
    * @param mult количество загружаемых объектов
    */
-  public final void loadResource(final String className, int mult) {
-    dataThread.addRequest(new LoadResourceRequest(className, mult));
+  public final void loadResource(final String className, final int mult, final Map config) {
+    dataThread.addRequest(new LoadResourceRequest(className, mult, config));
   }
 
   /** Выгрузка ресурсного объекта.
@@ -226,13 +226,17 @@ public class StandartResourceManager implements ResourceManager {
     private String className = null;
     /** Мультипликатор. */
     private int mult = ResourceEntry.MULT_SHARE;
+    /** Списк параметров. */
+    private Map configuration = null;
     /** Создание нового запроса на загрузку ресурса.
      * @param nclassName имя класса для загрузки
      * @param nmult множитель загрузки
+     * @param config конфигурация ресурса
      */
-    public LoadResourceRequest(final String nclassName, final int nmult) {
+    public LoadResourceRequest(final String nclassName, final int nmult, final Map config) {
       className = nclassName;
       mult = nmult;
+      configuration = config;
     }
     /** Выполнение запроса.
      * @param dt нить данных на которой выполняется запрос
@@ -249,6 +253,7 @@ public class StandartResourceManager implements ResourceManager {
       for (int i = 0; i < mult; i++) {
 	try {
 	  Resource r = (Resource) Class.forName(className).newInstance();
+      r.setConfiguration(configuration);
 	  re.addResource(r);
 	  logMessage += "+";
 	} catch (ClassNotFoundException e) {

@@ -2,6 +2,7 @@ package com.novel.odisp.common;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Iterator;
 import java.util.logging.Logger;
 
@@ -9,7 +10,7 @@ import java.util.logging.Logger;
 * посылаемых диспетчером ODISP.
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: ODObject.java,v 1.13 2004/02/13 15:16:03 valeks Exp $
+* @version $Id: ODObject.java,v 1.14 2004/03/26 21:53:38 valeks Exp $
 */
 public abstract class ODObject extends Thread {
   /** Журнал. */
@@ -18,6 +19,8 @@ public abstract class ODObject extends Thread {
   protected Dispatcher dispatcher;
   /** Список сообщений к обработке. */
   protected List messages;
+  /** Таблица конфигурационных параметров. */
+  private Map configuration;
   /** Признак окончания работы основного цикла обработки сообщений. */
   protected boolean doExit;
   /** Regex маска принимаемых сообщений.
@@ -100,4 +103,26 @@ public abstract class ODObject extends Thread {
    * @return список сервисов
    */
   public abstract String[] getProviding();
+  /** Установить таблицу параметров.
+   * @param cfg новая таблица
+   */
+  public final void setConfiguration(final Map cfg) {
+    configuration = cfg;
+  }
+  /** Получить значение параметра конфигурации.
+   * @param name имя параметра
+   */
+  protected final String getParameter(final String name) {
+    if (configuration != null && configuration.containsKey(name)) {
+      return (String) configuration.get(name);
+    }
+    return null;
+  }
+  /** Получить значение параметра конфигурации с учетом значения по-умолчанию.
+   * @param name имя параметра
+   * @param defValue значение по умолчанию
+   */
+  protected final String getParameter(final String name, final String defValue) {
+    return getParameter(name) == null ? defValue : getParameter(name);
+  }
 }

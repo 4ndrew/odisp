@@ -17,7 +17,7 @@ import java.util.Set;
 
 /** Обработчик сообщений диспетчера ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: DispatcherHandler.java,v 1.7 2004/03/18 11:18:50 valeks Exp $
+ * @version $Id: DispatcherHandler.java,v 1.8 2004/03/26 21:53:38 valeks Exp $
  */
 
 public class StandartDispatcherHandler extends CallbackODObject {
@@ -74,7 +74,7 @@ public class StandartDispatcherHandler extends CallbackODObject {
 	    return;
 	  }
 	  String objname = (String) msg.getField(0);
-	  oman.loadObject(objname);
+	  oman.loadObject(objname, null);
 	  oman.loadPending();
 	}
       });

@@ -6,7 +6,7 @@ import java.util.Map;
 /** Интерфейс сообщения ядра ODISP системы.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Message.java,v 1.6 2004/03/03 14:02:54 valeks Exp $
+ * @version $Id: Message.java,v 1.7 2004/03/26 21:53:37 valeks Exp $
  */
 public interface Message {
   /** Добавление произволього объекта в тело сообщения.
@@ -26,7 +26,7 @@ public interface Message {
    * @param name имя поля
    * @return содержимое поля
    */
-  Object getField(String field);
+  Object getField(String name);
 
   /** Количество объектов в теле сообщения.
    * @return кол-во объектов

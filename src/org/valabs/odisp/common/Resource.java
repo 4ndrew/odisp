@@ -1,9 +1,11 @@
 package com.novel.odisp.common;
 
+import java.util.Map;
+
 /** Интерфейс ресурсного объекта ODISP ядра.
 * @author Валентин А. Алексеев
 * @author (C) 2003, НПП "Новел-ИЛ"
-* @version $Id: Resource.java,v 1.2 2004/01/16 10:29:15 valeks Exp $
+* @version $Id: Resource.java,v 1.3 2004/03/26 21:53:37 valeks Exp $
 */
 public interface Resource {
   /** Максимальное количество ссылок одновременно поддерживаемых объектом.
@@ -16,4 +18,8 @@ public interface Resource {
    * @return код возврата
    */
   int cleanUp(int type);
+  /** Установить конфигурацию.
+   * @param config конфигурация
+   */
+  void setConfiguration(Map configuration);
 }

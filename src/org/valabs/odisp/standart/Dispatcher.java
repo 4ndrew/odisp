@@ -1,14 +1,19 @@
 package com.novel.odisp;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.InputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.util.List;
-import java.util.StringTokenizer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.logging.Logger;
+import java.util.Map;
+import java.util.HashMap;
+
+import org.valeks.xlang.parser.Tag;
+import org.valeks.xlang.parser.Parser;
+import org.valeks.xlang.parser.XLangException;
 
 import com.novel.stdmsg.StandartMessage;
 import com.novel.odisp.common.Message;
@@ -22,7 +27,7 @@ import com.novel.odisp.common.Dispatcher;
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.35 2004/03/12 21:29:30 dron Exp $
+ * @version $Id: Dispatcher.java,v 1.36 2004/03/26 21:53:37 valeks Exp $
  */
 public class StandartDispatcher implements Dispatcher {
   /** Журнал. */
@@ -116,13 +121,37 @@ public class StandartDispatcher implements Dispatcher {
   public final Message getNewMessage() {
     return new StandartMessage();
   }
+
+  /** Получить информацию о параметрах для заданного тега.
+   * @param childTag тег
+   */
+  private Map getParamsForTag(final Tag childTag) {
+    Map params = null;
+    if (childTag.getChild().size() != 0) {
+      params = new HashMap();
+      // имеются потомки -- необходимо проитерировать по списку и заполнить список
+      Iterator cit = childTag.getChild().iterator();
+      while (cit.hasNext()) {
+        Tag ctag = (Tag) cit.next();
+        if (ctag.getName().equalsIgnoreCase("param")) {
+          String paramName = (String) ctag.getAttributes().get("name");
+          String paramValue = (String) ctag.getAttributes().get("value");
+          if (paramName != null && paramValue != null) {
+            params.put(paramName, paramValue);
+          }
+        }
+      }
+    }
+    return params;
+  }
+
   /** Конструктор загружающий первоначальный набор объектов.
    * на основе списка
-   * @param objs список объектов для загрузки
+   * @param docTag 
    */
-  public StandartDispatcher(final List objs) {
+  public StandartDispatcher(final Tag docTag) {
     log.info(toString() + " starting up...");
-    oman.loadObject(StandartDispatcherHandler.class.getName());
+    oman.loadObject(StandartDispatcherHandler.class.getName(), null);
     oman.loadPending();
     Message runthr = getNewMessage("od_set_run_thread", "stddispatcher", "G0D", 0);
     Thread t = new Thread("alive thread") {
@@ -138,31 +167,37 @@ public class StandartDispatcher implements Dispatcher {
     t.start();
     runthr.addField(t);
     oman.send(runthr);
-    Iterator it = objs.iterator();
+    Iterator it = docTag.getChild().iterator();
     while (it.hasNext()) {
-      int mult = 1;
-      String param = "";
-      String line = (String) it.next();
-      boolean type = true; // true -- object, false -- resource
-      StringTokenizer st = new StringTokenizer(line, ":");
-      if (st.countTokens() < 1) {
-	continue;
+      Tag curt = (Tag) it.next();
+      if (curt.getName().equalsIgnoreCase("object")) {
+        String className = (String) curt.getAttributes().get("name");
+        if (className == null) {
+          log.warning("object tag has no name attribute. ignoring.");
+          continue;
+        }
+        Map params = getParamsForTag(curt);
+        oman.loadObject(className, params);
+      } else if (curt.getName().equalsIgnoreCase("resource")) {
+        int mult = 1;
+        String className = (String) curt.getAttributes().get("name");
+        if (className == null) {
+          log.warning("resource tag has no name attribute. ignoring.");
+          continue;
+        }
+        String smult = (String) curt.getAttributes().get("mult");
+        if (smult != null) {
+          try {
+            mult = new Integer(smult).intValue();
+          } catch (NumberFormatException e) {
+            log.warning("resource tag attribute mult has non-integer value. ignoring.");
+          }
+        }
+        Map params = getParamsForTag(curt);
+        rman.loadResource(className, mult, params);
       }
-      if (st.nextToken().equalsIgnoreCase("r")) {
-	type = false;
-      }
-      String className = st.nextToken();
-      if (st.hasMoreTokens()) {
-	mult = new Integer(st.nextToken()).intValue();
-      }
-      if (type) { // объект
-	oman.loadObject(className);
-      } else { // ресурс
-	rman.loadResource(className, mult);
-      }
-      oman.loadPending();
     }
-    objs.clear();
+    oman.loadPending();
     try {
       t.join();
     } catch (InterruptedException e) {
@@ -184,19 +219,15 @@ public class StandartDispatcher implements Dispatcher {
 		usage();
     } else {
       try {
-	BufferedReader cfg = new BufferedReader(new FileReader(args[0]));
-	List objs = new ArrayList();
-	String s;
-	while ((s = cfg.readLine()) != null) {
-	  if (!s.startsWith("#") && s.length() != 0) {
-	    objs.add(s);
-	  }
-	}
-	new StandartDispatcher(objs);
+	    InputStream inp = new FileInputStream(args[0]);
+        Parser p = new Parser(inp);
+	    new StandartDispatcher(p.getRootTag());
       } catch (FileNotFoundException e) {
-	log.severe("[e] configuration file " + args[0] + " not found.");
+	    log.severe("configuration file " + args[0] + " not found.");
       } catch (IOException e) {
-	log.severe("[e] unable to read configuration file.");
+	    log.severe("unable to read configuration file.");
+      } catch (XLangException e) {
+        log.severe("configuration file " + args[0] + " contains unrecoverable errors: " + e);
       }
     }
   }

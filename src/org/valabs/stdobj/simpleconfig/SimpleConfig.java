@@ -10,7 +10,7 @@ import java.util.Properties;
 /** Ресурс ODISP реализующий доступ к конфигурационным файлам  формата [имя]=[значение].
 * @author Валентин А. Алексеев
 * @author (C) 2003, НПП "Новел-ИЛ"
-* @version $Id: SimpleConfig.java,v 1.10 2004/02/12 17:50:23 valeks Exp $
+* @version $Id: SimpleConfig.java,v 1.11 2004/03/26 21:53:38 valeks Exp $
 */
 public class SimpleConfig extends Properties implements Resource {
   /** Имя конфигурационного файла по-умолчанию.*/
@@ -68,5 +68,11 @@ public class SimpleConfig extends Properties implements Resource {
    */
   public final int getMaxReferenceCount() {
     return 0;
+  }
+  /** Установить конфигурацию.
+   * @param cfg конфигурация
+   */
+  public void setConfiguration(final java.util.Map cfg) {
+  
   }
 }

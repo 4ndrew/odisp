@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 /** Прокси-ресурс для доступа к произвольным внешним объектам.
 * @author Валентин А. Алексеев
 * @author (C) 2003, НПП "Новел-ИЛ"
-* @version $Id: ProxyResource.java,v 1.4 2004/01/16 14:31:57 valeks Exp $
+* @version $Id: ProxyResource.java,v 1.5 2004/03/26 21:53:38 valeks Exp $
 */
 public class ProxyResource implements Resource {
   /** Собственно ресурс. */
@@ -74,5 +74,8 @@ public class ProxyResource implements Resource {
       logger.warning("failed: " + e);
     }
     return resource;
+  }
+  public void setConfiguration(java.util.Map cfg) {
+  
   }
 }
