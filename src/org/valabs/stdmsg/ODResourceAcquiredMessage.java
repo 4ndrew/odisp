@@ -1,12 +1,12 @@
 package com.novel.stdmsg;
 
-import com.novel.odisp.common.Resource;
 import com.novel.odisp.common.Message;
+import com.novel.odisp.common.Resource;
 
 /** Ответ на запрос о захвате ресурса.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODResourceAcquiredMessage.java,v 1.13 2004/07/12 06:38:48 valeks Exp $
+ * @version $Id: ODResourceAcquiredMessage.java,v 1.14 2004/07/16 12:11:27 boris Exp $
  */
 public class ODResourceAcquiredMessage extends StandartMessage {
   /** Символьное имя сообщения. */

@@ -1,13 +1,13 @@
 package com.novel.stdobj.echo;
 
-import com.novel.odisp.common.StandartODObject;
 import com.novel.odisp.common.Message;
 import com.novel.odisp.common.MessageHandler;
+import com.novel.odisp.common.StandartODObject;
 
 /** Простейший ODISP объект реализующий автоответчик на приходящие сообщения.
 * @author Валентин А. Алексеев
 * @author (C) 2003, НПП "Новел-ИЛ"
-* @version $Id: EchoObject.java,v 1.13 2004/05/13 09:25:46 valeks Exp $
+* @version $Id: EchoObject.java,v 1.14 2004/07/16 12:11:27 boris Exp $
 */
 public class EchoObject extends StandartODObject {
   /** Регистрация обработчиков. */

@@ -1,8 +1,8 @@
 package com.novel.stdobj.racer;
 
 import com.novel.odisp.common.Message;
-import com.novel.odisp.common.StandartODObject;
 import com.novel.odisp.common.Resource;
+import com.novel.odisp.common.StandartODObject;
 import com.novel.stdmsg.ODAcquireMessage;
 import com.novel.stdmsg.ODCleanupMessage;
 import com.novel.stdmsg.ODObjectLoadedMessage;
@@ -15,7 +15,7 @@ import com.novel.stdobj.simpleconfig.SimpleConfig;
  * 
  * @author (C) 2004 <a href="valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author <a href="dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: Racer.java,v 1.14 2004/07/12 09:59:41 valeks Exp $
+ * @version $Id: Racer.java,v 1.15 2004/07/16 12:11:27 boris Exp $
  */
 public class Racer extends StandartODObject {
   /** Счётчик запросов */

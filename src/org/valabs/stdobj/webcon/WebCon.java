@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-import com.novel.odisp.common.StandartODObject;
 import com.novel.odisp.common.Message;
 import com.novel.odisp.common.MessageHandler;
+import com.novel.odisp.common.StandartODObject;
 import com.novel.stdmsg.ODCleanupMessage;
 import com.novel.stdmsg.ODObjectLoadedMessage;
 import com.novel.stdmsg.webcon.WCAddServletMessage;
@@ -24,7 +24,7 @@ import com.novel.stdobj.webcon.servlet.http.HttpServletResponse;
 /** ODISP-интерфейс к ACME серверу.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2004, НПП "Новел-ИЛ"
- * @version $Id: WebCon.java,v 1.9 2004/06/21 16:30:23 valeks Exp $
+ * @version $Id: WebCon.java,v 1.10 2004/07/16 12:11:27 boris Exp $
  */
 
 public class WebCon extends StandartODObject implements MessageHandler {

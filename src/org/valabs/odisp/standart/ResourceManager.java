@@ -12,13 +12,13 @@ import com.novel.odisp.common.Dispatcher;
 import com.novel.odisp.common.Message;
 import com.novel.odisp.common.Resource;
 import com.novel.odisp.common.ResourceManager;
-import com.novel.stdmsg.ODResourceAcquiredMessage;
 import com.novel.stdmsg.ODAcquireMessage;
 import com.novel.stdmsg.ODReleaseMessage;
+import com.novel.stdmsg.ODResourceAcquiredMessage;
 
 /** Менеджер ресурсных объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceManager.java,v 1.23 2004/06/09 19:44:43 valeks Exp $
+ * @version $Id: ResourceManager.java,v 1.24 2004/07/16 12:11:27 boris Exp $
  */
 public class StandartResourceManager implements ResourceManager {
   /** Ссылка на диспетчер объектов. */

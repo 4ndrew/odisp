@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
-import com.novel.odisp.common.StandartODObject;
 import com.novel.odisp.common.Message;
 import com.novel.odisp.common.MessageHandler;
 import com.novel.odisp.common.ObjectManager;
 import com.novel.odisp.common.ResourceManager;
+import com.novel.odisp.common.StandartODObject;
 import com.novel.stdmsg.ODAcquireMessage;
 import com.novel.stdmsg.ODAddProviderMessage;
 import com.novel.stdmsg.ODGetProvidingMessage;
@@ -24,7 +24,7 @@ import com.novel.stdmsg.ODShutdownMessage;
 
 /** Обработчик сообщений диспетчера ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: DispatcherHandler.java,v 1.21 2004/06/25 13:15:31 dron Exp $
+ * @version $Id: DispatcherHandler.java,v 1.22 2004/07/16 12:11:27 boris Exp $
  */
 
 public class StandartDispatcherHandler extends StandartODObject {
