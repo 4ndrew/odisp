@@ -5,8 +5,8 @@ import java.util.List;
 
 /** Запрос на динамическое изменение списка сервисов.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODGetProvidingReplyMessage.java,v 1.1 2004/03/27 19:40:18 valeks Exp $
+ * @author (C) 2004, НПП "Новел-ИЛ"
+ * @version $Id: ODGetProvidingReplyMessage.java,v 1.2 2004/03/27 20:07:56 valeks Exp $
  */
 
 public class ODGetProvidingReplyMessage extends StandartMessage {

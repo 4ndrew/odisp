@@ -4,8 +4,8 @@ import com.novel.odisp.common.Message;
 
 /** Запрос списка доступных сервисов диспетчера.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODGetProvidingMessage.java,v 1.1 2004/03/27 19:40:18 valeks Exp $
+ * @author (C) 2004, НПП "Новел-ИЛ"
+ * @version $Id: ODGetProvidingMessage.java,v 1.2 2004/03/27 20:07:56 valeks Exp $
  */
 
 public class ODGetProvidingMessage extends StandartMessage {
