@@ -1,69 +1,45 @@
 package com.novel.stdmsg.webcon;
 
 import com.novel.odisp.common.Message;
-import com.novel.stdmsg.StandartMessage;
 
 /** Удаление сервлета из контейнера.
  * Производится удаление ссылки на обработчик запросов из записей контейнера.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2004, НПП "Новел-ИЛ"
- * @version $Id: WCRemoveServletMessage.java,v 1.2 2004/03/31 12:54:48 dron Exp $
+ * @version $Id: WCRemoveServletMessage.java,v 1.3 2004/06/09 21:07:36 valeks Exp $
  */
 
-public class WCRemoveServletMessage extends StandartMessage {
+public class WCRemoveServletMessage {
   /** Символтическое имя сообщения. */
   public static final String NAME = "wc_remove_servlet";
-  /** Объект-обработчик запроса. */
-  private transient Object servletHandler = null;
   /** Имя поля. */
-  private static final String SERVLETHANDLER_IDX = "0";
+  private static final String SERVLETHANDLER_IDX = "servlethandler";
   /** Конструктор сообщения.
    * @param webConName имя объекта webcon. в случае если null используется сервис <tt>webcon</tt>.
    * @param objectName источник сообщения
    * @param msgId индекс сообщения на которое производится ответ
    */
-  public WCRemoveServletMessage(String webConName, final String objectName, final int msgId) {
-    super(NAME, webConName, objectName, msgId);
-    if (webConName == null) {
-      // работаем через Discovery
-      setDestination("webcon");
-    }
-  }
-
-  /** Копирующий конструктор.
-   * @param msg сообщение для приведения
-   */
-  public WCRemoveServletMessage(final Message msg) {
-    super(msg);
+  public static final void setup(final Message msg, final String webConName, final String objectName, final int msgId) {
+    msg.setAction(NAME);
+    msg.setDestination(webConName);
+    msg.setOrigin(objectName);
+    msg.setReplyTo(msgId);
+    msg.setRoutable(false);
+    msg.setCorrect(false);
   }
 
   /** Установка обработчика. */
-  public final void setServletHandler(final String newServletHandler) {
-    servletHandler = newServletHandler;
+  public static final void setServletHandler(final Message msg, final String newServletHandler) {
+    msg.addField(SERVLETHANDLER_IDX, newServletHandler);
+    msg.setCorrect(true);
   }
 
   /** Доступ к обработчику. */
-  public final Object getServletHandler() {
-    if (isCE()) {
-      return (Object) getField(SERVLETHANDLER_IDX);
-    }
-    return servletHandler;
+  public static final Object getServletHandler(final Message msg) {
+    return (Object) msg.getField(SERVLETHANDLER_IDX);
   }
 
-  /** Проверка корректности сообщения. */
-  public final boolean isCorrect() {
-    if (isCE()) {
-      return isCE();
-    }
-    if (servletHandler != null) {
-      addField(SERVLETHANDLER_IDX, servletHandler);
-      setCE(true);
-    }
-    return isCE();
-  }
-
-  /** Является ли сообщение маршрутизируемым. */
-  public final boolean isRoutable() {
-    return false;
+  public static final boolean equals(final Message msg) {
+    return msg.getAction().equals(NAME);
   }
 }// WCRemoveServletMessage

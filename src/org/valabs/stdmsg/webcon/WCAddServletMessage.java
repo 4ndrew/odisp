@@ -1,7 +1,6 @@
 package com.novel.stdmsg.webcon;
 
 import com.novel.odisp.common.Message;
-import com.novel.stdmsg.StandartMessage;
 
 /** Добавление сервлета в контейнер WebCon.
  * <p> Для того, что бы не далеть дополнительных зависимостей в качестве обработчика на данный момент
@@ -10,81 +9,61 @@ import com.novel.stdmsg.StandartMessage;
  * <p>Сообщение не является маршрутизируемым, так как не имеет смысл добавлять сервлеты в удаленный контейнер.</p>
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2004, НПП "Новел-ИЛ"
- * @version $Id: WCAddServletMessage.java,v 1.3 2004/03/31 12:54:47 dron Exp $
+ * @version $Id: WCAddServletMessage.java,v 1.4 2004/06/09 21:07:36 valeks Exp $
  */
 
-public class WCAddServletMessage extends StandartMessage {
+public class WCAddServletMessage {
   /** Символтическое имя сообщения. */
   public static final String NAME = "wc_add_servlet";
-  /** Маска запроса. */
-  private transient String servletMask = null;
   /** Имя поля. */
-  private static final String SERVLETMASK_IDX = "0";
-  /** Объект-обработчик запроса. */
-  private transient Object servletHandler = null;
+  private static final String SERVLETMASK_IDX = "servletmask";
   /** Имя поля. */
-  private static final String SERVLETHANDLER_IDX = "1";
+  private static final String SERVLETHANDLER_IDX = "servlethandler";
   /** Конструктор сообщения.
    * @param webConName имя объекта webcon. в случае если null используется сервис <tt>webcon</tt>.
    * @param objectName источник сообщения
    * @param msgId индекс сообщения на которое производится ответ
    */
-  public WCAddServletMessage(String webConName, final String objectName, final int msgId) {
-    super(NAME, webConName, objectName, msgId);
+  public static final void setup(final Message msg, final String webConName, final String objectName, final int msgId) {
+    msg.setAction(NAME);
     if (webConName == null) {
-      // работаем через Discovery
-      setDestination("webcon");
+      msg.setDestination("webcon");      
+    } else {
+      msg.setDestination(webConName);
     }
-  }
-
-  /** Копирующий конструктор.
-   * @param msg сообщение для приведения
-   */
-  public WCAddServletMessage(final Message msg) {
-    super(msg);
+    msg.setOrigin(objectName);
+    msg.setReplyTo(msgId);
+    msg.setRoutable(false);
+    msg.setCorrect(false);
   }
 
   /** Установка маски. */
-  public final void setServletMask(final String newServletMask) {
-    servletMask = newServletMask;
+  public static final void setServletMask(final Message msg, final String newServletMask) {
+    msg.addField(SERVLETMASK_IDX, newServletMask);
+    if (msg.getContents().size() == 2) {
+      msg.setCorrect(true);
+    }
   }
 
   /** Доступ к маске. */
-  public final String getServletMask() {
-    if (isCE()) {
-      return (String) getField(SERVLETMASK_IDX);
-    }
-    return servletMask;
+  public static final String getServletMask(final Message msg) {
+    return (String) msg.getField(SERVLETMASK_IDX);
   }
 
   /** Установка обработчика. */
-  public final void setServletHandler(final Object newServletHandler) {
-    servletHandler = newServletHandler;
+  public static final void setServletHandler(final Message msg, final Object newServletHandler) {
+    msg.addField(SERVLETHANDLER_IDX, newServletHandler);
+    if (msg.getContents().size() == 2) {
+      msg.setCorrect(true);
+    }
   }
 
   /** Доступ к обработчику. */
-  public final Object getServletHandler() {
-    if (isCE()) {
-      return (Object) getField(SERVLETHANDLER_IDX);
-    }
-    return servletHandler;
+  public static final Object getServletHandler(final Message msg) {
+    return (Object) msg.getField(SERVLETHANDLER_IDX);
   }
 
-  /** Проверка корректности сообщения. */
-  public final boolean isCorrect() {
-    if (isCE()) {
-      return isCE();
-    }
-    if (servletMask != null && servletHandler != null) {
-      addField(SERVLETMASK_IDX, servletMask);
-      addField(SERVLETHANDLER_IDX, servletHandler);
-      setCE(true);
-    }
-    return isCE();
+  public static final boolean equals(final Message msg) {
+    return msg.getAction().equals(NAME);
   }
-
-  /** Является ли сообщение маршрутизируемым. */
-  public final boolean isRoutable() {
-    return false;
-  }
-}// WCAddServletMessage
+} // WCAddServletMessage

@@ -24,7 +24,7 @@ import com.novel.stdobj.webcon.servlet.http.HttpServletResponse;
 /** ODISP-интерфейс к ACME серверу.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2004, НПП "Новел-ИЛ"
- * @version $Id: WebCon.java,v 1.7 2004/06/09 19:44:43 valeks Exp $
+ * @version $Id: WebCon.java,v 1.8 2004/06/09 21:07:36 valeks Exp $
  */
 
 public class WebCon extends StandartODObject implements MessageHandler {
@@ -55,45 +55,45 @@ public class WebCon extends StandartODObject implements MessageHandler {
 	  acmeServe.serve();
 	}
       }.run();
-    } else if (msg instanceof WCAddServletMessage) {
-      WCAddServletMessage m = (WCAddServletMessage) msg;
-      if (m.getServletHandler() instanceof Servlet) {
+    } else if (WCAddServletMessage.equals(msg)) {
+      if (WCAddServletMessage.getServletHandler(msg) instanceof Servlet) {
 	// обработчик действительно сервлет
 	if (acmeServe != null) {
-	  acmeServe.addServlet(m.getServletMask(), (Servlet) m.getServletHandler());
+	  acmeServe.addServlet(WCAddServletMessage.getServletMask(msg),
+			       (Servlet) WCAddServletMessage.getServletHandler(msg));
 	} else {
 	  logger.warning("attempting to add servlet while container is not started");
 	}
       } else {
 	logger.warning("handler is not an Servlet extension");
       }
-    } else if (msg instanceof WCRemoveServletMessage) {
-      WCRemoveServletMessage m = (WCRemoveServletMessage) msg;
-      if (m.getServletHandler() instanceof Servlet) {
+    } else if (WCRemoveServletMessage.equals(msg)) {
+      if (WCRemoveServletMessage.getServletHandler(msg) instanceof Servlet) {
 	// обработчик действительно сервлет
 	if (acmeServe != null) {
-	  acmeServe.removeServlet((Servlet) m.getServletHandler());
+	  acmeServe.removeServlet((Servlet) WCRemoveServletMessage.getServletHandler(msg));
 	} else {
 	  logger.warning("attempting to add servlet while container is not started");
 	}
       } else {
 	logger.warning("handler is not an Servlet extension");
       }
-    } else if (msg instanceof WCListServletsMessage) {
+    } else if (WCListServletsMessage.equals(msg)) {
       if (acmeServe == null) {
 	logger.warning("servlet enumeration request before container was started");
 	return;
       }
-      WCListServletsReplyMessage m = new WCListServletsReplyMessage(msg.getOrigin(), getObjectName(), msg.getId());
+      Message m = dispatcher.getNewMessage();
+      WCListServletsReplyMessage.setup(m, msg.getOrigin(), getObjectName(), msg.getId());
       List result = new ArrayList();
       Enumeration e = acmeServe.getServletNames();
       while (e.hasMoreElements()) {
 	result.add(e.nextElement());
       }
-      m.setServletsList(result);
+      WCListServletsReplyMessage.setServletsList(m, result);
       dispatcher.send(m);
     } else if (ODCleanupMessage.equals(msg)) {
-      cleanUp(0);
+      cleanUp(ODCleanupMessage.getReason(msg));
     }
   }
 

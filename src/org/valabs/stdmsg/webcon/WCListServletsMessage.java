@@ -1,15 +1,14 @@
 package com.novel.stdmsg.webcon;
 
 import com.novel.odisp.common.Message;
-import com.novel.stdmsg.StandartMessage;
 
 /** Получение списка сервлетов в контейнере.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2004, НПП "Новел-ИЛ"
- * @version $Id: WCListServletsMessage.java,v 1.2 2004/03/31 12:54:48 dron Exp $
+ * @version $Id: WCListServletsMessage.java,v 1.3 2004/06/09 21:07:36 valeks Exp $
  */
 
-public class WCListServletsMessage extends StandartMessage {
+public class WCListServletsMessage {
   /** Символтическое имя сообщения. */
   public static final String NAME = "wc_list_servlets";
   /** Конструктор сообщения.
@@ -17,23 +16,16 @@ public class WCListServletsMessage extends StandartMessage {
    * @param objectName источник сообщения
    * @param msgId индекс сообщения на которое производится ответ
    */
-  public WCListServletsMessage(String webConName, final String objectName, final int msgId) {
-    super(NAME, webConName, objectName, msgId);
-    if (webConName == null) {
-      // работаем через Discovery
-      setDestination("webcon");
-    }
+  public static final void setup(final Message msg, final String webConName, final String objectName, final int msgId) {
+    msg.setAction(NAME);
+    msg.setDestination(webConName);
+    msg.setOrigin(objectName);
+    msg.setReplyTo(msgId);
+    msg.setRoutable(false);
+    msg.setCorrect(true);
   }
 
-  /** Копирующий конструктор.
-   * @param msg сообщение для приведения
-   */
-  public WCListServletsMessage(final Message msg) {
-    super(msg);
-  }
-
-  /** Является ли сообщение маршрутизируемым. */
-  public final boolean isRoutable() {
-    return false;
+  public static final boolean equals(final Message msg) {
+    return msg.getAction().equals(msg);
   }
 }// WCRemoveServletMessage

@@ -3,60 +3,43 @@ package com.novel.stdmsg.webcon;
 import java.util.List;
 
 import com.novel.odisp.common.Message;
-import com.novel.stdmsg.StandartMessage;
 
 /** Запрос на динамическое изменение списка сервисов.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2004, НПП "Новел-ИЛ"
- * @version $Id: WCListServletsReplyMessage.java,v 1.2 2004/03/31 12:54:48 dron Exp $
+ * @version $Id: WCListServletsReplyMessage.java,v 1.3 2004/06/09 21:07:36 valeks Exp $
  */
 
-public class WCListServletsReplyMessage extends StandartMessage {
+public class WCListServletsReplyMessage {
   /** Символическое имя сообщения. */
   public static final String NAME = "wc_list_servlets_reply";
-  /** Название сервиса. */
-  private transient List servletsList = null;
   /** Имя параметра с названием. */
-  private static String SERVLETSLIST_IDX = "0";
-  /** Копирующий конструктор.
-   * @param msg приводимое сообщение
-   */
-  public WCListServletsReplyMessage(final Message msg) {
-    super(msg);
-  }
+  private static String SERVLETSLIST_IDX = "servletlist";
   /** Конструктор сообщения.
    * @param webCon объект-отправитель
    * @param objectName имя объекта-получателя
    * @param replyId номер сообщения на которое производится ответ
    */
-  public WCListServletsReplyMessage(final String webCon, final String objectName, final int replyId) {
-    super(NAME, objectName, webCon, replyId);
+  public static final void setup(final Message msg, final String webCon, final String objectName, final int replyId) {
+    msg.setAction(NAME);
+    msg.setDestination(objectName);
+    msg.setOrigin(webCon);
+    msg.setReplyTo(replyId);
+    msg.setRoutable(false);
+    msg.setCorrect(false);
   }
   /** Доступ к имени сервиса. */
-  public final List getServletsList() {
-    if (isCE()) {
-      return (List) getField(SERVLETSLIST_IDX);
-    }
-    return servletsList;
+  public static final List getServletsList(final Message msg) {
+    return (List) msg.getField(SERVLETSLIST_IDX);
   }
   /** Установка имени сервиса. */
-  public final void setServletsList(final List newServletsList) {
-    servletsList = newServletsList;
-  }
-  /** Проверка корректности сообщения. */
-  public final boolean isCorrect() {
-    if (isCE()) {
-      return true;
-    }
-    if (servletsList != null) {
-      addField(SERVLETSLIST_IDX, servletsList);
-      setCE(true);
-    }
-    return isCE();
+  public static final void setServletsList(final Message msg, final List newServletsList) {
+    msg.addField(SERVLETSLIST_IDX, newServletsList);
+    msg.setCorrect(true);
   }
 
-  /** Является ли сообщение маршрутизуемым. */
-  public final boolean isRoutable() {
-    return false;
+  public static final boolean equals(final Message msg) {
+    return msg.getAction().equals(NAME);
   }
 } // WCListServletsReplyMessage
+
