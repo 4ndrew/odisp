@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 
 /** Менеджер ресурсных объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceManager.java,v 1.8 2004/02/20 13:56:21 valeks Exp $
+ * @version $Id: ResourceManager.java,v 1.9 2004/02/23 14:43:00 valeks Exp $
  */
 public class StandartResourceManager implements ResourceManager {
   /** Список запросов на ресурсы. */
@@ -40,11 +40,11 @@ public class StandartResourceManager implements ResourceManager {
    * @param mult количество загружаемых объектов
    * @param param параметр загрузки
    */
-  public final void loadResource(final String className, int mult, final String param) {
-    String logMessage = "loading resource ";
+  public final void loadResource(final String className, int mult) {
+    String logMessage = mult + " loading resource ";
     ResourceEntry re = new ResourceEntry(className);
     re.setMaxUsage(mult);
-    if (mult != ResourceEntry.MULT_SHARE) {
+    if (mult == ResourceEntry.MULT_SHARE) {
       logMessage+= "shared ";
       mult = 1;
     }
@@ -66,12 +66,8 @@ public class StandartResourceManager implements ResourceManager {
 	return;
       }
     }
-    if (realMult != mult) {
-      // были загружены не все объекты
-      re.setMaxUsage(realMult);
-    }
     resources.put(className, re);
-    logMessage += " ok.";
+    logMessage += " ok";
     log.config(logMessage);
   }
 
@@ -298,7 +294,7 @@ public class StandartResourceManager implements ResourceManager {
       }
       ResourceRequest result = null;
       if (resourceRequests.containsKey(className) 
-	  && ((List) resourceRequests.get(className)).size() != 0) {
+	  && ((List) resoureRequests.get(className)).size() != 0) {
 	List rrl = (List) resourceRequests.get(className);
 	synchronized (rrl) {
 	  try {
