@@ -9,10 +9,7 @@ import java.util.Map;
 import org.valabs.odisp.common.Message;
 import org.valabs.odisp.common.MessageHandler;
 
-/** Класс для работы с Odisp сессиями ("запрос-ответ"). Временно помещён в
- * клиентскую часть проекта, в будующем (просле согласования) будет перенесён
- * в Odisp респозиторий. 
- * 
+/**
  * <h5>Использование ODsessionManager'а:</h5>
  * 
  * <p> Менеджер сессий хранится в памяти один раз, в рамках одного
@@ -44,7 +41,7 @@ import org.valabs.odisp.common.MessageHandler;
  * </pre>
  * 
  * @author (C) 2004 <a href="dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: SessionManager.java,v 1.6 2004/08/23 07:42:37 valeks Exp $ 
+ * @version $Id: SessionManager.java,v 1.7 2004/10/15 13:08:24 boris Exp $ 
  */
 public class SessionManager {
   /** Ссылка на ODSessionManager */
