@@ -6,7 +6,7 @@ import java.util.regex.*;
 * посылаемых диспетчером ODISP.
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: PollingODObject.java,v 1.1 2003/10/07 11:11:00 valeks Exp $
+* @version $Id: PollingODObject.java,v 1.2 2003/10/07 13:34:55 valeks Exp $
 */
 public abstract class PollingODObject extends ODObject {
 	/** Цикл обработки приходящих сообщений */
@@ -31,7 +31,7 @@ public abstract class PollingODObject extends ODObject {
 		}
 		synchronized(this){
 		    try {
-			wait();
+			wait(1000);
 		    } catch(InterruptedException e){}
 		}
 	    }
