@@ -30,7 +30,7 @@ import org.valabs.stdmsg.ODShutdownMessage;
  * Менеджер объектов ODISP.
  * 
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev </a>
- * @version $Id: ObjectManager.java,v 1.48 2005/02/12 17:27:29 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.49 2005/02/15 15:13:11 valeks Exp $
  */
 
 class ObjectManager implements org.valabs.odisp.common.ObjectManager {
@@ -64,12 +64,6 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
 
   /** Ранее загруженный файл hints. */
   private Hints hints = null;
-
-  /** Кол-во объектов для загрузки. */
-  private int statToLoadCount = 0;
-
-  /** Статистика количества запусков loadPending. */
-  private int statLoadPendingFireCount = 0;
 
   /**
    * Добавление объекта как провайдера конкретного сервиса.
@@ -135,7 +129,6 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
 
   /** Попытка подгрузки объектов в следствии изменения списка сервисов менеджера. */
   public final void loadPending() {
-    statLoadPendingFireCount++;
     // resources
     Map resourceList = new HashMap(dispatcher.getResourceManager().getResources());
     Iterator it = resourceList.keySet().iterator();
@@ -148,75 +141,80 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
         hints.addNewHint(objectName);
       }
     }
-    int loaded = 0;
+
     Map localObjects = hints.getHintedOrder(objects);
-    it = localObjects.keySet().iterator();
-    while (it.hasNext()) {
-      String objectName = (String) it.next();
-      ObjectEntry oe = (ObjectEntry) objects.get(objectName);
-      if (oe.isLoaded()) {
-        continue;
+    int statToLoadCount = objects.size();
+    while (statToLoadCount != 0) {
+      int loaded = 0;
+      it = localObjects.keySet().iterator();
+      while (it.hasNext()) {
+        String objectName = (String) it.next();
+        ObjectEntry oe = (ObjectEntry) objects.get(objectName);
+        if (oe.isLoaded()) {
+          continue;
+        }
+        log.finest("trying to load object " + objectName);
+        // проверка на удовлетворение всех зависимостей
+        int totalDependencies = oe.getDepends().size();
+        Iterator dit = oe.getDepends().iterator();
+        while (dit.hasNext()) {
+          String dependency = (String) dit.next();
+          if (hasProviders(dependency)) {
+            totalDependencies--;
+          } else {
+            log.finest("dependency not met: " + dependency);
+          }
+
+        }
+
+        // все условия зависимости удовлетворены
+        if (totalDependencies == 0) {
+          // занесение в качестве провайдера для указанных сервисов
+          Iterator pit = oe.getProvides().iterator();
+          while (pit.hasNext()) {
+            String providing = (String) pit.next();
+            log.finest("added as provider of " + providing);
+            addProvider(providing, objectName);
+
+          }
+
+          // занесение в сервис RECIPIENT_ALL
+          addProvider(Message.RECIPIENT_ALL, objectName);
+          // если объект хочет получать все сообщения, то занести его в RECIPIENT_CATCHALL
+          if (oe.getObject().getMatchAll()) {
+            addProvider(Message.RECIPIENT_CATCHALL, objectName);
+          }
+          // пометка объекта как работающего
+          oe.setLoaded(true);
+          log.config(" ok. loaded = " + objectName);
+          // восстановление данных из слепка если он был
+          if (ds.hasSnapshot()) {
+            log.config("Restoring state from snapshot for " + objectName);
+            oe.getObject().importState(ds.getObjectSnapshot(objectName));
+          }
+          // официальное уведомление объекта о загрузке
+          Message m = dispatcher.getNewMessage();
+          ODObjectLoadedMessage.setup(m, objectName, UUID.getNullUUID());
+          m.setDestination(objectName);
+          oe.getObject().handleMessage0(m);
+          // сброс накопившихся сообщений
+          flushDefferedMessages(objectName);
+          // запись в hints файл в случае необходимости
+          if (oe.isIntoHints()) {
+            hints.addNewHint(oe.getObject().getClass().getName());
+          }
+          statToLoadCount--;
+          loaded++;
+        }
       }
-      log.finest("trying to load object " + objectName);
-      // проверка на удовлетворение всех зависимостей
-      int totalDependencies = oe.getDepends().size();
-      Iterator dit = oe.getDepends().iterator();
-      while (dit.hasNext()) {
-        String dependency = (String) dit.next();
-        if (hasProviders(dependency)) {
-          totalDependencies--;
-        } else {
-          log.finest("dependency not met: " + dependency);
-        }
-
-      }
-
-      // все условия зависимости удовлетворены
-      if (totalDependencies == 0) {
-        // занесение в качестве провайдера для указанных сервисов
-        Iterator pit = oe.getProvides().iterator();
-        while (pit.hasNext()) {
-          String providing = (String) pit.next();
-          log.finest("added as provider of " + providing);
-          addProvider(providing, objectName);
-
-        }
-
-        // занесение в сервис RECIPIENT_ALL
-        addProvider(Message.RECIPIENT_ALL, objectName);
-        // если объект хочет получать все сообщения, то занести его в RECIPIENT_CATCHALL
-        if (oe.getObject().getMatchAll()) {
-          addProvider(Message.RECIPIENT_CATCHALL, objectName);
-        }
-        // пометка объекта как работающего
-        oe.setLoaded(true);
-        log.config(" ok. loaded = " + objectName);
-        // восстановление данных из слепка если он был
-        if (ds.hasSnapshot()) {
-          log.config("Restoring state from snapshot for " + objectName);
-          oe.getObject().importState(ds.getObjectSnapshot(objectName));
-        }
-        // официальное уведомление объекта о загрузке
-        Message m = dispatcher.getNewMessage();
-        ODObjectLoadedMessage.setup(m, objectName, UUID.getNullUUID());
-        m.setDestination(objectName);
-        oe.getObject().handleMessage0(m);
-        // сброс накопившихся сообщений
-        flushDefferedMessages(objectName);
-        // запись в hints файл в случае необходимости
-        if (oe.isIntoHints()) {
-          hints.addNewHint(oe.getObject().getClass().getName());
-        }
-        loaded++;
-        statToLoadCount--;
+      if (loaded == 0) {
+        log.warning("Some of the objects failed to load. There is something wrong with dependencies.");
+        break;
       }
     }
-    if (loaded > 0) {
-      if (statToLoadCount == 0) {
-        hints.storeHints();
-        ds.clearSnapshot();
-      }
-      loadPending();
+    if (statToLoadCount == 0) {
+      hints.storeHints();
+      ds.clearSnapshot();
     }
   }
 
@@ -255,7 +253,6 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
       synchronized (objects) {
         objects.put(load.getObjectName(), oe);
       }
-      statToLoadCount++;
     } catch (Exception e) {
       dispatcher.getExceptionHandler().signalException(e);
     }
@@ -393,20 +390,10 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
 
     // рассылка реальным адресатам
     Iterator it;
-    List recipients = getProviders(message.getDestination());
-    if (recipients != null) {
-      it = recipients.iterator();
-      Message actualMessage;
-      while (it.hasNext()) {
-        String objectName = (String) it.next();
-        actualMessage = message.cloneMessage();
-        actualMessage.setDestination(objectName);
-        sendToObject(objectName, actualMessage);
-      }
-    }
-    // рассылка тем, кто хочет получать все сообщения
-    recipients = getProviders(Message.RECIPIENT_CATCHALL);
-    if (recipients != null) {
+    Set recipients = new HashSet();
+    recipients.addAll(getProviders(message.getDestination()));
+    recipients.addAll(getProviders(Message.RECIPIENT_CATCHALL));
+    if (recipients.size() > 0) {
       it = recipients.iterator();
       Message actualMessage;
       while (it.hasNext()) {
