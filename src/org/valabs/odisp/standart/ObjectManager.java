@@ -18,7 +18,7 @@ import com.novel.stdmsg.ODObjectLoadedMessage;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@valeks.novel.local">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.18 2004/05/11 13:10:49 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.19 2004/05/12 14:46:34 dron Exp $
  */
 
 public class StandartObjectManager implements ObjectManager {
@@ -287,7 +287,6 @@ public class StandartObjectManager implements ObjectManager {
 	victim = tmp;
       }
     }
-    victim.send(message, objToSendTo);
     /*
       Адаптивный алгоритм работы:
       при превышении лимита в 10-15 сообщений для минимума производится запуск пары дополнительных
@@ -296,7 +295,8 @@ public class StandartObjectManager implements ObjectManager {
      */
     avgLoad = avgLoad / senderPool.size();
     if (leastLoad > 15) {
-      senderPool.add(new Sender());
+      victim = new Sender();
+      senderPool.add(victim);
       senderPool.add(new Sender());
       log.fine("Least load exceed 15 - throttling.");
     } else if (avgLoad < 5 && senderPool.size() > SENDER_POOL_SIZE) {
@@ -306,6 +306,7 @@ public class StandartObjectManager implements ObjectManager {
       s = null;
       log.fine("Average load less than 5 - slowing down.");
     }
+    victim.send(message, objToSendTo);
   }
 
   /** Посылка сообщения всем объектам менеджера.
