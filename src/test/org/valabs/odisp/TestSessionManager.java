@@ -10,9 +10,8 @@ import org.valabs.stdmsg.StandartMessage;
 
 
 /** Набор тестов для менеджера сессий.
- * @author <a href="mailto:valeks@novel-il.ru">Алексеев Валентин А.</a>
- * @author (C) 2004 НПП "Новел-ИЛ"
- * @version $Id: TestSessionManager.java,v 1.1 2004/12/02 21:47:15 valeks Exp $
+ * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Алексеев Валентин А.</a>
+ * @version $Id: TestSessionManager.java,v 1.2 2004/12/02 22:08:59 valeks Exp $
  */
 public class TestSessionManager extends TestCase {
   /** Тестирование простейшего случая -- обработчик на одиночное сообщение. */
