@@ -13,7 +13,7 @@ import org.valabs.odisp.common.Resource;
  *
  * @author <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
  * @author (C) 2004 НПП "Новел-ИЛ"
- * @version $Id: Translator.java,v 1.16 2005/01/27 20:52:54 valeks Exp $
+ * @version $Id: Translator.java,v 1.17 2005/02/17 12:32:42 valeks Exp $
  */
 public class Translator extends Properties implements Resource {
   /** Путь к корневой папке транляций. */
@@ -161,7 +161,7 @@ public class Translator extends Properties implements Resource {
     if (!autoLoad) return;
     
     try {
-      BufferedReader inSettings = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(rootDir + "/" + langId + "/settings"))); // XXX: обязательно ли это '/'
+      BufferedReader inSettings = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(rootDir + "/" + langId + "/settings")));
       String inLine = null;
       do {
         inLine = inSettings.readLine();

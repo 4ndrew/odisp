@@ -15,7 +15,7 @@ import org.valabs.stdmsg.TranslatorGetTranslationReplyMessage;
 
 /**
  * @author <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
- * @version $Id: TranslatorServer.java,v 1.6 2005/01/27 20:52:54 valeks Exp $
+ * @version $Id: TranslatorServer.java,v 1.7 2005/02/17 12:32:42 valeks Exp $
  */
 public class TranslatorServer extends StandartODObject
 		implements
@@ -40,7 +40,7 @@ public class TranslatorServer extends StandartODObject
 			String packagePath = getParameter("catalogueroot", "/resources/language")
 					+ "/" + language + (encoding != null ? "." + encoding : "");
 			Properties result = new Properties();
-	    BufferedReader inSettings = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(packagePath + "/settings"))); // XXX: обязательно ли это '/'
+	    BufferedReader inSettings = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(packagePath + "/settings")));
 	    try {
 	      String inLine = null;
 	      do {
