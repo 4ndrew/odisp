@@ -5,7 +5,7 @@ import java.util.Map;
 /** Интерфейс ресурсного объекта ODISP ядра.
 * @author Валентин А. Алексеев
 * @author (C) 2003, НПП "Новел-ИЛ"
-* @version $Id: Resource.java,v 1.3 2004/03/26 21:53:37 valeks Exp $
+* @version $Id: Resource.java,v 1.4 2004/07/12 12:31:00 valeks Exp $
 */
 public interface Resource {
   /** Максимальное количество ссылок одновременно поддерживаемых объектом.
@@ -19,7 +19,7 @@ public interface Resource {
    */
   int cleanUp(int type);
   /** Установить конфигурацию.
-   * @param config конфигурация
+   * @param configuration конфигурация
    */
   void setConfiguration(Map configuration);
 }

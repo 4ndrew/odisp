@@ -6,7 +6,7 @@ import com.novel.odisp.common.ODObject;
 /** Запись об объекте в таблице объектов.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ObjectEntry.java,v 1.6 2004/05/21 21:49:28 valeks Exp $
+ * @version $Id: ObjectEntry.java,v 1.7 2004/07/12 12:31:00 valeks Exp $
  */
 
 public class ObjectEntry {
@@ -101,7 +101,6 @@ public class ObjectEntry {
 
   /** Конструктор класса.
    * @param cn имя класса
-   * @param bs изначальное состояние блокировки
    * @param newDepends список зависимостей
    * @param newProvides список сервисов
    */
