@@ -1,11 +1,13 @@
 package com.novel.odisp;
 
+import java.util.ArrayList;
+import java.util.List;
 
 import com.novel.odisp.common.ODObject;
 /** Запись об объекте в таблице объектов.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ObjectEntry.java,v 1.2 2004/02/13 15:16:03 valeks Exp $
+ * @version $Id: ObjectEntry.java,v 1.3 2004/03/31 12:00:21 dron Exp $
  */
 
 public class ObjectEntry {
@@ -17,6 +19,7 @@ public class ObjectEntry {
   public final boolean isLoaded() {
     return loaded;
   }
+
   /** Установка признака загрузки.
    * @param newLoaded новое значение состояния
    */
@@ -32,12 +35,14 @@ public class ObjectEntry {
   public final String getClassName() {
     return className;
   }
+
   /** Установить имя класса для объекта.
    * @param newClassName новое имя класса
    */
   public final void setClassName(final String newClassName) {
     className = newClassName;
   }
+
   /** Состояние блокировки. */
   private int blockedState;
   /** Вернуть состояние блокировки объекта.
@@ -46,12 +51,14 @@ public class ObjectEntry {
   public final int getBlockedState() {
     return blockedState;
   }
+
   /** Проверка заблокирован объект или нет.
    * @return статус блокировки
    */
   public final boolean isBlockedState() {
     return (blockedState > 0);
   }
+
   /** Установить состояние блокировки.
    * @param newBlockedState новое состояние блокировки
    */
@@ -62,6 +69,7 @@ public class ObjectEntry {
       blockedState = newBlockedState;
     }
   }
+
   /** Ссылка на объект. */
   private ODObject object;
   /** Вернуть ссылку на объект.
@@ -86,18 +94,20 @@ public class ObjectEntry {
   public final String[] getDepends() {
     return depends;
   }
+
   /** Убрать определенную зависимость из списка.
    * @param toRemove зависимость
    */
   public final void removeDepend(final String toRemove) {
-    String[] newDeps = new String[depends.length - 1];
+    List newDeps = new ArrayList();
     for (int i = 0; i < depends.length; i++) {
       if (!depends[i].equals(toRemove)) {
-	newDeps[i] = new String(depends[i]);
+	newDeps.add(new String(depends[i]));
       }
     }
-    depends = newDeps;
+    depends = (String []) newDeps.toArray();
   }
+  
   /** Список сервисов. */
   private String[] provides;
   /** Вернуть список сервисов.
@@ -106,6 +116,7 @@ public class ObjectEntry {
   public final String[] getProvides() {
     return provides;
   }
+
   /** Конструктор класса.
    * @param cn имя класса
    * @param bs изначальное состояние блокировки
