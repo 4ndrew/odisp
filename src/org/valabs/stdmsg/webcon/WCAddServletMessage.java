@@ -8,7 +8,7 @@ import org.valabs.odisp.common.Message;
  * во время isCorrect().</p>
  * <p>Сообщение не является маршрутизируемым, так как не имеет смысл добавлять сервлеты в удаленный контейнер.</p>
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: WCAddServletMessage.java,v 1.6 2004/08/23 07:42:36 valeks Exp $
+ * @version $Id: WCAddServletMessage.java,v 1.7 2004/10/28 22:57:00 valeks Exp $
  */
 
 public class WCAddServletMessage {
@@ -59,7 +59,7 @@ public class WCAddServletMessage {
 
   /** Доступ к обработчику. */
   public static final Object getServletHandler(final Message msg) {
-    return (Object) msg.getField(SERVLETHANDLER_IDX);
+    return msg.getField(SERVLETHANDLER_IDX);
   }
 
   public static final boolean equals(final Message msg) {

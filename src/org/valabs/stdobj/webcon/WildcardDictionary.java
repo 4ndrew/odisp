@@ -26,7 +26,7 @@
  *
  * Visit the ACME Labs Java page for up-to-date versions of this and other
  * fine Java utilities: http://www.acme.com/java/
-*/
+ */
 
 package org.valabs.stdobj.webcon;
 
@@ -39,23 +39,22 @@ import java.util.regex.Pattern;
 /** A dictionary with wildcard lookups. */
 
 public class WildcardDictionary extends HashMap {
-    /** Gets the object associated with the specified key in the dictionary.
-     * The key is assumed to be a String, which is matched against
-     * the wildcard-pattern keys in the dictionary.
-     * @param key the string to match
-     * @returns the element for the key, or null if there's no match
-	 */
-    public synchronized Object get( Object key ) {
-        String sKey = (String) key;
-        Iterator it = keySet().iterator();
-        while (it.hasNext()) {
-          String tkey = (String) it.next();
-          if (Pattern.matches ((String) key, tkey)) {
-            return super.get(tkey);
-          }
-        }
-        return null;
+  /** Gets the object associated with the specified key in the dictionary.
+   * The key is assumed to be a String, which is matched against
+   * the wildcard-pattern keys in the dictionary.
+   * @param key the string to match
+   * @returns the element for the key, or null if there's no match
+   */
+  public synchronized Object get(Object key) {
+    Iterator it = keySet().iterator();
+    while (it.hasNext()) {
+      String tkey = (String) it.next();
+      if (Pattern.matches((String) key, tkey)) {
+        return super.get(tkey);
+      }
     }
+    return null;
+  }
 
   /** Удалить объект по значению.
    * Удаляются все записи у которых значение совпадает с заданным.
@@ -66,14 +65,14 @@ public class WildcardDictionary extends HashMap {
       List toRemove = new ArrayList();
       Iterator it = keySet().iterator();
       while (it.hasNext()) {
-	Object tkey = (Object) it.next();
-	if (get(tkey).equals(value)) {
-	  toRemove.add(tkey);
-	}
+        Object tkey = it.next();
+        if (get(tkey).equals(value)) {
+          toRemove.add(tkey);
+        }
       }
       it = toRemove.iterator();
       while (it.hasNext()) {
-	remove(it.next());
+        remove(it.next());
       }
     }
   }

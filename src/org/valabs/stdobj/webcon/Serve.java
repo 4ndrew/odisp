@@ -63,7 +63,7 @@ import org.valabs.stdobj.webcon.servlet.ServletException;
  * @see org.valabs.stdobj.webcon.servlet.http.HttpServlet
  * @author (C) 1996,1998 by Jef Poskanzer <jef@acme.com>
  * @author (C) 2004 Valentin A. Alekseev
- * @version $Id: Serve.java,v 1.9 2004/08/23 07:42:38 valeks Exp $
+ * @version $Id: Serve.java,v 1.10 2004/10/28 22:57:00 valeks Exp $
  */
 
 public class Serve implements ServletContext {
@@ -146,7 +146,7 @@ public class Serve implements ServletContext {
    */
   public void addServlet(String urlPat, Servlet servlet) {
     try {
-      servlet.init(new ServeConfig((ServletContext) this));
+      servlet.init(new ServeConfig(this));
       registry.put(urlPat, servlet);
       servlets.put(servlet.getClass().getName(), servlet);
     } catch (ServletException e) {
@@ -203,7 +203,7 @@ public class Serve implements ServletContext {
    * @throws GeneralSecurityException в случае проблем с инциализацией контекста
    * @throws IOException в случае проблем с инциализацией контекста
    */
-  private void setupSSLContext() throws GeneralSecurityException, IOException {
+  private void setupSSLContext() throws GeneralSecurityException {
     TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
     tmf.init(clientKeyStore);
 
@@ -229,7 +229,7 @@ public class Serve implements ServletContext {
           5,
           InetAddress.getLocalHost());
       ss.setNeedClientAuth(false);
-      serverSocket = (ServerSocket) ss;
+      serverSocket = ss;
     } catch (Exception gse) {
     }
     if (serverSocket == null) {

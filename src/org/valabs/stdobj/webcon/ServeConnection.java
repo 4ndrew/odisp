@@ -338,7 +338,6 @@ class ServeConnection
    * @param name the parameter name
    */
   public String getParameter(String name) {
-    Enumeration en = getParameterNames();
     int i = queryNames.indexOf(name);
     if (i == -1) {
       return null;
@@ -352,7 +351,6 @@ class ServeConnection
    */
   public String[] getParameterValues(String name) {
     Vector v = new Vector();
-    Enumeration en = getParameterNames();
     for (int i = 0; i < queryNames.size(); ++i) {
       String n = (String) queryNames.elementAt(i);
       if (name.equals(n)) {
@@ -815,8 +813,6 @@ class ServeConnection
   private static String to1123String(Date date) {
     Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
     c.setTime(date);
-    int localDay = c.get(Calendar.DAY_OF_WEEK);
-    int localDate = c.get(Calendar.DATE);
     String gmtStr = c.toString();
     return gmtStr;
   }

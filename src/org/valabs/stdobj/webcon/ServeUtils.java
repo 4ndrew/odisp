@@ -45,7 +45,7 @@ public class ServeUtils {
 
   // Server identification.
   public static final String serverName = "org.valabs.stdobj.webcon";
-  public static final String serverVersion = "$Revision: 1.4 $";
+  public static final String serverVersion = "$Revision: 1.5 $";
   public static final String serverUrl =
     "http://www.acme.com/java/software/org.valabs.stdobj.webcon.Serve.html";
 
@@ -53,7 +53,7 @@ public class ServeUtils {
    * @param o
    * @exception IOException 
    */
-  public static void writeAddress(OutputStream o) throws IOException {
+  public static void writeAddress(OutputStream o) {
     PrintStream p = new PrintStream(o);
     p.println(
       "<ADDRESS><A HREF=\""

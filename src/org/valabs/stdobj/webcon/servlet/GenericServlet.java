@@ -64,7 +64,7 @@ public abstract class GenericServlet implements Servlet
     /// Initializes the servlet.
     // This is called by the system when the servlet is first loaded.
     // @exception ServletException when an exception has occurred
-    public void init() throws ServletException
+    public void init()
 	{
 	}
 
