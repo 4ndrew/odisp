@@ -18,7 +18,7 @@ import com.novel.stdmsg.ODObjectLoadedMessage;
 
 /** Менеджер объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ObjectManager.java,v 1.21 2004/05/14 07:56:42 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.22 2004/05/18 12:33:04 valeks Exp $
  */
 
 public class StandartObjectManager implements ObjectManager {
@@ -280,41 +280,7 @@ public class StandartObjectManager implements ObjectManager {
     synchronized (messageStorage) {
 		messageStorage.add(new SendRecord(message, objToSendTo));
     }
-    /* Выбор первой наименее загруженной нити отсылки.
-       Возможно в дальнейшем потребуется какой ни будь адаптивный алгоритм, который будет
-       расширять размер пула нитей в зависимости от нагрузки системы.
-     *//*
-    Sender victim = null;
-    int leastLoad = Integer.MAX_VALUE;
-    int avgLoad = 0;
-    for (int i = 0; i < senderPool.size(); i++) {
-      Sender tmp = (Sender) senderPool.get(i);
-      avgLoad += tmp.getCounter();
-      if (tmp.getCounter() < leastLoad) {
-	leastLoad = tmp.getCounter();
-	victim = tmp;
-      }
-    }*/
-    /*
-      Адаптивный алгоритм работы:
-      при превышении лимита в 10-15 сообщений для минимума производится запуск пары дополнительных
-      нитей с перераспределением нагрузки между ними. Когда средняя нагрузка
-      опускается ниже 5 - убираем по 1 нити.
-     *//*
-    avgLoad = avgLoad / senderPool.size();
-    if (leastLoad > 15) {
-      victim = new Sender(this);
-      senderPool.add(victim);
-      senderPool.add(new Sender(this));
-      log.fine("Least load exceed 15 - throttling.");
-    } else if (avgLoad < 5 && senderPool.size() > SENDER_POOL_SIZE) {
-      Sender s = (Sender) senderPool.get(0);
-      s.quit();
-      senderPool.remove(0);
-      s = null;
-      log.fine("Average load less than 5 - slowing down.");
-    }*/
-  }
+   }
 
   /** Посылка сообщения всем объектам менеджера.
    * @param message сообщение
