@@ -4,13 +4,18 @@ import com.novel.odisp.common.Resource;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 /** Запись об однотипных ресурах в таблице ресурсов.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ResourceEntry.java,v 1.2 2004/02/13 22:22:50 valeks Exp $
+ * @version $Id: ResourceEntry.java,v 1.3 2004/02/15 21:55:13 valeks Exp $
  */
 public class ResourceEntry {
+  /** Журнал. */
+  private Logger log = Logger.getLogger("com.novel.odisp.ResourceEntry");
+  /** Уникальное обозначение разделяемого ресурса. */
+  public static final int MULT_SHARE = -1;
   /** Имя класса ресурса. */
   private String className;
   /** Хранилище ресурсных записей. */
@@ -89,6 +94,9 @@ public class ResourceEntry {
   /** Установка нового количеств использованных экземпляров. */
   public final void setMaxUsage(final int newUsage) {
     usage = newUsage;
+    if (usage == MULT_SHARE) {
+      log.fine(className + " marked as shared resource.");
+    }
   }
 
   public final boolean isAvailable() {
@@ -100,9 +108,11 @@ public class ResourceEntry {
    */
   public final Resource acquireResource() {
     assert usage == 0;
-    usage--;
     ResourceItem rit = lookupFirstUnused();
-    rit.setUsed(true);
+    if (usage != MULT_SHARE) {
+      usage--;
+      rit.setUsed(true);
+    }
     return rit.getResource();
   }
 
@@ -111,8 +121,10 @@ public class ResourceEntry {
    */
   public final void releaseResource(final Resource newResource) {
     ResourceItem rit = lookupResourceItemByResource(newResource);
-    rit.setUsed(false);
-    usage++;
+    if (usage != MULT_SHARE) {
+      rit.setUsed(false);
+      usage++;
+    }
   }
 
   /** Добавить новый ресурс в хранилище.
