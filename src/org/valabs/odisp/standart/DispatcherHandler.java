@@ -2,6 +2,7 @@ package org.valabs.odisp.standart;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +27,7 @@ import org.valabs.stdmsg.ODShutdownMessage;
  * Обработчик сообщений диспетчера ODISP.
  * 
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: DispatcherHandler.java,v 1.35 2005/01/26 08:22:53 valeks Exp $
+ * @version $Id: DispatcherHandler.java,v 1.36 2005/01/27 14:15:43 valeks Exp $
  */
 
 class DispatcherHandler extends StandartODObject {
@@ -107,7 +108,7 @@ class DispatcherHandler extends StandartODObject {
                 int exitCode = 0;
                 log.info(toString() + " shutting down...");
                 if (msg.getFieldsCount() == 1) {
-                    exitCode = ODShutdownMessage.getExitCode(msg).intValue();
+                    exitCode = ((Integer) msg.getField("exitcode")).intValue();
                 }
                 // харакири
                 oman.unloadObject(getObjectName(), exitCode);
@@ -222,5 +223,9 @@ class DispatcherHandler extends StandartODObject {
         runThread = (Thread) cfg.get("runthr");
         cfg.remove("runthr");
         super.setConfiguration(cfg);
+    }
+    
+    public Map exportState() {
+      return new HashMap();
     }
 } // StandartDispatcherHandler

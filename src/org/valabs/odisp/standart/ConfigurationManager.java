@@ -19,7 +19,7 @@ import org.valeks.xlang.parser.XLangException;
  * Реализация менеджера конфигурации.
  * 
  * @author (C) 2004 <a href="valeks@valabs.spb.ru">Валентин А. Алексеев </a>
- * @version $Id: ConfigurationManager.java,v 1.4 2004/12/01 10:36:42 boris Exp $
+ * @version $Id: ConfigurationManager.java,v 1.5 2005/01/27 14:15:43 valeks Exp $
  */
 class ConfigurationManager implements org.valabs.odisp.common.ConfigurationManager {
 
@@ -85,15 +85,16 @@ class ConfigurationManager implements org.valabs.odisp.common.ConfigurationManag
    * 
    * @see org.valabs.odisp.common.ConfigurationManager#setCommandLineArguments(java.lang.String[])
    */
-  public void setCommandLineArguments(String[] args) {
+  public void setCommandLineArguments(List args) {
+    assert args.size() > 0 : "Argument list too small";
     try {
-      InputStream inp = new FileInputStream(args[0]);
+      InputStream inp = new FileInputStream((String) args.get(0));
       Parser p = new Parser(inp);
       loadConfiguration(p.getRootTag());
     } catch (FileNotFoundException e) {
-      log.severe("configuration file " + args[0] + " not found.");
+      log.severe("configuration file " + args.get(0) + " not found.");
     } catch (XLangException e) {
-      log.severe("configuration file " + args[0] + " contains unrecoverable errors: " + e);
+      log.severe("configuration file " + args.get(0) + " contains unrecoverable errors: " + e);
     }
   }
 

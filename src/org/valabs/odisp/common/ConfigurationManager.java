@@ -6,12 +6,12 @@ import java.util.Map;
 
 /** Интерфейс менеджера конфигурации диспетчера ODISP.
  * @author (C) 2004 <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
- * @version $Id: ConfigurationManager.java,v 1.1 2004/11/28 10:51:56 valeks Exp $
+ * @version $Id: ConfigurationManager.java,v 1.2 2005/01/27 14:15:42 valeks Exp $
  */
 public interface ConfigurationManager {
   /** Задание параметров коммандной строки.
    */
-  public void setCommandLineArguments(String[] args);
+  public void setCommandLineArguments(List args);
   /** Поддерживает ли менеджер конфигурации выдачу списка ресурсов и объектов для загрузки.
    */
   public boolean supportComponentListing();

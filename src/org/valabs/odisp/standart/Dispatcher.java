@@ -21,7 +21,7 @@ import org.valabs.stdmsg.StandartMessage;
  * и управление ресурсными объектами.
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: Dispatcher.java,v 1.58 2005/01/24 12:57:59 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.59 2005/01/27 14:15:43 valeks Exp $
  */
 public class Dispatcher implements org.valabs.odisp.common.Dispatcher, ExceptionHandler {
   /** Журнал. */
@@ -105,7 +105,7 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
     return new StandartMessage();
   }
 
-  public Dispatcher(String[] args) {
+  public Dispatcher(List args) {
     log.info(toString() + " starting up...");
     addConfigurationManager(new org.valabs.odisp.standart.ConfigurationManager());
     getConfigurationManager().setCommandLineArguments(args);
@@ -162,14 +162,14 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
    * @param args по 0 должно содержать имя файла с перечислением классов,
    * которые необходимо загрузить
    */
-  public static void main(final String[] args) {
+  /*public static void main(final String[] args) {
     log.setLevel(java.util.logging.Level.ALL);
     if (args.length != 1) {
 		usage();
     } else {
       new Dispatcher(args);
     }
-  }
+  }*/
   
   /* (non-Javadoc)
    * @see org.valabs.odisp.common.Dispatcher#addSecurityManager(org.valabs.odisp.common.SecurityManager)
@@ -262,7 +262,7 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
       return null;
     }
     
-    public void setCommandLineArguments(String[] args) {
+    public void setCommandLineArguments(List args) {
       Iterator it = cman.iterator();
       while (it.hasNext()) {
         ConfigurationManager element = (ConfigurationManager) it.next();
