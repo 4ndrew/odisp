@@ -10,10 +10,12 @@ package com.novel.stdmsg;
  * захват не более одного ресурса с установлением режима блокировки.</p>
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODAcquireMessage.java,v 1.2 2003/12/03 19:17:53 valeks Exp $
+ * @version $Id: ODAcquireMessage.java,v 1.3 2003/12/04 09:48:20 valeks Exp $
  */
 
 public class ODAcquireMessage extends StandartMessage {
+  /** Символьное имя сообщения*/
+  public static final String name = "od_acquire";
   /** Создать новое сообщение диспетчеру с запросом на захват ресурса
    * @param origin автор
    * @param replyTo в ответ на сообщение No.

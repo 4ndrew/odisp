@@ -5,10 +5,12 @@ package com.novel.stdmsg;
  * В качестве параметра можно указать код выхода который будет рассылатся объектам.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODShutdownMessage.java,v 1.3 2003/12/03 19:17:53 valeks Exp $
+ * @version $Id: ODShutdownMessage.java,v 1.4 2003/12/04 09:48:20 valeks Exp $
  */
 
 public class ODShutdownMessage extends StandartMessage {
+  /** Символьное имя сообщения*/
+  public static final String name = "od_shutdown";
   /** Создает новое сообщение с заданными параметрами 
    * @param origin отправитель
    * @param replyTo индекс сообщения на которое производится ответ

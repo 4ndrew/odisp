@@ -4,14 +4,16 @@ package com.novel.stdmsg;
  * Необязательный параметр reason определяет код причины выхода
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODCleanupMessage.java,v 1.1 2003/12/03 19:18:38 valeks Exp $
+ * @version $Id: ODCleanupMessage.java,v 1.2 2003/12/04 09:48:20 valeks Exp $
  */
 
 public class ODCleanupMessage extends StandartMessage {
+  /** Символьное имя сообщение */
+  public static final String name = "od_cleanup";
   /** Конструктор сообщения
    * @param destination получатель сообщения
    * @param replyId индекс сообщения на которое производится ответ
-  */
+   */
   public ODCleanupMessage(String destination, int replyId) {
     super("od_cleanup", destination, "stddispatcher", replyId);
   }
