@@ -12,7 +12,7 @@ import javax.swing.text.html.*;
 /** Объект ODISP реализующий графический интерфейс доступа к менеджеру
  * @author Андрей А. Порохин
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: GUIConsole.java,v 1.4 2003/10/20 13:42:36 valeks Exp $
+ * @version $Id: GUIConsole.java,v 1.5 2003/10/21 12:36:58 valeks Exp $
  */
 public class GUIConsole extends PollingODObject {
    JFrame mFrame;
@@ -131,7 +131,9 @@ public class GUIConsole extends PollingODObject {
    }
 
    private void parseCommand(String stCmd) {
-      String stContent[] = stCmd.split(" ");
+      String stContent[] = {};
+      if(stCmd != null)
+        stContent = stCmd.split(" ");
 /*      for(int i=0; i < stContent.length; i++) {
          mTextArea1.setText(mTextArea1.getText()+"["+i+"]"+stContent[i]+"\n");
       }*/
