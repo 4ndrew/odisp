@@ -14,7 +14,7 @@ import org.valabs.odisp.common.Message;
  * 
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: ConsoleReader.java,v 1.16 2004/11/05 14:11:29 valeks Exp $
+ * @version $Id: ConsoleReader.java,v 1.17 2005/01/26 22:10:30 valeks Exp $
  */
 
 public class ConsoleReader extends Thread {
@@ -95,6 +95,7 @@ public class ConsoleReader extends Thread {
   public final synchronized void exit() {
     try {
       inp.close();
+      this.interrupt();
     } catch (IOException e) { /*NOP*/ }
     doExit = true;
   }
