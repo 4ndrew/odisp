@@ -1,4 +1,4 @@
-<!-- $Id: build.xml,v 1.16 2004/10/22 10:34:39 valeks Exp $ mode: -*- --><!-- xsl -*- -->
+<!-- $Id: build.xml,v 1.17 2004/10/28 22:03:07 valeks Exp $ mode: -*- --><!-- xsl -*- -->
 <project name="odisp" default="all" basedir=".">
     <taskdef resource="checkstyletask.properties"
            classpath="/usr/local/share/java/classes/checkstyle.jar"/>
@@ -63,7 +63,7 @@
 	    <tag name="fixme." description="Must FIX:" enabled="yes" scope="all"/>
 	    <tag name="todo." description="To do:" enabled="yes" scope="all"/>	    
 	    <tag name="xxx." description="Urgent!:" enabled="yes" scope="all"/>	    
-	    <packageset dir="odisp" defaultexcludes="yes"/>
+	    <packageset dir="src" defaultexcludes="yes"/>
             <link offline="false" href="${jdk-doc-path}"/>
 	</javadoc>
     </target>
