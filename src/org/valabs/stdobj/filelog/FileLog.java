@@ -27,7 +27,7 @@ import com.novel.stdobj.simpleconfig.SimpleConfig;
 /** Объект реализующий простейшую журнализацию событий согласно файлу шаблонов.
 * @author Валентин А. Алексеев
 * @author (С) 2003, НПП "Новел-ИЛ"
-* @version $Id: FileLog.java,v 1.21 2004/05/13 09:25:46 valeks Exp $
+* @version $Id: FileLog.java,v 1.22 2004/05/21 21:59:29 valeks Exp $
 */
 public class FileLog extends StandartODObject {
   /** Поток вывода. */
@@ -48,7 +48,6 @@ public class FileLog extends StandartODObject {
       setMatch(".*");
       ODAcquireMessage m = new ODAcquireMessage(getObjectName(), 0);
       m.setResourceName("com.novel.stdobj.simpleconfig.SimpleConfig");
-      m.setWillBlock(true);
       dispatcher.send(m);
       return;
     }
