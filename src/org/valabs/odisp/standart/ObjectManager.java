@@ -30,7 +30,7 @@ import org.valabs.stdmsg.ODShutdownMessage;
  * Менеджер объектов ODISP.
  * 
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev </a>
- * @version $Id: ObjectManager.java,v 1.51 2005/02/27 12:37:31 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.52 2005/02/27 13:05:24 valeks Exp $
  */
 
 class ObjectManager implements org.valabs.odisp.common.ObjectManager {
@@ -388,7 +388,7 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
       while (it.hasNext()) {
         final String objectName = (String) it.next();
         actualMessage = message.cloneMessage();
-        actualMessage.setDestination(objectName);
+//        actualMessage.setDestination(objectName);
         sendToObject(objectName, actualMessage);
       }
     }

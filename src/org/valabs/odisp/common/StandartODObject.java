@@ -1,10 +1,13 @@
 package org.valabs.odisp.common;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.valabs.odisp.SessionManager;
@@ -17,7 +20,7 @@ import org.valabs.stdmsg.ModuleStatusReplyMessage;
  * Стандартный объект ODISP.
  * 
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev </a>
- * @version $Id: StandartODObject.java,v 1.16 2005/02/27 12:37:29 valeks Exp $
+ * @version $Id: StandartODObject.java,v 1.17 2005/02/27 13:05:24 valeks Exp $
  */
 
 public abstract class StandartODObject implements ODObject {
@@ -55,6 +58,8 @@ public abstract class StandartODObject implements ODObject {
   private boolean blockedState = false;
 
   private String fullName;
+  
+  private final Set providing = new HashSet();
 
   /**
    * Обрабатывать ли все сообщения.
@@ -106,6 +111,7 @@ public abstract class StandartODObject implements ODObject {
     logger.setLevel(java.util.logging.Level.ALL);
     handlers = new HashMap();
     registerHandlers();
+    providing.addAll(Arrays.asList(getProviding()));
   }
 
   /**
@@ -188,8 +194,8 @@ public abstract class StandartODObject implements ODObject {
       messages.add(msg);
       return;
     }
-
-    if (msg.getDestination().equals(name)) {
+    
+    if (isOur(msg)) {
       if (!handleMessageInternal(msg)) {
         handleMessageByObject(msg);
       }
@@ -198,16 +204,27 @@ public abstract class StandartODObject implements ODObject {
     }
   }
   
+  /** Проверка является ли сообщения нашим. */
+  private boolean isOur(final Message msg) {
+    boolean result = false;
+    if (msg.getDestination().equals(name)) {
+      result = true;
+    } else if (providing.contains(msg.getDestination())) {
+      result = true;
+    }
+    return result;
+  }
+  
   /**
    * @param msg
    */
   private void handleMessageByObject(final Message msg) {
     boolean handled = false;
 
-    if (msg.getDestination().equals(name) && SessionManager.getSessionManager().processMessage(msg)) {
+    if (isOur(msg) && SessionManager.getSessionManager().processMessage(msg)) {
       handled = true;
     }
-    if (msg.getDestination().equals(name) && handlers.containsKey(msg.getAction())) {
+    if (isOur(msg) && handlers.containsKey(msg.getAction())) {
       if (!handled) {
         ((MessageHandler) handlers.get(msg.getAction())).messageReceived(msg);
         handled = true;
