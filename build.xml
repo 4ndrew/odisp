@@ -1,4 +1,4 @@
-<!-- $Id: build.xml,v 1.23 2005/01/24 12:59:15 valeks Exp $ mode: -*- --><!-- xsl -*- -->
+<!-- $Id: build.xml,v 1.24 2005/01/27 14:17:00 valeks Exp $ mode: -*- --><!-- xsl -*- -->
 <project name="odisp" default="all" basedir=".">
     <taskdef resource="checkstyletask.properties"
            classpath="/usr/local/share/java/classes/checkstyle.jar"/>
@@ -148,16 +148,24 @@
         </javac>
     </target>
     <target name="odisp-jar" depends="release-dir-setup, odisp">
-	<jar destfile="release/odisp.jar" basedir="build" includes="org/**">
+	   <jar destfile="release/odisp.jar" basedir="build" includes="org/**/*class" excludes="org/valabs/odisp/Launcher*">
                 <manifest>
                         <attribute name="Built-By" value="${user.name}"/>
-                        <attribute name="Main-Class" value="org.valabs.odisp.standart.Dispatcher"/>
                 </manifest>
         </jar>
     </target>
   
+  <target name="launcher-jar" depends="release-dir-setup, odisp">
+     <jar destfile="release/launcher.jar" basedir="build" includes="org/valabs/odisp/Launcher*">
+       <manifest>
+         <attribute name="Built-By" value="${user.name}"/>
+         <attribute name="Main-Class" value="org.valabs.odisp.Launcher"/>
+       </manifest>
+     </jar>
+  </target>
+  
   <target name="odisp-jar-debug" depends="odisp, odisp-junit">
-    <jar destfile="release/odisp.jar" basedir="build" includes="org/**,test/org/valabs/odisp/DispatcherFake.class">
+    <jar destfile="release/odisp.jar" basedir="build" includes="org/**/*class,test/org/valabs/odisp/DispatcherFake.class">
       <manifest>
       <attribute name="Built-By" value="${user.name}"/>
       <attribute name="Main-Class" value="org.valabs.odisp.standart.Dispatcher"/>
