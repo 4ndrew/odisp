@@ -24,7 +24,7 @@ import com.novel.stdmsg.ODShutdownMessage;
 
 /** Обработчик сообщений диспетчера ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: DispatcherHandler.java,v 1.16 2004/05/30 11:56:32 valeks Exp $
+ * @version $Id: DispatcherHandler.java,v 1.17 2004/05/30 12:19:26 valeks Exp $
  */
 
 public class StandartDispatcherHandler extends StandartODObject {
@@ -183,7 +183,7 @@ public class StandartDispatcherHandler extends StandartODObject {
       oman = dispatcher.getObjectManager();
       rman = dispatcher.getResourceManager();
     }
-    super.handlerMessage(msg);
+    super.handleMessage(msg);
   }
 
   /** Точка выхода из объекта.
