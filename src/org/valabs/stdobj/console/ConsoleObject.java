@@ -5,12 +5,47 @@ import java.io.*;
 /** Объект ODISP реализующий консольный интерфейс доступа к менеджеру
 * @author Валентин А. Алексеев
 * @author (C) 2003, НПП "Новел-ИЛ"
-* @version $Id: ConsoleObject.java,v 1.5 2003/10/14 09:39:49 valeks Exp $
+* @version $Id: ConsoleObject.java,v 1.6 2003/10/21 12:29:33 valeks Exp $
 */
 public class ConsoleObject extends PollingODObject {
 	private Thread reader;
 	public void handleMessage(Message msg){
 	    log("handleMessage","processing "+msg);
+            if(msg.getAction().equals("od_object_loaded")){
+	        reader = new Thread(new Runnable() {
+	        BufferedReader inp = new BufferedReader(new InputStreamReader(System.in));
+	        public void run(){
+		        try {
+		                sleep(100);
+		                System.out.print("action> ");
+		                String action, tmp;
+		                while((action = inp.readLine()) != null){
+			                System.out.print("destination> ");
+			                Message m = dispatcher.getNewMessage(action, inp.readLine(), getObjectName(), 0);
+			                System.out.print("params? ");
+			                while(!inp.readLine().equals("")){
+			                        System.out.print("int|str? ");
+			                        tmp = inp.readLine();
+			                        System.out.print("value> ");
+			                        if(tmp.startsWith("i"))
+				                        m.addField(new Integer(inp.readLine()));
+			                        else 
+				                        m.addField(new String(inp.readLine()));
+			                        System.out.print("more? ");
+			                }
+			                getDispatcher().sendMessage(m);
+			                sleep(1);
+			                System.out.print("action> ");
+		                }
+		        } catch(IOException e) {
+		                System.err.println("ConsoleReader: Terminal connection lost. Quitting.");
+		        } catch(InterruptedException e){
+		                System.out.println("ConsoleReader: closing console");
+		        }
+	        }    
+	        });
+	        reader.start();
+            }
 	    if(msg.getAction().equals("od_cleanup"))
 		cleanUp(((Integer)msg.getField(0)).intValue());
 	    else {
@@ -33,39 +68,6 @@ public class ConsoleObject extends PollingODObject {
     }
     public ConsoleObject(Integer id){
 	super("console"+id);
-	reader = new Thread(new Runnable() {
-	    BufferedReader inp = new BufferedReader(new InputStreamReader(System.in));
-	    public void run(){
-		try {
-		    sleep(100);
-		    System.out.print("action> ");
-		    String action, tmp;
-		    while((action = inp.readLine()) != null){
-			System.out.print("destination> ");
-			Message m = dispatcher.getNewMessage(action, inp.readLine(), getObjectName(), 0);
-			System.out.print("params? ");
-			while(!inp.readLine().equals("")){
-			    System.out.print("int|str? ");
-			    tmp = inp.readLine();
-			    System.out.print("value> ");
-			    if(tmp.startsWith("i"))
-				m.addField(new Integer(inp.readLine()));
-			    else 
-				m.addField(new String(inp.readLine()));
-			    System.out.print("more? ");
-			}
-			getDispatcher().sendMessage(m);
-			sleep(1);
-			System.out.print("action> ");
-		    }
-		} catch(IOException e) {
-		    System.err.println("ConsoleReader: Terminal connection lost. Quitting.");
-		} catch(InterruptedException e){
-		    System.out.println("ConsoleReader: closing console");
-		}
-	    }    
-	});
-	reader.start();
     }
     public String[] getProviding(){
 	String res[] = {"console"};
