@@ -5,14 +5,13 @@ import java.io.*;
 /** Объект ODISP реализующий консольный интерфейс доступа к менеджеру
 * @author Валентин А. Алексеев
 * @author (C) 2003, НПП "Новел-ИЛ"
-* @version $Id: ConsoleObject.java,v 1.3 2003/10/07 11:13:29 valeks Exp $
+* @version $Id: ConsoleObject.java,v 1.4 2003/10/07 13:35:38 valeks Exp $
 */
 public class ConsoleObject extends PollingODObject {
 	private Thread reader;
 	public void handleMessage(Message msg){
 	    log("handleMessage","processing "+msg);
-	    if(msg.getAction().equals("od_object_loaded")){
-	    } else if(msg.getAction().equals("od_cleanup"))
+	    if(msg.getAction().equals("od_cleanup"))
 		cleanUp(((Integer)msg.getField(0)).intValue());
 	    else {
 		System.out.println("Received:");
