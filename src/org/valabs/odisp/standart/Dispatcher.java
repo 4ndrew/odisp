@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.logging.Logger;
 
+import com.novel.stdmsg.StandartMessage;
 import com.novel.odisp.common.Message;
 import com.novel.odisp.common.ResourceManager;
 import com.novel.odisp.common.ObjectManager;
@@ -22,7 +23,7 @@ import com.novel.odisp.common.Dispatcher;
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.30 2004/02/13 15:16:03 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.31 2004/02/13 22:22:50 valeks Exp $
  */
 public class StandartDispatcher implements Dispatcher {
   /** Журнал. */
