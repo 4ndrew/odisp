@@ -3,7 +3,7 @@ package com.novel.odisp.common;
 /** Интерфейс сообщения ядра ODISP системы.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Message.java,v 1.3 2004/01/16 10:29:15 valeks Exp $
+ * @version $Id: Message.java,v 1.4 2004/02/17 10:56:00 valeks Exp $
  */
 public interface Message {
   /** Добавление произволього объекта в тело сообщения.
@@ -76,4 +76,10 @@ public interface Message {
    * @return флаг корректности
    */
   boolean isCorrect();
+
+  /** Вернуть описание сообщения включая список последних 5 вызовов.
+   * @param willStackTrace
+   * @return сформатированное сообщение
+   */
+  String toString(boolean willStackTrace);
 }

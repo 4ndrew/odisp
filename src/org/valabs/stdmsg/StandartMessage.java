@@ -8,7 +8,7 @@ import java.io.Serializable;
 /** Реализация стандартного сообщения для стандартного диспетчера ODISP.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: StandartMessage.java,v 1.5 2004/02/13 22:24:10 valeks Exp $
+ * @version $Id: StandartMessage.java,v 1.6 2004/02/17 10:56:00 valeks Exp $
  */
 public class StandartMessage implements Message, Serializable {
   /** Внутренний уникальный счетчик сообщения. */
@@ -146,6 +146,30 @@ public class StandartMessage implements Message, Serializable {
     return "stdmessage id=" + myId + " replyto=" + inReplyTo
       + " action=" + action + ", destination=" + destination
       + ", origin=" + origin + ", fields.size()=" + fields.size();
+  }
+
+  /** Представление сообщения в виде текстовой строки с дампом пяти последних вызово.
+   * @return строчное представление сообщения
+   */
+  public final String toString(boolean doStackTrace) {
+    if (!doStackTrace) {
+      return toString();
+    }
+    // небольшой хак для того, что бы получить список вызовов методов
+    StackTraceElement[] stea = {};
+    try {
+      throw new Exception();
+    } catch (Exception e) {
+      stea = e.getStackTrace();
+    }
+    String stackTraceMessage = "";
+    for(int i = 1; i < 10 && i < stea.length; i++) {
+      stackTraceMessage += "\n" + stea[i];
+    }
+    return "stdmessage id=" + myId + " replyto=" + inReplyTo
+      + " action=" + action + ", destination=" + destination
+      + ", origin=" + origin + ", fields.size()=" + fields.size()
+      + ", stacktrace: " + stackTraceMessage;
   }
 
   /** Проверка корректности сообщения.
