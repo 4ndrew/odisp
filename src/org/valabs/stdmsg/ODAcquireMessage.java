@@ -3,80 +3,91 @@ package com.novel.stdmsg;
 /** Запрос диспетчера на захват ресурса.
  * <p>Запрос должен содержать минимум 1 параметр - имя ресурсного объекта.
  * Необязательный дополнительный параметр (по умолчанию - ложь) определяет
- * будет ли объект считатся блокированным до тех пор пока он не возвратит ресурс.</p>
- * <p><b>ВНИМАНИЕ</b>: текущая реализация стандартного диспетчера не позволяет корректно 
- * отслеживать быль ли высвобожден ресурс, который использовался с блокировкой или нет.
- * Для того, что бы избежать некорректного поведения, рекомендуется одновременно производить 
+ * будет ли объект считатся блокированным до тех пор пока он не возвратит
+ * ресурс.</p>
+ * <p><b>ВНИМАНИЕ</b>: текущая реализация стандартного диспетчера не
+ * позволяет корректно отслеживать быль ли высвобожден ресурс, который
+ * использовался с блокировкой или нет. Для того, что бы избежать
+ * некорректного поведения, рекомендуется одновременно производить
  * захват не более одного ресурса с установлением режима блокировки.</p>
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODAcquireMessage.java,v 1.4 2003/12/15 14:02:43 valeks Exp $
+ * @version $Id: ODAcquireMessage.java,v 1.5 2004/01/16 10:29:15 valeks Exp $
  */
 
 public class ODAcquireMessage extends StandartMessage {
-  /** Символьное имя сообщения*/
-  public static final String name = "od_acquire";
+  /** Символьное имя сообщения. */
+  public static final String NAME = "od_acquire";
+  /** Имя ресурса. */
   private transient String resourceName;
+  /** Индекс блокировки в списке полей. */
+  private static final int NAME_IDX = 0;
+  /** Флаг блокировки. */
   private transient boolean willBlock = false;
-  /** Создать новое сообщение диспетчеру с запросом на захват ресурса
+  /** Индекс флага блокировки. */
+  private static final int BLOCK_IDX = 0;
+  /** Создать новое сообщение диспетчеру с запросом на захват ресурса.
    * @param origin автор
    * @param replyTo в ответ на сообщение No.
    */
-  public ODAcquireMessage(String origin, int replyTo) {
+  public ODAcquireMessage(final String origin, final int replyTo) {
     super("od_acquire", "stddispatcher", origin, replyTo);
   }
 
-  /** Вернуть имя ресурса для захвата
+  /** Вернуть имя ресурса для захвата.
    * @return имя ресурса
    */
-  public String getResourceName() {
-    if (ce) {
-      return (String) getField(0);
+  public final String getResourceName() {
+    if (isCE()) {
+      return (String) getField(NAME_IDX);
     }
     return resourceName;
   }
 
-  /** Установить имя ресурса
+  /** Установить имя ресурса.
    * @param newName новое имя
    * @return ссылка на текущее сообщение
    */
-  public ODAcquireMessage setResourceName(String newName) {
+  public final ODAcquireMessage setResourceName(final String newName) {
     resourceName = newName;
     return this;
   }
 
-  /** Вернуть режим захвата
+  /** Вернуть режим захвата.
    * по умолчанию - неблокирующий захват
    * @return режим захвата
    */
-  public boolean getWillBlock() {
-    if (ce) {
-      return ((Boolean) getField(1)).booleanValue();
+  public final boolean getWillBlock() {
+    if (isCE()) {
+      return ((Boolean) getField(BLOCK_IDX)).booleanValue();
     }
     return willBlock;
   }
 
-  /** Установить режим блокировки
+  /** Установить режим блокировки.
    * @param newBlock новый режим
    * @return ссылка на текущее сообщение
    */
-  public ODAcquireMessage setWillBlock(boolean newBlock) {
+  public final ODAcquireMessage setWillBlock(final boolean newBlock) {
     willBlock = newBlock;
     return this;
   }
-  
-  public boolean isCorrect() {
-    if (ce) {
+
+  /** Проверка корректности сообщения.
+   * @return флаг корректности
+   */
+  public final boolean isCorrect() {
+    if (isCE()) {
       return true;
     }
     if (resourceName != "") {
-      fields.clear();
+      getFields().clear();
       addField(resourceName);
       addField(new Boolean(willBlock));
-      ce = true;
+      setCE(true);
       return true;
     } else {
       return false;
     }
   }
-}// ODAcquireMessage
+} // ODAcquireMessage

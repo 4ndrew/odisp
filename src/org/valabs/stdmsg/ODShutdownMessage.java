@@ -2,51 +2,60 @@ package com.novel.stdmsg;
 
 /** Класс реализующий сообщение диспетчеру ODISP об останове.
  * Это сообщение должно обрабатыватся только диспетчером.
- * В качестве параметра можно указать код выхода который будет рассылатся объектам.
+ * В качестве параметра можно указать код выхода который будет
+ * рассылатся объектам.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODShutdownMessage.java,v 1.5 2003/12/15 14:02:43 valeks Exp $
+ * @version $Id: ODShutdownMessage.java,v 1.6 2004/01/16 10:29:15 valeks Exp $
  */
 
 public class ODShutdownMessage extends StandartMessage {
-  /** Символьное имя сообщения*/
-  public static final String name = "od_shutdown";
-  
-  private transient int exitCode = 0;
+  /** Символьное имя сообщения. */
+  public static final String NAME = "od_shutdown";
 
-  /** Создает новое сообщение с заданными параметрами 
+  /** Код выхода. */
+  private transient int exitCode = 0;
+  /** Индекс поля в сообщении. */
+  private static final int EXITCODE_IDX = 0;
+
+  /** Создает новое сообщение с заданными параметрами.
    * @param origin отправитель
    * @param replyTo индекс сообщения на которое производится ответ
    */
-  public ODShutdownMessage(String origin, int replyTo) {
+  public ODShutdownMessage(final String origin, final int replyTo) {
     super("od_shutdown", origin, "stddispatcher", replyTo);
   }
 
-  /** Вернуть значение кода выхода
+  /** Вернуть значение кода выхода.
    * @return код выхода
    */
-  public int getExitCode() {
-    if (ce) {
-      return ((Integer) getField(0)).intValue();
+  public final int getExitCode() {
+    if (isCE()) {
+      return ((Integer) getField(EXITCODE_IDX)).intValue();
     }
     return exitCode;
   }
 
-  /** Установить значение кода выхода
+  /** Установить значение кода выхода.
    * @param newExitCode новое значение кода выхода
+   * @return ссылка на сообщение
    */
-  public ODShutdownMessage setExitCode(int newExitCode) {
+  public final ODShutdownMessage setExitCode(final int newExitCode) {
     exitCode = newExitCode;
     return this;
   }
-  
-  public boolean isCorrect() {
-    if (ce) {
+
+  /** Проверка корректности сообщения.
+   * @return флаг корректности
+   */
+  public final boolean isCorrect() {
+    if (isCE()) {
       return true;
     }
-    fields.clear();
+    getFields().clear();
     addField(new Integer(exitCode));
+    setCE(true);
     return true;
   }
 
-}// ODShutdownMessage
+} // ODShutdownMessage

@@ -2,74 +2,84 @@ package com.novel.stdmsg;
 
 import com.novel.odisp.common.Resource;
 
-/** Ответ на запрос о захвате ресурса
+/** Ответ на запрос о захвате ресурса.
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODResourceAcquiredMessage.java,v 1.6 2003/12/15 14:02:43 valeks Exp $
+ * @version $Id: ODResourceAcquiredMessage.java,v 1.8 2004/01/16 14:31:57 valeks Exp $
  */
 public class ODResourceAcquiredMessage extends StandartMessage {
-  /** Символьное имя сообщения*/
-  public static final String name = "od_resource_acquired";
+  /** Символьное имя сообщения. */
+  public static final String NAME = "od_resource_acquired";
 
+  /** Имя ресурса. */
   private transient String resourceName = "";
+  /** Индекс имени ресурса. */
+  private static final int RESNAME_IDX = 0;
+  /** Ресурс. */
   private transient Resource resource;
+  /** Индекс имени ресурса. */
+  private static final int RES_IDX = 0;
 
-  /** Конструктор сообщения
+  /** Конструктор сообщения.
    * @param destination получатель сообщения
    * @param replyId сообщение на которое производится ответ
    */
-  public ODResourceAcquiredMessage(String destination, int replyId) {
+  public ODResourceAcquiredMessage(final String destination,
+				   final int replyId) {
     super("od_resource_acquired", destination, "stddispatcher", replyId);
   }
-  /** Вернуть имя класса ресурса
+  /** Вернуть имя класса ресурса.
    * @return имя класса
    */
-  public String getResourceName() {
-    if (ce) {
-      return (String) getField(0);
+  public final String getResourceName() {
+    if (isCE()) {
+      return (String) getField(RESNAME_IDX);
     }
     return resourceName;
   }
 
-  /** Установить имя класса ресурса
-   * @param newClassName новое имя класса
+  /** Установить имя класса ресурса.
+   * @param newResourceName новое имя класса
    * @return ссылка на сообщение
    */
-  public ODResourceAcquiredMessage setResourceName(String newResourceName) {
+  public final ODResourceAcquiredMessage setResourceName
+    (final String newResourceName) {
     resourceName = newResourceName;
     return this;
   }
 
-  /** Вернуть ссылку на ресурс
+  /** Вернуть ссылку на ресурс.
    * @return ссылка на ресурс
    */
-  public Resource getResource() {
-    if (ce) {
+  public final Resource getResource() {
+    if (isCE()) {
       return (Resource) getField(1);
     }
     return resource;
   }
-  /** Установить ссылку на ресурс
+  /** Установить ссылку на ресурс.
    * @param newResource новое значение ссылки
    * @return ссылка на сообщение
    */
-  public ODResourceAcquiredMessage setResource(Resource newResource) {
+  public final ODResourceAcquiredMessage setResource
+    (final Resource newResource) {
     resource = newResource;
     return this;
   }
 
-  public boolean isCorrect() {
-    if (ce) {
+  /** Проверка корректности сообщения.
+   * @return флаг корректности
+   */
+  public final boolean isCorrect() {
+    if (isCE()) {
       return true;
     }
     if (resourceName != "" && resource != null) {
-      fields.clear();
+      getFields().clear();
       addField(resourceName);
       addField(resource);
-      return true;
-    } else {
-      return false;
+      setCE(true);
     }
+    return isCE();
   }
-
-}// ODResourceAcquiredMessage
+} // ODResourceAcquiredMessage

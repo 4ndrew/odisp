@@ -4,47 +4,53 @@ package com.novel.stdmsg;
  * Необязательный параметр reason определяет код причины выхода
  * @author <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: ODCleanupMessage.java,v 1.3 2003/12/15 14:02:43 valeks Exp $
+ * @version $Id: ODCleanupMessage.java,v 1.4 2004/01/16 10:29:15 valeks Exp $
  */
 
 public class ODCleanupMessage extends StandartMessage {
-  /** Символьное имя сообщение */
-  public static final String name = "od_cleanup";
+  /** Символьное имя сообщение. */
+  public static final String NAME = "od_cleanup";
+  /** Причина выхода. */
   private transient int reason = 0;
-  /** Конструктор сообщения
+  /** Индек поля с причиной. */
+  private static final int REASON_IDX = 0;
+  /** Конструктор сообщения.
    * @param destination получатель сообщения
    * @param replyId индекс сообщения на которое производится ответ
    */
-  public ODCleanupMessage(String destination, int replyId) {
+  public ODCleanupMessage(final String destination, final int replyId) {
     super("od_cleanup", destination, "stddispatcher", replyId);
   }
 
-  /** Вернуть текущее значение причины выхода
+  /** Вернуть текущее значение причины выхода.
    * @return код выхода
    */
-  public int getReason() {
-    if (ce) {
-      return ((Integer) getField(0)).intValue();
+  public final int getReason() {
+    if (isCE()) {
+      return ((Integer) getField(REASON_IDX)).intValue();
     }
     return reason;
   }
 
-  /** Установить новое значение кода выхода
+  /** Установить новое значение кода выхода.
    * @param newReason новое значение кода
    * @return ссылка на сообщение
    */
-  public ODCleanupMessage setReason(int newReason) {
+  public final ODCleanupMessage setReason(final int newReason) {
     reason = newReason;
     return this;
   }
-  
-  public boolean isCorrect() {
-    if (ce) {
+
+  /** Проверка корректности сообщения.
+   * @return флаг корректности
+   */
+  public final boolean isCorrect() {
+    if (isCE()) {
       return true;
     }
-    fields.clear();
+    getFields().clear();
     addField(new Integer(reason));
-    ce = true;
+    setCE(true);
     return true;
   }
-}// ODCleanupMessage
+} // ODCleanupMessage

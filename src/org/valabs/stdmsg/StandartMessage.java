@@ -5,129 +5,175 @@ import java.util.List;
 import java.util.ArrayList;
 import java.io.Serializable;
 
-/** Реализация стандартного сообщения для стандартного диспетчера ODISP
+/** Реализация стандартного сообщения для стандартного диспетчера ODISP.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: StandartMessage.java,v 1.2 2003/12/15 14:01:45 valeks Exp $
+ * @version $Id: StandartMessage.java,v 1.3 2004/01/16 10:29:15 valeks Exp $
  */
 public class StandartMessage implements Message, Serializable {
-  /** Внутренний уникальный счетчик сообщения */
+  /** Внутренний уникальный счетчик сообщения. */
   private static int id = 0;
-  /** Уникальный индекс сообщения в системе */
+  /** Уникальный индекс сообщения в системе. */
   private int myId;
-  /** Список полей сообщения */
-  protected List fields = new ArrayList();
-  /** Действие */
+  /** Список полей сообщения. */
+  private List fields = new ArrayList();
+  /** Действие. */
   private String action;
-  /** Точка назначения */
+  /** Точка назначения. */
   private String destination;
-  /** Отправитель */
+  /** Отправитель. */
   private String origin;
-  /** Идентификатор сообщения на которое производится ответ */
+  /** Идентификатор сообщения на которое производится ответ. */
   private int inReplyTo;
-  /** Флаг проведения проверки */
-  protected boolean ce = false;
-  /** Реализация конструктора сообщения
-   * @param action действие которое несет сообщение
-   * @param destination адресат сообщения
-   * @param origin отправитель сообщения
-   * @param inReplyTo идентификатор сообщения на которое производится ответ
+  /** Флаг проведения проверки. */
+  private boolean ce = false;
+  /** Реализация конструктора сообщения.
+   * @param newAction действие которое несет сообщение
+   * @param newDestination адресат сообщения
+   * @param newOrigin отправитель сообщения
+   * @param newInReplyTo идентификатор сообщения на которое производится ответ
    */
-  public StandartMessage(String action, String destination, String origin, int inReplyTo) {
-    this.action = action;
-    this.destination = destination;
-    this.inReplyTo = inReplyTo;
-    this.origin = origin;
-    myId = id++;
-  }
-  public StandartMessage(){
+  public StandartMessage(final String newAction,
+			 final String newDestination,
+			 final String newOrigin,
+			 final int newInReplyTo) {
+    action = newAction;
+    destination = newDestination;
+    inReplyTo = newInReplyTo;
+    origin = newOrigin;
     myId = id++;
   }
 
-  /** Добавление произвольного объекта в тело сообщения
+  /** Конструктор по-умолчанию. */
+  public StandartMessage() {
+    myId = id++;
+  }
+
+  /** Добавление произвольного объекта в тело сообщения.
    * @param field объект который будет добавлен сообщение
    */
-  public void addField(Object field) {
+  public final void addField(final Object field) {
     fields.add(field);
   }
-  /** Выборка сохраненного в теле сообщения объекта по индексу
+
+  /** Выборка сохраненного в теле сообщения объекта по индексу.
    * @param field индекс объекта
    * @return поле сообщения
    */
-  public Object getField(int field) {
+  public final Object getField(final int field) {
     return fields.get(field);
   }
-  /** Возвращает действие которое несет сообщение 
+
+  /** Возвращает действие которое несет сообщение.
    * @return действие
    */
-  public String getAction() { 
-    return action; 
-  }
-  /** Устанавливает действие которое несет сообщение 
-   * @param newAction действие
-   */
-  public void setAction(String newAction) { 
-    action = newAction; 
-  }
-  /** Возвращает адресата сообщения 
-   * @return адресат
-   */
-  public String getDestination() { return destination; }
-  /** Устанавливает адресата сообщения 
-   * @param newDest адресат
-   */
-  public void setDestination(String newDest) { destination = newDest; }
-  /** Возвращает автора сообщения 
-   * @return автор
-   */
-  public String getOrigin() {
-    return origin;
-  }
-  /** Изменить отправителя на лету 
-   * @param newOrigin новое значение поля отправителя
-   */
-  public void setOrigin(String newOrigin) {
-    this.origin = newOrigin;
-  }
-  /** Возвращает идентификатор сообщения на которое производится ответ 
-   * @return идентификатор
-   */
-  public int getReplyTo() {
-    return inReplyTo;
-  }
-  /** Устанавливает идентификатор сообщения на которое производится ответ 
-   * @param newId идентификатор
-   */
-  public void setReplyTo(int newId) {
-    inReplyTo = newId;
-  }
-  /** Возвращает количество полей в сообщении 
-   * @return кол-во полей
-   */
-  public int getFieldsCount() { 
-    return fields.size();
-  }
-  /** Возвращает уникальный идентификатор сообщения 
-   * @return идентификатор
-   */
-  public int getId() { 
-    return myId; 
-  }
-  /** Устанавливает уникальный идентификатор сообщения 
-   * @param newId идентификатор
-   */
-  public void setId(int newId) { 
-    myId = newId; 
-  }
-  /** Представление сообщения в виде текстовой строки 
-   * @return строчное представление сообщения
-   */
-  public String toString() {
-    return "stdmessage id=" + myId + " replyto=" + inReplyTo + " action=" + action + ", destination=" + destination + ", origin=" + origin + ", fields.size()=" + fields.size();
+  public final String getAction() {
+    return action;
   }
 
+  /** Устанавливает действие которое несет сообщение.
+   * @param newAction действие
+   */
+  public final void setAction(final String newAction) {
+    action = newAction;
+  }
+
+  /** Возвращает адресата сообщения.
+   * @return адресат
+   */
+  public final String getDestination() { return destination; }
+
+  /** Устанавливает адресата сообщения.
+   * @param newDest адресат
+   */
+  public final void setDestination(final String newDest) {
+    destination = newDest;
+  }
+
+  /** Возвращает автора сообщения.
+   * @return автор
+   */
+  public final String getOrigin() {
+    return origin;
+  }
+
+  /** Изменить отправителя на лету.
+   * @param newOrigin новое значение поля отправителя
+   */
+  public final void setOrigin(final String newOrigin) {
+    this.origin = newOrigin;
+  }
+
+  /** Возвращает идентификатор сообщения на которое производится ответ.
+   * @return идентификатор
+   */
+  public final int getReplyTo() {
+    return inReplyTo;
+  }
+
+  /** Устанавливает идентификатор сообщения на которое производится ответ.
+   * @param newId идентификатор
+   */
+  public final void setReplyTo(final int newId) {
+    inReplyTo = newId;
+  }
+
+  /** Возвращает количество полей в сообщении.
+   * @return кол-во полей
+   */
+  public final int getFieldsCount() {
+    return fields.size();
+  }
+
+  /** Возвращает уникальный идентификатор сообщения.
+   * @return идентификатор
+   */
+  public final int getId() {
+    return myId;
+  }
+
+  /** Устанавливает уникальный идентификатор сообщения.
+   * @param newId идентификатор
+   */
+  public final void setId(final int newId) {
+    myId = newId;
+  }
+
+  /** Представление сообщения в виде текстовой строки.
+   * @return строчное представление сообщения
+   */
+  public final String toString() {
+    return "stdmessage id=" + myId + " replyto=" + inReplyTo
+      + " action=" + action + ", destination=" + destination
+      + ", origin=" + origin + ", fields.size()=" + fields.size();
+  }
+
+  /** Проверка корректности сообщения.
+   * @return флаг корректности
+   */
   public boolean isCorrect() {
     ce = true;
     return true;
+  }
+
+  /** Доступ ко всему списку полей.
+   * @return список полей
+   */
+  protected final List getFields() {
+    return fields;
+  }
+
+  /** Установить флаг корректности.
+   * @param newCE новое значение
+   */
+  public final void setCE(final boolean newCE) {
+    ce = newCE;
+  }
+
+  /** Проверить флаг корректности.
+   * @return значение флага
+   */
+  public final boolean isCE() {
+    return ce;
   }
 }
