@@ -25,7 +25,7 @@ import com.novel.stdmsg.StandartMessage;
  * и управление ресурсными объектами.
  * @author Валентин А. Алексеев
  * @author (C) 2003, НПП "Новел-ИЛ"
- * @version $Id: Dispatcher.java,v 1.44 2004/07/01 13:45:39 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.45 2004/07/05 14:39:01 dron Exp $
  */
 public class StandartDispatcher implements Dispatcher {
   /** Журнал. */
@@ -75,9 +75,11 @@ public class StandartDispatcher implements Dispatcher {
    * @param messageList список сообщений для посылки
    */
   public final void send(final List messageList) {
-    Iterator it = messageList.iterator();
-    while (it.hasNext()) {
-      send((Message) it.next());
+    if (messageList != null) {
+      Iterator it = messageList.iterator();
+      while (it.hasNext()) {
+        send((Message) it.next());
+      }
     }
   }
 
