@@ -1,4 +1,4 @@
-<!-- $Id: build.xml,v 1.1 2003/10/04 12:54:45 valeks Exp $ -->
+<!-- $Id: build.xml,v 1.2 2003/10/06 15:46:32 valeks Exp $ -->
 <project name="nms" default="all" basedir=".">
     <property name="odisp-src" location="./"/>
     <path id="odisp-src">
@@ -30,6 +30,6 @@
 	<delete dir="${odisp-doc}"/>
     </target>
     <target name="nms" depends="odisp"/>
-    <target name="doc" depends="odisp-doc"/>
-    <target name="all" depends="build-dir-setup, doc-dir-setup, nms, doc"/>
+    <target name="doc" depends="doc-dir-setup, odisp-doc"/>
+    <target name="all" depends="build-dir-setup, nms"/>
 </project>
