@@ -1,9 +1,9 @@
 # Makefile for all documents
 #
-# $Id: Makefile,v 1.24 2004/07/19 13:04:29 valeks Exp $
+# $Id: Makefile,v 1.25 2004/07/20 10:14:36 valeks Exp $
 
 # folders & files
-TEXDOCS=gui_imp.tex tz.tex style-9.tex odisp-style.tex sync.tex todo.tex model.tex adr-upload-re.tex corba.tex
+TEXDOCS=gui_imp.tex tz.tex style-9.tex odisp-style.tex sync.tex todo.tex model.tex adr-upload-re.tex corba.tex security.tex
 TEXPDFS=$(TEXDOCS:.tex=.pdf)
 TEXHTMLS=$(TEXDOCS:.tex=.html)
 RELEASEDIR=/mnt/docs/Оборудование\ Новел/Проект\ МЦП-155\ Н/Документация/NMS/
@@ -24,7 +24,7 @@ ${TEXHTMLS}: ${TEXDOCS}
 
 clean:
 	@echo Cleaning...
-	$(RM) $(TEXDOCS:.tex=.log) $(TEXDOCS:.tex=.aux) $(TEXDOCS:.tex=.toc)
+	$(RM) $(TEXDOCS:.tex=.log) $(TEXDOCS:.tex=.aux) $(TEXDOCS:.tex=.toc) $(TEXDOCS:.tex=.out)
 
 distclean: clean
 	@echo Full clean...
