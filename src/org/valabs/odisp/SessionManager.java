@@ -2,6 +2,7 @@ package org.valabs.odisp;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.doomdark.uuid.UUID;
@@ -51,7 +52,7 @@ import org.valabs.odisp.common.MessageHandler;
  * </pre>
  * 
  * @author (C) 2004 <a href="dron@novel-il.ru">Андрей А. Порохин </a>
- * @version $Id: SessionManager.java,v 1.12 2004/12/02 22:16:45 valeks Exp $
+ * @version $Id: SessionManager.java,v 1.13 2005/02/17 12:31:44 valeks Exp $
  */
 public class SessionManager {
 
@@ -110,20 +111,13 @@ public class SessionManager {
    * @see SessionManager#addMessageListener(UUID, MessageHandler, boolean)
    */
   public void removeMessageListener(UUID messageId, MessageHandler messageHandler) {
-    List toDelete = new ArrayList();
-
-    for (int i = 0; i < handlers.size(); i++) {
-      SessionRecord arecord = (SessionRecord) handlers.get(i);
-      if (arecord.getMsgId().equals(messageId) && arecord.getMessageHandler().equals(messageHandler)) {
-        toDelete.add(new Integer(i));
+    Iterator it = handlers.iterator();
+    while (it.hasNext()) {
+      SessionRecord element = (SessionRecord) it.next();
+      if (element.getMsgId().equals(messageId) && element.getMessageHandler().equals(messageHandler)) {
+        it.remove();
       }
     }
-    if (toDelete.size() > 0) {
-      for (int i = 0; i < toDelete.size(); i++) {
-        handlers.remove(((Integer) toDelete.get(i)).intValue());
-      }
-    }
-
   }
 
   /**
@@ -136,28 +130,29 @@ public class SessionManager {
    */
   public boolean processMessage(Message msg) {
     boolean matched = false;
-
-    List toDelete = new ArrayList();
+    Iterator it = handlers.iterator();
     List toPerform = new ArrayList();
-    for (int i = 0; i < handlers.size(); i++) {
-      SessionRecord arecord = (SessionRecord) handlers.get(i);
-      if (arecord.getMsgId().equals(msg.getReplyTo())) {
-        if (!arecord.isMultiply()) {
-          toDelete.add(new Integer(i));
+    List toRemove = new ArrayList();
+    while (it.hasNext()) {
+      SessionRecord element = (SessionRecord) it.next();
+      if (element.getMsgId().equals(msg.getReplyTo())) {
+        toPerform.add(element);
+        if (!element.isMultiply()) {
+          toRemove.add(element);
         }
-        toPerform.add(((SessionRecord) handlers.get(i)).getMessageHandler());
         matched = true;
       }
     }
-    if (matched) {
-      for (int i = 0; i < toDelete.size(); i++) {
-        handlers.remove(((Integer) toDelete.get(i)).intValue());
-      }
-      for (int i = 0; i < toPerform.size(); i++) {
-        ((MessageHandler) toPerform.get(i)).messageReceived(msg);
-      }
+    it = toPerform.iterator();
+    while (it.hasNext()) {
+      SessionRecord element = (SessionRecord) it.next();
+      element.getMessageHandler().messageReceived(msg);
     }
-
+    it = toRemove.iterator();
+    while (it.hasNext()) {
+      Object element = it.next();
+      handlers.remove(element);
+    }
     return matched;
   }
 
