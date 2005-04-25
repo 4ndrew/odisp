@@ -1,7 +1,6 @@
 package org.valabs.odisp.standart;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -13,7 +12,7 @@ import org.valabs.odisp.common.Resource;
 
 /** Менеджер ресурсных объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceManager.java,v 1.37 2005/03/11 12:57:19 valeks Exp $
+ * @version $Id: ResourceManager.java,v 1.38 2005/04/25 13:54:38 valeks Exp $
  */
 class ResourceManager implements org.valabs.odisp.common.ResourceManager {
   /** Ссылка на диспетчер объектов. */
