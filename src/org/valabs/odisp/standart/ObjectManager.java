@@ -30,7 +30,7 @@ import org.valabs.stdmsg.ODShutdownMessage;
  * Менеджер объектов ODISP.
  * 
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev </a>
- * @version $Id: ObjectManager.java,v 1.55 2005/04/25 12:32:27 dron Exp $
+ * @version $Id: ObjectManager.java,v 1.56 2005/04/25 13:54:15 valeks Exp $
  */
 
 class ObjectManager implements org.valabs.odisp.common.ObjectManager {
@@ -142,14 +142,14 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
       }
     }
 
-    final Map localObjects = new HashMap(objects); //hints.getHintedOrder(objects);
+    final Map localObjects = new HashMap(objects); // hints.getHintedOrder(objects);
     int statToLoadCount = objects.size();
     while (statToLoadCount != 0) {
       int loaded = 0;
       commonIt = localObjects.keySet().iterator();
       while (commonIt.hasNext()) {
         final String objectName = (String) commonIt.next();
-        final ObjectEntry oe = (ObjectEntry) objects.get(objectName);
+        final ObjectEntry oe = (ObjectEntry) localObjects.get(objectName);
         if (oe.isLoaded()) {
           continue;
         }
@@ -397,7 +397,9 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
       while (it.hasNext()) {
         final String objectName = (String) it.next();
         actualMessage = message.cloneMessage();
-//        actualMessage.setDestination(objectName);
+        if (message.getDestination().equals(Message.RECIPIENT_ALL)) {
+        	actualMessage.setDestination(objectName);
+        }
         sendToObject(objectName, actualMessage);
       }
     }
