@@ -22,7 +22,7 @@ import org.valabs.stdmsg.StandartMessage;
  * и управление ресурсными объектами.
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: Dispatcher.java,v 1.61 2005/02/27 12:37:31 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.62 2005/04/25 12:32:27 dron Exp $
  */
 public class Dispatcher implements org.valabs.odisp.common.Dispatcher, ExceptionHandler {
   /** Журнал. */
@@ -127,7 +127,7 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
         ConfigurationManager.ComponentConfiguration element = (ConfigurationManager.ComponentConfiguration) it.next();
         oman.loadObject(element.getClassName(), element.getConfiguration());
       }
-      oman.loadPending();
+//      oman.loadPending();
       Thread aliveThread = new Thread("alive thread") {
         public final void run() {
           try {
