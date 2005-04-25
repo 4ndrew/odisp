@@ -15,7 +15,7 @@ import java.util.StringTokenizer;
 
 /** Стартовый класс для диспетчера.
  * @author <a hrev="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
- * @version $Id: Launcher.java,v 1.2 2005/02/27 12:37:32 valeks Exp $
+ * @version $Id: Launcher.java,v 1.3 2005/04/25 13:55:09 valeks Exp $
  */
 public class Launcher {
 
@@ -64,22 +64,26 @@ public class Launcher {
   
   public static final String folderChecksum(final String s_libdirs) {
     String result = "";
-    final StringTokenizer libraryDirs = new StringTokenizer(s_libdirs.substring(1, s_libdirs.length() - 1), ",");
-    final FilenameFilter jarFiles = new FilenameFilter() {
-      public boolean accept(File arg0, String arg1) {
-        return arg1.endsWith("jar");
-      }
-    };
-    while (libraryDirs.hasMoreTokens()) {
-      final File libraryDir = new File(libraryDirs.nextToken().trim());
-      if (libraryDir.isDirectory()) {
-        final String files[] = libraryDir.list(jarFiles);
-        for (int i = 0; i < files.length; i++) {
-          final File file = new File(libraryDir.getAbsolutePath() + File.separator + files[i]);
-          result += file.getName() + file.length();
-        }
-      }
-    }    
+  	if (s_libdirs != null) {
+			final StringTokenizer libraryDirs = new StringTokenizer(s_libdirs
+					.substring(1, s_libdirs.length() - 1), ",");
+			final FilenameFilter jarFiles = new FilenameFilter() {
+				public boolean accept(File arg0, String arg1) {
+					return arg1.endsWith("jar");
+				}
+			};
+			while (libraryDirs.hasMoreTokens()) {
+				final File libraryDir = new File(libraryDirs.nextToken().trim());
+				if (libraryDir.isDirectory()) {
+					final String files[] = libraryDir.list(jarFiles);
+					for (int i = 0; i < files.length; i++) {
+						final File file = new File(libraryDir.getAbsolutePath()
+								+ File.separator + files[i]);
+						result += file.getName() + file.length();
+					}
+				}
+			}
+		}
     return result;
   }
   
