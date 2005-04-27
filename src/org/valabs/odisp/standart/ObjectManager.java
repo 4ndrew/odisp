@@ -26,11 +26,14 @@ import org.valabs.odisp.common.ODObject;
 import org.valabs.stdmsg.ODObjectLoadedMessage;
 import org.valabs.stdmsg.ODShutdownMessage;
 
+import com.novel.tools.filter.Filter;
+import com.novel.tools.filter.FilteringIterator;
+
 /**
  * Менеджер объектов ODISP.
  * 
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev </a>
- * @version $Id: ObjectManager.java,v 1.57 2005/04/27 09:26:23 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.58 2005/04/27 14:02:00 valeks Exp $
  */
 
 class ObjectManager implements org.valabs.odisp.common.ObjectManager {
@@ -198,12 +201,18 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
         log.warning("Some of the objects failed to load. There is something wrong with dependencies.");
         
         final List badObjects = new ArrayList();
-        final Iterator it = objects.values().iterator();
+        final Iterator it = new FilteringIterator(objects.values().iterator(), new Filter() {
+					public boolean accept(final Object o) {
+						if (o instanceof ObjectEntry) {
+							ObjectEntry elt = (ObjectEntry) o;
+							return !elt.isLoaded();
+						}
+						return false;
+					}
+				});
         while (it.hasNext()) {
           final ObjectEntry el = (ObjectEntry) it.next();
-          if (!el.isLoaded()) {
-            badObjects.add(el.getObject().getObjectName());
-          }
+          badObjects.add(el.getObject().getObjectName());
         }
         log.fine("Objects failed to load: " + badObjects.toString());
         break;
