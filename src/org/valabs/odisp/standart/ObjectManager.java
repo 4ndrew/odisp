@@ -30,7 +30,7 @@ import org.valabs.stdmsg.ODShutdownMessage;
  * Менеджер объектов ODISP.
  * 
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev </a>
- * @version $Id: ObjectManager.java,v 1.56 2005/04/25 13:54:15 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.57 2005/04/27 09:26:23 valeks Exp $
  */
 
 class ObjectManager implements org.valabs.odisp.common.ObjectManager {
@@ -197,12 +197,13 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
       if (loaded == 0) {
         log.warning("Some of the objects failed to load. There is something wrong with dependencies.");
         
-        List badObjects = new ArrayList();
-        Iterator it = objects.values().iterator();
+        final List badObjects = new ArrayList();
+        final Iterator it = objects.values().iterator();
         while (it.hasNext()) {
-          ObjectEntry el = (ObjectEntry) it.next();
-          if (!el.isLoaded())
+          final ObjectEntry el = (ObjectEntry) it.next();
+          if (!el.isLoaded()) {
             badObjects.add(el.getObject().getObjectName());
+          }
         }
         log.fine("Objects failed to load: " + badObjects.toString());
         break;
