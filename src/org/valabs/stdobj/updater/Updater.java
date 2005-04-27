@@ -5,7 +5,6 @@ import java.util.TimerTask;
 
 import org.doomdark.uuid.UUID;
 import org.valabs.odisp.Launcher;
-import org.valabs.odisp.common.Dispatcher;
 import org.valabs.odisp.common.Message;
 import org.valabs.odisp.common.MessageHandler;
 import org.valabs.odisp.common.StandartODObject;
@@ -14,7 +13,7 @@ import org.valabs.stdmsg.ODObjectLoadedMessage;
 
 /** Компонент поддержки обновлений.
  * @author <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
- * @version $Id: Updater.java,v 1.2 2005/04/25 13:55:09 valeks Exp $
+ * @version $Id: Updater.java,v 1.3 2005/04/27 09:47:52 valeks Exp $
  */
 public class Updater extends StandartODObject implements MessageHandler {
   private static final String NAME = "updater";
