@@ -23,6 +23,7 @@ import org.doomdark.uuid.UUID;
 import org.valabs.odisp.common.Dispatcher;
 import org.valabs.odisp.common.Message;
 import org.valabs.odisp.common.ODObject;
+import org.valabs.stdmsg.COWStandardMessage;
 import org.valabs.stdmsg.ODObjectLoadedMessage;
 import org.valabs.stdmsg.ODShutdownMessage;
 
@@ -33,7 +34,7 @@ import com.novel.tools.filter.FilteringIterator;
  * Менеджер объектов ODISP.
  * 
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev </a>
- * @version $Id: ObjectManager.java,v 1.58 2005/04/27 14:02:00 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.59 2005/05/20 10:46:03 valeks Exp $
  */
 
 class ObjectManager implements org.valabs.odisp.common.ObjectManager {
@@ -401,12 +402,14 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
     if (getProviders(Message.RECIPIENT_CATCHALL) != null) {
       recipients.addAll(getProviders(Message.RECIPIENT_CATCHALL));
     }
+    
     if (recipients.size() > 0) {
       it = recipients.iterator();
       Message actualMessage;
       while (it.hasNext()) {
         final String objectName = (String) it.next();
-        actualMessage = message.cloneMessage();
+//        actualMessage = message.cloneMessage();
+        actualMessage = new COWStandardMessage(message);
         if (message.getDestination().equals(Message.RECIPIENT_ALL)) {
         	actualMessage.setDestination(objectName);
         }
