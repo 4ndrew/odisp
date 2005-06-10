@@ -8,7 +8,7 @@ import org.valabs.odisp.common.Message;
 
 /** Реализация Copy-On-Write стратегии для сообщения.
  * @author <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
- * @version $Id: COWStandardMessage.java,v 1.1 2005/05/20 10:46:03 valeks Exp $
+ * @version $Id: COWStandardMessage.java,v 1.2 2005/06/10 14:39:07 valeks Exp $
  */
 public class COWStandardMessage implements Message {
 	private Message orig;
@@ -201,4 +201,7 @@ public class COWStandardMessage implements Message {
 		messageToSet().setOOB(newValue);
 	}
 
+	public String toString() {
+		return messageToGet().toString();
+	}
 }
