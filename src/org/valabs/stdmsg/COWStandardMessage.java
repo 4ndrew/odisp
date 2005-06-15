@@ -1,5 +1,6 @@
 package org.valabs.stdmsg;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -8,9 +9,9 @@ import org.valabs.odisp.common.Message;
 
 /** Реализация Copy-On-Write стратегии для сообщения.
  * @author <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
- * @version $Id: COWStandardMessage.java,v 1.2 2005/06/10 14:39:07 valeks Exp $
+ * @version $Id: COWStandardMessage.java,v 1.3 2005/06/15 09:57:05 valeks Exp $
  */
-public class COWStandardMessage implements Message {
+public class COWStandardMessage implements Message, Serializable, Cloneable {
 	private Message orig;
 	private Message clone = null;
 
