@@ -18,3 +18,4 @@ MDNSRegisterTypeNotifyMessage.java
 MDNSListServicesMessage.java
 MDNSAdvertiseServiceMessage.java
 MDNSListServicesReplyMessage.java
+ODGetProvidingReplyMessage.java
