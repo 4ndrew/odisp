@@ -7,7 +7,7 @@ import java.util.Map;
  * Интерфейс менеджера ресурсов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev
  *         </a>
- * @version $Id: ResourceManager.java,v 1.11 2005/01/25 20:34:33 valeks Exp $
+ * @version $Id: ResourceManager.java,v 1.12 2005/06/19 23:04:30 valeks Exp $
  */
 
 public interface ResourceManager {
@@ -45,7 +45,7 @@ public interface ResourceManager {
    * new Thread() {
    *   public void run() {
    * 		setBlockedState(true);
-   * 		res = dispatcher.resourceAcquire(SomeResource.class.getName());
+   * 		res = (SomeResource) dispatcher.resourceAcquire(SomeResource.class.getName());
    * 		setBlockedState(false);
    * 	}
    * }.start();
