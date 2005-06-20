@@ -13,7 +13,7 @@ import org.valabs.odisp.common.Resource;
  *
  * @author <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
  * @author (C) 2004 НПП "Новел-ИЛ"
- * @version $Id: Translator.java,v 1.17 2005/02/17 12:32:42 valeks Exp $
+ * @version $Id: Translator.java,v 1.18 2005/06/20 03:37:02 dron Exp $
  */
 public class Translator extends Properties implements Resource {
   /** Путь к корневой папке транляций. */
@@ -169,7 +169,7 @@ public class Translator extends Properties implements Resource {
           try {
             load(getClass().getResourceAsStream(rootDir + "/" + langId + "/" + inLine));
           } catch (Exception e) {
-            logger.warning("Unable to load resource file " + inLine);
+            logger.warning("Unable to load resource file " + inLine + " exception: " + e);
           }
         }
       } while (inLine != null);
