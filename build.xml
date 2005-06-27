@@ -1,4 +1,4 @@
-<!-- $Id: build.xml,v 1.25 2005/02/02 20:24:07 valeks Exp $ mode: -*- --><!-- xsl -*- -->
+<!-- $Id: build.xml,v 1.26 2005/06/27 11:57:36 dron Exp $ mode: -*- --><!-- xsl -*- -->
 <project name="odisp" default="all" basedir=".">
     <taskdef resource="checkstyletask.properties"
            classpath="/usr/local/share/java/classes/checkstyle.jar"/>
@@ -91,21 +91,21 @@
         </exec>	
     </target>
 
-    <!-- General building and releasing tags: all, world, release*, nightly -->
-    <target name="all" depends="odisp"/>
-    <target name="world" depends="clean, all, doc, doc-general"/>
+  <!-- General building and releasing tags: all, world, release*, nightly -->
+  <target name="all" depends="odisp"/>
+  <target name="world" depends="clean, all, doc, doc-general"/>
 
-  <target name="messages-generate-build">
+  <!-- Internal build target: build tplParser aka message generator. -->
+  <target name="messages-parser-build">
     <ant dir="tools"/>
   </target>
   
-  <target name="messages-generate-gen">
+  <!-- External build target: generate all tpl'ed messages. -->
+  <target name="messages-generate" depends="messages-parser-build">
     <java classpath="tools/tplParser.jar" classname="org.valabs.tplParser.TplParser"/>
   </target>
-
-  <target name="messages-generate" depends="messages-generate-build, messages-generate-gen"/>
     
-    <!-- Object Dispatcher -->
+  <!-- Object Dispatcher -->
   <target name="odisp-junit-compile" depends="odisp">
     <javac
       srcdir="src/test"
