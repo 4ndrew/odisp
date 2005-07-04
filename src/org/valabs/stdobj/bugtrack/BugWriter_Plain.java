@@ -12,7 +12,7 @@ import java.util.Map;
 
 /** Запись сообщения об ошибке в файл в виде простого отформатированного текста.
  * @author (C) 2005 <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
- * @version $Id: BugWriter_Plain.java,v 1.2 2005/02/27 12:37:30 valeks Exp $
+ * @version $Id: BugWriter_Plain.java,v 1.3 2005/07/04 13:05:26 valeks Exp $
  */
 public class BugWriter_Plain extends AbstractBugWriter {
 
@@ -21,7 +21,7 @@ public class BugWriter_Plain extends AbstractBugWriter {
   }
   
   public void writeBugReport(final String id, final String pc, final String ai, final SystemSnapshot ss) {
-    final File reportFile = new File("bug-" + DateFormat.getInstance().format(Calendar.getInstance().getTime()));
+    final File reportFile = new File("bug-" + DateFormat.getInstance().format(Calendar.getInstance().getTime()).replaceAll(" ", "_").replaceAll(":", "_"));
     try {
       if (!reportFile.exists()) {
         reportFile.createNewFile();
