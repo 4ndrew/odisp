@@ -1,5 +1,6 @@
 package org.valabs.stdobj.console;
 
+import java.io.IOException;
 import java.util.Enumeration;
 
 import org.valabs.odisp.common.Message;
@@ -15,7 +16,7 @@ import org.valabs.stdobj.translator.Translator;
  *         Алексеев </a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин
  *         </a>
- * @version $Id: ConsoleObject.java,v 1.27 2005/02/27 12:37:30 valeks Exp $
+ * @version $Id: ConsoleObject.java,v 1.28 2005/07/14 11:01:16 valeks Exp $
  */
 public class ConsoleObject extends StandartODObject {
   /** Имя объекта */
@@ -87,6 +88,12 @@ public class ConsoleObject extends StandartODObject {
   public final int cleanUp(final int type) {
     logger.finest("Cleaning up...");
     if (reader != null) {
+    	try {
+			System.in.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
       reader.exit();
     }
     return 0;
