@@ -1,6 +1,5 @@
 package org.valabs.stdobj.copyright;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -22,7 +21,7 @@ import org.valabs.stdmsg.CopyrightGetReplyMessage;
 /** Небольшой объект, который занимается сбором информации о правах
  * на ПО используемое в модулях ODISP.
  * @author <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
- * @version $Id: Copyright.java,v 1.1 2005/07/18 08:36:15 valeks Exp $
+ * @version $Id: Copyright.java,v 1.2 2005/07/18 08:37:31 valeks Exp $
  */
 public class Copyright extends StandartODObject implements MessageHandler {
 	private static final String NAME = "copyright";
