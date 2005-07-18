@@ -12,7 +12,7 @@ import org.valabs.stdmsg.ODObjectLoadedMessage;
  * файле classes.cfg. Возможно лишь два варианта поведения -- default to deny или
  * default to accept.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
- * @version $Id: NullAuth.java,v 1.6 2005/01/26 08:22:54 valeks Exp $
+ * @version $Id: NullAuth.java,v 1.7 2005/07/18 13:28:15 valeks Exp $
  */
 public class NullAuth extends StandartODObject implements SecurityManager {
 
@@ -62,4 +62,10 @@ public class NullAuth extends StandartODObject implements SecurityManager {
     if (getParameter("default", "deny") != null && getParameter("default", "deny").equals("deny")) { return false; }
     return true;
   }
+
+/**
+ * @see org.valabs.odisp.common.SecurityManager#audit(java.lang.String, java.lang.String, boolean, java.lang.String)
+ */
+public void audit(String userName, String actionId, boolean successStatus, String ai) {
+}
 }
