@@ -13,6 +13,8 @@ import org.valabs.odisp.common.MessageHandler;
 import org.valabs.odisp.common.ObjectManager;
 import org.valabs.odisp.common.ResourceManager;
 import org.valabs.odisp.common.StandartODObject;
+import org.valabs.stdmsg.CopyrightGetMessage;
+import org.valabs.stdmsg.CopyrightGetReplyMessage;
 import org.valabs.stdmsg.ModuleStatusMessage;
 import org.valabs.stdmsg.ModuleStatusReplyMessage;
 import org.valabs.stdmsg.ODRemoveDepMessage;
@@ -22,7 +24,7 @@ import org.valabs.stdmsg.ODShutdownMessage;
  * Обработчик сообщений диспетчера ODISP.
  * 
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: DispatcherHandler.java,v 1.40 2005/03/11 12:58:45 valeks Exp $
+ * @version $Id: DispatcherHandler.java,v 1.41 2005/07/18 08:37:13 valeks Exp $
  */
 
 class DispatcherHandler extends StandartODObject {
@@ -154,6 +156,18 @@ class DispatcherHandler extends StandartODObject {
                 dispatcher.send(m);
             }
         });
+        addHandler(CopyrightGetMessage.NAME, new MessageHandler() {
+			public void messageReceived(Message msg) {
+		    	List result = new ArrayList();
+		    	result.add("ODISP MOM (C) 2003-2005 Valentin A. Alekseev <valeks@valabs.spb.ru>, Andrew A. Porohin <@>");
+		    	result.add("XLang XML Parser (C) 2004 Valentin A. Alekseev <valeks@valabs.spb.ru>");
+		    	result.add("Java UUID Generator (JUG) Copyright (c) 2002-2005 Tatu Saloranta, tatu.saloranta@iki.fi");
+		    	Message m = dispatcher.getNewMessage();
+		    	CopyrightGetReplyMessage.setup(m, msg.getOrigin(), getObjectName(), msg.getId());
+		    	CopyrightGetReplyMessage.setCopyrights(m, result);
+		    	dispatcher.send(m);
+			}
+		});
     }
 
     /** Обработка пришедшего сообщения.

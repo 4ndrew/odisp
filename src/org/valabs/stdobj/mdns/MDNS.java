@@ -1,9 +1,11 @@
 package org.valabs.stdobj.mdns;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -18,6 +20,8 @@ import org.doomdark.uuid.UUID;
 import org.valabs.odisp.common.Message;
 import org.valabs.odisp.common.MessageHandler;
 import org.valabs.odisp.common.StandartODObject;
+import org.valabs.stdmsg.CopyrightGetMessage;
+import org.valabs.stdmsg.CopyrightGetReplyMessage;
 import org.valabs.stdmsg.MDNSAdvertiseServiceMessage;
 import org.valabs.stdmsg.MDNSListServicesMessage;
 import org.valabs.stdmsg.MDNSListServicesReplyMessage;
@@ -28,7 +32,7 @@ import org.valabs.stdmsg.ODObjectLoadedMessage;
 
 /** Объект, который обеспечивает поддержку Zeroconf/Randezvous.
  * @author <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
- * @version $Id: MDNS.java,v 1.4 2005/02/17 12:30:05 valeks Exp $
+ * @version $Id: MDNS.java,v 1.5 2005/07/18 08:37:05 valeks Exp $
  */
 public class MDNS extends StandartODObject implements MessageHandler, ServiceListener {
   private Map listeners = new HashMap();
@@ -48,6 +52,7 @@ public class MDNS extends StandartODObject implements MessageHandler, ServiceLis
     addHandler(MDNSAdvertiseServiceMessage.NAME, this);
     addHandler(MDNSRegisterTypeNotifyMessage.NAME, this);
     addHandler(MDNSListServicesMessage.NAME, this);
+    addHandler(CopyrightGetMessage.NAME, this);
   }
 
   /* (non-Javadoc)
@@ -100,6 +105,13 @@ public class MDNS extends StandartODObject implements MessageHandler, ServiceLis
       String type = MDNSRegisterTypeNotifyMessage.getType(msg);
       listeners.put(type, msg.getOrigin());
       jmdns.addServiceListener(type, this);
+    } else if (CopyrightGetReplyMessage.equals(msg)) {
+    	List result = new ArrayList();
+    	result.add("JmDNS Copyright 2003-2005 Arthur van Hoff, Rick Blair");
+    	Message m = dispatcher.getNewMessage();
+    	CopyrightGetReplyMessage.setup(m, msg.getOrigin(), getObjectName(), msg.getId());
+    	CopyrightGetReplyMessage.setCopyrights(m, result);
+    	dispatcher.send(m);
     }
   }
 

@@ -8,6 +8,8 @@ import java.util.List;
 import org.valabs.odisp.common.Message;
 import org.valabs.odisp.common.MessageHandler;
 import org.valabs.odisp.common.StandartODObject;
+import org.valabs.stdmsg.CopyrightGetMessage;
+import org.valabs.stdmsg.CopyrightGetReplyMessage;
 import org.valabs.stdmsg.ODObjectLoadedMessage;
 import org.valabs.stdmsg.webcon.WCAddServletMessage;
 import org.valabs.stdmsg.webcon.WCListServletsMessage;
@@ -22,7 +24,7 @@ import org.valabs.stdobj.webcon.servlet.http.HttpServletResponse;
 
 /** ODISP-интерфейс к ACME серверу.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: WebCon.java,v 1.18 2005/07/18 06:33:30 valeks Exp $
+ * @version $Id: WebCon.java,v 1.19 2005/07/18 08:37:13 valeks Exp $
  */
 
 public class WebCon extends StandartODObject implements MessageHandler {
@@ -38,6 +40,7 @@ public class WebCon extends StandartODObject implements MessageHandler {
     addHandler(WCAddServletMessage.NAME, this);
     addHandler(WCRemoveServletMessage.NAME, this);
     addHandler(WCListServletsMessage.NAME, this);
+    addHandler(CopyrightGetMessage.NAME, this);
   }
 
   /** Обработчик приходящих сообщений. */
@@ -107,6 +110,13 @@ public class WebCon extends StandartODObject implements MessageHandler {
       }
       WCListServletsReplyMessage.setServletsList(m, result);
       dispatcher.send(m);
+    } else if (CopyrightGetMessage.equals(msg)) {
+    	List result = new ArrayList();
+    	result.add("ACME Web Server portions copyright: (C)1996,1998 by Jef Poskanzer <jef@acme.com>. (C) 2004-2005 Valentin A. Alekseev <valeks@valabs.spb.ru>");
+    	Message m = dispatcher.getNewMessage();
+    	CopyrightGetReplyMessage.setup(m, msg.getOrigin(), getObjectName(), msg.getId());
+    	CopyrightGetReplyMessage.setCopyrights(m, result);
+    	dispatcher.send(m);
     }
   }
 
