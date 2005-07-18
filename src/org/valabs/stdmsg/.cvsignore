@@ -19,3 +19,5 @@ MDNSListServicesMessage.java
 MDNSAdvertiseServiceMessage.java
 MDNSListServicesReplyMessage.java
 ODGetProvidingReplyMessage.java
+CopyrightGetMessage.java
+CopyrightGetReplyMessage.java
