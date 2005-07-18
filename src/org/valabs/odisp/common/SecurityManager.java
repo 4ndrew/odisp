@@ -4,7 +4,7 @@ import java.util.Map;
 
 /** Интерфейс менеджера безопасности ODISP.
  * @author (C) 2004 <a href="valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: SecurityManager.java,v 1.5 2005/02/27 12:37:29 valeks Exp $
+ * @version $Id: SecurityManager.java,v 1.6 2005/07/18 13:30:59 valeks Exp $
  */
 public interface SecurityManager {
 	/** Проверка доступности пользователю заданного свойства.
@@ -18,4 +18,9 @@ public interface SecurityManager {
    * @param password пароль пользователя
    */
   boolean authenticateUser(final String name, final String password);
+  
+  /** Журналирование операции пользователя.
+   * 
+   */
+  void audit(final String userName, final String actionId, final boolean successStatus, final String ai);
 }
