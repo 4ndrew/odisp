@@ -34,7 +34,7 @@ import com.novel.tools.filter.FilteringIterator;
  * Менеджер объектов ODISP.
  * 
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev </a>
- * @version $Id: ObjectManager.java,v 1.59 2005/05/20 10:46:03 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.60 2005/07/20 08:50:18 valeks Exp $
  */
 
 class ObjectManager implements org.valabs.odisp.common.ObjectManager {
@@ -408,8 +408,10 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
       Message actualMessage;
       while (it.hasNext()) {
         final String objectName = (String) it.next();
-//        actualMessage = message.cloneMessage();
-        actualMessage = new COWStandardMessage(message);
+        actualMessage = message;
+        if (!(actualMessage instanceof COWStandardMessage)) {
+        	actualMessage = new COWStandardMessage(message);
+        }
         if (message.getDestination().equals(Message.RECIPIENT_ALL)) {
         	actualMessage.setDestination(objectName);
         }
