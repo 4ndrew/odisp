@@ -69,17 +69,17 @@ import org.valabs.stdobj.webcon.servlet.http.HttpServletResponse;
  */
 public class TestServlet extends HttpServlet {
 
-  /** Returns a string containing information about the author, version, and
-   * copyright of the servlet. 
-   */
+  /**
+	* 
+	* @see org.valabs.stdobj.webcon.servlet.Servlet#getServletInfo()
+	*/
   public String getServletInfo() {
     return "simple servlet that tests the Servlet API";
   }
 
-  /** Services a single request from the client.
-   * @param req the servlet request
-   * @param res the servlet response
-   * @exception ServletException when an exception has occurred
+  /**
+   * 
+   * @see org.valabs.stdobj.webcon.servlet.http.HttpServlet#service(org.valabs.stdobj.webcon.servlet.http.HttpServletRequest, org.valabs.stdobj.webcon.servlet.http.HttpServletResponse)
    */
   public void service(HttpServletRequest req, HttpServletResponse res)
     throws ServletException, IOException {

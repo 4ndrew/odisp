@@ -44,7 +44,7 @@ public class ServeUtils {
 
   // Server identification.
   public static final String serverName = "org.valabs.stdobj.webcon";
-  public static final String serverVersion = "$Revision: 1.6 $";
+  public static final String serverVersion = "$Revision: 1.7 $";
   public static final String serverUrl =
     "http://www.acme.com/java/software/org.valabs.stdobj.webcon.Serve.html";
 
@@ -63,7 +63,11 @@ public class ServeUtils {
         + "</A></ADDRESS>");
   }
 
-  /** Get a cookie of a given name. */
+  /** Get a cookie of a given name.
+   * @param req HTTP request
+   * @param name cookie name
+   * @return cookie value
+   */
   public static String getCookie(HttpServletRequest req, String name) {
     String h = req.getHeader("Cookie");
     if (h == null)
@@ -86,7 +90,11 @@ public class ServeUtils {
     return null;
   }
 
-  /** Set a cookie. */
+  /** Set a cookie. 
+   * @param res HTTP response
+   * @param name cookie name
+   * @param value cookie value
+   */
   public static void setCookie(
     HttpServletResponse res,
     String name,

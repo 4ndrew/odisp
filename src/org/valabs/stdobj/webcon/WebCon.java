@@ -24,7 +24,7 @@ import org.valabs.stdobj.webcon.servlet.http.HttpServletResponse;
 
 /** ODISP-интерфейс к ACME серверу.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: WebCon.java,v 1.20 2005/07/22 13:06:54 dron Exp $
+ * @version $Id: WebCon.java,v 1.21 2005/07/22 16:04:48 valeks Exp $
  */
 
 public class WebCon extends StandartODObject implements MessageHandler {
@@ -43,7 +43,9 @@ public class WebCon extends StandartODObject implements MessageHandler {
     addHandler(CopyrightGetMessage.NAME, this);
   }
 
-  /** Обработчик приходящих сообщений. */
+  /** Обработчик приходящих сообщений. 
+   * @see org.valabs.odisp.common.MessageHandler#messageReceived(org.valabs.odisp.common.Message)
+   */
   public final void messageReceived(final Message msg) {
     if (ODObjectLoadedMessage.equals(msg)) {
       if (acmeServe != null) {
@@ -126,13 +128,17 @@ public class WebCon extends StandartODObject implements MessageHandler {
     super(NAME, FULLNAME, VERSION, COPYRIGHT);
   }
 
-  /** Вернуть список сервисов. */
+  /** Вернуть список сервисов. 
+   * @see org.valabs.odisp.common.ODObject#getProviding()
+   */
   public String[] getProviding() {
     String[] result = { "webcon", };
     return result;
   }
 
-  /** Вернуть список зависимостей. */
+  /** Вернуть список зависимостей. 
+   * @see org.valabs.odisp.common.ODObject#getDepends()
+   */
   public String[] getDepends() {
     String[] result = { "dispatcher", };
     return result;
@@ -140,6 +146,7 @@ public class WebCon extends StandartODObject implements MessageHandler {
 
   /** Завершение работы.
    * @param exitCode код завершения
+   * @see org.valabs.odisp.common.ODObject#cleanUp(int)
    */
   public int cleanUp(int exitCode) {
     return exitCode;
@@ -147,11 +154,16 @@ public class WebCon extends StandartODObject implements MessageHandler {
 
   /** Обработчик index запросов. */
   private class IndexServlet extends HttpServlet {
-    /** Информация о сервлете. */
+    /** Информация о сервлете. 
+     * @see org.valabs.stdobj.webcon.servlet.Servlet#getServletInfo()
+     */
     public String getServletInfo() {
       return "IndexServlet: servlet that act as front page for WebCon";
     }
-    /** Выполнение запроса. */
+    
+    /**
+     * @see org.valabs.stdobj.webcon.servlet.http.HttpServlet#service(org.valabs.stdobj.webcon.servlet.http.HttpServletRequest, org.valabs.stdobj.webcon.servlet.http.HttpServletResponse)
+     */
     public void service(
       final HttpServletRequest req,
       final HttpServletResponse res)

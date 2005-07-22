@@ -20,7 +20,7 @@ import org.valabs.odisp.common.Message;
  * 
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: StandartMessage.java,v 1.29 2005/07/22 13:06:56 dron Exp $
+ * @version $Id: StandartMessage.java,v 1.30 2005/07/22 16:04:48 valeks Exp $
  */
 public class StandartMessage implements Message, Serializable, Cloneable {
   private static MessageGraphWriter debugMGW = new MessageGraphWriter();
@@ -93,7 +93,9 @@ public class StandartMessage implements Message, Serializable, Cloneable {
     copyFrom(msg, noKeepId);
   }
 
-  /** Копирующий конструктор сохрянющий номер сообщения. */
+  /** Копирующий конструктор сохрянющий номер сообщения. 
+   * @param msg исходное сообщение
+   */
   public StandartMessage(final Message msg) {
     copyFrom(msg, false);
   }
@@ -206,6 +208,7 @@ public class StandartMessage implements Message, Serializable, Cloneable {
 
   /** Представление сообщения в виде текстовой строки с дампом пяти последних вызово.
    * @return строчное представление сообщения
+   * @param doStackTrace выводить или нет дамп вызовов методов
    */
   public final String toString(final boolean doStackTrace) {
     String result = toString();
@@ -252,6 +255,7 @@ public class StandartMessage implements Message, Serializable, Cloneable {
   }
 
   /** Установка флага корректности.
+   * @param newCE true -- сообщение корректно, false -- сообщение некорректно
    */
   public final void setCorrect(final boolean newCE) {
     ce = newCE;

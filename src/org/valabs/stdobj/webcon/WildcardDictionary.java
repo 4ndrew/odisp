@@ -43,7 +43,7 @@ public class WildcardDictionary extends HashMap {
    * The key is assumed to be a String, which is matched against
    * the wildcard-pattern keys in the dictionary.
    * @param key the string to match
-   * @returns the element for the key, or null if there's no match
+   * @return the element for the key, or null if there's no match
    */
   public synchronized Object get(Object key) {
     Iterator it = keySet().iterator();

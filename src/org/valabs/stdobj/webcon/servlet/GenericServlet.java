@@ -99,9 +99,9 @@ public abstract class GenericServlet implements Servlet
     // This is called by the system when the servlet is first loaded.
     // @param config servlet initialization information
     // @exception ServletException when an exception has occurred
-    public void init( ServletConfig config ) throws ServletException
+    public void init( ServletConfig _config ) throws ServletException
 	{
-	this.config = config;
+	config = _config;
 	init();
 	}
 

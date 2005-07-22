@@ -40,9 +40,8 @@ class ServeConnection
   private Vector cookies = new Vector(); // !!!
 
   /** Constructor. 
-   * 
-   * @param socket
-   * @param serve
+   * @param socket connection
+   * @param serve container
    */
   public ServeConnection(Socket socket, Serve serve) {
     // Save arguments.
@@ -170,10 +169,10 @@ class ServeConnection
     }
   }
 
-  private void problem(String logMessage, int resCode) {
+  private void problem(String logMessage, int _resCode) {
     serve.log(logMessage);
     try {
-      sendError(resCode);
+      sendError(_resCode);
     } catch (IOException e) { /* ignore */
     }
   }
@@ -220,6 +219,7 @@ class ServeConnection
 
   /** Returns the size of the request entity data, or -1 if not known.
    * Same as the CGI variable CONTENT_LENGTH.
+   * @return length of request data or -1 if unknown
    */
   public int getContentLength() {
     return getIntHeader("content-length", -1);
@@ -228,14 +228,16 @@ class ServeConnection
   /** Returns the MIME type of the request entity data, or null if
    * not known.
    * Same as the CGI variable CONTENT_TYPE.
+   * @return request content-type or null if unknown
    */
   public String getContentType() {
     return getHeader("content-type");
   }
 
   /** Returns the protocol and version of the request as a string of
-   * the form <protocol>/<major version>.<minor version>.
+   * the form &lt;protocol>/&lt;major version>.&lt;minor version>.
    * Same as the CGI variable SERVER_PROTOCOL.
+   * @return protocol version
    */
   public String getProtocol() {
     return reqProtocol;
@@ -246,6 +248,7 @@ class ServeConnection
    * for constructing URLs, as noted in RFC 1738.  The URL used to create
    * a request may be reconstructed using this scheme, the server name
    * and port, and additional information such as URIs.
+   * @return "http"
    */
   public String getScheme() {
     return "http";
@@ -254,6 +257,7 @@ class ServeConnection
   /** Returns the host name of the server as used in the <host> part of
    * the request URI.
    * Same as the CGI variable SERVER_NAME.
+   * @return host name
    */
   public String getServerName() {
     try {
@@ -266,6 +270,7 @@ class ServeConnection
   /** Returns the port number on which this request was received as used in
    * the <port> part of the request URI.
    * Same as the CGI variable SERVER_PORT.
+   * @return server port
    */
   public int getServerPort() {
     return socket.getLocalPort();
@@ -273,6 +278,7 @@ class ServeConnection
 
   /** Returns the IP address of the agent that sent the request.
    * Same as the CGI variable REMOTE_ADDR.
+   * @return agent's inet address
    */
   public String getRemoteAddr() {
     return socket.getInetAddress().toString();
@@ -281,6 +287,7 @@ class ServeConnection
   /** Returns the fully qualified host name of the agent that sent the
    * request.
    * Same as the CGI variable REMOTE_HOST.
+   * @return agent's host name
    */
   public String getRemoteHost() {
     return socket.getInetAddress().getHostName();
@@ -318,7 +325,9 @@ class ServeConnection
   
   Map query = null;
 
-  /** Returns the parameter names for this request. */
+  /** Returns the parameter names for this request.
+   * @return parameter names
+   */
   public Enumeration getParameterNames() {
     return (Enumeration) query.keySet();
   }
@@ -350,6 +359,7 @@ class ServeConnection
   /** Returns the value of the specified query string parameter, or null
    * if not found.
    * @param name the parameter name
+   * @return param value or null if not found
    */
   public String getParameter(String name) {
     return (String) query.get(name);
@@ -377,7 +387,9 @@ class ServeConnection
 
   // Methods from HttpServletRequest.
 
-  /** Gets the array of cookies found in this request. */
+  /** Gets the array of cookies found in this request.
+   * @return array of cookies
+   */
   public Cookie[] getCookies() {
     Cookie[] cookieArray = new Cookie[cookies.size()];
     cookies.copyInto(cookieArray);
@@ -387,12 +399,15 @@ class ServeConnection
   /** Returns the method with which the request was made. This can be "GET",
    * "HEAD", "POST", or an extension method.
    * Same as the CGI variable REQUEST_METHOD.
+   * @return either "GET", "HEAD" or "POST"
    */
   public String getMethod() {
     return reqMethod;
   }
 
-  /** Returns the full request URI. */
+  /** Returns the full request URI.
+   * @return full request URI
+   */
   public String getRequestURI() {
     String portPart = "";
     int port = getServerPort();
@@ -410,6 +425,7 @@ class ServeConnection
   /** Returns the part of the request URI that referred to the servlet being
    * invoked.
    * Analogous to the CGI variable SCRIPT_NAME.
+   * @return servlet path
    */
   public String getServletPath() {
     // In this server, the entire path is regexp-matched against the
@@ -421,6 +437,7 @@ class ServeConnection
   /** Returns optional extra path information following the servlet path, but
    * immediately preceding the query string.  Returns null if not specified.
    * Same as the CGI variable PATH_INFO.
+   * @return path info of a request or null if none
    */
   public String getPathInfo() {
     return pathInfo;
@@ -429,6 +446,7 @@ class ServeConnection
   /** Returns extra path information translated to a real path.  Returns
    * null if no extra path information was specified.
    * Same as the CGI variable PATH_TRANSLATED.
+   * @return translated request path
    */
   public String getPathTranslated() {
     // In this server, the entire path is regexp-matched against the
@@ -439,6 +457,7 @@ class ServeConnection
 
   /** Returns the query string part of the servlet URI, or null if not known.
    * Same as the CGI variable QUERY_STRING.
+   * @return query string or null if none
    */
   public String getQueryString() {
     return reqQuery;
@@ -446,6 +465,7 @@ class ServeConnection
 
   /** Returns the name of the user making this request, or null if not known.
    * Same as the CGI variable REMOTE_USER.
+   * @return remote user or null if none
    */
   public String getRemoteUser() {
     // This server does not support authentication, so even if a username
@@ -455,6 +475,7 @@ class ServeConnection
 
   /** Returns the authentication scheme of the request, or null if none.
    * Same as the CGI variable AUTH_TYPE.
+   * @return null
    */
   public String getAuthType() {
     // This server does not support authentication.
@@ -464,6 +485,7 @@ class ServeConnection
   /** Returns the value of a header field, or null if not known.
    * Same as the information passed in the CGI variabled HTTP_*.
    * @param name the header field name
+   * @return header value or null
    */
   public String getHeader(String name) {
     return (String) reqHeader.get(name);
@@ -472,6 +494,7 @@ class ServeConnection
   /** Returns the value of an integer header field.
    * @param name the header field name
    * @param def the integer value to return if header not found or invalid
+   * @return header value parsed into int or def
    */
   public int getIntHeader(String name, int def) {
     String val = getHeader(name);
@@ -488,6 +511,7 @@ class ServeConnection
   /** Returns the value of a long header field.
    * @param name the header field name
    * @param def the long value to return if header not found or invalid
+   * @return header value parsed into long or def
    */
   public long getLongHeader(String name, long def) {
     String val = getHeader(name);
@@ -504,6 +528,7 @@ class ServeConnection
   /** Returns the value of a date header field.
    * @param name the header field name
    * @param def the date value to return if header not found or invalid
+   * @return header value parsed into long or def
    */
   public long getDateHeader(String name, long def) {
     String val = getHeader(name);
@@ -517,7 +542,9 @@ class ServeConnection
     }
   }
 
-  /** Returns an Enumeration of the header names. */
+  /** Returns an Enumeration of the header names.
+   * @return header names
+   */
   public Enumeration getHeaderNames() {
     return (Enumeration) reqHeader.keySet();
   }
@@ -548,6 +575,7 @@ class ServeConnection
    * from the actual session id.  For example, if the request specified
    * an id for an invalid session, then this will get a new session with
    * a new id.
+   * @return null
    */
   public String getRequestedSessionId() {
     return null;
@@ -557,6 +585,7 @@ class ServeConnection
    * valid in the current session context.  If it is not valid, the
    * requested session will never be returned from the getSession
    * method.
+   * @return false
    */
   public boolean isRequestedSessionIdValid() {
     return false;
@@ -565,6 +594,7 @@ class ServeConnection
   /** Checks whether the session id specified by this request came in as
    * a cookie.  (The requested session may not be one returned by the
    * getSession method.)
+   * @return false
    */
   public boolean isRequestedSessionIdFromCookie() {
     return false;
@@ -573,6 +603,7 @@ class ServeConnection
   /** Checks whether the session id specified by this request came in as
    * part of the URL.  (The requested session may not be the one returned
    * by the getSession method.)
+   * @return false
    */
   public boolean isRequestedSessionIdFromUrl() {
     return false;
@@ -594,7 +625,9 @@ class ServeConnection
     setHeader("Content-Type", type);
   }
 
-  /** Returns an output stream for writing response data. */
+  /** Returns an output stream for writing response data.
+   * @return response data output stream
+   */
   public ServletOutputStream getOutputStream() {
     return out;
   }
@@ -606,6 +639,7 @@ class ServeConnection
    * @exception UnsupportedEncodingException if no such encoding can be provided
    * @exception IllegalStateException if getOutputStream has been called
    * @exception IOException on other I/O errors
+   * @return null
    */
   public PrintWriter getWriter() throws IOException {
     // !!!
@@ -616,6 +650,7 @@ class ServeConnection
    * character encoding is either the one specified in the assigned
    * content type, or one which the client understands.  If no content
    * type has yet been assigned, it is implicitly set to text/plain.
+   * @return null
    */
   public String getCharacterEncoding() {
     // !!!
@@ -844,21 +879,21 @@ class ServeConnection
   }
 
   /** Writes an error response using the specified status code and message.
-   * @param resCode the status code
-   * @param resMessage the status message
+   * @param _resCode the status code
+   * @param _resMessage the status message
    * @exception IOException if an I/O error has occurred
    */
-  public void sendError(int resCode, String resMessage) throws IOException {
-    setStatus(resCode, resMessage);
+  public void sendError(int _resCode, String _resMessage) throws IOException {
+    setStatus(_resCode, _resMessage);
     realSendError();
   }
 
   /** Writes an error response using the specified status code and a default message.
-   * @param resCode the status code
+   * @param _resCode the status code
    * @exception IOException if an I/O error has occurred
    */
-  public void sendError(int resCode) throws IOException {
-    setStatus(resCode);
+  public void sendError(int _resCode) throws IOException {
+    setStatus(_resCode);
     realSendError();
   }
 
@@ -906,6 +941,8 @@ class ServeConnection
    * All URLs emitted by a Servlet should be run through this method.
    * Otherwise, URL rewriting cannot be used with browsers which do not
    * support cookies.
+   * @param url an URL
+   * @return = url
    */
   public String encodeUrl(String url) {
     return url;
@@ -922,6 +959,8 @@ class ServeConnection
    * All URLs sent to the HttpServletResponse.sendRedirect method should be
    * run through this method.  Otherwise, URL rewriting cannot be used with
    * browsers which do not support cookies.
+   * @param url an URL
+   * @return = url
    */
   public String encodeRedirectUrl(String url) {
     return url;
