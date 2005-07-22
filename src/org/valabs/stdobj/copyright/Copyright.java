@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.WindowConstants;
 import javax.swing.table.AbstractTableModel;
 
 import org.doomdark.uuid.UUID;
@@ -21,7 +22,7 @@ import org.valabs.stdmsg.CopyrightGetReplyMessage;
 /** Небольшой объект, который занимается сбором информации о правах
  * на ПО используемое в модулях ODISP.
  * @author <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
- * @version $Id: Copyright.java,v 1.2 2005/07/18 08:37:31 valeks Exp $
+ * @version $Id: Copyright.java,v 1.3 2005/07/22 12:49:52 dron Exp $
  */
 public class Copyright extends StandartODObject implements MessageHandler {
 	private static final String NAME = "copyright";
@@ -47,24 +48,20 @@ public class Copyright extends StandartODObject implements MessageHandler {
 
 	public void messageReceived(Message msg) {
 		if (CopyrightGetMessage.equals(msg) && !msg.getOrigin().equals(getObjectName())) {
-			new CopyrightGetTask(msg.getOrigin(), msg.getId());
+			new CopyrightGetTask();
 		}
 	}
 	
 	private class CopyrightGetTask implements MessageHandler {
-		private String origin;
-		private UUID msgId;
 		private JFrame copyrightFrame;
 		private CopyrightTableModel ctm = new CopyrightTableModel();
-		public CopyrightGetTask(final String _origin, final UUID _msgId) {
-			origin = _origin;
-			msgId = _msgId;
+		public CopyrightGetTask() {
 			Message m = getDispatcher().getNewMessage();
 			CopyrightGetMessage.setup(m, Message.RECIPIENT_ALL, getObjectName(), UUID.getNullUUID());
 			SessionManager.getSessionManager().addMessageListener(m.getId(), this, true);
-			if (getParameter("ui", "cli").equals("gui")) {
+			if (getParameter("ui", "gui").equals("gui")) {
 				copyrightFrame = new JFrame("Copyright Information");
-				copyrightFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				copyrightFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 				copyrightFrame.getContentPane().add(new JScrollPane(new JTable(ctm)));
 				copyrightFrame.pack();
 				copyrightFrame.setVisible(true);
@@ -73,7 +70,7 @@ public class Copyright extends StandartODObject implements MessageHandler {
 		}
 
 		public void messageReceived(Message msg) {
-			if (getParameter("ui", "cli").equals("cli")) {
+			if (getParameter("ui", "gui").equals("cli")) {
 				messageReceivedCLI(msg);
 			} else {
 				messageReceivedGUI(msg);
@@ -136,15 +133,23 @@ public class Copyright extends StandartODObject implements MessageHandler {
 			public Object getValueAt(int rowIndex, int columnIndex) {
 				Iterator it = values.entrySet().iterator();
 				int rowIdx = 0;
+				String prev = null;
 				while (it.hasNext()) {
 					Map.Entry entry = (Map.Entry) it.next();
 					if (rowIdx == rowIndex) {
 						if (columnIndex == 0) {
 							String modulename = (String) entry.getKey();
+							if (prev != null && modulename.startsWith(prev)) {
+							  return "";
+							}
 							return modulename.substring(0, modulename.lastIndexOf('-')); 
-						} else {
-							return entry.getValue();
 						}
+					  
+						return entry.getValue();
+					}
+					
+					if (columnIndex == 0) {
+					  prev = ((String) entry.getKey()).substring(0, ((String) entry.getKey()).lastIndexOf('-'));
 					}
 					rowIdx++;
 				}
