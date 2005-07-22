@@ -10,6 +10,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.WindowConstants;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableColumn;
 
 import org.doomdark.uuid.UUID;
 import org.valabs.odisp.SessionManager;
@@ -22,7 +23,7 @@ import org.valabs.stdmsg.CopyrightGetReplyMessage;
 /** Небольшой объект, который занимается сбором информации о правах
  * на ПО используемое в модулях ODISP.
  * @author <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
- * @version $Id: Copyright.java,v 1.3 2005/07/22 12:49:52 dron Exp $
+ * @version $Id: Copyright.java,v 1.4 2005/07/22 12:56:38 dron Exp $
  */
 public class Copyright extends StandartODObject implements MessageHandler {
 	private static final String NAME = "copyright";
@@ -62,7 +63,13 @@ public class Copyright extends StandartODObject implements MessageHandler {
 			if (getParameter("ui", "gui").equals("gui")) {
 				copyrightFrame = new JFrame("Copyright Information");
 				copyrightFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-				copyrightFrame.getContentPane().add(new JScrollPane(new JTable(ctm)));
+				JTable table = new JTable(ctm);
+				
+				TableColumn column = table.getColumnModel().getColumn(0);
+		    column.setPreferredWidth(100);
+		    column.setMaxWidth(300);
+		    
+				copyrightFrame.getContentPane().add(new JScrollPane(table));
 				copyrightFrame.pack();
 				copyrightFrame.setVisible(true);
 			}
