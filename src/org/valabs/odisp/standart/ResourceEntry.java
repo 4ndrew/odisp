@@ -9,7 +9,7 @@ import org.valabs.odisp.common.Resource;
 
 /** Запись об однотипных ресурах в таблице ресурсов.
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceEntry.java,v 1.13 2005/02/27 12:37:31 valeks Exp $
+ * @version $Id: ResourceEntry.java,v 1.14 2005/07/22 15:32:01 valeks Exp $
  */
 class ResourceEntry {
   /** Журнал. */
@@ -58,7 +58,9 @@ class ResourceEntry {
     return result;
   }
 
-  /** Установка нового количеств использованных экземпляров. */
+  /** Установка нового количеств использованных экземпляров.
+   * @param newUsage установка нового значения максимального кол-ва экземпляров
+   */
   public final void setMaxUsage(final int newUsage) {
     usage = newUsage;
     maxUsage = newUsage;
@@ -75,6 +77,7 @@ class ResourceEntry {
   }
 
   /** Запросить ресурс.
+   * @param usedBy описание того, кто пользуется ресурсом
    * @return ссылка на ресурс
    */
   public final Resource acquireResource(final String usedBy) {

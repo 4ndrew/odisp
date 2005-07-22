@@ -20,7 +20,7 @@ import org.valabs.stdmsg.ModuleStatusReplyMessage;
  * Стандартный объект ODISP.
  * 
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev </a>
- * @version $Id: StandartODObject.java,v 1.18 2005/07/22 13:06:56 dron Exp $
+ * @version $Id: StandartODObject.java,v 1.19 2005/07/22 15:32:02 valeks Exp $
  */
 
 public abstract class StandartODObject implements ODObject {
@@ -63,6 +63,8 @@ public abstract class StandartODObject implements ODObject {
 
   /**
    * Обрабатывать ли все сообщения.
+   * @param newMatch true -- принимать все сообщения, false -- 
+   * принимать только свои сообщения
    */
   protected final void setMatchAll(final boolean newMatch) {
     matchAll = newMatch;
@@ -70,6 +72,8 @@ public abstract class StandartODObject implements ODObject {
 
   /**
    * Обрабатываются ли все сообщения.
+   * @return true -- принимать все сообщения, false -- 
+   * принимать только свои сообщения
    */
   public final boolean getMatchAll() {
     return matchAll;
@@ -158,21 +162,23 @@ public abstract class StandartODObject implements ODObject {
   /**
    * Получить значение параметра конфигурации.
    * 
-   * @param name имя параметра.
+   * @param paramName имя параметра.
+   * @return значение параметра или null если он не указан
    */
-  protected final String getParameter(final String name) {
-    if (configuration != null && configuration.containsKey(name)) { return (String) configuration.get(name); }
+  protected final String getParameter(final String paramName) {
+    if (configuration != null && configuration.containsKey(paramName)) { return (String) configuration.get(paramName); }
     return null;
   }
 
   /**
    * Получить значение параметра конфигурации с учетом значения по-умолчанию.
    * 
-   * @param name Имя параметра.
+   * @param paramName Имя параметра.
    * @param defValue Значение по умолчанию.
+   * @return значение параметра если он установлен или значение из defValue
    */
-  protected final String getParameter(final String name, final String defValue) {
-    return getParameter(name) == null ? defValue : getParameter(name);
+  protected final String getParameter(final String paramName, final String defValue) {
+    return getParameter(paramName) == null ? defValue : getParameter(paramName);
   }
 
   /**

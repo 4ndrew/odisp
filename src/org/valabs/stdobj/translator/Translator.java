@@ -13,7 +13,7 @@ import org.valabs.odisp.common.Resource;
  *
  * @author <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
  * @author (C) 2004 НПП "Новел-ИЛ"
- * @version $Id: Translator.java,v 1.18 2005/06/20 03:37:02 dron Exp $
+ * @version $Id: Translator.java,v 1.19 2005/07/22 15:32:03 valeks Exp $
  */
 public class Translator extends Properties implements Resource {
   /** Путь к корневой папке транляций. */
@@ -112,12 +112,14 @@ public class Translator extends Properties implements Resource {
   /** Очистка ресурса.
    *
    * @param type Код выхода.
+   * @return код возврата
    */
   public int cleanUp(int type) {
     return 0;
   }
   
-  /** Комментарии в интерфейсе.
+  /**
+   * @see org.valabs.odisp.common.Resource#getMaxReferenceCount()
    */
   public int getMaxReferenceCount() {
     return 0;

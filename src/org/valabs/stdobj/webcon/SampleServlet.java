@@ -50,6 +50,7 @@ public class SampleServlet extends HttpServlet {
    * @param req the servlet request
    * @param res the servlet response
    * @exception ServletException when an exception has occurred
+   * @exception IOException when an IO exception occured
    */
   public void service(HttpServletRequest req, HttpServletResponse res)
     throws ServletException, IOException {

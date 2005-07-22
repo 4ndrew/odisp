@@ -7,7 +7,7 @@ import java.util.Map;
  * Интерфейс менеджера ресурсов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev
  *         </a>
- * @version $Id: ResourceManager.java,v 1.12 2005/06/19 23:04:30 valeks Exp $
+ * @version $Id: ResourceManager.java,v 1.13 2005/07/22 15:32:02 valeks Exp $
  */
 
 public interface ResourceManager {
@@ -15,6 +15,7 @@ public interface ResourceManager {
    * Загрузка ресурса.
    * @param className имя класса
    * @param mult множитель
+   * @param params список параметров загрузки
    */
   void loadResource(String className, int mult, Map params);
 

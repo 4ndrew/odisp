@@ -5,7 +5,7 @@ import java.util.Map;
 /** Базовый класс реализующий почтовый ящик для сообщений
 * посылаемых диспетчером ODISP.
 * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
-* @version $Id: ODObject.java,v 1.24 2005/02/27 12:37:29 valeks Exp $
+* @version $Id: ODObject.java,v 1.25 2005/07/22 15:32:02 valeks Exp $
 */
 public interface ODObject {
   /** Возвращает внутреннее ODISP имя объекта.
@@ -44,6 +44,7 @@ public interface ODObject {
 
   /** 
    * Получать ли все сообщения в системе.
+   * @return true -- разрешить получение всех сообщений в системе
    */
   boolean getMatchAll();
   

@@ -63,7 +63,7 @@ import org.valabs.stdobj.webcon.servlet.ServletException;
  * @see org.valabs.stdobj.webcon.servlet.http.HttpServlet
  * @author (C) 1996,1998 by Jef Poskanzer <jef@acme.com>
  * @author (C) 2004 Valentin A. Alekseev
- * @version $Id: Serve.java,v 1.11 2005/07/22 13:06:54 dron Exp $
+ * @version $Id: Serve.java,v 1.12 2005/07/22 15:32:01 valeks Exp $
  */
 
 public class Serve implements ServletContext {
@@ -143,6 +143,8 @@ public class Serve implements ServletContext {
    * which can contain wildcards, and the Servlet to
    * launch when a matching URL comes in.  Patterns are checked for
    *  matches in the order they were added, and only the first match is run.
+   * @param urlPat URL pattern
+   * @param servlet servlet handler
    */
   public void addServlet(String urlPat, Servlet servlet) {
     try {
@@ -154,7 +156,9 @@ public class Serve implements ServletContext {
     }
   }
 
-  /** Remove servlet by reference. */
+  /** Remove servlet by reference.
+   * @param servlet servlet reference
+   */
   public final void removeServlet(final Servlet servlet) {
     registry.removeValue(servlet);
     ((Servlet) servlets.get(servlet.getClass().getName())).destroy();
@@ -274,6 +278,7 @@ public class Serve implements ServletContext {
   /** Enumerates the servlets in this context (server). Only servlets that
    * are accesible will be returned.  This enumeration always includes the
    * servlet itself.
+   * @return all known servlets
    */
   public Enumeration getServlets() {
     return servlets.elements();
@@ -282,6 +287,7 @@ public class Serve implements ServletContext {
   /** Enumerates the names of the servlets in this context (server). Only
    * servlets that are accesible will be returned.  This enumeration always
    * includes the servlet itself.
+   * @return names of all known servlets
    */
   public Enumeration getServletNames() {
     return servlets.keys();
@@ -317,6 +323,7 @@ public class Serve implements ServletContext {
    * corresponding real path.  It returns null if the translation
    * cannot be performed.
    * @param path the path to be translated
+   * @return translated path or null if it can't be translated
    */
   public String getRealPath(String path) {
     // No mapping.
@@ -325,6 +332,7 @@ public class Serve implements ServletContext {
 
   /** Returns the MIME type of the specified file.
    * @param file file name whose MIME type is required
+   * @return MIME type string for given file based on extension
    */
   public String getMimeType(String file) {
     int lastDot = file.lastIndexOf('.');
@@ -365,6 +373,7 @@ public class Serve implements ServletContext {
   /** Returns the name and version of the web server under which the servlet
    * is running.
    * Same as the CGI variable SERVER_SOFTWARE.
+   * @return server string
    */
   public String getServerInfo() {
     return ServeUtils.serverName
@@ -379,6 +388,8 @@ public class Serve implements ServletContext {
    * null if the attribute does not exist.  This method allows access to
    * additional information about the service, not already provided by
    * the other methods in this interface.
+   * @param name
+   * @return null
    */
   public Object getAttribute(String name) {
     // This server does not support attributes.

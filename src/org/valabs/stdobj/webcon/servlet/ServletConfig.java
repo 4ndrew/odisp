@@ -47,14 +47,20 @@ import java.util.Enumeration;
 public interface ServletConfig
     {
 
-    /// Returns the context for the servlet.
+    /** Returns the context for the servlet.
+     * @return servlet context
+     */
     public ServletContext getServletContext();
 
-    /// Gets an initialization parameter of the servlet.
-    // @param name the parameter name
+    /** Gets an initialization parameter of the servlet.
+     * @param name the parameter name
+     * @return param value
+     */
     public String getInitParameter( String name );
 
-    /// Gets the names of the initialization parameters of the servlet.
+    /** Gets the names of the initialization parameters of the servlet.
+     * @return list of initialization parameters names
+     */
     public Enumeration getInitParameterNames();
 
     }

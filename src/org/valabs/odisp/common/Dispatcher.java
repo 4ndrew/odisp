@@ -7,7 +7,7 @@ import org.doomdark.uuid.UUID;
 /** Стандартный интерфейс диспетчера, который должен реализовывать
  * класс, который выступает в качестве ODISP диспетчера.
  * @author (C) 2003 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
- * @version $Id: Dispatcher.java,v 1.17 2005/02/27 12:37:29 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.18 2005/07/22 15:32:02 valeks Exp $
  */
 public interface Dispatcher {
   /** Посылка одиночного сообщения.
@@ -38,20 +38,36 @@ public interface Dispatcher {
    */
   Message getNewMessage();
 
-  /** Доступ к менеджеру объектов. */
+  /** Доступ к менеджеру объектов. 
+   * @return ссылка на менеджер объектов
+   */
   ObjectManager getObjectManager();
-  /** Доступ к менеджеру ресурсов. */
+  /** Доступ к менеджеру ресурсов. 
+   * @return ссылка на менеджер ресурсов
+   */
   ResourceManager getResourceManager();
-  /** Доступ к менеджеру безопасности. */
+  /** Доступ к менеджеру безопасности.
+   * @return ссылка на менеджер безопасности
+   */
   SecurityManager getSecurityManager();
-  /** Доступ к менеджеру конфигурации. */
+  /** Доступ к менеджеру конфигурации.
+   * @return ссылка на менеджер конфигураций
+   */
   ConfigurationManager getConfigurationManager();
-  /** Доступ к обработчику исключений. */
+  /** Доступ к обработчику исключений. 
+   * @return ссылка на обработчик исключений
+   */
   ExceptionHandler getExceptionHandler();
-  /** Добавление менеджера безопасности. */
+  /** Добавление менеджера безопасности. 
+   * @param additionalSecurityManager новый менеджер безопасности
+   */
   void addSecurityManager(SecurityManager additionalSecurityManager);
-  /** Установка нового обработчика исключений. */
+  /** Установка нового обработчика исключений.
+   * @param exception новый обработчик исключений
+   */
   void addExceptionHandler(ExceptionHandler exception);
-  /** Добавление менеджера конфигурации. */
+  /** Добавление менеджера конфигурации. 
+   * @param cman новый менеджер конфигураций
+   */
   void addConfigurationManager(ConfigurationManager cman);
 }

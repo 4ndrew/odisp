@@ -18,7 +18,7 @@ import org.valabs.stdobj.webcon.servlet.http.HttpServletResponse;
 
 /** Объект ODISP реализующий WebCon интерфейс доступа к менеджеру.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
- * @version $Id: WCConsoleObject.java,v 1.17 2005/07/22 13:06:53 dron Exp $
+ * @version $Id: WCConsoleObject.java,v 1.18 2005/07/22 15:32:02 valeks Exp $
  */
 public class WCConsoleObject extends StandartODObject {
   public static final String NAME = "wcconsole";
@@ -75,12 +75,18 @@ public class WCConsoleObject extends StandartODObject {
 
   private class WCConsoleServlet extends HttpServlet {
     private final List messages = new ArrayList();
-    /** Информация о сервлете. */
+    /** Информация о сервлете. 
+     * 
+     * @see org.valabs.stdobj.webcon.servlet.Servlet#getServletInfo()
+     */
     public String getServletInfo() {
       return "WCConsoleServlet: servlet that act as ODISP console. <a href=\"/wcconsole\">Start servlet</a>";
     }
 
-    /** Выполнение запроса. */
+    /** Выполнение запроса. 
+     * 
+     * @see org.valabs.stdobj.webcon.servlet.http.HttpServlet#service(org.valabs.stdobj.webcon.servlet.http.HttpServletRequest, org.valabs.stdobj.webcon.servlet.http.HttpServletResponse)
+     */
     public void service(final HttpServletRequest req, final HttpServletResponse res) throws ServletException,
             IOException {
       res.setStatus(HttpServletResponse.SC_OK);
@@ -148,7 +154,9 @@ public class WCConsoleObject extends StandartODObject {
       page.println("</html>");
     }
 
-    /** Добавление сообщения в журнал. */
+    /** Добавление сообщения в журнал. 
+     * @param msg новое сообщение
+     */
     public synchronized void messageReceived(final Message msg) {
       if (messages.size() == 30) {
         // удаление устаревших сообщений

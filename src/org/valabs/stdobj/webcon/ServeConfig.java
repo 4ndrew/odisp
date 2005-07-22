@@ -12,20 +12,25 @@ class ServeConfig implements ServletConfig {
     this.context = context;
   }
 
-  /** Returns the context for the servlet. */
+  
+
+  /**
+   * @see org.valabs.stdobj.webcon.servlet.ServletConfig#getServletContext()
+   */
   public ServletContext getServletContext() {
     return context;
   }
 
-  /** Gets an initialization parameter of the servlet.
-   * @param name the parameter name
+  /**
+   * @see org.valabs.stdobj.webcon.servlet.ServletConfig#getInitParameter(java.lang.String)
    */
   public String getInitParameter(String name) {
     // This server doesn't support servlet init params.
     return null;
   }
 
-  /** Gets the names of the initialization parameters of the servlet.
+  /**
+   * @see org.valabs.stdobj.webcon.servlet.ServletConfig#getInitParameterNames()
    */
   public Enumeration getInitParameterNames() {
     // This server doesn't support servlet init params.

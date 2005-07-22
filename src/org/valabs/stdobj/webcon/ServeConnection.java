@@ -39,7 +39,11 @@ class ServeConnection
 
   private Vector cookies = new Vector(); // !!!
 
-  /** Constructor. */
+  /** Constructor. 
+   * 
+   * @param socket
+   * @param serve
+   */
   public ServeConnection(Socket socket, Serve serve) {
     // Save arguments.
     this.socket = socket;
@@ -288,6 +292,8 @@ class ServeConnection
    * resolve the path using the virtual docroot, if virtual hosting is
    * enabled, and with the default docroot otherwise.  Calling this
    * method with the string "/" as an argument returns the document root.
+   * @param path virtual path
+   * @return real path
    */
   public String getRealPath(String path) {
     return serve.getRealPath(path);
@@ -296,15 +302,16 @@ class ServeConnection
   /** Returns an input stream for reading request data.
    * @exception IllegalStateException if getReader has already been called
    * @exception IOException on other I/O-related errors
+   * @return input stream to read data from
    */
   public ServletInputStream getInputStream() throws IOException {
     return in;
   }
 
   /** Returns a buffered reader for reading request data.
+   * @return null
    */
   public BufferedReader getReader() {
-     // !!!
     return null;
   }
 
@@ -350,6 +357,8 @@ class ServeConnection
 
   /** Returns the values of the specified parameter for the request as an
    * array of strings, or null if the named parameter does not exist.
+   * @param name parameter name
+   * @return values
    */
   public String[] getParameterValues(String name) {
     return (String[]) query.values().toArray();
@@ -358,6 +367,8 @@ class ServeConnection
   /** Returns the value of the named attribute of the request, or null if
    * the attribute does not exist.  This method allows access to request
    * information not already provided by the other methods in this interface.
+   * @param name
+   * @return null
    */
   public Object getAttribute(String name) {
     // This server does not implement attributes.
@@ -520,10 +531,14 @@ class ServeConnection
    * Note: to ensure the session is properly maintained, the servlet
    * developer must call this method (at least once) before any output
    * is written to the response.
+   * </p>
    * <P>
    * Additionally, application-writers need to be aware that newly
    * created sessions (that is, sessions for which HttpSession.isNew
    * returns true) do not have any application-specific state.
+   * </p>
+   * @param create
+   * @return null
    */
   public HttpSession getSession(boolean create) {
     return null;
@@ -611,6 +626,7 @@ class ServeConnection
 
   /** Adds the specified cookie to the response.  It can be called
    * multiple times to set more than one cookie.
+   * @param cookie a cookie
    */
   public void addCookie(Cookie cookie) {
     cookies.addElement(cookie);
@@ -618,6 +634,8 @@ class ServeConnection
 
   /** Checks whether the response message header has a field with the
    * specified name.
+   * @param name header name
+   * @return true -- if response contained that header 
    */
   public boolean containsHeader(String name) {
     return resHeaderNames.contains(name);

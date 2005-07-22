@@ -12,7 +12,7 @@ import org.valabs.odisp.common.Resource;
 
 /** Менеджер ресурсных объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceManager.java,v 1.38 2005/04/25 13:54:38 valeks Exp $
+ * @version $Id: ResourceManager.java,v 1.39 2005/07/22 15:32:02 valeks Exp $
  */
 class ResourceManager implements org.valabs.odisp.common.ResourceManager {
   /** Ссылка на диспетчер объектов. */
@@ -33,6 +33,7 @@ class ResourceManager implements org.valabs.odisp.common.ResourceManager {
   /** Динамическая загрузка ресурсных объектов.
    * @param className имя загружаемого класса
    * @param mult количество загружаемых объектов
+   * @param config конфигурация ресурса
    */
   public final void loadResource(final String className, final int mult, final Map config) {
     int realMult = mult;

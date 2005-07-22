@@ -6,7 +6,7 @@ import java.util.Map;
  * Интерфейс менеджера безопасности ODISP.
  * 
  * @author (C) 2004 <a href="valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: SecurityManager.java,v 1.7 2005/07/22 13:06:56 dron Exp $
+ * @version $Id: SecurityManager.java,v 1.8 2005/07/22 15:32:02 valeks Exp $
  */
 public interface SecurityManager {
 	/**
@@ -15,6 +15,7 @@ public interface SecurityManager {
 	 * @param userName имя пользователя.
 	 * @param capability имя свойства.
 	 * @param options Дополнительные опции.
+	 * @return флаг успеха или отказа проверки
 	 */
 	boolean checkAccess(String userName, String capability, Map options);
 	
@@ -23,6 +24,7 @@ public interface SecurityManager {
    * 
    * @param name имя пользователя.
    * @param password пароль пользователя.
+   * @return флаг успеха или отказа проверки
    */
   boolean authenticateUser(final String name, final String password);
   

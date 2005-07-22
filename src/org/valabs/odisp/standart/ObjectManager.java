@@ -34,7 +34,7 @@ import com.novel.tools.filter.FilteringIterator;
  * Менеджер объектов ODISP.
  * 
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev </a>
- * @version $Id: ObjectManager.java,v 1.60 2005/07/20 08:50:18 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.61 2005/07/22 15:32:01 valeks Exp $
  */
 
 class ObjectManager implements org.valabs.odisp.common.ObjectManager {
@@ -434,7 +434,9 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
     }
   }
 
-  /** Получение следующего сообщения для обработки. */
+  /** Получение следующего сообщения для обработки. 
+   * @return описание следующего задания для посылки
+   */
   final SendRecord getNextPendingMessage() {
     SendRecord toSend = null;
     synchronized (messageStorage) {
@@ -477,15 +479,15 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
       }
     }
 
-    public Map getHintedOrder(final Map objects) {
+    public Map getHintedOrder(final Map currentObjects) {
       Map localObjects;
       if (oldHints.size() > 0) {
         localObjects = new TreeMap(new HintsOrderComparator(oldHints));
       } else {
         localObjects = new HashMap();
       }
-      synchronized (objects) {
-        localObjects.putAll(objects);
+      synchronized (currentObjects) {
+        localObjects.putAll(currentObjects);
       }
       return localObjects;
     }

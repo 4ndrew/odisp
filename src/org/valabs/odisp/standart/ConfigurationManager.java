@@ -19,7 +19,7 @@ import org.valeks.xlang.parser.XLangException;
  * Реализация менеджера конфигурации.
  * 
  * @author (C) 2004 <a href="valeks@valabs.spb.ru">Валентин А. Алексеев </a>
- * @version $Id: ConfigurationManager.java,v 1.6 2005/02/27 12:37:31 valeks Exp $
+ * @version $Id: ConfigurationManager.java,v 1.7 2005/07/22 15:32:02 valeks Exp $
  */
 class ConfigurationManager implements org.valabs.odisp.common.ConfigurationManager {
 
@@ -133,9 +133,9 @@ class ConfigurationManager implements org.valabs.odisp.common.ConfigurationManag
    * @param childTag тег
    */
   private Map getParamsForTag(final Tag childTag) {
-    Map params = null;
+    Map result = null;
     if (childTag.getChild().size() != 0) {
-      params = new HashMap();
+      result = new HashMap();
       // имеются потомки -- необходимо проитерировать по списку и заполнить список
       final Iterator cit = childTag.getChild().iterator();
       while (cit.hasNext()) {
@@ -144,12 +144,12 @@ class ConfigurationManager implements org.valabs.odisp.common.ConfigurationManag
           final String paramName = (String) ctag.getAttributes().get("name");
           final String paramValue = (String) ctag.getAttributes().get("value");
           if (paramName != null && paramValue != null) {
-            params.put(paramName, paramValue);
+            result.put(paramName, paramValue);
           }
         }
       }
     }
-    return params;
+    return result;
   }
 
   class MultiMap {
@@ -164,19 +164,19 @@ class ConfigurationManager implements org.valabs.odisp.common.ConfigurationManag
       return (String) getDomain(domainName).get(paramName);
     }
 
-    public void putAll(final String domainName, final Map params) {
-      getDomain(domainName).putAll(params);
+    public void putAll(final String domainName, final Map domainParams) {
+      getDomain(domainName).putAll(domainParams);
     }
 
-    public void putAllPrefixed(final String domainName, final String prefix, final Map params) {
+    public void putAllPrefixed(final String domainName, final String prefix, final Map domainParams) {
       //Не стоит забывать что параметров может и не быть ;)
-      if (params == null) { return; }
+      if (domainParams == null) { return; }
 
       final Map domain = getDomain(domainName);
-      final Iterator keyIt = params.keySet().iterator();
+      final Iterator keyIt = domainParams.keySet().iterator();
       while (keyIt.hasNext()) {
         final String key = (String) keyIt.next();
-        domain.put(prefix + key, params.get(key));
+        domain.put(prefix + key, domainParams.get(key));
       }
     }
 
