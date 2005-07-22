@@ -13,14 +13,18 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 
-/** Стартовый класс для диспетчера.
+/**
+ * Стартовый класс для диспетчера.
+ * 
  * @author <a hrev="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
- * @version $Id: Launcher.java,v 1.3 2005/04/25 13:55:09 valeks Exp $
+ * @version $Id: Launcher.java,v 1.4 2005/07/22 13:06:56 dron Exp $
  */
 public class Launcher {
 
   /**
+   * Конструктор.
    * 
+   * @param args Аргументы для класса. 
    */
   public Launcher(String[] args) {
     String dispatcher = "standart";
@@ -88,9 +92,10 @@ public class Launcher {
   }
   
   /**
-   * @param libdirs
-   * @return
-   * @throws MalformedURLException
+   * Поиск всех jar-библиотек в указанных путях.
+   * 
+   * @param libdirs Список путей.
+   * @return Список jar-библиотек с полными путями.
    */
   private final URL[] searchJarURLs(final List libdirs) {
     final Iterator libdirIt = libdirs.iterator();

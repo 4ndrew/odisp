@@ -20,7 +20,7 @@ import org.valabs.stdmsg.ModuleStatusReplyMessage;
  * Стандартный объект ODISP.
  * 
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev </a>
- * @version $Id: StandartODObject.java,v 1.17 2005/02/27 13:05:24 valeks Exp $
+ * @version $Id: StandartODObject.java,v 1.18 2005/07/22 13:06:56 dron Exp $
  */
 
 public abstract class StandartODObject implements ODObject {
@@ -78,9 +78,9 @@ public abstract class StandartODObject implements ODObject {
   /**
    * Конструктор инициализирующий почтовый ящик.
    * 
-   * @param newName имя объекта
-   * @deprecated необходимо использовать полный конструктор
-   * @see StandartODObject(String, String, String, String)
+   * @param name Имя объекта.
+   * @deprecated необходимо использовать полный конструктор.
+   * @see #StandartODObject(String, String, String, String)
    */
   public StandartODObject(final String name) {
     initialize(name, "An old style StandartODObject", "0.0.0", "(C) Dumb user");
@@ -89,17 +89,22 @@ public abstract class StandartODObject implements ODObject {
   /**
    * Конструктор инициализирующий почтовый ящик.
    * 
-   * @param newName имя объекта
-   * @param version версия объекта
-   * @param copyright авторство
-   * @param ai дополнительная информация
+   * @param newName имя объекта.
+   * @param fullName Полное имя объекта.
+   * @param version версия объекта.
+   * @param copyright авторство.
    */
   public StandartODObject(final String newName, final String fullName, final String version, final String copyright) {
     initialize(newName, fullName, version, copyright);
   }
 
   /**
-   * @param newName
+   * Инициализация объекта.
+   * 
+   * @param newName Имя.
+   * @param newFullName Развёрнутое описание.
+   * @param newVersion Версия.
+   * @param newCopyright Права.
    */
   private void initialize(final String newName, final String newFullName, final String newVersion, final String newCopyright) {
     messages = new ArrayList();
@@ -117,7 +122,7 @@ public abstract class StandartODObject implements ODObject {
   /**
    * Доступ к диспетчеру.
    * 
-   * @return ссылка на диспетчер
+   * @return ссылка на диспетчер.
    */
   protected final Dispatcher getDispatcher() {
     return dispatcher;
@@ -126,7 +131,7 @@ public abstract class StandartODObject implements ODObject {
   /**
    * Возвращает внутреннее ODISP имя объекта.
    * 
-   * @return ODISP имя объекта
+   * @return ODISP имя объекта.
    */
   public final String getObjectName() {
     return name;
@@ -135,7 +140,7 @@ public abstract class StandartODObject implements ODObject {
   /**
    * Устанавливает диспетчера для текущего объекта.
    * 
-   * @param newDisp диспетчер работающий с этим объектом
+   * @param newDisp диспетчер работающий с этим объектом.
    */
   public final void setDispatcher(final Dispatcher newDisp) {
     this.dispatcher = newDisp;
@@ -144,7 +149,7 @@ public abstract class StandartODObject implements ODObject {
   /**
    * Установить таблицу параметров.
    * 
-   * @param cfg новая таблица
+   * @param cfg новая таблица.
    */
   public void setConfiguration(final Map cfg) {
     configuration = cfg;
@@ -153,7 +158,7 @@ public abstract class StandartODObject implements ODObject {
   /**
    * Получить значение параметра конфигурации.
    * 
-   * @param name имя параметра
+   * @param name имя параметра.
    */
   protected final String getParameter(final String name) {
     if (configuration != null && configuration.containsKey(name)) { return (String) configuration.get(name); }
@@ -163,8 +168,8 @@ public abstract class StandartODObject implements ODObject {
   /**
    * Получить значение параметра конфигурации с учетом значения по-умолчанию.
    * 
-   * @param name имя параметра
-   * @param defValue значение по умолчанию
+   * @param name Имя параметра.
+   * @param defValue Значение по умолчанию.
    */
   protected final String getParameter(final String name, final String defValue) {
     return getParameter(name) == null ? defValue : getParameter(name);
@@ -173,8 +178,8 @@ public abstract class StandartODObject implements ODObject {
   /**
    * Регистрация обработчика сообщения.
    * 
-   * @param message символьное имя сообщения
-   * @param handler обработчик
+   * @param message Символьное имя сообщения.
+   * @param handler Обработчик.
    */
   protected final void addHandler(final String message, final MessageHandler handler) {
     if (handlers.containsKey(message)) { return; }
@@ -184,9 +189,13 @@ public abstract class StandartODObject implements ODObject {
   /**
    * Обработка сообщения.
    * Возможны три группы сообщений:
-   * сообщения объекту,
-   * сообщение посланное другому объекту или сервису в случае если стоит matchAll
-   * @param msg сообщение для обработки
+   * <ul>
+   * <li>сообщения объекту;
+   * <li>сообщение посланное другому объекту или сервису в случае если стоит matchAll;
+   * <li>сообщения добавляются в корзину в случае;
+   * </ul> 
+   * 
+   * @param msg сообщение для обработки.
    */
   public final void handleMessage0(final Message msg) {
     if (blockedState && !msg.isOOB()) {
@@ -204,7 +213,12 @@ public abstract class StandartODObject implements ODObject {
     }
   }
   
-  /** Проверка является ли сообщения нашим. */
+  /**
+   * Проверка является ли сообщения нашим (место назначение - объект или
+   * его сервисы).
+   * 
+   * @return true, если оно наше, false - в другом случае.
+   */
   private boolean isOur(final Message msg) {
     boolean result = false;
     if (msg.getDestination().equals(name)) {
@@ -216,7 +230,9 @@ public abstract class StandartODObject implements ODObject {
   }
   
   /**
-   * @param msg
+   * Обработка сообщения объектов.
+   * 
+   * @param msg Сообщение для обработки. 
    */
   private void handleMessageByObject(final Message msg) {
     boolean handled = false;
@@ -237,7 +253,9 @@ public abstract class StandartODObject implements ODObject {
   }
 
   /**
-   * @param msg
+   * Обработка встроенного сообщения.
+   * 
+   * @param msg Cообщение.
    */
   private boolean handleMessageInternal(final Message msg) {
     boolean result = false;
@@ -259,6 +277,10 @@ public abstract class StandartODObject implements ODObject {
     return result;
   }
 
+  /**
+   * Обработчик по-умолчанию.
+   * @param msg Cообщение.
+   */
   public void handleMessage(final Message msg) {
     logger.fine("There is no handler for message " + msg.getAction() + " in " + name);
   }
@@ -273,8 +295,8 @@ public abstract class StandartODObject implements ODObject {
   /**
    * Метод вызываемый для очистки данных класса.
    * 
-   * @param type признак выхода
-   * @return код возврата
+   * @param type Признак выхода.
+   * @return код Возврата.
    */
   public int cleanUp(final int type) {
     return 0;
@@ -282,10 +304,12 @@ public abstract class StandartODObject implements ODObject {
 
   /**
    * Установить состояние блокировки. В этом состоянии все сообщения, которые были получены объектом (кроме
-   * сообщений с префиксом "od_"), сохраняются для последующей обработки. При смене состояния на
+   * сообщений с установленным isOOB), сохраняются для последующей обработки. При смене состояния на
    * "неблокирующее" сохраненные сообщения передаются на обработку отдельному Sender-потоку.
    * 
-   * @param newState новое состояние
+   * @param newState Новое состояние.
+   * @see Message#isOOB()
+   * @see Message#setOOB(boolean)
    */
   protected void setBlockedState(final boolean newState) {
     blockedState = newState;
@@ -308,15 +332,28 @@ public abstract class StandartODObject implements ODObject {
     }
   }
   
+  /**
+   * Сохранение текущего состояния объекта для последующего восстановления при перезагрузке.
+   * Объекту, который поддерживает перезагрузку необходимо перегрузить данных метод для
+   * сохранения промежуточных данных.
+   *   
+   * @return Карта данных объекта. Как ключи, так данные Map <b>должны быть</b> должны реализовывать
+   * интерфейс {@link java.io.Serializable}.
+   */
   public Map exportState() {
     return null;
   }
   
+  /**
+   * Восстановление данных объекта при перезагрузке.
+   * 
+   * @param oldState Сохранённые данные объекта. 
+   */
   public void importState(final Map oldState) {
-    
+    /* ничего не делаем по-умолчанию. */
   }
 
-  	/** Хранение статуса объекта. */
+  /** Хранение статуса объекта. */
   protected static class ObjectStatus {
     public static final String NOERROR = "noerror";
     private final List runningTasks = new ArrayList();

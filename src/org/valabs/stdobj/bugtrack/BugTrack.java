@@ -15,7 +15,7 @@ import org.valabs.stdmsg.ODObjectLoadedMessage;
 /** Объект, который обеспечивает создание полного сообщения об ошибке возникшей во
  * время работы системы.
  * @author (C) 2005 <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
- * @version $Id: BugTrack.java,v 1.5 2005/02/27 12:37:30 valeks Exp $
+ * @version $Id: BugTrack.java,v 1.6 2005/07/22 13:06:56 dron Exp $
  */
 public class BugTrack extends StandartODObject implements ExceptionHandler, MessageHandler {
   public static final String NAME = "bugtrack";
@@ -67,9 +67,7 @@ public class BugTrack extends StandartODObject implements ExceptionHandler, Mess
         ss.startSnapshot();
         try {
           Thread.sleep(1000);
-        } catch (InterruptedException e) {
-          
-        }
+        } catch (InterruptedException e) { /* игнорируется */ }
         ss.stopSnapshot();
         logger.warning("Snapshot taken.");
         bw.writeBugReport(id, pc, ai, ss);

@@ -52,4 +52,5 @@ package org.valabs.stdobj.webcon.servlet;
 
 public interface SingleThreadModel
     {
+  		/* nothing to do */
     }

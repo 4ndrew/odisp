@@ -9,7 +9,7 @@ import org.valabs.stdobj.echo.EchoObject;
 /** Тестовый тест для тестового объекта.
  * Проверка принципиальной возможности создания тестов для объектов ODISP.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Алексеев Валентин А.</a>
- * @version $Id: TestEchoObject.java,v 1.3 2005/01/26 08:22:53 valeks Exp $
+ * @version $Id: TestEchoObject.java,v 1.4 2005/07/22 13:06:57 dron Exp $
  */
 public class TestEchoObject extends TestCase {
   /** Тестирование на корректность эха. */
@@ -20,7 +20,7 @@ public class TestEchoObject extends TestCase {
           signalException(new Exception("unknown message received"));
         }
       }
-    };
+    }
     
     DispatcherTest disp = new DispatcherTest();
     

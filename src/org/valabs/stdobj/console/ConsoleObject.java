@@ -16,7 +16,7 @@ import org.valabs.stdobj.translator.Translator;
  *         Алексеев </a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин
  *         </a>
- * @version $Id: ConsoleObject.java,v 1.28 2005/07/14 11:01:16 valeks Exp $
+ * @version $Id: ConsoleObject.java,v 1.29 2005/07/22 13:06:53 dron Exp $
  */
 public class ConsoleObject extends StandartODObject {
   /** Имя объекта */
@@ -101,7 +101,6 @@ public class ConsoleObject extends StandartODObject {
 
   /**
    * Конструктор объекта с заданным порядковым номером.
-   * @param id номер
    */
   public ConsoleObject() {
     super(NAME, FULLNAME, VERSION, COPYRIGHT);
@@ -124,10 +123,10 @@ public class ConsoleObject extends StandartODObject {
     if (getParameter("hasTranslator", "no").equals("no")) {
       String[] res = { "dispatcher" };
       return res;
-    } else {
-      String[] res = { "dispatcher", "translator-server",
-          Translator.class.getName(), };
-      return res;
     }
+    
+    String[] res = { "dispatcher", "translator-server",
+        Translator.class.getName(), };
+    return res;
   }
 }

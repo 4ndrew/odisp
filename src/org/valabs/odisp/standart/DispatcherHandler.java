@@ -23,8 +23,8 @@ import org.valabs.stdmsg.ODShutdownMessage;
 /**
  * Обработчик сообщений диспетчера ODISP.
  * 
- * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: DispatcherHandler.java,v 1.41 2005/07/18 08:37:13 valeks Exp $
+ * @author (C) 2004-2005 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
+ * @version $Id: DispatcherHandler.java,v 1.42 2005/07/22 13:06:54 dron Exp $
  */
 
 class DispatcherHandler extends StandartODObject {
@@ -50,7 +50,7 @@ class DispatcherHandler extends StandartODObject {
     private static final String VERSION = "0.1.0";
 
     /** Дополнительная информация о модуле. */
-    private static final String COPYRIGHT = "(C) 2003-2004 Valentin A. Alekseev, Andrew A. Porohin";
+    private static final String COPYRIGHT = "(C) 2003-2005 Valentin A. Alekseev, Andrew A. Porohin";
 
     /**
      * Вернуть список сервисов.
@@ -72,7 +72,9 @@ class DispatcherHandler extends StandartODObject {
         return res;
     }
 
-    /** Зарегистрировать обработчики сообщений. */
+    /**
+     * Зарегистрировать обработчики сообщений.
+     */
     protected final void registerHandlers() {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
@@ -170,7 +172,8 @@ class DispatcherHandler extends StandartODObject {
 		});
     }
 
-    /** Обработка пришедшего сообщения.
+    /**
+     * Обработка пришедшего сообщения.
      * @param msg сообщение для обработки
      */
     public final void handleMessage(final Message msg) {
@@ -185,7 +188,9 @@ class DispatcherHandler extends StandartODObject {
         super.handleMessage(msg);
     }
 
-    /** Точка выхода из объекта.
+    /**
+     * Точка выхода из объекта.
+     * 
      * @param type признак выхода
      * @return код возврата
      */
@@ -193,14 +198,16 @@ class DispatcherHandler extends StandartODObject {
         return type;
     }
 
-    /** Конструктор объекта.
-     * @param id порядковый номер объекта
+    /**
+     * Конструктор объекта.
      */
     public DispatcherHandler() {
         super(NAME, FULLNAME, VERSION, COPYRIGHT);
     }
 
-    /** Специальная обработка конфигурации.
+    /**
+     * Специальная обработка конфигурации.
+     * 
      * @param cfg конфигурация объекта
      */
     public void setConfiguration(final Map cfg) {

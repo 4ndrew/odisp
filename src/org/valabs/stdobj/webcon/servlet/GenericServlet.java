@@ -65,8 +65,9 @@ public abstract class GenericServlet implements Servlet
     // This is called by the system when the servlet is first loaded.
     // @exception ServletException when an exception has occurred
     public void init()
-	{
-	}
+  {
+     /* nothing to do */
+  }
 
     /// Services a single request from the client.
     // <P>
@@ -86,6 +87,7 @@ public abstract class GenericServlet implements Servlet
     // This is called by the system when the servlet is being destroyed.
     public void destroy()
 	{
+      /* nothing to do */
 	}
 
 

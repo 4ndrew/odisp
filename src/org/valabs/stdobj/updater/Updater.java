@@ -13,7 +13,7 @@ import org.valabs.stdmsg.ODObjectLoadedMessage;
 
 /** Компонент поддержки обновлений.
  * @author <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
- * @version $Id: Updater.java,v 1.3 2005/04/27 09:47:52 valeks Exp $
+ * @version $Id: Updater.java,v 1.4 2005/07/22 13:06:55 dron Exp $
  */
 public class Updater extends StandartODObject implements MessageHandler {
   private static final String NAME = "updater";
@@ -28,7 +28,7 @@ public class Updater extends StandartODObject implements MessageHandler {
   }
   
   /**
-   * @param name
+   * Конструктор.
    */
   public Updater() {
     super(NAME, FULLNAME, VERSION, COPYRIGHT);

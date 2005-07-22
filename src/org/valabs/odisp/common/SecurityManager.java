@@ -2,25 +2,37 @@ package org.valabs.odisp.common;
 
 import java.util.Map;
 
-/** Интерфейс менеджера безопасности ODISP.
+/**
+ * Интерфейс менеджера безопасности ODISP.
+ * 
  * @author (C) 2004 <a href="valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: SecurityManager.java,v 1.6 2005/07/18 13:30:59 valeks Exp $
+ * @version $Id: SecurityManager.java,v 1.7 2005/07/22 13:06:56 dron Exp $
  */
 public interface SecurityManager {
-	/** Проверка доступности пользователю заданного свойства.
-	 * @param userName имя пользователя
-	 * @param capabilityName имя свойства
-	 * @param options Дополнительные опции
+	/**
+	 * Проверка доступности пользователю заданного свойства.
+	 * 
+	 * @param userName имя пользователя.
+	 * @param capability имя свойства.
+	 * @param options Дополнительные опции.
 	 */
-	boolean checkAccess(String userName, String capability, Map options);	
-  /** Аутентифицировать пользователя.
-   * @param name имя пользователя
-   * @param password пароль пользователя
+	boolean checkAccess(String userName, String capability, Map options);
+	
+  /**
+   * Аутентифицировать пользователя.
+   * 
+   * @param name имя пользователя.
+   * @param password пароль пользователя.
    */
   boolean authenticateUser(final String name, final String password);
   
-  /** Журналирование операции пользователя.
+  /**
+   * Журналирование операции пользователя.
    * 
+   * @param userName Имя пользователя.
+   * @param actionId Идентификатор операции.
+   * @param successStatus Код результата операции.
+   * @param ai Дополнительная информация.
    */
   void audit(final String userName, final String actionId, final boolean successStatus, final String ai);
 }

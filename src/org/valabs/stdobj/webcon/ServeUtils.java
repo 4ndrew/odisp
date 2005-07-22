@@ -28,7 +28,6 @@
  */
 package org.valabs.stdobj.webcon;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.StringTokenizer;
@@ -45,13 +44,12 @@ public class ServeUtils {
 
   // Server identification.
   public static final String serverName = "org.valabs.stdobj.webcon";
-  public static final String serverVersion = "$Revision: 1.5 $";
+  public static final String serverVersion = "$Revision: 1.6 $";
   public static final String serverUrl =
     "http://www.acme.com/java/software/org.valabs.stdobj.webcon.Serve.html";
 
   /** Write a standard-format HTML address for this server.
-   * @param o
-   * @exception IOException 
+   * @param o 
    */
   public static void writeAddress(OutputStream o) {
     PrintStream p = new PrintStream(o);

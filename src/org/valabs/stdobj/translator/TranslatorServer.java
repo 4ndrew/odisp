@@ -15,7 +15,7 @@ import org.valabs.stdmsg.TranslatorGetTranslationReplyMessage;
 
 /**
  * @author <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
- * @version $Id: TranslatorServer.java,v 1.7 2005/02/17 12:32:42 valeks Exp $
+ * @version $Id: TranslatorServer.java,v 1.8 2005/07/22 13:06:55 dron Exp $
  */
 public class TranslatorServer extends StandartODObject
 		implements
@@ -53,9 +53,7 @@ public class TranslatorServer extends StandartODObject
 	          }
 	        }
 	      } while (inLine != null);
-	    } catch (IOException e) {
-	      
-	    }
+	    } catch (IOException e) { /* игнорируется */ }
 			Message m = dispatcher.getNewMessage();
 			TranslatorGetTranslationReplyMessage.setup(m, msg.getOrigin(),
 					getObjectName(), msg.getId());

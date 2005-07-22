@@ -302,9 +302,6 @@ class ServeConnection
   }
 
   /** Returns a buffered reader for reading request data.
-   * @exception UnsupportedEncodingException if the character set encoding isn't supported
-   * @exception IllegalStateException if getInputStream has already been called
-   * @exception IOException on other I/O-related errors
    */
   public BufferedReader getReader() {
      // !!!

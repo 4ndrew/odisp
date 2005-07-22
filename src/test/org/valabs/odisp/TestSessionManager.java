@@ -11,7 +11,7 @@ import org.valabs.stdmsg.StandartMessage;
 
 /** Набор тестов для менеджера сессий.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Алексеев Валентин А.</a>
- * @version $Id: TestSessionManager.java,v 1.2 2004/12/02 22:08:59 valeks Exp $
+ * @version $Id: TestSessionManager.java,v 1.3 2005/07/22 13:06:57 dron Exp $
  */
 public class TestSessionManager extends TestCase {
   /** Тестирование простейшего случая -- обработчик на одиночное сообщение. */
@@ -19,7 +19,7 @@ public class TestSessionManager extends TestCase {
     SessionManager sm = SessionManager.getSessionManager();
     MessageHandler mh = new MessageHandler() {
       public void messageReceived(final Message msg) {
-        
+        /* не используется */
       }
     };
     sm.addMessageListener(UUID.getNullUUID(), mh);
@@ -34,7 +34,7 @@ public class TestSessionManager extends TestCase {
     SessionManager sm = SessionManager.getSessionManager();
     MessageHandler mh = new MessageHandler() {
       public void messageReceived(final Message msg) {
-        
+        /* не используется */
       }
     };
     sm.addMessageListener(UUID.getNullUUID(), mh, true);
@@ -53,7 +53,7 @@ public class TestSessionManager extends TestCase {
       public void messageReceived(final Message msg) {
         SessionManager.getSessionManager().addMessageListener(UUID.getNullUUID(), new MessageHandler() {
           public void messageReceived(final Message msg) {
-            
+            /* не используется */
           }
         });
       }

@@ -14,9 +14,11 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 
-/** Класс читающий и сохраняющий состояние диспетчера перед перезагрузкой.
+/**
+ * Класс читающий и сохраняющий состояние диспетчера перед перезагрузкой.
+ * 
  * @author <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
- * @version $Id: DispatcherSnapshot.java,v 1.2 2005/02/27 12:37:31 valeks Exp $
+ * @version $Id: DispatcherSnapshot.java,v 1.3 2005/07/22 13:06:54 dron Exp $
  */
 class DispatcherSnapshot {
   private static final String SNAP_NAME = "restart.snap";
@@ -81,7 +83,7 @@ class DispatcherSnapshot {
   }
 
   /**
-   * @return
+   * @return true - снимок существует, false - иначе.
    */
   public boolean hasSnapshot() {
     return objectSnapshots.size() > 0 || messageQueue.size() > 0;

@@ -20,7 +20,7 @@ import org.valabs.odisp.common.Message;
  * 
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: StandartMessage.java,v 1.28 2005/07/20 08:49:34 valeks Exp $
+ * @version $Id: StandartMessage.java,v 1.29 2005/07/22 13:06:56 dron Exp $
  */
 public class StandartMessage implements Message, Serializable, Cloneable {
   private static MessageGraphWriter debugMGW = new MessageGraphWriter();
@@ -397,8 +397,7 @@ public class StandartMessage implements Message, Serializable, Cloneable {
     Message result = null;
     try {
       result = (Message) this.clone();
-    } catch (CloneNotSupportedException e) {
-    }
+    } catch (CloneNotSupportedException e) { /* игнорируется */ }
     return result;
   }
 }

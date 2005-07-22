@@ -48,7 +48,7 @@ public class SampleServlet extends HttpServlet {
 
   /** Services a single request from the client.
    * @param req the servlet request
-   * @param req the servlet response
+   * @param res the servlet response
    * @exception ServletException when an exception has occurred
    */
   public void service(HttpServletRequest req, HttpServletResponse res)

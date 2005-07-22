@@ -17,12 +17,13 @@ import org.valabs.odisp.common.ResourceManager;
 import org.valabs.odisp.common.SecurityManager;
 import org.valabs.stdmsg.StandartMessage;
 
-/** Стандартный диспетчер ODISP.
- * Стандартный диспетчер реализует пересылку сообщений между объектами ядра
- * и управление ресурсными объектами.
- * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
- * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: Dispatcher.java,v 1.62 2005/04/25 12:32:27 dron Exp $
+/**
+ * Стандартный диспетчер ODISP.
+ * Предоставляет интерфейс для отсылки сообщений.
+ * 
+ * @author (C) 2003-2005 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
+ * @author (C) 2003-2005 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
+ * @version $Id: Dispatcher.java,v 1.63 2005/07/22 13:06:54 dron Exp $
  */
 public class Dispatcher implements org.valabs.odisp.common.Dispatcher, ExceptionHandler {
   /** Журнал. */
@@ -38,29 +39,37 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
   /** Обработчик исключений. */
   private ExceptionHandler ehandler;
 
-  /** Доступ к менеджеру объектов. 
-   * @return ссылка на менеджер объектов
+  /**
+   * Доступ к менеджеру объектов.
+   *  
+   * @return ссылка на менеджер объектов.
    */
   public final ObjectManager getObjectManager() {
     return oman;
   }
 
-  /** Доступ к менеджеру ресурсов. 
-   * @return ссылка на менеджер ресурсов
+  /**
+   * Доступ к менеджеру ресурсов.
+   *  
+   * @return ссылка на менеджер ресурсов.
    */
   public final ResourceManager getResourceManager() {
     return rman;
   }
 
-  /** Интерфейс для объектов ядра для отсылки сообщений.
-   * @param message сообщение для посылки
+  /**
+   * Интерфейс для объектов ядра для отсылки сообщений.
+   * 
+   * @param message сообщение для посылки.
    */
   public final void send(final Message message) {
     oman.send(message);
   }
 
-  /** Интерфейс для объектов ядра для отсылки сообщений.
-   * @param messageList список сообщений для посылки
+  /**
+   * Интерфейс для объектов ядра для отсылки сообщений.
+   * 
+   * @param messageList список сообщений для посылки.
    */
   public final void send(final Message[] messageList) {
     if (messageList == null || messageList.length == 0) {
@@ -72,8 +81,10 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
     }
   }
 
-  /** Интерфейс для объектов ядра для отсылки сообщений.
-   * @param messageList список сообщений для посылки
+  /**
+   * Интерфейс для объектов ядра для отсылки сообщений.
+   * 
+   * @param messageList список сообщений для посылки.
    */
   public final void send(final List messageList) {
     if (messageList != null) {
@@ -84,13 +95,15 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
     }
   }
 
-  /** Интерфейс создания нового сообщения для сокрытия конкретной реализации
+  /**
+   * Интерфейс создания нового сообщения для сокрытия конкретной реализации
    * сообщений.
-   * @param action действие которое несет сообщение
-   * @param destination адресат сообщения
-   * @param origin отправитель сообщения
-   * @param inReplyTo идентификатор сообщения на которое производится ответ
-   * @return Message созданное сообщение
+   * 
+   * @param action действие которое несет сообщение.
+   * @param destination адресат сообщения.
+   * @param origin отправитель сообщения.
+   * @param inReplyTo идентификатор сообщения на которое производится ответ.
+   * @return Message созданное сообщение.
    */
   public final Message getNewMessage(final String action,
 				     final String destination,
@@ -99,13 +112,20 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
     return new StandartMessage(action, destination, origin, inReplyTo);
   }
 
-  /** Создать новое пустое сообщение.
-   * @return ссылка на сообщение
+  /**
+   * Создать новое пустое сообщение.
+   * 
+   * @return ссылка на сообщение.
    */
   public final Message getNewMessage() {
     return new StandartMessage();
   }
 
+  /**
+   * Конструктор. 
+   *
+   * @param args Аргументы.
+   */
   public Dispatcher(List args) {
     log.info(toString() + " starting up...");
     addConfigurationManager(new org.valabs.odisp.standart.ConfigurationManager());
@@ -134,8 +154,7 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
             synchronized (this) {
               wait();
             }
-          } catch (InterruptedException e) {
-          }
+          } catch (InterruptedException e) { /* игнорируется. */ }
         }
       };
       Map tmp = new HashMap();
@@ -146,22 +165,25 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
       aliveThread.start();
       try {
         aliveThread.join();
-      } catch (InterruptedException e) {
-
-      }
+      } catch (InterruptedException e) { /* игнорируется. */ }
     } else {
       log.severe("Default configuration manager does not support component listing. Bailing out.");
     }
   }
   
-  /** Выводит сообщение об ошибке в случае некорректных параметров. */
+  /**
+   * Выводит сообщение об ошибке в случае некорректных параметров.
+   */
   public static void usage() {
     log.severe("Usage: java org.valabs.odisp.standart.Dispatcher <config>");
     System.exit(0);
   }
-  /** Точка входа в StandartDispatcher.
+  
+  /**
+   * Точка входа в StandartDispatcher.
+   * 
    * @param args по 0 должно содержать имя файла с перечислением классов,
-   * которые необходимо загрузить
+   * которые необходимо загрузить.
    */
   public static void main(final String[] args) {
     log.setLevel(java.util.logging.Level.ALL);
@@ -224,7 +246,9 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
     return cman;
   }
   
-  /** Мультиплексор менеджеров конфигурации. */
+  /**
+   * Мультиплексор менеджеров конфигурации.
+   */
   class MultiConfigurationManager implements ConfigurationManager {
     private final List cman = new ArrayList();
     void addConfigurationManager(final ConfigurationManager _cman) {

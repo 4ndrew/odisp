@@ -26,7 +26,6 @@ class ServeConfig implements ServletConfig {
   }
 
   /** Gets the names of the initialization parameters of the servlet.
-   * @param name the parameter name
    */
   public Enumeration getInitParameterNames() {
     // This server doesn't support servlet init params.

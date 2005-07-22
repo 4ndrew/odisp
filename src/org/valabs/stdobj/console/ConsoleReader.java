@@ -14,7 +14,7 @@ import org.valabs.odisp.common.Message;
  * 
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: ConsoleReader.java,v 1.18 2005/02/27 12:37:30 valeks Exp $
+ * @version $Id: ConsoleReader.java,v 1.19 2005/07/22 13:06:53 dron Exp $
  */
 
 public class ConsoleReader extends Thread {
@@ -30,9 +30,7 @@ public class ConsoleReader extends Thread {
 
   /** Конструктор объекта слушающего ввод с консоли.
    * 
-   * @param oName имя ODISP-объекта
    * @param disp диспетчер ODISP
-   * @param log ссылка на журнал
    */
   public ConsoleReader(final Dispatcher disp) {
     super("ConsoleReader");

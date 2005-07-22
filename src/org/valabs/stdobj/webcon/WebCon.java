@@ -24,7 +24,7 @@ import org.valabs.stdobj.webcon.servlet.http.HttpServletResponse;
 
 /** ODISP-интерфейс к ACME серверу.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: WebCon.java,v 1.19 2005/07/18 08:37:13 valeks Exp $
+ * @version $Id: WebCon.java,v 1.20 2005/07/22 13:06:54 dron Exp $
  */
 
 public class WebCon extends StandartODObject implements MessageHandler {
@@ -121,7 +121,6 @@ public class WebCon extends StandartODObject implements MessageHandler {
   }
 
   /** Конструктор объекта.
-   * @param id порядковый номер
    */
   public WebCon() {
     super(NAME, FULLNAME, VERSION, COPYRIGHT);

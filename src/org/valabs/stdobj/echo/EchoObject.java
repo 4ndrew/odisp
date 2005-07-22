@@ -9,7 +9,7 @@ import org.valabs.odisp.common.StandartODObject;
 
 /** Простейший ODISP объект реализующий автоответчик на приходящие сообщения.
 * @author (C) 2003 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
-* @version $Id: EchoObject.java,v 1.21 2005/02/27 12:37:32 valeks Exp $
+* @version $Id: EchoObject.java,v 1.22 2005/07/22 13:06:57 dron Exp $
 */
 public class EchoObject extends StandartODObject {
   private int replyCount = 0;
@@ -34,7 +34,6 @@ public class EchoObject extends StandartODObject {
   }
 
   /** Создание echo-объекта.
-   * @param id индекс объекта
    */
   public EchoObject() {
     super("echo", "Echo object", "0.1.0", "(C) 2003-2005 Valentin A. Alekseev");

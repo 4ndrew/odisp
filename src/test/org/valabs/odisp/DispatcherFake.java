@@ -22,7 +22,7 @@ import org.valabs.stdmsg.StandartMessage;
 
 /** Диспетчер-заглушка для тестирования ODISP объектов.
  * @author (С) 2004 <a href="mailto:valeks@novel-il.ru">Алексеев Валентин А.</a>
- * @version $Id: DispatcherFake.java,v 1.6 2005/07/18 13:28:15 valeks Exp $
+ * @version $Id: DispatcherFake.java,v 1.7 2005/07/22 13:06:57 dron Exp $
  */
 public class DispatcherFake extends TestCase implements Dispatcher, ObjectManager, ResourceManager, SecurityManager, ConfigurationManager, ExceptionHandler {
 
@@ -30,6 +30,7 @@ public class DispatcherFake extends TestCase implements Dispatcher, ObjectManage
    * @see org.valabs.odisp.common.Dispatcher#send(org.valabs.odisp.common.Message)
    */
   public void send(Message message) {
+    /* не используется */
   }
 
   /* (non-Javadoc)
@@ -105,75 +106,107 @@ public class DispatcherFake extends TestCase implements Dispatcher, ObjectManage
    * @see org.valabs.odisp.common.Dispatcher#addSecurityManager(org.valabs.odisp.common.SecurityManager)
    */
   public void addSecurityManager(SecurityManager additionalSecurityManager) {
+    /* не используется */
   }
 
   /* (non-Javadoc)
    * @see org.valabs.odisp.common.Dispatcher#addExceptionHandler(org.valabs.odisp.common.ExceptionHandler)
    */
   public void addExceptionHandler(ExceptionHandler ex) {
+    /* не используется */
   }
 
   /* (non-Javadoc)
    * @see org.valabs.odisp.common.Dispatcher#addConfigurationManager(org.valabs.odisp.common.ConfigurationManager)
    */
   public void addConfigurationManager(ConfigurationManager cman) {
+    /* не используется */
   }
 
   public void addProvider(String service, String objectName) {
+    /* не используется */
   }
+  
   public Map getObjects() {
     return null;
   }
+  
   public List getProviding() {
     return null;
   }
+  
   public void loadObject(String name, Map params) {
+    /* не используется */
   }
+  
   public void loadPending() {
+    /* не используется */
   }
+  
   public void removeProvider(String service, String objectName) {
+    /* не используется */
   }
+  
   public void unloadObject(String objectName, int code) {
+    /* не используется */
   }
+  
   public Map getResources() {
     return null;
   }
+  
   public void loadResource(String className, int mult, Map params) {
+    /* не используется */
   }
+  
   public void releaseResource(String className, Resource resource) {
+    /* не используется */
   }
+  
   public Resource resourceAcquire(String className) {
     return null;
   }
+  
   public Resource resourceTryAcquire(String className) {
     return null;
   }
+  
   public List statRequest() {
     return null;
   }
+  
   public boolean authenticateUser(String name, String password) {
     return false;
   }
+  
   public boolean checkAccess(String userName, String capabilityName, Map options) {
     return false;
   }
+  
   public List getObjectList() {
     return null;
   }
+  
   public String getParameter(String domain, String paramName) {
     return null;
   }
+  
   public List getResourceList() {
     return null;
   }
+  
   public void setCommandLineArguments(List args) {
+    /* не используется */
   }
+  
   public boolean supportComponentListing() {
     return false;
   }
+  
   public boolean supportParameterFetching() {
     return false;
   }
+  
   public void signalException(Exception e) {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     e.printStackTrace(new PrintStream(out));
