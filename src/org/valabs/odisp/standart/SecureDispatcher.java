@@ -15,7 +15,7 @@ import org.valabs.odisp.common.SecurityManager;
 
 /** Обёртка диспетчера для защиты от подмены сообщений.
  * @author <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
- * @version $Id: SecureDispatcher.java,v 1.3 2005/02/27 12:37:31 valeks Exp $
+ * @version $Id: SecureDispatcher.java,v 1.4 2005/07/29 14:29:39 valeks Exp $
  */
 final class SecureDispatcher implements Dispatcher {
   private final Dispatcher realDispatcher;
@@ -26,14 +26,31 @@ final class SecureDispatcher implements Dispatcher {
     objectName = _objectName;
   }
   
+  private boolean checkMessage(Message message) {
+		if (message == null) {
+			return false;
+		}
+		boolean result = true;
+		if (message.getOrigin() == null) {
+			message.setOrigin(objectName);
+		}
+		result = message.getOrigin().equals(objectName);
+
+		if (message.getEnvelope().size() > 0) {
+			Iterator it = message.getEnvelope().iterator();
+			while (it.hasNext()) {
+				Message element = (Message) it.next();
+				if (!checkMessage(element)) {
+					result = false;
+					break;
+				}
+			}
+		}
+		return result;
+	}
+  
   public void send(final Message message) {
-    if (message == null) {
-      return;
-    }
-    if (message.getOrigin() == null) {
-      message.setOrigin(objectName);
-    }
-    assert message.getOrigin().equals(objectName) : "Message origin faked.";
+    assert checkMessage(message) : "Message or it's envelope contents contained faked info.";
     realDispatcher.send(message);
   }
 
