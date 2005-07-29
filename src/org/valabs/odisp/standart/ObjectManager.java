@@ -23,7 +23,6 @@ import org.doomdark.uuid.UUID;
 import org.valabs.odisp.common.Dispatcher;
 import org.valabs.odisp.common.Message;
 import org.valabs.odisp.common.ODObject;
-import org.valabs.stdmsg.COWStandardMessage;
 import org.valabs.stdmsg.ODObjectLoadedMessage;
 import org.valabs.stdmsg.ODShutdownMessage;
 
@@ -34,7 +33,7 @@ import com.novel.tools.filter.FilteringIterator;
  * Менеджер объектов ODISP.
  * 
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev </a>
- * @version $Id: ObjectManager.java,v 1.62 2005/07/29 15:14:26 dron Exp $
+ * @version $Id: ObjectManager.java,v 1.63 2005/07/29 16:23:53 dron Exp $
  */
 
 class ObjectManager implements org.valabs.odisp.common.ObjectManager {
