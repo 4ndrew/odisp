@@ -1,4 +1,4 @@
-<!-- $Id: build.xml,v 1.26 2005/06/27 11:57:36 dron Exp $ mode: -*- --><!-- xsl -*- -->
+<!-- $Id: build.xml,v 1.27 2005/07/31 10:04:24 dron Exp $ mode: -*- --><!-- xsl -*- -->
 <project name="odisp" default="all" basedir=".">
     <taskdef resource="checkstyletask.properties"
            classpath="/usr/local/share/java/classes/checkstyle.jar"/>
@@ -144,6 +144,7 @@
             <pathelement location="lib/xlang-parser.jar"/>
             <pathelement location="lib/jug.jar"/>
             <pathelement location="lib/jmdns.jar"/>
+            <pathelement location="tools/tplParser.jar"/>
           </classpath>
         </javac>
     </target>
