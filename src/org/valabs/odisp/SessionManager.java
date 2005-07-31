@@ -52,7 +52,7 @@ import org.valabs.odisp.common.MessageHandler;
  * </pre>
  * 
  * @author (C) 2004 <a href="dron@novel-il.ru">Андрей А. Порохин </a>
- * @version $Id: SessionManager.java,v 1.14 2005/02/27 12:37:31 valeks Exp $
+ * @version $Id: SessionManager.java,v 1.15 2005/07/31 16:02:52 dron Exp $
  */
 public class SessionManager {
 
@@ -143,15 +143,17 @@ public class SessionManager {
         matched = true;
       }
     }
-    commonIt = toPerform.iterator();
-    while (commonIt.hasNext()) {
-      final SessionRecord element = (SessionRecord) commonIt.next();
-      element.getMessageHandler().messageReceived(msg);
-    }
+
     commonIt = toRemove.iterator();
     while (commonIt.hasNext()) {
       final Object element = commonIt.next();
       handlers.remove(element);
+    }
+
+    commonIt = toPerform.iterator();
+    while (commonIt.hasNext()) {
+      final SessionRecord element = (SessionRecord) commonIt.next();
+      element.getMessageHandler().messageReceived(msg);
     }
     return matched;
   }
