@@ -16,12 +16,6 @@ import org.valabs.odisp.common.MessageHandler;
  * памяти). Примерный план использования ниже:
  * 
  * <pre>
- * 
- *  
- *   
- *    
- *     
- *      
  *       # После посылки сообщения: 
  *       Message newMsg = dispatcher.getNewMessage(...);
  *       ...
@@ -43,16 +37,10 @@ import org.valabs.odisp.common.MessageHandler;
  *         }
  *         ...
  *       }
- *       
- *      
- *     
- *    
- *   
- *  
  * </pre>
  * 
  * @author (C) 2004 <a href="dron@novel-il.ru">Андрей А. Порохин </a>
- * @version $Id: SessionManager.java,v 1.15 2005/07/31 16:02:52 dron Exp $
+ * @version $Id: SessionManager.java,v 1.16 2005/08/01 08:48:31 valeks Exp $
  */
 public class SessionManager {
 
@@ -130,25 +118,28 @@ public class SessionManager {
    */
   public final boolean processMessage(final Message msg) {
     boolean matched = false;
-    Iterator commonIt = handlers.iterator();
     final List toPerform = new ArrayList();
     final List toRemove = new ArrayList();
-    while (commonIt.hasNext()) {
-      final SessionRecord element = (SessionRecord) commonIt.next();
-      if (element.getMsgId().equals(msg.getReplyTo())) {
-        toPerform.add(element);
-        if (!element.isMultiply()) {
-          toRemove.add(element);
-        }
-        matched = true;
-      }
-    }
+    Iterator commonIt;
+    synchronized (handlers) {
+		commonIt = handlers.iterator();
+		while (commonIt.hasNext()) {
+			final SessionRecord element = (SessionRecord) commonIt.next();
+			if (element.getMsgId().equals(msg.getReplyTo())) {
+				toPerform.add(element);
+				if (!element.isMultiply()) {
+					toRemove.add(element);
+				}
+				matched = true;
+			}
+		}
 
-    commonIt = toRemove.iterator();
-    while (commonIt.hasNext()) {
-      final Object element = commonIt.next();
-      handlers.remove(element);
-    }
+		commonIt = toRemove.iterator();
+		while (commonIt.hasNext()) {
+			final Object element = commonIt.next();
+			handlers.remove(element);
+		}
+	}
 
     commonIt = toPerform.iterator();
     while (commonIt.hasNext()) {
