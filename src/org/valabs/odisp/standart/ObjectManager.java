@@ -33,7 +33,7 @@ import com.novel.tools.filter.FilteringIterator;
  * Менеджер объектов ODISP.
  * 
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev </a>
- * @version $Id: ObjectManager.java,v 1.63 2005/07/29 16:23:53 dron Exp $
+ * @version $Id: ObjectManager.java,v 1.64 2005/08/03 11:58:40 valeks Exp $
  */
 
 class ObjectManager implements org.valabs.odisp.common.ObjectManager {
@@ -212,7 +212,7 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
 				});
         while (it.hasNext()) {
           final ObjectEntry el = (ObjectEntry) it.next();
-          badObjects.add(el.getObject().getObjectName());
+          badObjects.add(el.getObject().getObjectName() + ",depends=" + el.getDepends());
         }
         log.fine("Objects failed to load: " + badObjects.toString());
         break;
