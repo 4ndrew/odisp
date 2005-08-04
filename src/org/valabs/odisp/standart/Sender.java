@@ -3,7 +3,7 @@ package org.valabs.odisp.standart;
 
 /** Реализация единого потока рассылки и обработки сообщений.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: Sender.java,v 1.14 2005/07/22 15:32:01 valeks Exp $
+ * @version $Id: Sender.java,v 1.15 2005/08/04 10:50:45 valeks Exp $
  */
 class Sender extends Thread {
 	/** Счетчик сообщений, которые были обработаны нитью. */
@@ -19,6 +19,13 @@ class Sender extends Thread {
 	 */
 	public Sender(ObjectManager noman) {
 		super("sender" + (counter++));
+		
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			public void run() {
+				System.err.println("Sender stats: messageCount=" + messageCounter);
+			}
+		});
+		
 		setDaemon(true);
 		oman = noman;
 		start();
