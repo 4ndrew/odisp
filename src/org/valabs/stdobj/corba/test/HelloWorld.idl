@@ -1,0 +1,14 @@
+module org {
+  module valabs {
+    module stdobj {
+      module corba {
+        module test {
+          interface HelloWorld {
+            void sayHello(in string toWhom);
+            string makeHello(in string toWhom);
+          };
+        };
+      };
+    };
+  };
+};
