@@ -1,0 +1,6 @@
+$Id: UPDATING,v 1.1 2005/08/11 21:55:13 valeks Exp $
+
+12.08.2005:
+  Была реализована начальная поддержка CORBA интерфейса в ODISP.
+  Подробнее: http://cvs.novel.local/cgi-bin/roundup.cgi/nms/issue1
+  Скорее всего сломает сборку на Windows -- решение в трекере.
