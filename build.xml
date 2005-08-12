@@ -1,4 +1,4 @@
-<!-- $Id: build.xml,v 1.28 2005/08/11 21:45:12 valeks Exp $ mode: -*- --><!-- xsl -*- -->
+<!-- $Id: build.xml,v 1.29 2005/08/12 05:41:29 valeks Exp $ mode: -*- --><!-- xsl -*- -->
 <project name="odisp" default="all" basedir=".">
     <taskdef resource="checkstyletask.properties"
            classpath="/usr/local/share/java/classes/checkstyle.jar"/>
@@ -111,6 +111,7 @@
     <exec os="FreeBSD" executable="/usr/local/bin/idlj" dir="src">
       <!--arg value="-td src"/-->
       <arg value="-v"/>
+      <arg value="-fall"/>
       <arg value="org/valabs/stdobj/corba/test/HelloWorld.idl"/>
     </exec>
     <exec os="Windows 2000, Windows XP" executable="123"> 
