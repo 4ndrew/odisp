@@ -40,7 +40,7 @@ import org.valabs.odisp.common.MessageHandler;
  * </pre>
  * 
  * @author (C) 2004 <a href="dron@novel-il.ru">Андрей А. Порохин </a>
- * @version $Id: SessionManager.java,v 1.16 2005/08/01 08:48:31 valeks Exp $
+ * @version $Id: SessionManager.java,v 1.17 2005/08/22 12:21:22 dron Exp $
  */
 public class SessionManager {
 
@@ -94,16 +94,20 @@ public class SessionManager {
   /**
    * Удаление обработчика сообщения сессии.
    * 
-   * @param messageId идентификатор ответа сообщения
-   * @param messageHandler обработчик сообщения
+   * @param messageId идентификатор ответа сообщения.
+   * @param messageHandler обработчик сообщения.
+   * @see SessionManager#addMessageListener(UUID, MessageHandler) 
    * @see SessionManager#addMessageListener(UUID, MessageHandler, boolean)
    */
   public final void removeMessageListener(final UUID messageId, final MessageHandler messageHandler) {
-    final Iterator handlerIt = handlers.iterator();
-    while (handlerIt.hasNext()) {
-      final SessionRecord element = (SessionRecord) handlerIt.next();
-      if (element.getMsgId().equals(messageId) && element.getMessageHandler().equals(messageHandler)) {
-        handlerIt.remove();
+    synchronized (handlers) {
+      final Iterator handlerIt = handlers.iterator();
+      while (handlerIt.hasNext()) {
+        final SessionRecord element = (SessionRecord) handlerIt.next();
+        if (element.getMsgId().equals(messageId) && element.getMessageHandler().equals(messageHandler)) {
+          handlerIt.remove();
+          break;
+        }
       }
     }
   }
