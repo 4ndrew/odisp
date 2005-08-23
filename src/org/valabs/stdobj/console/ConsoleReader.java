@@ -14,7 +14,7 @@ import org.valabs.odisp.common.Message;
  * 
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: ConsoleReader.java,v 1.19 2005/07/22 13:06:53 dron Exp $
+ * @version $Id: ConsoleReader.java,v 1.20 2005/08/23 11:16:29 dron Exp $
  */
 
 public class ConsoleReader extends Thread {
@@ -47,7 +47,7 @@ public class ConsoleReader extends Thread {
       while ((action = inp.readLine()) != null) {
         System.out.print("destination> ");
         final Message m
-          = dispatcher.getNewMessage(action, inp.readLine(), null, UUID.getNullUUID());
+          = dispatcher.getNewMessage(action, inp.readLine(), "console", UUID.getNullUUID());
         System.out.print("params? ");
         int paramCount = 0;
         while (!inp.readLine().equals("")) {
