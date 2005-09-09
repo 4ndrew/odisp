@@ -9,16 +9,17 @@ import org.valabs.odisp.common.Message;
 import org.valabs.odisp.common.MessageHandler;
 import org.valabs.odisp.common.StandartODObject;
 import org.valabs.stdmsg.ODObjectLoadedMessage;
+import org.valabs.stdmsg.updater.UpdaterFireUpdateMessage;
 
 
 /** Компонент поддержки обновлений.
  * @author <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
- * @version $Id: Updater.java,v 1.4 2005/07/22 13:06:55 dron Exp $
+ * @version $Id: Updater.java,v 1.5 2005/09/09 08:17:13 valeks Exp $
  */
 public class Updater extends StandartODObject implements MessageHandler {
   private static final String NAME = "updater";
   private static final String FULLNAME = "Update support";
-  private static final String VERSION = "0.1.0";
+  private static final String VERSION = "0.1.1";
   private static final String COPYRIGHT = "(C) 2005 Valentin A. Alekseev";
   private final String oldChecksum = System.getProperty("odisp.libchecksum");
   
@@ -35,7 +36,7 @@ public class Updater extends StandartODObject implements MessageHandler {
   }
 
   public void registerHandlers() {
-    addHandler("test", this);
+    addHandler(UpdaterFireUpdateMessage.NAME, this);
     addHandler(ODObjectLoadedMessage.NAME, this);
   }
   
@@ -60,7 +61,7 @@ public class Updater extends StandartODObject implements MessageHandler {
           } 
         }, 0, 500);
       }
-    } else if (msg.getAction().equals("test")) {
+    } else if (UpdaterFireUpdateMessage.equals(msg)) {
       logger.info("Checking for components update...");
       if (checkForUpdate()) {
         logger.info("Updates avaliable. Restarting");
