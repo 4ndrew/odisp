@@ -1,4 +1,4 @@
-<!-- $Id: build.xml,v 1.30 2005/09/12 15:31:50 dron Exp $ mode: -*- --><!-- xsl -*- -->
+<!-- $Id: build.xml,v 1.31 2005/09/19 07:26:23 valeks Exp $ mode: -*- --><!-- xsl -*- -->
 <project name="odisp" default="all" basedir=".">
     <taskdef resource="checkstyletask.properties"
            classpath="/usr/local/share/java/classes/checkstyle.jar"/>
@@ -158,11 +158,10 @@
             <pathelement location="lib/jug.jar"/>
             <pathelement location="lib/jmdns.jar"/>
             <pathelement location="tools/tplParser.jar"/>
-            <pathelement location="tools/novel-tools.jar"/>
           </classpath>
         </javac>
     </target>
-    <target name="odisp-jar" depends="release-dir-setup, odisp">
+    <target name="odisp-jar" depends="release-dir-setup">
 	   <jar destfile="release/odisp.jar" basedir="build" includes="org/**/*class" excludes="org/valabs/odisp/Launcher*">
                 <manifest>
                         <attribute name="Built-By" value="${user.name}"/>
