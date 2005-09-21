@@ -17,7 +17,7 @@ import java.util.StringTokenizer;
  * Стартовый класс для диспетчера.
  * 
  * @author <a hrev="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
- * @version $Id: Launcher.java,v 1.4 2005/07/22 13:06:56 dron Exp $
+ * @version $Id: Launcher.java,v 1.5 2005/09/21 11:07:40 dron Exp $
  */
 public class Launcher {
 
@@ -111,14 +111,15 @@ public class Launcher {
       if (libraryDir.isDirectory()) {
         final String files[] = libraryDir.list(jarFiles);
         for (int i = 0; i < files.length; i++) {
-          resultUrls.add("file://" + libraryDir.getAbsolutePath() + File.separator + files[i]);
+          File newFile = new File(libraryDir.getAbsolutePath() + File.separator + files[i]);
+          resultUrls.add(newFile);
         }
       }
     }
     URL[] urls = new URL[resultUrls.size()];
     for (int i = 0; i < urls.length; i++) {
       try {
-        urls[i] = new URL((String) resultUrls.get(i));
+        urls[i] = ((File) resultUrls.get(i)).toURL();
       } catch (MalformedURLException e) {
         e.printStackTrace();
       }
