@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  * Класс читающий и сохраняющий состояние диспетчера перед перезагрузкой.
  * 
  * @author <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
- * @version $Id: DispatcherSnapshot.java,v 1.3 2005/07/22 13:06:54 dron Exp $
+ * @version $Id: DispatcherSnapshot.java,v 1.4 2005/09/28 13:30:17 valeks Exp $
  */
 class DispatcherSnapshot {
   private static final String SNAP_NAME = "restart.snap";
@@ -71,6 +71,7 @@ class DispatcherSnapshot {
   }
   
   public void setMessageQueue(final List queueMessages) {
+    messageQueue.clear();
     messageQueue.addAll(queueMessages);
   }
   
