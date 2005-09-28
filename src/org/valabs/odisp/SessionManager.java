@@ -4,15 +4,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.doomdark.uuid.UUID;
 import org.valabs.odisp.common.Message;
 import org.valabs.odisp.common.MessageHandler;
+import org.valabs.stdmsg.ReplytimeoutMessage;
+import org.valabs.stdmsg.StandartMessage;
 
 /**
  * <h5>Использование ODsessionManager'а:</h5>
  * <p>
- * Менеджер сессий хранится в памяти один раз, в рамках одного пространства Odisp (для экономии использования
+ * Менеджер сессий хранится в памяти один раз, в рамках одного пространства ODISP (для экономии использования
  * памяти). Примерный план использования ниже:
  * 
  * <pre>
@@ -39,26 +43,52 @@ import org.valabs.odisp.common.MessageHandler;
  *       }
  * </pre>
  * 
- * @author (C) 2004 <a href="dron@novel-il.ru">Андрей А. Порохин </a>
- * @version $Id: SessionManager.java,v 1.17 2005/08/22 12:21:22 dron Exp $
+ * @author (C) 2004-2005 <a href="dron@novel-il.ru">Андрей А. Порохин </a>
+ * @version $Id: SessionManager.java,v 1.18 2005/09/28 09:56:11 dron Exp $
  */
 public class SessionManager {
-
+  /** Период, через который запускается проверка превышения ожидания. */
+  public static final int DELAY_PERIOD = 2000;
+  
   /** Ссылка на ODSessionManager */
   private static SessionManager sessionManager = new SessionManager();
-
   /** Список обработчиков. */
   private final List handlers = Collections.synchronizedList(new ArrayList());
+  /** */
+  private Timer timer = new Timer(true);
 
   /**
-   * Конструктор
+   * Конструктор.
    */
   protected SessionManager() {
     super();
+    
+    TimerTask timerTask = new TimerTask() {
+      public void run() {
+        synchronized (handlers) {
+          Iterator it = handlers.iterator();
+          while (it.hasNext()) {
+            SessionRecord el = (SessionRecord) it.next();
+            if (el.cycle != -1) el.cycle--;
+            if (el.cycle == 0) {
+              /*
+               * Не хочется протаскивать dispatcher в SessionManager, поэтому сообщение доносится в обход
+               * dispatcher'а через обработчик.
+               */
+              Message timeout = new StandartMessage();
+              ReplytimeoutMessage.setup(timeout, "", "sessionManager", el.getMsgId());
+              el.messageHandler.messageReceived(timeout);
+              it.remove();
+            }
+          }
+        }
+      }
+    };
+    timer.schedule(timerTask, 1000, DELAY_PERIOD);
   }
 
   /**
-   * Получить текущий менеджер
+   * Получить текущий менеджер.
    * 
    * @return Менеджер сессий.
    */
@@ -82,13 +112,23 @@ public class SessionManager {
    * (multiply установлен в true) после обработки сообщения обработчиком запись о сессии из SessionManager не
    * удаляется. Для того, что бы удалить её вручную необходимо воспользоваться методом removeMessageListener.
    * 
-   * @param messageId идентификатор ответа сообщения
-   * @param messageHandler обработчик сообщения
-   * @param multiply признак множественности
+   * @param messageId идентификатор ответа сообщения.
+   * @param messageHandler обработчик сообщения.
+   * @param multiply признак множественности.
    * @see SessionManager#removeMessageListener(UUID, MessageHandler)
    */
   public final void addMessageListener(final UUID messageId, final MessageHandler messageHandler, final boolean multiply) {
-    handlers.add(new SessionRecord(messageId, messageHandler, multiply));
+    handlers.add(new SessionRecord(messageId, messageHandler, multiply, -1));
+  }
+  
+  /**
+   * 
+   * @param messageId идентификатор ответа сообщения.
+   * @param messageHandler обработчик сообщения.
+   * @param timeoutCycle Количество проходом таймера перед тем, как пошлётся 
+   */
+  public final void addMessageListenerWithTimeout(final UUID messageId, final MessageHandler messageHandler, final int timeoutCycle) {
+    handlers.add(new SessionRecord(messageId, messageHandler, false, timeoutCycle));
   }
 
   /**
@@ -160,11 +200,14 @@ public class SessionManager {
     private final MessageHandler messageHandler;
 
     private final boolean multiply;
+    
+    private int cycle;
 
-    SessionRecord(UUID _msgId, MessageHandler _messageHandler, boolean _multiply) {
+    SessionRecord(UUID _msgId, MessageHandler _messageHandler, boolean _multiply, int _cycle) {
       msgId = _msgId;
       messageHandler = _messageHandler;
       multiply = _multiply;
+      cycle = _cycle;
     }
 
     MessageHandler getMessageHandler() {
@@ -177,6 +220,10 @@ public class SessionManager {
 
     boolean isMultiply() {
       return multiply;
+    }
+    
+    int getCycle() {
+      return cycle;
     }
   }
 }
