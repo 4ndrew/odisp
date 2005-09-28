@@ -20,10 +20,10 @@ import org.valabs.odisp.common.Message;
  * 
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: StandartMessage.java,v 1.30 2005/07/22 16:04:48 valeks Exp $
+ * @version $Id: StandartMessage.java,v 1.31 2005/09/28 13:31:12 valeks Exp $
  */
 public class StandartMessage implements Message, Serializable, Cloneable {
-  private static MessageGraphWriter debugMGW = new MessageGraphWriter();
+//  private static MessageGraphWriter debugMGW = new MessageGraphWriter();
   /** Флаг маршрутизации. */
   private boolean routable = true;
   /** Уникальный индекс сообщения в системе. */
@@ -43,7 +43,7 @@ public class StandartMessage implements Message, Serializable, Cloneable {
   /** Флаг проведения проверки. */
   private boolean ce = false;
   /** Список подсообщений. */
-  private final List envelope = new ArrayList();
+  private List envelope = null;
   /** Признак OOB. */
   private boolean oob = false;
   /** Реализация конструктора сообщения.
@@ -284,14 +284,17 @@ public class StandartMessage implements Message, Serializable, Cloneable {
   }
   
   public final void addToEnvelope(final Message envelopeMessage) {
-  		envelope.add(envelopeMessage);
+      if (envelope == null) {
+        envelope = new ArrayList();
+      }
+      envelope.add(envelopeMessage);
   }
   
   /** Проверка на OOB.
    * @return true если сообщение OOB.
    */
   public boolean isOOB() {
-    debugMGW.logMessage(this);
+//    debugMGW.logMessage(this);
     return oob;
   }
   
