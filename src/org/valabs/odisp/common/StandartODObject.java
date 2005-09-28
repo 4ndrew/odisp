@@ -20,7 +20,7 @@ import org.valabs.stdmsg.ModuleStatusReplyMessage;
  * Стандартный объект ODISP.
  * 
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev </a>
- * @version $Id: StandartODObject.java,v 1.19 2005/07/22 15:32:02 valeks Exp $
+ * @version $Id: StandartODObject.java,v 1.20 2005/09/28 13:29:49 valeks Exp $
  */
 
 public abstract class StandartODObject implements ODObject {
@@ -362,21 +362,38 @@ public abstract class StandartODObject implements ODObject {
   /** Хранение статуса объекта. */
   protected static class ObjectStatus {
     public static final String NOERROR = "noerror";
-    private final List runningTasks = new ArrayList();
-    private final List completedTasks = new ArrayList();
-    private final List failedTasks = new ArrayList();
+    private List runningTasks;
+    private List completedTasks;
+    private List failedTasks;
     private String runningState = ObjectStatus.NOERROR;
     
     public void taskStarted(final String task) {
+      if (runningTasks == null) {
+        runningTasks = new ArrayList();
+      }
       runningTasks.add(task);
     }
     
     public void taskCompleted(final String task) {
+      if (completedTasks == null) {
+        completedTasks = new ArrayList();
+      }
+      if (runningTasks == null) {
+        runningTasks = new ArrayList();
+      }
+
       runningTasks.remove(task);
       completedTasks.add(task);
     }
     
     public void taskFailed(final String task) {
+      if (failedTasks == null) {
+        failedTasks = new ArrayList();
+      }
+      if (runningTasks == null) {
+        runningTasks = new ArrayList();
+      }
+
       runningTasks.remove(task);
       failedTasks.add(task);
     }
