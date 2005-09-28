@@ -1,4 +1,4 @@
-$Id: ModuleStatusReplyMessage.tpl,v 1.3 2004/08/23 07:42:36 valeks Exp $
+$Id: ModuleStatusReplyMessage.tpl,v 1.4 2005/09/28 13:30:35 valeks Exp $
 NAME org.valabs.stdmsg ModuleStatusReplyMessage module_status_reply
 AUTHOR <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
 AUTHOR (C) 2004 НПП "Новел-ИЛ"
@@ -12,7 +12,10 @@ FIELD RunningState String
 FDESC RunningState Текущее состояние опрашиваемого модуля.
 FIELD RunningTasks List
 FDESC RunningTasks Список строк описывающих текущее состояние задач выполняемых модулем.
+FCHECK RunningTasks true
 FIELD CompletedTasks List
 FDESC CompletedTasks Список успешно выполненных заданий.
+FCHECK CompletedTasks true
 FIELD FailedTasks List
 FDESC FailedTasks Список не выполненных задач.
+FCHECK FailedTasks true
