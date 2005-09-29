@@ -10,7 +10,7 @@ import java.util.TimerTask;
 import org.doomdark.uuid.UUID;
 import org.valabs.odisp.common.Message;
 import org.valabs.odisp.common.MessageHandler;
-import org.valabs.stdmsg.ReplytimeoutMessage;
+import org.valabs.stdmsg.ReplyTimeoutMessage;
 import org.valabs.stdmsg.StandartMessage;
 
 /**
@@ -44,7 +44,7 @@ import org.valabs.stdmsg.StandartMessage;
  * </pre>
  * 
  * @author (C) 2004-2005 <a href="dron@novel-il.ru">Андрей А. Порохин </a>
- * @version $Id: SessionManager.java,v 1.18 2005/09/28 09:56:11 dron Exp $
+ * @version $Id: SessionManager.java,v 1.19 2005/09/29 11:22:42 dron Exp $
  */
 public class SessionManager {
   /** Период, через который запускается проверка превышения ожидания. */
@@ -76,7 +76,7 @@ public class SessionManager {
                * dispatcher'а через обработчик.
                */
               Message timeout = new StandartMessage();
-              ReplytimeoutMessage.setup(timeout, "", "sessionManager", el.getMsgId());
+              ReplyTimeoutMessage.setup(timeout, "", "sessionManager", el.getMsgId());
               el.messageHandler.messageReceived(timeout);
               it.remove();
             }

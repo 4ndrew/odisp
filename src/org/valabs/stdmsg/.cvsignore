@@ -21,4 +21,4 @@ MDNSListServicesReplyMessage.java
 ODGetProvidingReplyMessage.java
 CopyrightGetMessage.java
 CopyrightGetReplyMessage.java
-ReplytimeoutMessage.java
+ReplyTimeoutMessage.java
