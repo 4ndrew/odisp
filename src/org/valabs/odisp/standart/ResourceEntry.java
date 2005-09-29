@@ -9,7 +9,7 @@ import org.valabs.odisp.common.Resource;
 
 /** Запись об однотипных ресурах в таблице ресурсов.
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceEntry.java,v 1.14 2005/07/22 15:32:01 valeks Exp $
+ * @version $Id: ResourceEntry.java,v 1.15 2005/09/29 16:56:24 valeks Exp $
  */
 class ResourceEntry {
   /** Журнал. */
@@ -19,7 +19,7 @@ class ResourceEntry {
   /** Имя класса ресурса. */
   private String className;
   /** Хранилище ресурсных записей. */
-  private final List resourceStorage = new ArrayList();
+  private final List resourceStorage = new ArrayList(1);
   /** Количество использованных экземпляров. */
   private int usage = 0;
   /** Максимальное количество доступных экземпляров. */
