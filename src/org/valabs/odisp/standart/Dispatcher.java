@@ -23,7 +23,7 @@ import org.valabs.stdmsg.StandartMessage;
  * 
  * @author (C) 2003-2005 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author (C) 2003-2005 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: Dispatcher.java,v 1.63 2005/07/22 13:06:54 dron Exp $
+ * @version $Id: Dispatcher.java,v 1.64 2005/09/29 13:36:51 valeks Exp $
  */
 public class Dispatcher implements org.valabs.odisp.common.Dispatcher, ExceptionHandler {
   /** Журнал. */
@@ -33,7 +33,7 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
   /** Менеджер объектов. */
   private final ObjectManager oman = new org.valabs.odisp.standart.ObjectManager(this);
   /** Список менеджеров конфигурации. */
-  private final ConfigurationManager cman = new MultiConfigurationManager();
+  private final ConfigurationManager cman = new org.valabs.odisp.standart.ConfigurationManager();
   /** Менеджер безопасности. */
   private SecurityManager sman;
   /** Обработчик исключений. */
@@ -128,8 +128,7 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
    */
   public Dispatcher(List args) {
     log.info(toString() + " starting up...");
-    addConfigurationManager(new org.valabs.odisp.standart.ConfigurationManager());
-    getConfigurationManager().setCommandLineArguments(args);
+    cman.setCommandLineArguments(args);
     if (getConfigurationManager().supportComponentListing()) {
       List resources = getConfigurationManager().getResourceList();
       List objects = getConfigurationManager().getObjectList();
@@ -238,6 +237,7 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
     System.err.println("========================================================");
   }
   
+  /** @deprecated нет необходимости в множественных менеджерах конфигурации */
   public void addConfigurationManager(final ConfigurationManager _cman) {
     ((MultiConfigurationManager) cman).addConfigurationManager(_cman);
   }
@@ -248,6 +248,7 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
   
   /**
    * Мультиплексор менеджеров конфигурации.
+   * @deprecated нет необходимости в нескольких менеджерах конфигурации.
    */
   class MultiConfigurationManager implements ConfigurationManager {
     private final List cman = new ArrayList();

@@ -1,8 +1,5 @@
 package org.valabs.odisp.standart;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -11,15 +8,15 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.valeks.xlang.parser.Parser;
-import org.valeks.xlang.parser.Tag;
-import org.valeks.xlang.parser.XLangException;
+import org.apache.commons.configuration.CompositeConfiguration;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.XMLConfiguration;
 
 /**
  * Реализация менеджера конфигурации.
  * 
  * @author (C) 2004 <a href="valeks@valabs.spb.ru">Валентин А. Алексеев </a>
- * @version $Id: ConfigurationManager.java,v 1.7 2005/07/22 15:32:02 valeks Exp $
+ * @version $Id: ConfigurationManager.java,v 1.8 2005/09/29 13:36:51 valeks Exp $
  */
 class ConfigurationManager implements org.valabs.odisp.common.ConfigurationManager {
 
@@ -31,6 +28,8 @@ class ConfigurationManager implements org.valabs.odisp.common.ConfigurationManag
 
   Logger log = Logger.getLogger(ConfigurationManager.class.getName());
 
+  CompositeConfiguration compConf = new CompositeConfiguration();
+  
   public ConfigurationManager() {
     log.setLevel(Level.ALL);
   }
@@ -87,69 +86,52 @@ class ConfigurationManager implements org.valabs.odisp.common.ConfigurationManag
    */
   public void setCommandLineArguments(final List args) {
     assert args.size() > 0 : "Argument list too small";
-    try {
-      final InputStream inp = new FileInputStream((String) args.get(0));
-      loadConfiguration(new Parser(inp).getRootTag());
-    } catch (FileNotFoundException e) {
-      log.severe("configuration file " + args.get(0) + " not found.");
-    } catch (XLangException e) {
-      log.severe("configuration file " + args.get(0) + " contains unrecoverable errors: " + e);
-    }
-  }
-
-  private void loadConfiguration(final Tag docTag) {
-    final Iterator childIt = docTag.getChild().iterator();
-    params.putAll("root", getParamsForTag(docTag));
-    while (childIt.hasNext()) {
-      final Tag curt = (Tag) childIt.next();
-      if (curt.getName().equalsIgnoreCase("object")) {
-        final String className = (String) curt.getAttributes().get("name");
-        if (className == null) {
-          log.warning("object tag has no name attribute. ignoring.");
-          continue;
-        }
-        final Map lparams = getParamsForTag(curt);
-        objects.add(new org.valabs.odisp.common.ConfigurationManager.ComponentConfiguration(className,
-                lparams));
-        params.putAllPrefixed("boot", className, lparams);
-      } else if (curt.getName().equalsIgnoreCase("resource")) {
-        final String className = (String) curt.getAttributes().get("name");
-        if (className == null) {
-          log.warning("resource tag has no name attribute. ignoring.");
-          continue;
-        }
-        final Map lparams = getParamsForTag(curt);
-        resources.add(new org.valabs.odisp.common.ConfigurationManager.ComponentConfiguration(className,
-                lparams));
-        params.putAllPrefixed("boot", className, lparams);
+    Iterator it = args.iterator();
+    while (it.hasNext()) {
+      String element = (String) it.next();
+      try {
+        compConf.addConfiguration(new XMLConfiguration(element));
+      } catch (ConfigurationException ex) {
+        ex.printStackTrace();
       }
     }
+    loadConfiguration();
+  }
+
+  private void loadConfiguration() {
+    List objsList = compConf.getList("object[@name]");
+    
+    int objectsCount = objsList.size();
+    for (int i = 0; i < objectsCount; i++) {
+      String className = compConf.getString("object(" + i + ")[@name]");
+      List params = compConf.getList("object(" + i +").param[@name]");
+      int paramCount = params.size();
+      Map config = new HashMap();
+      for (int j = 0; j < paramCount; j++) {
+        String key = compConf.getString("object(" + i + ").param(" + j + ")[@name]");
+        String value = compConf.getString("object(" + i + ").param(" + j + ")[@value]", "SET");
+        config.put(key, value);
+      }
+      objects.add(new ComponentConfiguration(className, config));
+    }
+
+    List resourcesList = compConf.getList("resource[@name]");
+    
+    int resourcesCount = resourcesList.size();
+    for (int i = 0; i < resourcesCount; i++) {
+      String className = compConf.getString("resource(" + i + ")[@name]");
+      List params = compConf.getList("resource(" + i +").param[@name]");
+      int paramCount = params.size();
+      Map config = new HashMap();
+      for (int j = 0; j < paramCount; j++) {
+        String key = compConf.getString("resource(" + i + ").param(" + j + ")[@name]");
+        String value = compConf.getString("resource(" + i + ").param(" + j + ")[@value]", "SET");
+        config.put(key, value);
+      }
+      resources.add(new ComponentConfiguration(className, config));
+    }
+    
     log.fine("Found " + resources.size() + " resources and " + objects.size() + " objects to load.");
-  }
-
-  /**
-   * Получить информацию о параметрах для заданного тега.
-   * 
-   * @param childTag тег
-   */
-  private Map getParamsForTag(final Tag childTag) {
-    Map result = null;
-    if (childTag.getChild().size() != 0) {
-      result = new HashMap();
-      // имеются потомки -- необходимо проитерировать по списку и заполнить список
-      final Iterator cit = childTag.getChild().iterator();
-      while (cit.hasNext()) {
-        final Tag ctag = (Tag) cit.next();
-        if (ctag.getName().equalsIgnoreCase("param")) {
-          final String paramName = (String) ctag.getAttributes().get("name");
-          final String paramValue = (String) ctag.getAttributes().get("value");
-          if (paramName != null && paramValue != null) {
-            result.put(paramName, paramValue);
-          }
-        }
-      }
-    }
-    return result;
   }
 
   class MultiMap {
