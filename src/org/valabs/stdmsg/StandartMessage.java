@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +20,7 @@ import org.valabs.odisp.common.Message;
  * 
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: StandartMessage.java,v 1.31 2005/09/28 13:31:12 valeks Exp $
+ * @version $Id: StandartMessage.java,v 1.32 2005/09/29 16:02:49 valeks Exp $
  */
 public class StandartMessage implements Message, Serializable, Cloneable {
 //  private static MessageGraphWriter debugMGW = new MessageGraphWriter();
@@ -29,7 +29,7 @@ public class StandartMessage implements Message, Serializable, Cloneable {
   /** Уникальный индекс сообщения в системе. */
   private UUID myId;
   /** Список полей сообщения. */
-  private final Map fields = new HashMap();
+  private final Map fields = new Hashtable(5);
   /** Действие. */
   private String action = null;
   /** Точка назначения. */
