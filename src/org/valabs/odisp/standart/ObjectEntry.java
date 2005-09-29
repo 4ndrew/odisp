@@ -1,6 +1,5 @@
 package org.valabs.odisp.standart;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -8,7 +7,7 @@ import org.valabs.odisp.common.ODObject;
 
 /** Запись об объекте в таблице объектов.
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ObjectEntry.java,v 1.13 2005/02/27 12:37:31 valeks Exp $
+ * @version $Id: ObjectEntry.java,v 1.14 2005/09/29 13:35:32 valeks Exp $
  */
 class ObjectEntry {
 	/** Определяет загружен ли объект. */
@@ -92,8 +91,15 @@ class ObjectEntry {
 	public ObjectEntry(final String _className, final String[] newDepends,
 			final String[] newProvides) {
 		className = _className;
-		depends = new HashSet(Arrays.asList(newDepends));
-		provides = new HashSet(Arrays.asList(newProvides));
+    depends = new HashSet(newDepends.length);
+    for (int i = 0; i < newDepends.length; i++) {
+      depends.add(newDepends[i]);
+    }
+
+    provides = new HashSet(newProvides.length);
+    for (int i = 0; i < newProvides.length; i++) {
+      provides.add(newProvides[i]);
+    }
 	}
 
 	private boolean intoHints = true;

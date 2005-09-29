@@ -33,7 +33,7 @@ import com.novel.tools.filter.FilteringIterator;
  * Менеджер объектов ODISP.
  * 
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev </a>
- * @version $Id: ObjectManager.java,v 1.64 2005/08/03 11:58:40 valeks Exp $
+ * @version $Id: ObjectManager.java,v 1.65 2005/09/29 13:35:13 valeks Exp $
  */
 
 class ObjectManager implements org.valabs.odisp.common.ObjectManager {
@@ -55,12 +55,12 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
 
   /** Список сервисов менеджера. */
   private final Map provided = new HashMap();
-
-  /** Пул нитей отсылки. */
-  private final List senderPool = new ArrayList();
-
+  
   /** Максимальное количество нитей создаваемых для отсылки изначально. */
   public static final int SENDER_POOL_SIZE = 5;
+
+  /** Пул нитей отсылки. */
+  private final List senderPool = new ArrayList(SENDER_POOL_SIZE);
 
   /** Хранилище для сообщений. */
   private final List messageStorage = new ArrayList();
@@ -76,11 +76,11 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
    */
   public final void addProvider(final String service, final String objectName) {
     if (!provided.containsKey(service)) {
-      provided.put(service, new ArrayList());
+      provided.put(service, new ArrayList(3));
     }
     ((List) provided.get(service)).add(objectName);
   }
-
+  
   /**
    * Удаление провайдера конкретного сервиса. В случае если у сервиса не остается ни одного провайдера -- он
    * автоматически будет удален.
