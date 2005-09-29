@@ -1,16 +1,11 @@
 package org.valabs.stdmsg;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.doomdark.uuid.UUID;
 import org.doomdark.uuid.UUIDGenerator;
@@ -20,10 +15,9 @@ import org.valabs.odisp.common.Message;
  * 
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: StandartMessage.java,v 1.32 2005/09/29 16:02:49 valeks Exp $
+ * @version $Id: StandartMessage.java,v 1.33 2005/09/29 16:04:49 valeks Exp $
  */
 public class StandartMessage implements Message, Serializable, Cloneable {
-//  private static MessageGraphWriter debugMGW = new MessageGraphWriter();
   /** Флаг маршрутизации. */
   private boolean routable = true;
   /** Уникальный индекс сообщения в системе. */
@@ -98,23 +92,6 @@ public class StandartMessage implements Message, Serializable, Cloneable {
    */
   public StandartMessage(final Message msg) {
     copyFrom(msg, false);
-  }
-
-  /** Добавление произвольного объекта в тело сообщения.
-   * @param field объект который будет добавлен сообщение
-   * @deprecated используйте addField(String, Object)
-   */
-  protected final void addField(final Object field) {
-    addField((new Integer(lastIdx++)).toString(), field);
-  }
-
-  /** Выборка сохраненного в теле сообщения объекта по индексу.
-   * @param field индекс объекта
-   * @return поле сообщения
-   * @deprecated используйте getField(String)
-   */
-  protected final Object getField(final int field) {
-    return getField((new Integer(field)).toString());
   }
 
   /** Возвращает действие которое несет сообщение.
@@ -242,14 +219,6 @@ public class StandartMessage implements Message, Serializable, Cloneable {
     return ce;
   }
 
-  /** Доступ ко всему списку полей.
-   * @return список полей
-   * @deprecated Используйте getContents()
-   */
-  protected final List getFields() {
-    return new ArrayList(fields.values());
-  }
-
   public final Map getContents() {
     return fields;
   }
@@ -303,98 +272,6 @@ public class StandartMessage implements Message, Serializable, Cloneable {
    */
   public void setOOB(boolean newValue) {
     oob = newValue;
-  }
- 
-  /** Рисования графа сообщений в формате DOT. */
-  static class MessageGraphWriter {
-    private final MessageGraphWriter_MSGS msgs = new MessageGraphWriter_MSGS("msgs.dot");
-    private final MessageGraphWriter_OBJECTS objects = new MessageGraphWriter_OBJECTS("objects.dot");
-    
-    public void logMessage(final Message msg) {
-      msgs.logMessage(msg);
-      objects.logMessage(msg);
-    }
-  
-    /** Граф пересылки сообщений. */
-    class MessageGraphWriter_OBJECTS {
-      private final Set objects = new HashSet();
-      private final List messages = new ArrayList();
-
-      public MessageGraphWriter_OBJECTS(final String outfName) {
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-          public final void run() {
-            PrintStream output;
-            try {
-              output = new PrintStream(new FileOutputStream(outfName));
-            } catch (IOException e) {
-              output = new PrintStream(System.err);
-            }
-            output.println("digraph messagesobjects {");
-            Iterator it = objects.iterator();
-            final String namePrefix = " \"n";
-            while (it.hasNext()) {
-              final String element = (String) it.next();
-              output.println(namePrefix + element + "\" [label=\"" + element + "\"];");
-            }
-            it = messages.iterator();
-            while (it.hasNext()) {
-              final mrec element = (mrec) it.next();
-              output.println(namePrefix + element.origin + "\" -> " + namePrefix + element.destination + "\" [label=\""
-                      + element.action + "\"];");
-            }
-            output.println("}");
-            output.close();
-          }
-        });
-      }
-
-      public void logMessage(final Message msg) {
-        objects.add(msg.getOrigin());
-        objects.add(msg.getDestination());
-        final mrec rec = new mrec();
-        rec.origin = msg.getOrigin();
-        rec.destination = msg.getDestination();
-        rec.action = msg.getAction();
-        rec.id = msg.getId();
-        rec.replyid = msg.getReplyTo();
-        messages.add(rec);
-      }
-      class mrec {
-        String origin;
-        String destination;
-        String action;
-        UUID id;
-        UUID replyid;
-      }
-    }
-    
-    /** Граф последовательности сообщений. */
-    static class MessageGraphWriter_MSGS {
-
-      private PrintStream output;
-
-      public MessageGraphWriter_MSGS(String outfName) {
-        try {
-          output = new PrintStream(new FileOutputStream(outfName));
-        } catch (IOException e) {
-          output = new PrintStream(System.err);
-        }
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-          public void run() {
-            output.println("}");
-            output.close();
-          }
-        });
-        output.println("digraph messages {");
-        output.println("  \"n" + UUID.getNullUUID() + "\" [label=\"No origin\"];");
-      }
-
-      public void logMessage(final Message msg) {
-        output.println("  \"n" + msg.getId() + "\" [label=\"" + msg.getAction() + "\\n" + msg.getOrigin()
-                + " to " + msg.getDestination() + "\"];");
-        output.println("  \"n" + msg.getReplyTo() + "\" -> " + " \"n" + msg.getId() + "\";");
-      }
-    }
   }
 
   /* (non-Javadoc)
