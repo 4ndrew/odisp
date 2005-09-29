@@ -1,13 +1,13 @@
 package org.valabs.odisp.standart;
 
-import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.valabs.odisp.common.ODObject;
 
 /** Запись об объекте в таблице объектов.
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ObjectEntry.java,v 1.14 2005/09/29 13:35:32 valeks Exp $
+ * @version $Id: ObjectEntry.java,v 1.15 2005/09/29 16:56:54 valeks Exp $
  */
 class ObjectEntry {
 	/** Определяет загружен ли объект. */
@@ -91,12 +91,12 @@ class ObjectEntry {
 	public ObjectEntry(final String _className, final String[] newDepends,
 			final String[] newProvides) {
 		className = _className;
-    depends = new HashSet(newDepends.length);
+    depends = new TreeSet();
     for (int i = 0; i < newDepends.length; i++) {
       depends.add(newDepends[i]);
     }
 
-    provides = new HashSet(newProvides.length);
+    provides = new TreeSet();
     for (int i = 0; i < newProvides.length; i++) {
       provides.add(newProvides[i]);
     }
