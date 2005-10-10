@@ -15,7 +15,7 @@ import org.valabs.odisp.common.Message;
  * 
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: StandartMessage.java,v 1.33 2005/09/29 16:04:49 valeks Exp $
+ * @version $Id: StandartMessage.java,v 1.34 2005/10/10 06:56:53 valeks Exp $
  */
 public class StandartMessage implements Message, Serializable, Cloneable {
   /** Флаг маршрутизации. */
@@ -32,8 +32,6 @@ public class StandartMessage implements Message, Serializable, Cloneable {
   private String origin = null;
   /** Идентификатор сообщения на которое производится ответ. */
   private UUID inReplyTo = null;
-  /** Индекс последнего добавленного поля. */
-  private int lastIdx = 0;
   /** Флаг проведения проверки. */
   private boolean ce = false;
   /** Список подсообщений. */
@@ -238,6 +236,9 @@ public class StandartMessage implements Message, Serializable, Cloneable {
   }
 
   public void addField(final String name, final Object value) {
+    if (value == null) {
+      return;
+    }
     if (fields.containsKey(name)) {
       fields.remove(name);
     }
