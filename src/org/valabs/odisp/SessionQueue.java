@@ -16,7 +16,7 @@ import org.valabs.odisp.common.MessageHandler;
  * 
  * @author <a href="dron@novel-il.ru">Андрей А. Порохин</a>
  * @author (C) 2005 НПП "Новел-ИЛ"
- * @version $Id: SessionQueue.java,v 1.1 2005/10/13 09:32:34 dron Exp $
+ * @version $Id: SessionQueue.java,v 1.2 2005/10/13 11:23:45 dron Exp $
  */
 public class SessionQueue implements Runnable {
   private List messages = new ArrayList();
@@ -53,6 +53,16 @@ public class SessionQueue implements Runnable {
     messages.add(newPacket);
   }
   
+  public void addMessageAfterCurrent(Message msg, MessageHandlerEx mh_reply) {
+    if (mh_reply == null) {
+      throw new InvalidParameterException("Null mh_reply passed.");
+    }
+    MessageData newPacket = new MessageData();
+    newPacket.msg = msg;
+    newPacket.mh_reply = mh_reply;
+    messages.add(1, newPacket);
+  }
+  
   public int getCurrentState() {
     return counter;
   }
@@ -65,13 +75,14 @@ public class SessionQueue implements Runnable {
     synchronized (messages) {
       spr.currentData = getNextMessage();
       if (spr.currentData != null) {
+        messages.remove(0);
         if (spr.currentData.msg != null) {
           sm.addMessageListener(spr.currentData.msg.getId(), spr);
           dispatcher.send(spr.currentData.msg);
-          messages.remove(0);
         } else {
           spr.messageReceived(null);
         }
+        counter++;
       }
     }
   }
