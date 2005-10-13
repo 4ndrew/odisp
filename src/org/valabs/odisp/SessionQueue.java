@@ -16,7 +16,7 @@ import org.valabs.odisp.common.MessageHandler;
  * 
  * @author <a href="dron@novel-il.ru">Андрей А. Порохин</a>
  * @author (C) 2005 НПП "Новел-ИЛ"
- * @version $Id: SessionQueue.java,v 1.2 2005/10/13 11:23:45 dron Exp $
+ * @version $Id: SessionQueue.java,v 1.3 2005/10/13 12:11:17 dron Exp $
  */
 public class SessionQueue implements Runnable {
   private List messages = new ArrayList();
@@ -60,7 +60,7 @@ public class SessionQueue implements Runnable {
     MessageData newPacket = new MessageData();
     newPacket.msg = msg;
     newPacket.mh_reply = mh_reply;
-    messages.add(1, newPacket);
+    messages.add(0, newPacket);
   }
   
   public int getCurrentState() {
