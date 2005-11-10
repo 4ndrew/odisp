@@ -16,7 +16,7 @@ import org.apache.commons.configuration.XMLConfiguration;
  * Реализация менеджера конфигурации.
  * 
  * @author (C) 2004 <a href="valeks@valabs.spb.ru">Валентин А. Алексеев </a>
- * @version $Id: ConfigurationManager.java,v 1.8 2005/09/29 13:36:51 valeks Exp $
+ * @version $Id: ConfigurationManager.java,v 1.9 2005/11/10 08:18:51 valeks Exp $
  */
 class ConfigurationManager implements org.valabs.odisp.common.ConfigurationManager {
 
@@ -91,6 +91,12 @@ class ConfigurationManager implements org.valabs.odisp.common.ConfigurationManag
       String element = (String) it.next();
       try {
         compConf.addConfiguration(new XMLConfiguration(element));
+        try {
+          // попытка загрузить override
+          compConf.addConfiguration(new XMLConfiguration(element + ".local"));
+        } catch (ConfigurationException ex) {
+          
+        }
       } catch (ConfigurationException ex) {
         ex.printStackTrace();
       }
@@ -129,6 +135,14 @@ class ConfigurationManager implements org.valabs.odisp.common.ConfigurationManag
         config.put(key, value);
       }
       resources.add(new ComponentConfiguration(className, config));
+    }
+    
+    List rootConfig = compConf.getList("params.param");
+    int rootConfigCount = rootConfig.size();
+    for (int i = 0; i < rootConfigCount; i++) {
+      String name = compConf.getString("params.param(" + i + ")[@name]");
+      String value = compConf.getString("params.param(" + i + ")[@value]", "SET");
+      params.put("root", name, value);
     }
     
     log.fine("Found " + resources.size() + " resources and " + objects.size() + " objects to load.");
