@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  * Класс читающий и сохраняющий состояние диспетчера перед перезагрузкой.
  * 
  * @author <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
- * @version $Id: DispatcherSnapshot.java,v 1.4 2005/09/28 13:30:17 valeks Exp $
+ * @version $Id: DispatcherSnapshot.java,v 1.5 2005/11/14 22:04:36 valeks Exp $
  */
 class DispatcherSnapshot {
   private static final String SNAP_NAME = "restart.snap";
@@ -35,7 +35,7 @@ class DispatcherSnapshot {
       messageQueue = (List) snapFile.readObject();
       new File(SNAP_NAME).delete();
     } catch (FileNotFoundException e) {
-      log.warning("System restart snapshot exists but it could not be loaded. Starting from scratch.");
+      log.info("No snapshot found. Starting from scratch.");
     } catch (IOException e) {
       log.warning("System restart snapshot exists but it could not be loaded. Starting from scratch.");
     } catch (ClassNotFoundException e) {
