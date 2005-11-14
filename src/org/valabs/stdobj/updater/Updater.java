@@ -14,7 +14,7 @@ import org.valabs.stdmsg.updater.UpdaterFireUpdateMessage;
 
 /** Компонент поддержки обновлений.
  * @author <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
- * @version $Id: Updater.java,v 1.5 2005/09/09 08:17:13 valeks Exp $
+ * @version $Id: Updater.java,v 1.6 2005/11/14 22:05:34 valeks Exp $
  */
 public class Updater extends StandartODObject implements MessageHandler {
   private static final String NAME = "updater";
@@ -24,6 +24,9 @@ public class Updater extends StandartODObject implements MessageHandler {
   private final String oldChecksum = System.getProperty("odisp.libchecksum");
   
   private boolean checkForUpdate() {
+    if (getParameter("check", "no").equals("no")) {
+      return true;
+    }
     final String libdirs = System.getProperty("odisp.libdirs");
     return !Launcher.folderChecksum(libdirs).equals(oldChecksum);
   }
