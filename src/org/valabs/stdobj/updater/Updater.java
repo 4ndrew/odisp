@@ -14,7 +14,7 @@ import org.valabs.stdmsg.updater.UpdaterFireUpdateMessage;
 
 /** Компонент поддержки обновлений.
  * @author <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
- * @version $Id: Updater.java,v 1.6 2005/11/14 22:05:34 valeks Exp $
+ * @version $Id: Updater.java,v 1.7 2005/11/15 00:05:33 valeks Exp $
  */
 public class Updater extends StandartODObject implements MessageHandler {
   private static final String NAME = "updater";
@@ -65,6 +65,12 @@ public class Updater extends StandartODObject implements MessageHandler {
         }, 0, 500);
       }
     } else if (UpdaterFireUpdateMessage.equals(msg)) {
+      String security = (String) msg.getField("security");
+      if (!dispatcher.getSecurityManager().checkAccess(security, "restart", null)) {
+        dispatcher.getSecurityManager().audit(security, "restart", false, "noaccess");
+        // TODO добавить отправку сообщения об ошибке
+        return;
+      }
       logger.info("Checking for components update...");
       if (checkForUpdate()) {
         logger.info("Updates avaliable. Restarting");
