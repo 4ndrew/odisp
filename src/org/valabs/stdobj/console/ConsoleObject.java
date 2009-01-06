@@ -16,7 +16,7 @@ import org.valabs.stdobj.translator.Translator;
  *         Алексеев </a>
  * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин
  *         </a>
- * @version $Id: ConsoleObject.java,v 1.29 2005/07/22 13:06:53 dron Exp $
+ * @version $Id: ConsoleObject.java,v 1.32 2005/11/20 12:33:03 valeks Exp $
  */
 public class ConsoleObject extends StandartODObject {
   /** Имя объекта */
@@ -88,12 +88,12 @@ public class ConsoleObject extends StandartODObject {
   public final int cleanUp(final int type) {
     logger.finest("Cleaning up...");
     if (reader != null) {
-    	try {
-			System.in.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+      try {
+        System.in.close();
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
       reader.exit();
     }
     return 0;

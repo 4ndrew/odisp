@@ -15,7 +15,7 @@ import org.valabs.stdmsg.TranslatorGetTranslationReplyMessage;
 
 /**
  * @author <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
- * @version $Id: TranslatorServer.java,v 1.8 2005/07/22 13:06:55 dron Exp $
+ * @version $Id: TranslatorServer.java,v 1.11 2005/11/20 12:33:03 valeks Exp $
  */
 public class TranslatorServer extends StandartODObject
 		implements

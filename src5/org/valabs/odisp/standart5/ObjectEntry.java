@@ -1,4 +1,4 @@
-package org.valabs.odisp.standart;
+package org.valabs.odisp.standart5;
 
 import java.util.Set;
 import java.util.TreeSet;
@@ -8,11 +8,11 @@ import org.valabs.odisp.common.WeakDependency;
 
 /** Запись об объекте в таблице объектов.
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ObjectEntry.java,v 1.17 2006/03/29 11:17:29 valeks Exp $
+ * @version $Id: ObjectEntry.java,v 1.3 2006/03/29 11:29:59 valeks Exp $
  */
 class ObjectEntry {
 	/** Определяет загружен ли объект. */
-	private boolean loaded;
+	private boolean loaded = false;
 	/** Проверка загрузки объекта.
 	 * @return состояние загрузки
 	 */
@@ -53,17 +53,17 @@ class ObjectEntry {
 	}
 
 	/** Список зависимостей. */
-	private final Set depends;
+	private final Set<String> depends;
 	/** Вернуть список зависимостей.
 	 * @return список зависимостей
 	 */
-	public final Set getDepends() {
+	public final Set<String> getDepends() {
 		return depends;
 	}
   
-  private final Set weakDepends;
+  private final Set<String> weakDepends;
   
-  public final Set getWeakDepends() {
+  public final Set<String> getWeakDepends() {
     return weakDepends;
   }
 
@@ -75,11 +75,11 @@ class ObjectEntry {
 	}
 
 	/** Список сервисов. */
-	private final Set provides;
+	private final Set<String> provides;
 	/** Вернуть список сервисов.
 	 * @return список сервисов
 	 */
-	public final Set getProvides() {
+	public final Set<String> getProvides() {
 		return provides;
 	}
 
@@ -90,23 +90,22 @@ class ObjectEntry {
 	 */
 	public ObjectEntry(final String _className, final ODObject _obj) {
 		className = _className;
-    object = _obj;
-    depends = new TreeSet();
-    weakDepends = new TreeSet();
-    String[] newDepends = object.getDepends();
-    for (int i = 0; i < newDepends.length; i++) {
-      if (WeakDependency.isWeakDependency(newDepends[i])) {
-        weakDepends.add(newDepends[i]);
+		object = _obj;
+    depends = new TreeSet<String>();
+    weakDepends = new TreeSet<String>();
+    for (String dep : object.getDepends()) {
+      if (WeakDependency.isWeakDependency(dep)) {
+        weakDepends.add(dep);
       } else {
-        depends.add(newDepends[i]);
+        depends.add(dep);
       }
     }
 
-    provides = new TreeSet();
-    String[] newProvides = object.getProviding();
-    for (int i = 0; i < newProvides.length; i++) {
-      provides.add(newProvides[i]);
+    provides = new TreeSet<String>();
+    for (String prov : object.getProviding()) {
+      provides.add(prov);
     }
+    
 	}
 
 	private boolean intoHints = true;

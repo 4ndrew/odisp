@@ -29,22 +29,10 @@ import org.valabs.stdmsg.StandartMessage;
  *            System.out.println(&quot;Some reply-message received!&quot;);
  *          }
  *       });
- *       
- *       ...
- *       
- *       handleMessage(Message msg) {
- *         ODSessionManager sm = ODSessionManager.getSessionManager();
- *         if (!sm.processMessage(msg)) {
- *           System.out.println(&quot;Message processed by SessionManager&quot;);
- *         } else if (ODObjectLoaded.equals(msg)) {
- *           ...
- *         }
- *         ...
- *       }
  * </pre>
  * 
  * @author (C) 2004-2005 <a href="dron@novel-il.ru">Андрей А. Порохин </a>
- * @version $Id: SessionManager.java,v 1.19 2005/09/29 11:22:42 dron Exp $
+ * @version $Id: SessionManager.java,v 1.20 2006/07/04 10:51:41 loki Exp $
  */
 public class SessionManager {
   /** Период, через который запускается проверка превышения ожидания. */

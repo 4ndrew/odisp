@@ -1,151 +1,159 @@
-<!-- $Id: build.xml,v 1.31 2005/09/19 07:26:23 valeks Exp $ mode: -*- --><!-- xsl -*- -->
+<!-- $Id: build.xml,v 1.33 2006/03/16 14:24:38 valeks Exp $ mode: -*- -->
+<!-- xsl -*- -->
 <project name="odisp" default="all" basedir=".">
-    <taskdef resource="checkstyletask.properties"
+	<taskdef resource="checkstyletask.properties"
            classpath="/usr/local/share/java/classes/checkstyle.jar"/>
-	       
-    <!-- Environment setup targets and options -->
-    <target name="build-dir-setup">
-      <mkdir dir="build"/>
-    </target>
-    <target name="pre-doc-create-doc-dir">
-      <mkdir dir="docs"/>
-    </target>
-    
-    <target name="pre-doc" depends="pre-doc-create-doc-dir"/>
-    
-    <target name="release-dir-setup">
-      <mkdir dir="release"/>
-    </target>
-    <!-- Maintance tasks: clean, log, style, doc -->
-    <target name="clean" depends="clean-generated-messages">
-      <delete dir="build"/>
-      <delete dir="docs/javadoc"/>
-      <exec executable="make" dir="docs">
-         <arg line="distclean"/>
-      </exec>
-    </target>
-    
-    <target name="clean-generated-messages">
-      <java classpath="tools/tplParser.jar"
+
+	<!-- Environment setup targets and options -->
+	<target name="build-dir-setup">
+		<mkdir dir="build"/>
+	</target>
+	<target name="pre-doc-create-doc-dir">
+		<mkdir dir="docs"/>
+	</target>
+
+	<target name="pre-doc" depends="pre-doc-create-doc-dir"/>
+
+	<target name="release-dir-setup">
+		<mkdir dir="release"/>
+	</target>
+	<!-- Maintance tasks: clean, log, style, doc -->
+	<target name="clean" depends="clean-generated-messages">
+		<delete dir="build"/>
+		<delete dir="docs/javadoc"/>
+		<exec executable="make" dir="docs">
+			<arg line="distclean"/>
+		</exec>
+	</target>
+
+	<target name="clean-generated-messages">
+		<java classpath="tools/tplParser.jar"
         classname="org.valabs.tplParser.TplParser"
         fork="true"
         dir=".">
-        <arg value="-clean"/>
-      </java>
-    </target>
+			<arg value="-clean"/>
+		</java>
+	</target>
 
-    <target name="doc-log" depends="pre-doc">
-      <cvschangelog destfile="docs/ChangeLog.xml"/>
-      <style in="docs/ChangeLog.xml" 
+	<target name="doc-log" depends="pre-doc">
+		<cvschangelog destfile="docs/ChangeLog.xml"/>
+		<style in="docs/ChangeLog.xml" 
              out="docs/ChangeLog.html"
              style="tools/changelog.xsl">
-          <param name="title" expression="ODISP ChangeLog"/>
-          <param name="module" expression="odisp"/>
-          <param name="cvsweb" expression="http://cvs.novel.local/cgi-bin/viewcvs.cgi/"/>
-        </style>
-      <delete file="docs/ChangeLog.xml"/>
-    </target>
+			<param name="title" expression="ODISP ChangeLog"/>
+			<param name="module" expression="odisp"/>
+			<param name="cvsweb" expression="http://cvs.novel.local/cgi-bin/viewcvs.cgi/"/>
+		</style>
+		<delete file="docs/ChangeLog.xml"/>
+	</target>
 
-    <target name="doc-style" depends="pre-doc">
-      <checkstyle config="docs/sun_checks.xml" failOnViolation="no">
-        <fileset dir="messages" includes="**/*.java"/>
-        <fileset dir="odisp" includes="**/*.java"/>
-        <fileset dir="server" includes="**/*.java"/>
-        <fileset dir="client" includes="**/*.java"/>        
-        <formatter type="plain" toFile="docs/checkstyle_errors.txt"/>
-      </checkstyle>
-      <exec executable="cat">
-        <arg line="docs/checkstyle_errors.txt"/>
-      </exec>
-    </target>
+	<target name="doc-style" depends="pre-doc">
+		<checkstyle config="docs/sun_checks.xml" failOnViolation="no">
+			<fileset dir="messages" includes="**/*.java"/>
+			<fileset dir="odisp" includes="**/*.java"/>
+			<fileset dir="server" includes="**/*.java"/>
+			<fileset dir="client" includes="**/*.java"/>
+			<formatter type="plain" toFile="docs/checkstyle_errors.txt"/>
+		</checkstyle>
+		<exec executable="cat">
+			<arg line="docs/checkstyle_errors.txt"/>
+		</exec>
+	</target>
 
-    <!-- Javadoc and general documentation targets -->
-    <target name="doc-javadoc" depends="pre-doc, messages-generate">
-	<javadoc
+	<!-- Javadoc and general documentation targets -->
+	<target name="doc-javadoc" depends="pre-doc, messages-generate">
+		<javadoc
             destdir="docs/javadoc"
             encoding="koi8-r"
             author="yes"
             version="yes"
             verbose="no"
-            source="1.4"
-            classpath="lib/xlang-parser.jar">
-	    <tag name="fixme." description="Must FIX:" enabled="yes" scope="all"/>
-	    <tag name="todo." description="To do:" enabled="yes" scope="all"/>	    
-	    <tag name="xxx." description="Urgent!:" enabled="yes" scope="all"/>	    
-	    <packageset dir="src" defaultexcludes="yes"/>
-            <link offline="false" href="${jdk-doc-path}"/>
-	</javadoc>
-    </target>
-    
-    <target name="doc-doxygen" depends="pre-doc">
-        <exec executable="doxygen">
-          <arg line="Doxyfile"/>
-        </exec>
-    </target>
-    
-    <target name="doc" depends="doc-javadoc, doc-doxygen"/>
-    
-    <target name="doc-general">
-	<exec executable="make" dir="docs">
-	    <arg line="all"/>
-        </exec>	
-    </target>
+            source="1.5"
+            classpath="lib/xlang-parser.jar"
+					 access="private"
+					 windowtitle="ODISP"
+			>
+			<tag name="fixme." description="Must FIX:" enabled="yes" scope="all"/>
+			<tag name="todo." description="To do:" enabled="yes" scope="all"/>
+			<tag name="xxx." description="Urgent!:" enabled="yes" scope="all"/>
+			<packageset dir="src" defaultexcludes="yes"/>
+			<packageset dir="src5" defaultexcludes="yes"/>
+			<link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+			<group title="Core" packages="org.valabs.odisp*"/>
+			<group title="Basic objects" packages="org.valabs.stdobj*"/>
+			<group title="Messages" packages="org.valabs.stdmsg*"/>
+		</javadoc>
+	</target>
 
-  <!-- General building and releasing tags: all, world, release*, nightly -->
-  <target name="all" depends="odisp"/>
-  <target name="world" depends="clean, all, doc, doc-general"/>
+	<target name="doc-doxygen" depends="pre-doc">
+		<exec executable="doxygen">
+			<arg line="Doxyfile"/>
+		</exec>
+	</target>
 
-  <!-- Internal build target: build tplParser aka message generator. -->
-  <target name="messages-parser-build">
-    <ant dir="tools"/>
-  </target>
-  
-  <!-- External build target: generate all tpl'ed messages. -->
-  <target name="messages-generate" depends="messages-parser-build">
-    <java classpath="tools/tplParser.jar" classname="org.valabs.tplParser.TplParser"/>
-  </target>
-    
-  <!-- Object Dispatcher -->
- 
-  <target name="odisp-corbamanager">
-    <exec os="FreeBSD" executable="/usr/local/bin/idlj" dir="src">
-      <!--arg value="-td src"/-->
-      <arg value="-v"/>
-      <arg value="-fall"/>
-      <arg value="org/valabs/stdobj/corba/test/HelloWorld.idl"/>
-    </exec>
-    <exec os="Windows 2000, Windows XP" executable="123"> 
-    </exec>   
-  </target> 
- 
-    
-  <target name="odisp-junit-compile" depends="odisp">
-    <javac
+	<target name="doc" depends="doc-javadoc, doc-doxygen"/>
+
+	<target name="doc-general">
+		<exec executable="make" dir="docs">
+			<arg line="all"/>
+		</exec>
+	</target>
+
+	<!-- General building and releasing tags: all, world, release*, nightly -->
+	<target name="all" depends="odisp"/>
+	<target name="world" depends="clean, all, doc, doc-general"/>
+
+	<!-- Internal build target: build tplParser aka message generator. -->
+	<target name="messages-parser-build">
+		<ant dir="tools"/>
+	</target>
+
+	<!-- External build target: generate all tpl'ed messages. -->
+	<target name="messages-generate" depends="messages-parser-build">
+		<java classpath="tools/tplParser.jar" classname="org.valabs.tplParser.TplParser"/>
+	</target>
+
+	<!-- Object Dispatcher -->
+
+	<target name="odisp-corbamanager">
+		<exec os="FreeBSD" executable="/usr/local/bin/idlj" dir="src">
+			<!--arg value="-td src"/-->
+			<arg value="-v"/>
+			<arg value="-fall"/>
+			<arg value="org/valabs/stdobj/corba/test/HelloWorld.idl"/>
+		</exec>
+		<exec os="Windows 2000, Windows XP" executable="123">
+		</exec>
+	</target>
+
+
+	<target name="odisp-junit-compile" depends="odisp">
+		<javac
       srcdir="src/test"
       destdir="build"
       deprecation="yes"
       source="1.4">
-      <classpath>
-        <pathelement location="lib/xlang-parser.jar"/>
-        <pathelement location="lib/jug.jar"/>
-        <pathelement location="build"/>
-      </classpath>
-    </javac>
-  </target>
-  <target name="odisp-junit" depends="odisp-junit-compile">
-    <junit printsummary="withOutAndErr" fork="yes" haltonfailure="yes">
-      <classpath>
-        <pathelement location="lib/xlang-parser.jar"/>
-        <pathelement location="lib/jug.jar"/>
-        <pathelement location="build"/>
-      </classpath>
-      <test name="test.org.valabs.odisp.AllTests"/>
-    </junit>
-    
-  </target>  
+			<classpath>
+				<pathelement location="lib/xlang-parser.jar"/>
+				<pathelement location="lib/jug.jar"/>
+				<pathelement location="build"/>
+			</classpath>
+		</javac>
+	</target>
+	<target name="odisp-junit" depends="odisp-junit-compile">
+		<junit printsummary="withOutAndErr" fork="yes" haltonfailure="yes">
+			<classpath>
+				<pathelement location="lib/xlang-parser.jar"/>
+				<pathelement location="lib/jug.jar"/>
+				<pathelement location="build"/>
+			</classpath>
+			<test name="test.org.valabs.odisp.AllTests"/>
+		</junit>
 
-    <target name="odisp" depends="build-dir-setup, messages-generate, odisp-corbamanager">
-	<javac
+	</target>
+
+	<target name="odisp" depends="build-dir-setup, messages-generate, odisp-corbamanager">
+		<javac
 	    srcdir="src/org" 
 	    destdir="build" 
 	    debug="yes"
@@ -153,37 +161,70 @@
 	    source="1.4"
 	    failonerror="${fail-on-error}"
 	    >
-          <classpath>
-            <pathelement location="lib/xlang-parser.jar"/>
-            <pathelement location="lib/jug.jar"/>
-            <pathelement location="lib/jmdns.jar"/>
-            <pathelement location="tools/tplParser.jar"/>
-          </classpath>
-        </javac>
-    </target>
-    <target name="odisp-jar" depends="release-dir-setup">
-	   <jar destfile="release/odisp.jar" basedir="build" includes="org/**/*class" excludes="org/valabs/odisp/Launcher*">
-                <manifest>
-                        <attribute name="Built-By" value="${user.name}"/>
-                </manifest>
-        </jar>
-    </target>
-  
-  <target name="launcher-jar" depends="release-dir-setup, odisp">
-     <jar destfile="release/launcher.jar" basedir="build" includes="org/valabs/odisp/Launcher*">
-       <manifest>
-         <attribute name="Built-By" value="${user.name}"/>
-         <attribute name="Main-Class" value="org.valabs.odisp.Launcher"/>
-       </manifest>
-     </jar>
-  </target>
-  
-  <target name="odisp-jar-debug" depends="odisp, odisp-junit">
-    <jar destfile="release/odisp.jar" basedir="build" includes="org/**/*class,test/org/valabs/odisp/DispatcherFake.class">
-      <manifest>
-      <attribute name="Built-By" value="${user.name}"/>
-      <attribute name="Main-Class" value="org.valabs.odisp.standart.Dispatcher"/>
-      </manifest>
-    </jar>
-  </target>
+			<classpath>
+				<pathelement location="lib/xlang-parser.jar"/>
+				<pathelement location="lib/jug.jar"/>
+				<pathelement location="lib/jmdns.jar"/>
+				<pathelement location="lib/commons-configuration-1.1.jar"/>
+				<pathelement location="lib/commons-lang-2.1.jar"/>
+				<pathelement location="tools/tplParser.jar"/>
+				<pathelement location="tools/novel-tools.jar"/>
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="odisp5" depends="odisp">
+		<javac
+    srcdir="src5/org" 
+    destdir="build" 
+    debug="yes"
+    deprecation="yes"
+    source="1.5"
+    failonerror="${fail-on-error}"
+    >
+			<classpath>
+				<pathelement location="lib/xlang-parser.jar"/>
+				<pathelement location="lib/jug.jar"/>
+				<pathelement location="lib/jmdns.jar"/>
+				<pathelement location="lib/commons-configuration-1.1.jar"/>
+				<pathelement location="lib/commons-lang-2.1.jar"/>
+				<pathelement location="tools/tplParser.jar" />
+				<pathelement location="tools/novel-tools.jar" />
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="odisp-jar" depends="release-dir-setup">
+		<jar destfile="release/odisp.jar" basedir="build" includes="org/**/*class" excludes="org/valabs/odisp/Launcher*, org/valabs/odisp/standart5/**, org/valabs/odisp/common/ODISPMessageHandler*,org/valabs/odisp/common/StandartODObject5*,org/valabs/stdobj/echo/Echo5*">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+			</manifest>
+		</jar>
+	</target>
+	
+	<target name="odisp5-jar" depends="odisp5, release-dir-setup">
+		<jar destfile="release/odisp.jar" basedir="build" includes="org/**/*class" excludes="org/valabs/odisp/Launcher*">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="launcher-jar" depends="release-dir-setup, odisp">
+		<jar destfile="release/launcher.jar" basedir="build" includes="org/valabs/odisp/Launcher*">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Main-Class" value="org.valabs.odisp.Launcher" />
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="odisp-jar-debug" depends="odisp, odisp-junit">
+		<jar destfile="release/odisp.jar" basedir="build" includes="org/**/*class,test/org/valabs/odisp/DispatcherFake.class">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Main-Class" value="org.valabs.odisp.standart.Dispatcher"/>
+			</manifest>
+		</jar>
+	</target>
 </project>

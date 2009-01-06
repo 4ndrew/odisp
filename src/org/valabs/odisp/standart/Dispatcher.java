@@ -2,6 +2,7 @@ package org.valabs.odisp.standart;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -23,7 +24,7 @@ import org.valabs.stdmsg.StandartMessage;
  * 
  * @author (C) 2003-2005 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
  * @author (C) 2003-2005 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: Dispatcher.java,v 1.64 2005/09/29 13:36:51 valeks Exp $
+ * @version $Id: Dispatcher.java,v 1.66 2006/03/14 13:31:51 valeks Exp $
  */
 public class Dispatcher implements org.valabs.odisp.common.Dispatcher, ExceptionHandler {
   /** Журнал. */
@@ -128,6 +129,20 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
    */
   public Dispatcher(List args) {
     log.info(toString() + " starting up...");
+    
+    Thread aliveThread = new Thread("alive thread") {
+      public final void run() {
+        try {
+          synchronized (this) {
+            wait();
+          }
+        } catch (InterruptedException e) { /* игнорируется. */ }
+      }
+    };
+    Map tmp = new HashMap();
+    tmp.put("runthr", aliveThread);
+    oman.loadObject(DispatcherHandler.class.getName(), tmp);
+    
     cman.setCommandLineArguments(args);
     if (getConfigurationManager().supportComponentListing()) {
       List resources = getConfigurationManager().getResourceList();
@@ -146,19 +161,7 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
         ConfigurationManager.ComponentConfiguration element = (ConfigurationManager.ComponentConfiguration) it.next();
         oman.loadObject(element.getClassName(), element.getConfiguration());
       }
-//      oman.loadPending();
-      Thread aliveThread = new Thread("alive thread") {
-        public final void run() {
-          try {
-            synchronized (this) {
-              wait();
-            }
-          } catch (InterruptedException e) { /* игнорируется. */ }
-        }
-      };
-      Map tmp = new HashMap();
-      tmp.put("runthr", aliveThread);
-      oman.loadObject(DispatcherHandler.class.getName(), tmp);
+
       oman.loadPending();
 
       aliveThread.start();
@@ -174,7 +177,7 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
    * Выводит сообщение об ошибке в случае некорректных параметров.
    */
   public static void usage() {
-    log.severe("Usage: java org.valabs.odisp.standart.Dispatcher <config>");
+    log.severe("Usage: java org.valabs.odisp.standart.Dispatcher <config>*");
     System.exit(0);
   }
   
@@ -186,7 +189,7 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
    */
   public static void main(final String[] args) {
     log.setLevel(java.util.logging.Level.ALL);
-    if (args.length != 1) {
+    if (args.length < 1) {
 		usage();
     } else {
       new Dispatcher(Arrays.asList(args));

@@ -1,24 +1,28 @@
-package org.valabs.odisp.standart;
+/*
+ * This is a part of odisp.
+ * See LICENSE for licensing details.
+ */
+package org.valabs.odisp.standart5;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
 import org.valabs.odisp.common.Dispatcher;
 import org.valabs.odisp.common.Resource;
+import org.valabs.odisp.common.ResourceManager;
 
-/** Менеджер ресурсных объектов ODISP.
- * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceManager.java,v 1.41 2005/11/25 15:27:35 valeks Exp $
+/** Менеджер ресурсов.
+ * @author (С) 2006 <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
+ * @version $Id: ResourceManager5.java,v 1.2 2006/03/29 11:33:02 valeks Exp $
  */
-class ResourceManager implements org.valabs.odisp.common.ResourceManager {
+class ResourceManager5 implements ResourceManager {
   /** Ссылка на диспетчер объектов. */
   private final Dispatcher dispatcher;
-  /** Нить обработки запросов. */
-  private final Map resources = new HashMap();
+  /** Словарь ресурсов (название -> дескриптор ресурса). */
+  private final Map<String, ResourceEntry> resources = new HashMap<String, ResourceEntry>();
 
   /** Журнал. */
   private static final Logger log = Logger.getLogger(ResourceManager.class.getName());
@@ -26,7 +30,7 @@ class ResourceManager implements org.valabs.odisp.common.ResourceManager {
   /** Доступ к ресурсам.
    * @return список ресурсов
    */
-  public final Map getResources() {
+  public final Map<String, ResourceEntry> getResources() {
     return resources;
   }
 
@@ -37,30 +41,27 @@ class ResourceManager implements org.valabs.odisp.common.ResourceManager {
    */
   public final void loadResource(final String className, final int mult, final Map config) {
     int realMult = mult;
-    String logMessage = realMult + " loading resource ";
+    StringBuffer logMessage = new StringBuffer();
+    logMessage.append(realMult).append(" loading resource ");
     if (mult == ResourceEntry.MULT_SHARE) {
-      logMessage += "shared ";
+      logMessage.append("shared ");
       realMult = 1;
     }
     final ResourceEntry re = new ResourceEntry(mult, className);
-    logMessage += className;
+    logMessage.append(className);
     for (int i = 0; i < realMult; i++) {
       try {
         final Resource r = (Resource) Class.forName(className).newInstance();
         r.setConfiguration(config);
         re.addResource(r);
-        logMessage += "+";
+        logMessage.append("+");
         synchronized (resources) {
           resources.put(className, re);
         }
-        logMessage += " ok";
-        log.config(logMessage);
-      } catch (ClassNotFoundException e) {
-        log.warning(" failed: " + e);
-      } catch (InstantiationException e) {
-        log.warning(" failed: " + e);
-      } catch (IllegalAccessException e) {
-        log.warning(" failed: " + e);
+        logMessage.append(" ok");
+        log.config(logMessage.toString());
+      } catch (Exception e) {
+        dispatcher.getExceptionHandler().signalException(e);
       }
     }
   }
@@ -68,16 +69,15 @@ class ResourceManager implements org.valabs.odisp.common.ResourceManager {
   /** Конструктор менеджера ресурсов.
    * @param newDispatcher ссылка на диспетчер ресурсами которого управляет менеджер
    */
-  public ResourceManager(final Dispatcher newDispatcher) {
+  public ResourceManager5(final Dispatcher newDispatcher) {
     log.setLevel(java.util.logging.Level.ALL);
     dispatcher = newDispatcher;
   }
 
-  public List statRequest() {
-    final List result = new ArrayList();
-    Iterator it = resources.keySet().iterator();
-    while (it.hasNext()) {
-      result.add(resources.get(it.next()).toString());
+  public List<String> statRequest() {
+    final List<String> result = new ArrayList<String>(resources.size());
+    for (ResourceEntry re : resources.values()) {
+      result.add(re.toString());
     }
     return result;
   }
@@ -104,11 +104,11 @@ class ResourceManager implements org.valabs.odisp.common.ResourceManager {
    */
   public Resource resourceTryAcquire(final String className) {
     Resource result = null;
-    synchronized (resources) {
-      if (resources.containsKey(className)) {
-        final ResourceEntry re = (ResourceEntry) resources.get(className);
+    if (resources.containsKey(className)) {
+      final ResourceEntry re = resources.get(className);
+      synchronized (re) {
         if (re.isAvailable()) {
-          result = re.acquireResource("whom-ever"); // XXX
+          result = re.acquireResource();
         }
       }
     }
@@ -116,13 +116,15 @@ class ResourceManager implements org.valabs.odisp.common.ResourceManager {
   }
 
   /**
-   * @see org.valabs.odisp.common.ResourceManager#releaseResource(java.lang.String, org.valabs.odisp.common.Resource)
+   * @see org.valabs.odisp.common.ResourceManager#releaseResource(java.lang.String,
+   *      org.valabs.odisp.common.Resource)
    */
   public void releaseResource(final String className, final Resource resource) {
-    synchronized (resources) {
-      if (resources.containsKey(className)) {
-        ((ResourceEntry) resources.get(className)).releaseResource(resource);
+    if (resources.containsKey(className)) {
+      final ResourceEntry re = resources.get(className);
+      synchronized (re) {
+        re.releaseResource(resource);
       }
     }
   }
-} // StandartResourceManager
+}

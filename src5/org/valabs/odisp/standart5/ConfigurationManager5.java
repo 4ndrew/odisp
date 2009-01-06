@@ -1,10 +1,10 @@
-package org.valabs.odisp.standart;
+package org.valabs.odisp.standart5;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -16,20 +16,20 @@ import org.apache.commons.configuration.XMLConfiguration;
 /**
  * Реализация менеджера конфигурации.
  * 
- * @author (C) 2004 <a href="valeks@valabs.spb.ru">Валентин А. Алексеев </a>
- * @version $Id: ConfigurationManager.java,v 1.12 2007/01/16 10:27:17 dron Exp $
+ * @author (C) 2005 <a href="valeks@valabs.spb.ru">Валентин А. Алексеев </a>
+ * @version $Id: ConfigurationManager5.java,v 1.4 2006/03/29 11:33:24 valeks Exp $
  */
-class ConfigurationManager implements org.valabs.odisp.common.ConfigurationManager {
+class ConfigurationManager5 implements org.valabs.odisp.common.ConfigurationManager {
 
-  List objects = new ArrayList();
+  final List<ComponentConfiguration> objects = new LinkedList<ComponentConfiguration>();
 
-  List resources = new ArrayList();
+  final List<ComponentConfiguration> resources = new LinkedList<ComponentConfiguration>();
 
-  MultiMap params = new MultiMap();
+  final MultiMap params = new MultiMap();
 
-  Logger log = Logger.getLogger(ConfigurationManager.class.getName());
+  static final Logger log = Logger.getLogger(ConfigurationManager5.class.getName());
   
-  public ConfigurationManager() {
+  public ConfigurationManager5() {
     log.setLevel(Level.ALL);
   }
 
@@ -102,24 +102,16 @@ class ConfigurationManager implements org.valabs.odisp.common.ConfigurationManag
             return arg1.endsWith(".xml");
           }
         });
-        for (int i = 0; i < cfgFiles.length; i++) {
-          loadConfigFile(element + File.separator + cfgFiles[i]);
+        for (String aFile : cfgFiles) {
+          loadConfigFile(element + File.separator + aFile);
         }
       }
     }
-//    loadConfiguration();
   }
 
   private void loadConfigFile(String element) {
     try {
-//      compConf.addConfiguration();
       XMLConfiguration conf = new XMLConfiguration(element);
-//      try {
-//        // попытка загрузить override
-//        compConf.addConfiguration(new XMLConfiguration(element + ".local"));
-//      } catch (ConfigurationException ex) {
-//
-//      }
       log.info("Loaded " + element);
       loadConfiguration(conf);
     } catch (ConfigurationException ex) {
@@ -131,13 +123,12 @@ class ConfigurationManager implements org.valabs.odisp.common.ConfigurationManag
     List objsList = compConf.getList("object[@name]");
     int foundObjects = 0;
     int foundResources = 0;
-    int foundParams = 0;
     int objectsCount = objsList.size();
     for (int i = 0; i < objectsCount; i++) {
       String className = compConf.getString("object(" + i + ")[@name]");
       List params = compConf.getList("object(" + i +").param[@name]");
       int paramCount = params.size();
-      Map config = new HashMap();
+      Map<String, String> config = new HashMap<String, String>();
       for (int j = 0; j < paramCount; j++) {
         String key = compConf.getString("object(" + i + ").param(" + j + ")[@name]");
         String value = compConf.getString("object(" + i + ").param(" + j + ")[@value]", "SET");
@@ -154,7 +145,7 @@ class ConfigurationManager implements org.valabs.odisp.common.ConfigurationManag
       String className = compConf.getString("resource(" + i + ")[@name]");
       List params = compConf.getList("resource(" + i +").param[@name]");
       int paramCount = params.size();
-      Map config = new HashMap();
+      Map<String, String> config = new HashMap<String, String>();
       for (int j = 0; j < paramCount; j++) {
         String key = compConf.getString("resource(" + i + ").param(" + j + ")[@name]");
         String value = compConf.getString("resource(" + i + ").param(" + j + ")[@value]", "SET");
@@ -164,52 +155,49 @@ class ConfigurationManager implements org.valabs.odisp.common.ConfigurationManag
       foundResources++;
     }
     
-    List rootConfig = compConf.getList("param[@name]");
+    List rootConfig = compConf.getList("params.param");
     int rootConfigCount = rootConfig.size();
     for (int i = 0; i < rootConfigCount; i++) {
-      String name = compConf.getString("param(" + i + ")[@name]");
-      String value = compConf.getString("param(" + i + ")[@value]", "SET");
+      String name = compConf.getString("params.param(" + i + ")[@name]");
+      String value = compConf.getString("params.param(" + i + ")[@value]", "SET");
       params.put("root", name, value);
-      foundParams++;
     }
     
-    log.fine("Found " + foundResources + " resources and " + foundObjects + " objects to load (" + foundParams + " params).");
+    log.fine("Found " + foundResources + " resources and " + foundObjects + " objects to load.");
   }
 
   class MultiMap {
 
-    private final Map domains = new HashMap();
+    private final Map<String, Map<String, String>> domains = new HashMap<String, Map<String, String>>();
 
     public void put(final String domainName, final String param, final String value) {
       getDomain(domainName).put(param, value);
     }
 
     public String get(final String domainName, final String paramName) {
-      return (String) getDomain(domainName).get(paramName);
+      return getDomain(domainName).get(paramName);
     }
 
-    public void putAll(final String domainName, final Map domainParams) {
+    public void putAll(final String domainName, final Map<String, String> domainParams) {
       getDomain(domainName).putAll(domainParams);
     }
 
-    public void putAllPrefixed(final String domainName, final String prefix, final Map domainParams) {
+    public void putAllPrefixed(final String domainName, final String prefix, final Map<String, String> domainParams) {
       //Не стоит забывать что параметров может и не быть ;)
       if (domainParams == null) { return; }
 
-      final Map domain = getDomain(domainName);
-      final Iterator keyIt = domainParams.keySet().iterator();
-      while (keyIt.hasNext()) {
-        final String key = (String) keyIt.next();
+      final Map<String, String> domain = getDomain(domainName);
+      for (String key: domainParams.keySet()) {
         domain.put(prefix + key, domainParams.get(key));
       }
     }
 
-    public Map getDomain(final String domain) {
-      Map result;
+    public Map<String, String> getDomain(final String domain) {
+      Map<String, String> result;
       if (domains.containsKey(domain)) {
-        result = (Map) domains.get(domain);
+        result = domains.get(domain);
       } else {
-        result = new HashMap();
+        result = new HashMap<String, String>();
         domains.put(domain, result);
       }
       return result;

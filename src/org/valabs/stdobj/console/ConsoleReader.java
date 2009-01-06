@@ -70,7 +70,10 @@ public class ConsoleReader extends Thread {
           System.out.print("more? ");
         }
         m.setCorrect(true);
-        dispatcher.send(m);
+        if (m.getDestination() != null && m.getDestination().length() > 0
+            && m.getAction() != null && m.getAction().length() > 0) {
+          dispatcher.send(m);
+        }
         if (doExit) {
           break;
         }

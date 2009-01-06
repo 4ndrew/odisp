@@ -23,7 +23,7 @@ import org.valabs.stdmsg.CopyrightGetReplyMessage;
 /** Небольшой объект, который занимается сбором информации о правах
  * на ПО используемое в модулях ODISP.
  * @author <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
- * @version $Id: Copyright.java,v 1.4 2005/07/22 12:56:38 dron Exp $
+ * @version $Id: Copyright.java,v 1.7 2005/11/20 12:33:04 valeks Exp $
  */
 public class Copyright extends StandartODObject implements MessageHandler {
 	private static final String NAME = "copyright";

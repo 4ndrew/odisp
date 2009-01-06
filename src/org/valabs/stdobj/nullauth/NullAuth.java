@@ -12,7 +12,7 @@ import org.valabs.stdmsg.ODObjectLoadedMessage;
  * файле classes.cfg. Возможно лишь два варианта поведения -- default to deny или
  * default to accept.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
- * @version $Id: NullAuth.java,v 1.8 2005/07/22 13:06:55 dron Exp $
+ * @version $Id: NullAuth.java,v 1.11 2005/11/20 12:33:04 valeks Exp $
  */
 public class NullAuth extends StandartODObject implements SecurityManager {
 

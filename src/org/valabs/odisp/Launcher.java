@@ -128,6 +128,7 @@ public class Launcher {
   }
 
   public static final void main(final String[] args) {
+    // BasicConfigurator.configure();
     new Launcher(args);
   }
 }

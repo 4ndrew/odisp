@@ -24,7 +24,7 @@ import org.valabs.stdmsg.ODShutdownMessage;
  * Обработчик сообщений диспетчера ODISP.
  * 
  * @author (C) 2004-2005 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: DispatcherHandler.java,v 1.42 2005/07/22 13:06:54 dron Exp $
+ * @version $Id: DispatcherHandler.java,v 1.46 2006/06/26 16:30:21 dron Exp $
  */
 
 class DispatcherHandler extends StandartODObject {
@@ -47,7 +47,7 @@ class DispatcherHandler extends StandartODObject {
     private static final String FULLNAME = "Standart ODISP Dispatcher Core";
 
     /** Версия модуля. */
-    private static final String VERSION = "0.1.0";
+    private static final String VERSION = "0.1.1";
 
     /** Дополнительная информация о модуле. */
     private static final String COPYRIGHT = "(C) 2003-2005 Valentin A. Alekseev, Andrew A. Porohin";

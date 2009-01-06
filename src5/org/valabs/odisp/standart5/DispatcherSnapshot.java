@@ -1,4 +1,4 @@
-package org.valabs.odisp.standart;
+package org.valabs.odisp.standart5;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,19 +16,18 @@ import java.util.logging.Logger;
  * Класс читающий и сохраняющий состояние диспетчера перед перезагрузкой.
  * 
  * @author <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
- * @version $Id: DispatcherSnapshot.java,v 1.6 2005/11/25 00:11:45 valeks Exp $
+ * @version $Id: DispatcherSnapshot.java,v 1.2 2005/12/24 16:46:37 valeks Exp $
  */
 class DispatcherSnapshot {
   private static final String SNAP_NAME = "restart.snap";
-  private Map objectSnapshots = new HashMap();
+  private Map<String, Map> objectSnapshots = new HashMap<String, Map>();
   private final static Logger log = Logger.getLogger(DispatcherSnapshot.class.getName());
-  /**
-   * 
-   */
+
+  @SuppressWarnings("unchecked")
   public DispatcherSnapshot() {
     try {
       final ObjectInputStream snapFile = new ObjectInputStream(new FileInputStream(SNAP_NAME));
-      objectSnapshots = (Map) snapFile.readObject();
+      objectSnapshots = (Map<String, Map>) snapFile.readObject();
       new File(SNAP_NAME).delete();
     } catch (FileNotFoundException e) {
       log.info("No snapshot found. Starting from scratch.");
@@ -65,7 +64,7 @@ class DispatcherSnapshot {
   }
     
   public Map getObjectSnapshot(final String objectName) {
-    return (Map) objectSnapshots.get(objectName);
+    return objectSnapshots.get(objectName);
   }
 
   /**

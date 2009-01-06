@@ -1,10 +1,10 @@
-package org.valabs.odisp.standart;
+package org.valabs.odisp.standart5;
 
 import org.valabs.odisp.common.Resource;
 
 /** Запись об однотипных ресурах в таблице ресурсов.
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
- * @version $Id: ResourceEntry.java,v 1.17 2005/11/25 15:27:35 valeks Exp $
+ * @version $Id: ResourceEntry.java,v 1.2 2006/03/29 11:33:02 valeks Exp $
  */
 class ResourceEntry {
   /** Уникальное обозначение разделяемого ресурса. */
@@ -25,9 +25,9 @@ class ResourceEntry {
    */
   private ResourceItem lookupFirstUnused() {
     ResourceItem result = null;
-    for (int i = 0; i < resourceStorage.length; i++) {
-      if (resourceStorage[i] != null && !resourceStorage[i].isUsed()) {
-        result = resourceStorage[i];
+    for (ResourceItem ri : resourceStorage) {
+      if (ri != null && !ri.isUsed()) {
+        result = ri;
         break;
       }
     }
@@ -39,9 +39,9 @@ class ResourceEntry {
    */
   private ResourceItem lookupResourceItemByResource(final Resource res) {
     ResourceItem result = null;
-    for (int i = 0; i < resourceStorage.length; i++) {
-      if (resourceStorage[i] != null && resourceStorage[i].getResource() == res) {
-        result = resourceStorage[i];
+    for (ResourceItem  ri: resourceStorage) {
+      if (ri != null && ri.getResource() == res) {
+        result = ri;
         break;
       }
     }
@@ -59,18 +59,16 @@ class ResourceEntry {
    * @param usedBy описание того, кто пользуется ресурсом
    * @return ссылка на ресурс
    */
-  public final Resource acquireResource(final String usedBy) {
+  public final Resource acquireResource() {
     assert isAvailable();
     ResourceItem rit = null;
-    if (usage == MULT_SHARE) {
-      rit = (ResourceItem) resourceStorage[0]; // HACK
+    if (maxUsage == MULT_SHARE) {
+      rit = resourceStorage[0]; // HACK
     } else {
       rit = lookupFirstUnused();
       usage--;
       rit.setUsed(true);
-      rit.setUsedBy(usedBy);
     }
-    assert rit != null;
     acquireCount++;
     return rit.getResource();
   }
@@ -98,8 +96,8 @@ class ResourceEntry {
   }
 
   public final void cleanUp(final int code) {
-    for (int i = 0; i < resourceStorage.length; i++) {
-      resourceStorage[i].getResource().cleanUp(code);
+    for (ResourceItem ri: resourceStorage) {
+      ri.getResource().cleanUp(code);
     }
   }
 
@@ -121,20 +119,19 @@ class ResourceEntry {
    * @return строковое представление
    */
   public String toString() {
-    String result = "\nClass name: " + className + "\n";
+    StringBuffer result = new StringBuffer("\nClass name: ").append(className).append("\n");
     if (maxUsage == MULT_SHARE) {
-      result += "Shared resource. Acquire times: " + acquireCount;
+      result.append("Shared resource. Acquire times: ").append(acquireCount);
     } else {
-      result += "Usage: " + (maxUsage - usage) + " of " + maxUsage + ". Acquire times: " + acquireCount + "\n";
-      result += "Usage map: ";
-      for (int i = 0; i < resourceStorage.length; i++) {
-        if (resourceStorage[i] != null) {
-          result += resourceStorage[i].isUsed() + (resourceStorage[i].isUsed() ? "(" + resourceStorage[i].getUsedBy() + ")" : "") + " ";
-        }
+      result.append("Usage: ").append(maxUsage - usage).append(" of ").append(maxUsage).append(". Acquire times: ").append(acquireCount).append("\n");
+      result.append("Usage map: ");
+      for (ResourceItem ri: resourceStorage) {
+        result.append(ri.isUsed());
+        result.append(" ");
       }
     }
-    result+= "\n";
-    return result;
+    result.append("\n");
+    return result.toString();
   }
 
   /** Хранилище данных о конкретной ресурсе. */
@@ -154,19 +151,12 @@ class ResourceEntry {
       used = newUsed;
     }
 
-    private String usedBy = "";
-    public String getUsedBy() {
-      return usedBy;
-    }
-    public final void setUsedBy(String newUsedBy) {
-      usedBy = newUsedBy;
-    }
     /** Ссылка на ресурс. */
-    private Resource resource;
+    private final Resource resource;
     /** Установка ресурса.
      * @param newResource ссылка на ресурс
      */
-    public final void setResource(final Resource newResource) {
+    public ResourceItem(final Resource newResource) {
       resource = newResource;
     }
     /** Получение ссылки на ресурс.
@@ -174,9 +164,6 @@ class ResourceEntry {
      */
     public final Resource getResource() {
       return resource;
-    }
-    public ResourceItem(final Resource nresource) {
-      resource = nresource;
     }
   } // ResourceItem
 } // ResourceEntry

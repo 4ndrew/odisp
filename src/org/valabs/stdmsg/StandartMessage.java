@@ -13,11 +13,12 @@ import org.valabs.odisp.common.Message;
 
 /** Реализация стандартного сообщения для стандартного диспетчера ODISP.
  * 
- * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
- * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @version $Id: StandartMessage.java,v 1.34 2005/10/10 06:56:53 valeks Exp $
+ * @author (C) 2003-2005 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
+ * @author (C) 2003-2005 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
+ * @version $Id: StandartMessage.java,v 1.35 2005/11/21 15:02:54 dron Exp $
  */
 public class StandartMessage implements Message, Serializable, Cloneable {
+  static final long serialVersionUID = 1L;
   /** Флаг маршрутизации. */
   private boolean routable = true;
   /** Уникальный индекс сообщения в системе. */
