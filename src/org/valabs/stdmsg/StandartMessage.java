@@ -1,19 +1,3 @@
-/* ODISP -- Message Oriented Middleware
- * Copyright (C) 2003-2005 Valentin A. Alekseev
- * Copyright (C) 2003-2005 Andrew A. Porohin 
- * 
- * ODISP is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, version 2.1 of the License.
- * 
- * ODISP is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License
- * along with ODISP.  If not, see <http://www.gnu.org/licenses/>.
- */
 package org.valabs.stdmsg;
 
 import java.io.Serializable;
@@ -27,39 +11,39 @@ import org.doomdark.uuid.UUID;
 import org.doomdark.uuid.UUIDGenerator;
 import org.valabs.odisp.common.Message;
 
-/** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ ODISP.
+/** Реализация стандартного сообщения для стандартного диспетчера ODISP.
  * 
- * @author (C) 2003-2005 <a href="mailto:valeks@novel-il.ru">О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫. О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫</a>
- * @author (C) 2003-2005 <a href="mailto:dron@novel-il.ru">О©╫О©╫О©╫О©╫О©╫О©╫ О©╫. О©╫О©╫О©╫О©╫О©╫О©╫О©╫</a>
+ * @author (C) 2003-2005 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
+ * @author (C) 2003-2005 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
  * @version $Id: StandartMessage.java,v 1.35 2005/11/21 15:02:54 dron Exp $
  */
 public class StandartMessage implements Message, Serializable, Cloneable {
   static final long serialVersionUID = 1L;
-  /** О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
+  /** Флаг маршрутизации. */
   private boolean routable = true;
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
+  /** Уникальный индекс сообщения в системе. */
   private UUID myId;
-  /** О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
+  /** Список полей сообщения. */
   private final Map fields = new Hashtable(5);
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
+  /** Действие. */
   private String action = null;
-  /** О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
+  /** Точка назначения. */
   private String destination = null;
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
+  /** Отправитель. */
   private String origin = null;
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫. */
+  /** Идентификатор сообщения на которое производится ответ. */
   private UUID inReplyTo = null;
-  /** О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
+  /** Флаг проведения проверки. */
   private boolean ce = false;
-  /** О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
+  /** Список подсообщений. */
   private List envelope = null;
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫ OOB. */
+  /** Признак OOB. */
   private boolean oob = false;
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
-   * @param newAction О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
-   * @param newDestination О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
-   * @param newOrigin О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
-   * @param newInReplyTo О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫
+  /** Реализация конструктора сообщения.
+   * @param newAction действие которое несет сообщение
+   * @param newDestination адресат сообщения
+   * @param newOrigin отправитель сообщения
+   * @param newInReplyTo идентификатор сообщения на которое производится ответ
    */
   public StandartMessage(final String newAction,
 			 final String newDestination,
@@ -72,12 +56,12 @@ public class StandartMessage implements Message, Serializable, Cloneable {
     myId = UUIDGenerator.getInstance().generateTimeBasedUUID();
   }
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫-О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
+  /** Конструктор по-умолчанию. */
   public StandartMessage() {
     myId = UUIDGenerator.getInstance().generateTimeBasedUUID();
   }
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
+  /** Копирование сообщения. */
   private void copyFrom(final Message msg, final boolean noKeepId) {
     action = msg.getAction();
     destination = msg.getDestination();
@@ -94,103 +78,103 @@ public class StandartMessage implements Message, Serializable, Cloneable {
     setCorrect(msg.isCorrect());
   }
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
-   * @param msg О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫
-   * @param noKeepId О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+  /** Копирующий конструктор.
+   * @param msg сообещние с которого снимается копия
+   * @param noKeepId не восстанавливать идентификатор сообщения
    */
   public StandartMessage(final Message msg, final boolean noKeepId) {
     copyFrom(msg, noKeepId);
   }
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. 
-   * @param msg О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+  /** Копирующий конструктор сохрянющий номер сообщения. 
+   * @param msg исходное сообщение
    */
   public StandartMessage(final Message msg) {
     copyFrom(msg, false);
   }
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
-   * @return О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+  /** Возвращает действие которое несет сообщение.
+   * @return действие
    */
   public final String getAction() {
   	assert action != null : "Action is null";
     return action;
   }
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
-   * @param newAction О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+  /** Устанавливает действие которое несет сообщение.
+   * @param newAction действие
    */
   public final void setAction(final String newAction) {
     action = newAction;
   }
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
-   * @return О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+  /** Возвращает адресата сообщения.
+   * @return адресат
    */
   public final String getDestination() {
   	assert destination != null : "Destination is null";
   	return destination;
   }
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
-   * @param newDest О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+  /** Устанавливает адресата сообщения.
+   * @param newDest адресат
    */
   public final void setDestination(final String newDest) {
     destination = newDest;
   }
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
-   * @return О©╫О©╫О©╫О©╫О©╫
+  /** Возвращает автора сообщения.
+   * @return автор
    */
   public final String getOrigin() {
   	assert origin != null : "Origin is null";
     return origin;
   }
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫.
-   * @param newOrigin О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+  /** Изменить отправителя на лету.
+   * @param newOrigin новое значение поля отправителя
    */
   public final void setOrigin(final String newOrigin) {
     this.origin = newOrigin;
   }
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫.
-   * @return О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+  /** Возвращает идентификатор сообщения на которое производится ответ.
+   * @return идентификатор
    */
   public final UUID getReplyTo() {
     return inReplyTo;
   }
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫.
-   * @param newId О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+  /** Устанавливает идентификатор сообщения на которое производится ответ.
+   * @param newId идентификатор
    */
   public final void setReplyTo(final UUID newId) {
     inReplyTo = newId;
   }
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
-   * @return О©╫О©╫О©╫-О©╫О©╫ О©╫О©╫О©╫О©╫О©╫
+  /** Возвращает количество полей в сообщении.
+   * @return кол-во полей
    */
   public final int getFieldsCount() {
     return fields.size();
   }
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
-   * @return О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+  /** Возвращает уникальный идентификатор сообщения.
+   * @return идентификатор
    */
   public final UUID getId() {
     return myId;
   }
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
-   * @param newId О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+  /** Устанавливает уникальный идентификатор сообщения.
+   * @param newId идентификатор
    */
   public final void setId(final UUID newId) {
     myId = newId;
   }
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫.
-   * @return О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+  /** Представление сообщения в виде текстовой строки.
+   * @return строчное представление сообщения
    */
   public final String toString() {
     return "stdmessage id=" + myId + " replyto=" + inReplyTo
@@ -198,14 +182,14 @@ public class StandartMessage implements Message, Serializable, Cloneable {
       + ", origin=" + origin + ", fields.size()=" + fields.size() + (isRoutable() ? " routable" :"");
   }
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫.
-   * @return О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
-   * @param doStackTrace О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+  /** Представление сообщения в виде текстовой строки с дампом пяти последних вызово.
+   * @return строчное представление сообщения
+   * @param doStackTrace выводить или нет дамп вызовов методов
    */
   public final String toString(final boolean doStackTrace) {
     String result = toString();
     if (doStackTrace) {
-      // О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫, О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+      // небольшой хак для того, что бы получить список вызовов методов
       StackTraceElement[] stea = {};
       try {
         throw new IllegalArgumentException();
@@ -227,8 +211,8 @@ public class StandartMessage implements Message, Serializable, Cloneable {
     return result;
   }
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
-   * @return О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+  /** Проверка корректности сообщения.
+   * @return флаг корректности
    */
   public boolean isCorrect() {
     return ce;
@@ -238,8 +222,8 @@ public class StandartMessage implements Message, Serializable, Cloneable {
     return fields;
   }
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
-   * @param newCE true -- О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫, false -- О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+  /** Установка флага корректности.
+   * @param newCE true -- сообщение корректно, false -- сообщение некорректно
    */
   public final void setCorrect(final boolean newCE) {
     ce = newCE;
@@ -277,16 +261,16 @@ public class StandartMessage implements Message, Serializable, Cloneable {
       envelope.add(envelopeMessage);
   }
   
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ OOB.
-   * @return true О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ OOB.
+  /** Проверка на OOB.
+   * @return true если сообщение OOB.
    */
   public boolean isOOB() {
 //    debugMGW.logMessage(this);
     return oob;
   }
   
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ OOB.
-   * @param newValue О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+  /** Установка флага OOB.
+   * @param newValue новое значение.
    */
   public void setOOB(boolean newValue) {
     oob = newValue;
@@ -299,7 +283,7 @@ public class StandartMessage implements Message, Serializable, Cloneable {
     Message result = null;
     try {
       result = (Message) this.clone();
-    } catch (CloneNotSupportedException e) { /* О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ */ }
+    } catch (CloneNotSupportedException e) { /* игнорируется */ }
     return result;
   }
 }

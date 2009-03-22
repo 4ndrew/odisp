@@ -1,19 +1,3 @@
-/* ODISP -- Message Oriented Middleware
- * Copyright (C) 2003-2005 Valentin A. Alekseev
- * Copyright (C) 2003-2005 Andrew A. Porohin 
- * 
- * ODISP is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, version 2.1 of the License.
- * 
- * ODISP is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License
- * along with ODISP.  If not, see <http://www.gnu.org/licenses/>.
- */
 package org.valabs.odisp.standart;
 
 import java.io.File;
@@ -30,9 +14,9 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 
 /**
- * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+ * Реализация менеджера конфигурации.
  * 
- * @author (C) 2004 <a href="valeks@valabs.spb.ru">О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫. О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ </a>
+ * @author (C) 2004 <a href="valeks@valabs.spb.ru">Валентин А. Алексеев </a>
  * @version $Id: ConfigurationManager.java,v 1.12 2007/01/16 10:27:17 dron Exp $
  */
 class ConfigurationManager implements org.valabs.odisp.common.ConfigurationManager {
@@ -109,10 +93,10 @@ class ConfigurationManager implements org.valabs.odisp.common.ConfigurationManag
         continue;
       }
       if (f.isFile()) {
-        // О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ -- О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫
+        // если это файл -- загрузить как есть
         loadConfigFile(element);
       } else if (f.isDirectory()) {
-        // О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ -- О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ xml О©╫О©╫О©╫О©╫О©╫ О©╫ нёО©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+        // если это каталог -- найти все xml файлы в нём и загрузить
         String cfgFiles[] = f.list(new FilenameFilter() {
           public boolean accept(File arg0, String arg1) {
             return arg1.endsWith(".xml");
@@ -131,7 +115,7 @@ class ConfigurationManager implements org.valabs.odisp.common.ConfigurationManag
 //      compConf.addConfiguration();
       XMLConfiguration conf = new XMLConfiguration(element);
 //      try {
-//        // О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ override
+//        // попытка загрузить override
 //        compConf.addConfiguration(new XMLConfiguration(element + ".local"));
 //      } catch (ConfigurationException ex) {
 //
@@ -209,7 +193,7 @@ class ConfigurationManager implements org.valabs.odisp.common.ConfigurationManag
     }
 
     public void putAllPrefixed(final String domainName, final String prefix, final Map domainParams) {
-      //О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫ ;)
+      //Не стоит забывать что параметров может и не быть ;)
       if (domainParams == null) { return; }
 
       final Map domain = getDomain(domainName);

@@ -1,19 +1,3 @@
-/* ODISP -- Message Oriented Middleware
- * Copyright (C) 2003-2005 Valentin A. Alekseev
- * Copyright (C) 2003-2005 Andrew A. Porohin 
- * 
- * ODISP is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, version 2.1 of the License.
- * 
- * ODISP is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License
- * along with ODISP.  If not, see <http://www.gnu.org/licenses/>.
- */
 package org.valabs.stdobj.updater;
 
 import java.io.File;
@@ -30,8 +14,8 @@ import org.valabs.stdmsg.updater.UpdaterFireUpdateErrorMessage;
 import org.valabs.stdmsg.updater.UpdaterFireUpdateMessage;
 
 /**
- * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
- * @author <a href="mailto:valeks@valabs.spb.ru">О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫.</a>
+ * Компонент поддержки обновлений.
+ * @author <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
  * @version $Id: Updater.java,v 1.13 2006/02/20 11:52:25 valeks Exp $
  */
 public class Updater extends StandartODObject implements MessageHandler {
@@ -48,9 +32,9 @@ public class Updater extends StandartODObject implements MessageHandler {
   private String destBaseFolder;
 
   /**
-   * О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
-   * @param folder О©╫О©╫О©╫О©╫О©╫О©╫О©╫
-   * @return О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
+   * Ищет присутствие хоть какого ни будь файла в заданном каталоге или его подкаталогах.
+   * @param folder каталог
+   * @return список найденых файлов
    */
   private List checkForUpdate(final File folder) {
     List result;
@@ -75,10 +59,10 @@ public class Updater extends StandartODObject implements MessageHandler {
   }
   
   /**
-   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ updatebase О©╫ destbase.
-   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
-   * @param filesToMove О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
-   * @return true О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+   * Произвести обновление из каталога updatebase в destbase.
+   * Каталоги создаются в случае необходимости
+   * @param filesToMove список файлов для перемещения
+   * @return true если перемещение файлов завершилось успешно
    */
   private boolean doUpdate(final List filesToMove) {
     boolean result = true;
@@ -96,7 +80,7 @@ public class Updater extends StandartODObject implements MessageHandler {
   }
 
   /**
-   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * Конструктор.
    */
   public Updater() {
     super(NAME, FULLNAME, VERSION, COPYRIGHT);
@@ -119,7 +103,7 @@ public class Updater extends StandartODObject implements MessageHandler {
       String security = (String) msg.getField("security");
       if (!dispatcher.getSecurityManager().checkAccess(security, "restart", null)) {
         dispatcher.getSecurityManager().audit(security, "restart", false, "noaccess");
-        // TODO О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
+        // TODO добавить отправку сообщения об ошибке
         return;
       }
       logger.info("Checking for components update...");

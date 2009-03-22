@@ -1,19 +1,3 @@
-/* ODISP -- Message Oriented Middleware
- * Copyright (C) 2003-2005 Valentin A. Alekseev
- * Copyright (C) 2003-2005 Andrew A. Porohin 
- * 
- * ODISP is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, version 2.1 of the License.
- * 
- * ODISP is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License
- * along with ODISP.  If not, see <http://www.gnu.org/licenses/>.
- */
 package org.valabs.stdobj.bugtrack;
 
 import java.io.PrintWriter;
@@ -28,9 +12,9 @@ import org.valabs.stdmsg.BugSignalMessage;
 import org.valabs.stdmsg.ODObjectLoadedMessage;
 
 
-/** О©╫О©╫О©╫О©╫О©╫О©╫, О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫
- * О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
- * @author (C) 2005 <a href="mailto:valeks@valabs.spb.ru">О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫.</a>
+/** Объект, который обеспечивает создание полного сообщения об ошибке возникшей во
+ * время работы системы.
+ * @author (C) 2005 <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
  * @version $Id: BugTrack.java,v 1.6 2005/07/22 13:06:56 dron Exp $
  */
 public class BugTrack extends StandartODObject implements ExceptionHandler, MessageHandler {
@@ -83,7 +67,7 @@ public class BugTrack extends StandartODObject implements ExceptionHandler, Mess
         ss.startSnapshot();
         try {
           Thread.sleep(1000);
-        } catch (InterruptedException e) { /* О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ */ }
+        } catch (InterruptedException e) { /* игнорируется */ }
         ss.stopSnapshot();
         logger.warning("Snapshot taken.");
         bw.writeBugReport(id, pc, ai, ss);

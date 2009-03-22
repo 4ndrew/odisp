@@ -1,19 +1,3 @@
-/* ODISP -- Message Oriented Middleware
- * Copyright (C) 2003-2005 Valentin A. Alekseev
- * Copyright (C) 2003-2005 Andrew A. Porohin 
- * 
- * ODISP is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, version 2.1 of the License.
- * 
- * ODISP is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License
- * along with ODISP.  If not, see <http://www.gnu.org/licenses/>.
- */
 package org.valabs.stdobj.console;
 
 import java.io.IOException;
@@ -27,38 +11,38 @@ import org.valabs.stdmsg.TranslatorGetTranslationReplyMessage;
 import org.valabs.stdobj.translator.Translator;
 
 /**
- * О©╫О©╫О©╫О©╫О©╫О©╫ ODISP О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
- * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫.
- *         О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ </a>
- * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">О©╫О©╫О©╫О©╫О©╫О©╫ О©╫. О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+ * Объект ODISP реализующий консольный интерфейс доступа к менеджеру.
+ * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Валентин А.
+ *         Алексеев </a>
+ * @author (C) 2003-2004 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин
  *         </a>
  * @version $Id: ConsoleObject.java,v 1.32 2005/11/20 12:33:03 valeks Exp $
  */
 public class ConsoleObject extends StandartODObject {
-  /** О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ */
+  /** Имя объекта */
   public final static String NAME = "console";
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
+  /** Полное название объекта. */
   private static String FULLNAME = "ODISP Message Console";
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
+  /** Версия объекта. */
   private static String VERSION = "0.3.1";
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
+  /** Дополнительная информация. */
   private static String COPYRIGHT = "(C) 2003-2004 Valentin A. Alekseev, Andrew A. Porohin";
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
+  /** Выполнять ли трансляцию констант в сообщениях. */
   private static boolean doTranslation = false;
 
-  /** О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
+  /** Поток читающий ввод с консоли. */
   private ConsoleReader reader;
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
+  /** Транслятор. */
   private Translator tr;
 
   /**
-   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
-   * @param msg О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+   * Обработчик входящих сообщений.
+   * @param msg сообщение
    */
   public final void handleMessage(final Message msg) {
     logger.finest("console object -- processing " + msg);
@@ -97,9 +81,9 @@ public class ConsoleObject extends StandartODObject {
   }
 
   /**
-   * О©╫О©╫О©╫О©╫О©╫.
-   * @param type О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
-   * @return О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+   * Выход.
+   * @param type признак выхода
+   * @return код возврата
    */
   public final int cleanUp(final int type) {
     logger.finest("Cleaning up...");
@@ -116,15 +100,15 @@ public class ConsoleObject extends StandartODObject {
   }
 
   /**
-   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * Конструктор объекта с заданным порядковым номером.
    */
   public ConsoleObject() {
     super(NAME, FULLNAME, VERSION, COPYRIGHT);
   }
 
   /**
-   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
-   * @return О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+   * Вернуть список сервисов.
+   * @return список сервисов
    */
   public final String[] getProviding() {
     String[] res = { NAME };
@@ -132,8 +116,8 @@ public class ConsoleObject extends StandartODObject {
   }
 
   /**
-   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
-   * @return О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+   * Вернуть список зависимостей.
+   * @return список зависимостей
    */
   public final String[] getDepends() {
     if (getParameter("hasTranslator", "no").equals("no")) {

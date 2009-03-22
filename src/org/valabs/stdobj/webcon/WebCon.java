@@ -1,19 +1,3 @@
-/* ODISP -- Message Oriented Middleware
- * Copyright (C) 2003-2005 Valentin A. Alekseev
- * Copyright (C) 2003-2005 Andrew A. Porohin 
- * 
- * ODISP is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, version 2.1 of the License.
- * 
- * ODISP is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License
- * along with ODISP.  If not, see <http://www.gnu.org/licenses/>.
- */
 package org.valabs.stdobj.webcon;
 
 import java.io.IOException;
@@ -38,7 +22,7 @@ import org.valabs.stdobj.webcon.servlet.http.HttpServlet;
 import org.valabs.stdobj.webcon.servlet.http.HttpServletRequest;
 import org.valabs.stdobj.webcon.servlet.http.HttpServletResponse;
 
-/** ODISP-О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ ACME О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+/** ODISP-интерфейс к ACME серверу.
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @version $Id: WebCon.java,v 1.24 2005/11/20 12:33:03 valeks Exp $
  */
@@ -48,9 +32,9 @@ public class WebCon extends StandartODObject implements MessageHandler {
   public static final String FULLNAME = "Servlet container interface to ODISP";
   public static final String VERSION = "0.1.0";
   public static final String COPYRIGHT = "(C) 2004 Valentin A. Alekseev";
-  /** О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫. */
+  /** Ссылка на сам сервер. */
   private Serve acmeServe = null;
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
+  /** Регистрация обработчиков сообщений. */
   public void registerHandlers() {
     addHandler(ODObjectLoadedMessage.NAME, this);
     addHandler(WCAddServletMessage.NAME, this);
@@ -59,7 +43,7 @@ public class WebCon extends StandartODObject implements MessageHandler {
     addHandler(CopyrightGetMessage.NAME, this);
   }
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. 
+  /** Обработчик приходящих сообщений. 
    * @see org.valabs.odisp.common.MessageHandler#messageReceived(org.valabs.odisp.common.Message)
    */
   public final void messageReceived(final Message msg) {
@@ -80,7 +64,7 @@ public class WebCon extends StandartODObject implements MessageHandler {
       t.start();
     } else if (WCAddServletMessage.equals(msg)) {
       if (WCAddServletMessage.getServletHandler(msg) instanceof Servlet) {
-        // О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+        // обработчик действительно сервлет
         if (acmeServe != null) {
           Servlet s = (Servlet) WCAddServletMessage.getServletHandler(msg);
           acmeServe.addServlet(
@@ -96,7 +80,7 @@ public class WebCon extends StandartODObject implements MessageHandler {
       }
     } else if (WCRemoveServletMessage.equals(msg)) {
       if (WCRemoveServletMessage.getServletHandler(msg) instanceof Servlet) {
-        // О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+        // обработчик действительно сервлет
         if (acmeServe != null) {
           Servlet s = (Servlet) WCRemoveServletMessage.getServletHandler(msg);
           acmeServe.removeServlet(
@@ -138,13 +122,13 @@ public class WebCon extends StandartODObject implements MessageHandler {
     }
   }
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+  /** Конструктор объекта.
    */
   public WebCon() {
     super(NAME, FULLNAME, VERSION, COPYRIGHT);
   }
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. 
+  /** Вернуть список сервисов. 
    * @see org.valabs.odisp.common.ODObject#getProviding()
    */
   public String[] getProviding() {
@@ -152,7 +136,7 @@ public class WebCon extends StandartODObject implements MessageHandler {
     return result;
   }
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. 
+  /** Вернуть список зависимостей. 
    * @see org.valabs.odisp.common.ODObject#getDepends()
    */
   public String[] getDepends() {
@@ -160,17 +144,17 @@ public class WebCon extends StandartODObject implements MessageHandler {
     return result;
   }
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫.
-   * @param exitCode О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+  /** Завершение работы.
+   * @param exitCode код завершения
    * @see org.valabs.odisp.common.ODObject#cleanUp(int)
    */
   public int cleanUp(int exitCode) {
     return exitCode;
   }
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ index О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
+  /** Обработчик index запросов. */
   private class IndexServlet extends HttpServlet {
-    /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. 
+    /** Информация о сервлете. 
      * @see org.valabs.stdobj.webcon.servlet.Servlet#getServletInfo()
      */
     public String getServletInfo() {
@@ -196,7 +180,7 @@ public class WebCon extends StandartODObject implements MessageHandler {
       p.println("\t</head>");
       p.println("\t<body>");
       p.println("\t\t<h3>ODISP WebCon default index page</h3>");
-      // О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+      // список зарегистрированных сервлетов
       Enumeration e = acmeServe.getServlets();
       if (e.hasMoreElements()) {
         p.println("\t\t<hr/>");

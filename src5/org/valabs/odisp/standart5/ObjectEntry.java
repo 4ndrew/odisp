@@ -1,19 +1,3 @@
-/* ODISP -- Message Oriented Middleware
- * Copyright (C) 2003-2005 Valentin A. Alekseev
- * Copyright (C) 2003-2005 Andrew A. Porohin 
- * 
- * ODISP is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, version 2.1 of the License.
- * 
- * ODISP is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License
- * along with ODISP.  If not, see <http://www.gnu.org/licenses/>.
- */
 package org.valabs.odisp.standart5;
 
 import java.util.Set;
@@ -22,56 +6,56 @@ import java.util.TreeSet;
 import org.valabs.odisp.common.ODObject;
 import org.valabs.odisp.common.WeakDependency;
 
-/** О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+/** Запись об объекте в таблице объектов.
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @version $Id: ObjectEntry.java,v 1.3 2006/03/29 11:29:59 valeks Exp $
  */
 class ObjectEntry {
-	/** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫. */
+	/** Определяет загружен ли объект. */
 	private boolean loaded = false;
-	/** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
-	 * @return О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+	/** Проверка загрузки объекта.
+	 * @return состояние загрузки
 	 */
 	public final boolean isLoaded() {
 		return loaded;
 	}
 
-	/** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
-	 * @param newLoaded О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+	/** Установка признака загрузки.
+	 * @param newLoaded новое значение состояния
 	 */
 	public final void setLoaded(final boolean newLoaded) {
 		loaded = newLoaded;
 	}
 
-	/** О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
+	/** Имя класса для объекта. */
 	private String className;
-	/** О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
-	 * @return О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
+	/** Вернуть имя класса для объекта.
+	 * @return имя класса
 	 */
 	public final String getClassName() {
 		return className;
 	}
 
-	/** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
-	 * @param newClassName О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
+	/** Установить имя класса для объекта.
+	 * @param newClassName новое имя класса
 	 */
 	public final void setClassName(final String newClassName) {
 		className = newClassName;
 	}
 
-	/** О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫. */
+	/** Ссылка на объект. */
 	private final ODObject object;
-	/** О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫.
-	 * @return О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
+	/** Вернуть ссылку на объект.
+	 * @return ссылка на объект
 	 */
 	public final ODObject getObject() {
 		return object;
 	}
 
-	/** О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
+	/** Список зависимостей. */
 	private final Set<String> depends;
-	/** О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
-	 * @return О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+	/** Вернуть список зависимостей.
+	 * @return список зависимостей
 	 */
 	public final Set<String> getDepends() {
 		return depends;
@@ -83,26 +67,26 @@ class ObjectEntry {
     return weakDepends;
   }
 
-	/** О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫.
-	 * @param toRemove О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+	/** Убрать определенную зависимость из списка.
+	 * @param toRemove зависимость
 	 */
 	public final void removeDepend(final String toRemove) {
 	  depends.remove(toRemove);
 	}
 
-	/** О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
+	/** Список сервисов. */
 	private final Set<String> provides;
-	/** О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
-	 * @return О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+	/** Вернуть список сервисов.
+	 * @return список сервисов
 	 */
 	public final Set<String> getProvides() {
 		return provides;
 	}
 
-	/** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫.
-	 * @param _className О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
-	 * @param newDepends О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
-	 * @param newProvides О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+	/** Конструктор класса.
+	 * @param _className имя класса
+	 * @param newDepends список зависимостей
+	 * @param newProvides список сервисов
 	 */
 	public ObjectEntry(final String _className, final ODObject _obj) {
 		className = _className;

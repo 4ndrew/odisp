@@ -1,19 +1,3 @@
-/* ODISP -- Message Oriented Middleware
- * Copyright (C) 2003-2005 Valentin A. Alekseev
- * Copyright (C) 2003-2005 Andrew A. Porohin 
- * 
- * ODISP is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, version 2.1 of the License.
- * 
- * ODISP is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License
- * along with ODISP.  If not, see <http://www.gnu.org/licenses/>.
- */
 package org.valabs.odisp.standart;
 
 import java.io.BufferedReader;
@@ -51,7 +35,7 @@ import com.novel.tools.filter.FilteringIterator;
 import com.sun.corba.se.spi.legacy.connection.GetEndPointInfoAgainException;
 
 /**
- * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ ODISP.
+ * Менеджер объектов ODISP.
  * 
  * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev </a>
  * @version $Id: ObjectManager.java,v 1.74 2007/01/24 14:21:31 dron Exp $
@@ -59,46 +43,46 @@ import com.sun.corba.se.spi.legacy.connection.GetEndPointInfoAgainException;
 
 class ObjectManager implements org.valabs.odisp.common.ObjectManager {
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
+  /** Диспетчер объектов. */
   private final Dispatcher dispatcher;
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
+  /** Снапшот системы. */
   private final DispatcherSnapshot snapshot = new DispatcherSnapshot();
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
+  /** Хранилище отложенных сообщений. */
   private final DefferedMessages messages = new DefferedMessages();
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
+  /** Список объектов. */
   private final Map objects = new LinkedHashMap();
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫. */
+  /** Журнал. */
   private final static Logger log = Logger.getLogger(ObjectManager.class.getName());
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
+  /** Список сервисов менеджера. */
   private final Map provided = new HashMap();
   
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
+  /** Максимальное количество нитей создаваемых для отсылки изначально. */
   public static final int SENDER_POOL_SIZE = 5;
 
-  /** О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
+  /** Пул нитей отсылки. */
   private final Sender[] senderPool;
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
+  /** Хранилище для сообщений. */
   private final List messageStorage = new LinkedList();
   
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ */
+  /** Максимальный список */
 
-  /** О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ hints. */
+  /** Ранее загруженный файл hints. */
   private Hints hints = null;
   
-  /** О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
+  /** Время старта системы. */
   private long startupTime = 0;
 
   /**
-   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * Добавление объекта как провайдера конкретного сервиса.
    * 
-   * @param service О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫
-   * @param objectName О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+   * @param service название сервиса
+   * @param objectName название объекта
    */
   public final void addProvider(final String service, final String objectName) {
     if (!provided.containsKey(service)) {
@@ -108,11 +92,11 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
   }
   
   /**
-   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫. О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ -- О©╫О©╫
-   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫.
+   * Удаление провайдера конкретного сервиса. В случае если у сервиса не остается ни одного провайдера -- он
+   * автоматически будет удален.
    * 
-   * @param service О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫
-   * @param objectName О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+   * @param service название сервиса
+   * @param objectName название объекта
    */
   public void removeProvider(final String service, final String objectName) {
     if (provided.containsKey(service)) {
@@ -124,20 +108,20 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
   }
 
   /**
-   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * Проверка на существование провайдеров сервиса.
    * 
-   * @param service О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫
-   * @return О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+   * @param service название сервиса
+   * @return флаг присутствия сервиса
    */
   private boolean hasProviders(final String service) {
     return provided.containsKey(service);
   }
 
   /**
-   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫-О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * Получить список объектов-провайдеров сервиса.
    * 
-   * @param service О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫
-   * @return О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ thread-safe О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+   * @param service имя сервиса
+   * @return немодифицируемый thread-safe список объектов
    */
   private List getProviders(final String service) {
     List result = null;
@@ -148,15 +132,15 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
   }
 
   /**
-   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * Получить список сервисов диспетчера.
    * 
-   * @return О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+   * @return немодифицируемый список сервисов
    */
   public List getProviding() {
     return new ArrayList(Collections.unmodifiableSet(provided.keySet()));
   }
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
+  /** Попытка подгрузки объектов в следствии изменения списка сервисов менеджера. */
   public final void loadPending() {
     // resources
     final Map resourceList = new HashMap(dispatcher.getResourceManager().getResources());
@@ -164,7 +148,7 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
     while (commonIt.hasNext()) {
       final String objectName = (String) commonIt.next();
       if (!hasProviders(objectName)) {
-        // О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
+        // ресурсы считаются провайдерами сервиса с собственным именем
         addProvider(objectName, objectName);
         log.finest("added resource provider " + objectName);
         hints.addNewHint(objectName);
@@ -184,9 +168,9 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
           continue;
         }
         log.finest("trying to load object " + objectName);
-        // О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+        // все жесткие условия зависимости удовлетворены
         if (provided.keySet().containsAll(oe.getDepends())) {
-          // О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+          // проверка мягких зависимостей
           if (oe.getWeakDepends().size() > 0) {
             int haveCounter = 0;
             int doneCounter = 0;
@@ -201,11 +185,11 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
               }
             }
             if (haveCounter > doneCounter) {
-              // О©╫О©╫ О©╫О©╫О©╫ weak dependencies О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+              // не все weak dependencies удовлетворены из имеющихся
               continue;
             }
           }
-          // О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+          // занесение в качестве провайдера для указанных сервисов
           final Iterator provideIt = oe.getProvides().iterator();
           while (provideIt.hasNext()) {
             final String providing = (String) provideIt.next();
@@ -214,25 +198,25 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
 
           }
 
-          // О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ RECIPIENT_ALL
+          // занесение в сервис RECIPIENT_ALL
           addProvider(Message.RECIPIENT_ALL, objectName);
-          // О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫, О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫ RECIPIENT_CATCHALL
+          // если объект хочет получать все сообщения, то занести его в RECIPIENT_CATCHALL
           if (oe.getObject().getMatchAll()) {
             addProvider(Message.RECIPIENT_CATCHALL, objectName);
           }
-          // О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+          // пометка объекта как работающего
           oe.setLoaded(true);
           log.config(" ok. loaded = " + objectName);
-          // О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫
+          // восстановление данных из слепка если он был
           if (snapshot.hasSnapshot()) {
             log.config("Restoring state from snapshot for " + objectName);
             oe.getObject().importState(snapshot.getObjectSnapshot(objectName));
           }
-          // О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+          // официальное уведомление объекта о загрузке
           final Message m = dispatcher.getNewMessage();
           ODObjectLoadedMessage.setup(m, objectName, UUID.getNullUUID());
           m.setDestination(objectName);
-          // О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫рёО©╫О©╫О©╫О©╫ weak dependencies.
+          // список удовлетворённых weak dependencies.
           if (oe.getWeakDepends().size() > 0) {
             List doneWeakDeps = new LinkedList();
             Iterator it = oe.getWeakDepends().iterator();
@@ -245,9 +229,9 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
             ODObjectLoadedMessage.setWeakDependencies(m, doneWeakDeps);
           }
           oe.getObject().handleMessage0(m);
-          // О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+          // сброс накопившихся сообщений
           flushDefferedMessages(objectName);
-          // О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ hints О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+          // запись в hints файл в случае необходимости
           if (oe.isIntoHints()) {
             hints.addNewHint(oe.getObject().getClass().getName());
           }
@@ -290,14 +274,14 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
   }
 
   /**
-   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ (О©╫ О©╫чёО©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫). О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ hints О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * Динамическая загрузка объекта (с учётом зависимостей). Сохранение порядка в hints включено.
    * 
-   * @param cName О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
-   * @param configuration О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+   * @param cName имя загружаемого класса
+   * @param configuration список параметров загрузки
    */
   public final void loadObject(final String cName, final Map configuration) {
     if (cName.equals(DispatcherHandler.class.getName())) {
-      /** @todo. О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫. */
+      /** @todo. плохой хак. */
       loadObject(cName, configuration, false);
       return;
     }
@@ -305,11 +289,11 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
   }
 
   /**
-   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ (О©╫ О©╫чёО©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫).
+   * Динамическая загрузка объекта (с учётом зависимостей).
    * 
-   * @param cName О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
-   * @param configuration О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
-   * @param intoHints О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫ hints
+   * @param cName имя загружаемого класса
+   * @param configuration список параметров загрузки
+   * @param intoHints сохранять ли запись в файл hints
    */
   public final void loadObject(final String cName, final Map configuration, final boolean intoHints) {
     log.config("loading object " + cName);
@@ -329,16 +313,16 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
   }
 
   /**
-   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫чёО©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * Выгрузка объекта с учётом зависимых.
    * <ul>
-   * <li>О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
-   * <li>О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
-   * <li>О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫, О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
-   * <li>О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+   * <li>Составление списка зависимых объектов
+   * <li>Удаление зависимых объектов
+   * <li>Сохранение статуса объекта, в случае если происходит перезагрузка диспетчера
+   * <li>Удаление самого объекта
    * </ul>
    * 
-   * @param objectName О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
-   * @param code О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ (О©╫О©╫О©╫ code != 0 О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫).
+   * @param objectName внутреннее имя объекта для удаления.
+   * @param code код выхода (при code != 0 зависимые объекты не удаляются).
    */
   public synchronized final void unloadObject(final String objectName, final int code) {
     if (objects.containsKey(objectName)) {
@@ -347,7 +331,7 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
       Iterator it = objects.keySet().iterator();
       final Set dependingObjs = new HashSet();
 
-      // О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+      // поиск зависимых объектов
       while (it.hasNext()) {
         final String depObjectName = (String) it.next();
         final Set depends = ((ObjectEntry) objects.get(depObjectName)).getDepends();
@@ -360,14 +344,14 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
         }
       }
 
-      // О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+      // удаление из списка сервисов
       it = provides.iterator();
       while (it.hasNext()) {
         final String element = (String) it.next();
         removeProvider(element, objectName);
       }
 
-      // О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+      // выгрузка зависимых объектов
       it = dependingObjs.iterator();
       while (it.hasNext()) {
         final String className = (String) it.next();
@@ -375,38 +359,38 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
         unloadObject(className, code);
       }
 
-      // О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ (О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
-      // О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫)
+      // сигнализация завершения работы (чтобы плохие объекты не валили
+      // диспетчер здесь теперь так)
       try {
         oe.getObject().cleanUp(code);
       } catch (Exception e) {
         dispatcher.getExceptionHandler().signalException(e);
       }
 
-      // О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫, О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+      // сохранение слепка объекта, в случае если происходит перезапуск диспетчера
       if (code == ODShutdownMessage.SHUTDOWN_RESTART) {
         snapshot.addObjectSnapshot(objectName, oe.getObject().exportState());
       }
 
-      // О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+      // удаление объекта
       objects.remove(objectName);
       log.config("object " + objectName + " unloaded");
     }
   }
 
   /**
-   * О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * Доступ к списку объектов.
    * 
-   * @return О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+   * @return список объектов
    */
   public final Map getObjects() {
     return objects;
   }
 
   /**
-   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * Констурктор менеджера.
    * 
-   * @param newDispatcher О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+   * @param newDispatcher диспетчер для которого производится управление ресурсами
    */
   public ObjectManager(final Dispatcher newDispatcher) {
     dispatcher = newDispatcher;
@@ -419,20 +403,20 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
   }
 
   /**
-   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * Послать сообщение конкретному объекту.
    * 
-   * @param objectName О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫
-   * @param message О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+   * @param objectName имя объекта
+   * @param message сообщение
    */
   private void sendToObject(final String objectName, final Message message) {
     ObjectEntry oe = null;
-    // О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+    // исключить модификацию списка дескрипторов объектов
     synchronized (objects) {
       oe = (ObjectEntry) objects.get(objectName);
     }
     if (oe == null) { return; }
     ODObject objToSendTo = null;
-    // О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+    // исключить модификацию дескриптора состояние объекта
     synchronized (oe) {
       if (!oe.isLoaded()) {
         log.finest("deffered message " + message.getAction() + " for " + objectName);
@@ -452,18 +436,18 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
   }
 
   /**
-   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * Посылка сообщения всем объектам менеджера.
    * 
-   * @param message О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+   * @param message сообщение
    */
   public final void send(final Message message) {
     if (message == null || message.getAction() == null || message.getAction().length() == 0 || !message.isCorrect()) {
-      // О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫, О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫-О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ --- О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+      // давно так надо было сделать, так как неудачная отсылка из-за неправильныз полей --- явно ошибочня ситуация
       log.warning("Invalid message " + message + " couldn't be delivered.");
       return;
     }
 
-    // О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+    // рассылка реальным адресатам
     Iterator it;
     final Set recipients = new HashSet();
     if (getProviders(message.getDestination()) != null) {
@@ -494,9 +478,9 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
   }
 
   /**
-   * О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * Сброс записанных сообщений при снятии блокировки с объекта.
    * 
-   * @param objectName О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+   * @param objectName имя объекта
    */
   private void flushDefferedMessages(final String objectName) {
     if (objects.containsKey(objectName)) {
@@ -507,16 +491,16 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
     }
   }
 
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. 
-   * @return О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+  /** Получение следующего сообщения для обработки. 
+   * @return описание следующего задания для посылки
    */
   final SendRecord getNextPendingMessage() {
     SendRecord toSend = null;
     synchronized (messageStorage) {
       if (messageStorage.size() > 0) {
-        // LinkedList О©╫ 5 О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+        // LinkedList в 5 раз быстрее при перечислении чем при извлечении
         toSend = (SendRecord) messageStorage.iterator().next();
-        // LinkedList О©╫ 1905 О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ ArrayList
+        // LinkedList в 1905 раз быстрее при удалении чем ArrayList
         messageStorage.remove(0);
       }
     }
@@ -567,11 +551,11 @@ class ObjectManager implements org.valabs.odisp.common.ObjectManager {
      */
     public final void storeHints() {
       Iterator it;
-      // О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+      // вывести удачный порядок загрузки.
       String msg = "\n============================================\n";
       if (newHints.size() > 0) {
         msg += "Result hints file:\n";
-        /** @todo. HACK О©╫О©╫О©╫О©╫ hints О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫, О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫. */
+        /** @todo. HACK файл hints пишется в текущий каталог, что не есть гут. */
         try {
           final File hintsFile = new File("hints");
           hintsFile.createNewFile();

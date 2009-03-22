@@ -1,19 +1,3 @@
-/* ODISP -- Message Oriented Middleware
- * Copyright (C) 2003-2005 Valentin A. Alekseev
- * Copyright (C) 2003-2005 Andrew A. Porohin 
- * 
- * ODISP is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, version 2.1 of the License.
- * 
- * ODISP is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License
- * along with ODISP.  If not, see <http://www.gnu.org/licenses/>.
- */
 package test.org.valabs.odisp;
 
 import java.io.ByteArrayOutputStream;
@@ -36,8 +20,8 @@ import org.valabs.odisp.common.SecurityManager;
 import org.valabs.stdmsg.StandartMessage;
 
 
-/** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫-О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ ODISP О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
- * @author (О©╫) 2004 <a href="mailto:valeks@novel-il.ru">О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫.</a>
+/** Диспетчер-заглушка для тестирования ODISP объектов.
+ * @author (С) 2004 <a href="mailto:valeks@novel-il.ru">Алексеев Валентин А.</a>
  * @version $Id: DispatcherFake.java,v 1.7 2005/07/22 13:06:57 dron Exp $
  */
 public class DispatcherFake extends TestCase implements Dispatcher, ObjectManager, ResourceManager, SecurityManager, ConfigurationManager, ExceptionHandler {
@@ -46,7 +30,7 @@ public class DispatcherFake extends TestCase implements Dispatcher, ObjectManage
    * @see org.valabs.odisp.common.Dispatcher#send(org.valabs.odisp.common.Message)
    */
   public void send(Message message) {
-    /* О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ */
+    /* не используется */
   }
 
   /* (non-Javadoc)
@@ -122,25 +106,25 @@ public class DispatcherFake extends TestCase implements Dispatcher, ObjectManage
    * @see org.valabs.odisp.common.Dispatcher#addSecurityManager(org.valabs.odisp.common.SecurityManager)
    */
   public void addSecurityManager(SecurityManager additionalSecurityManager) {
-    /* О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ */
+    /* не используется */
   }
 
   /* (non-Javadoc)
    * @see org.valabs.odisp.common.Dispatcher#addExceptionHandler(org.valabs.odisp.common.ExceptionHandler)
    */
   public void addExceptionHandler(ExceptionHandler ex) {
-    /* О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ */
+    /* не используется */
   }
 
   /* (non-Javadoc)
    * @see org.valabs.odisp.common.Dispatcher#addConfigurationManager(org.valabs.odisp.common.ConfigurationManager)
    */
   public void addConfigurationManager(ConfigurationManager cman) {
-    /* О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ */
+    /* не используется */
   }
 
   public void addProvider(String service, String objectName) {
-    /* О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ */
+    /* не используется */
   }
   
   public Map getObjects() {
@@ -152,19 +136,19 @@ public class DispatcherFake extends TestCase implements Dispatcher, ObjectManage
   }
   
   public void loadObject(String name, Map params) {
-    /* О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ */
+    /* не используется */
   }
   
   public void loadPending() {
-    /* О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ */
+    /* не используется */
   }
   
   public void removeProvider(String service, String objectName) {
-    /* О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ */
+    /* не используется */
   }
   
   public void unloadObject(String objectName, int code) {
-    /* О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ */
+    /* не используется */
   }
   
   public Map getResources() {
@@ -172,11 +156,11 @@ public class DispatcherFake extends TestCase implements Dispatcher, ObjectManage
   }
   
   public void loadResource(String className, int mult, Map params) {
-    /* О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ */
+    /* не используется */
   }
   
   public void releaseResource(String className, Resource resource) {
-    /* О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ */
+    /* не используется */
   }
   
   public Resource resourceAcquire(String className) {
@@ -212,7 +196,7 @@ public class DispatcherFake extends TestCase implements Dispatcher, ObjectManage
   }
   
   public void setCommandLineArguments(List args) {
-    /* О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ */
+    /* не используется */
   }
   
   public boolean supportComponentListing() {

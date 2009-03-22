@@ -1,18 +1,6 @@
-/* ODISP -- Message Oriented Middleware
- * Copyright (C) 2003-2005 Valentin A. Alekseev
- * Copyright (C) 2003-2005 Andrew A. Porohin 
- * 
- * ODISP is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, version 2.1 of the License.
- * 
- * ODISP is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License
- * along with ODISP.  If not, see <http://www.gnu.org/licenses/>.
+/*
+ * This is a part of odisp.
+ * See LICENSE for licensing details.
  */
 package org.valabs.odisp.standart5;
 
@@ -29,8 +17,8 @@ import org.valabs.stdmsg.ModuleStatusMessage;
 import org.valabs.stdmsg.ModuleStatusReplyMessage;
 import org.valabs.stdmsg.ODShutdownMessage;
 
-/** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
- * @author (C) <a href="mailto:valeks@valabs.spb.ru">О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫.</a>, 2005
+/** Обработчик системных сообщений диспетчера.
+ * @author (C) <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>, 2005
  * @version $Id: DispatcherHandler5.java,v 1.3 2006/03/29 11:33:24 valeks Exp $
  */
 public class DispatcherHandler5 extends StandartODObject5 {
@@ -39,9 +27,9 @@ public class DispatcherHandler5 extends StandartODObject5 {
   private static final String FULLNAME = "ODISP Dispatcher Core for Java 1.5";
   private static final String VERSION = "0.1.0";
   private static final String COPYRIGHT = "(C) Valentin A. Alekseev, 2005";
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
+  /** Менеджер объектов. */
   private ObjectManager5 oman;
-  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
+  /** Менеджер ресурсов. */
   private ResourceManager5 rman;
   
   private Thread runThread;
@@ -93,7 +81,7 @@ public class DispatcherHandler5 extends StandartODObject5 {
   @ODISPMessageHandler(value=ODShutdownMessage.NAME, mapping={ODShutdownMessage.idxEXITCODE})
   public void handleODShutdown(final Message msg, Integer exitCode) {
     logger.info(toString() + " shutting down...");
-    // О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+    // харакири
     oman.unloadObject(getObjectName(), (exitCode == null ? 0 : exitCode.intValue()));
     runThread.interrupt();   
   }
@@ -119,7 +107,7 @@ public class DispatcherHandler5 extends StandartODObject5 {
   public void setConfiguration(Map cfg) {
     runThread = (Thread) cfg.get("runthr");
     cfg.remove("runthr");
-    // О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫, О©╫О©╫О©╫ DispatcherHandler О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ ODISP5.
+    // Вообще говоря не факт, что DispatcherHandler запускается именно под ODISP5.
     oman = (ObjectManager5) dispatcher.getObjectManager();
     rman = (ResourceManager5) dispatcher.getResourceManager();
     super.setConfiguration(cfg);

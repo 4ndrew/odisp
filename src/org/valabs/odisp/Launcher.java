@@ -1,19 +1,3 @@
-/* ODISP -- Message Oriented Middleware
- * Copyright (C) 2003-2005 Valentin A. Alekseev
- * Copyright (C) 2003-2005 Andrew A. Porohin 
- * 
- * ODISP is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, version 2.1 of the License.
- * 
- * ODISP is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License
- * along with ODISP.  If not, see <http://www.gnu.org/licenses/>.
- */
 package org.valabs.odisp;
 
 import java.io.File;
@@ -30,17 +14,17 @@ import java.util.StringTokenizer;
 
 
 /**
- * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+ * Стартовый класс для диспетчера.
  * 
- * @author <a hrev="mailto:valeks@valabs.spb.ru">О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫.</a>
+ * @author <a hrev="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
  * @version $Id: Launcher.java,v 1.5 2005/09/21 11:07:40 dron Exp $
  */
 public class Launcher {
 
   /**
-   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * Конструктор.
    * 
-   * @param args О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫. 
+   * @param args Аргументы для класса. 
    */
   public Launcher(String[] args) {
     String dispatcher = "standart";
@@ -108,10 +92,10 @@ public class Launcher {
   }
   
   /**
-   * О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ jar-О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫.
+   * Поиск всех jar-библиотек в указанных путях.
    * 
-   * @param libdirs О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫.
-   * @return О©╫О©╫О©╫О©╫О©╫О©╫ jar-О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @param libdirs Список путей.
+   * @return Список jar-библиотек с полными путями.
    */
   private final URL[] searchJarURLs(final List libdirs) {
     final Iterator libdirIt = libdirs.iterator();
