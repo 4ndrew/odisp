@@ -1,33 +1,49 @@
+/* ODISP -- Message Oriented Middleware
+ * Copyright (C) 2003-2005 Valentin A. Alekseev
+ * Copyright (C) 2003-2005 Andrew A. Porohin 
+ * 
+ * ODISP is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, version 2.1 of the License.
+ * 
+ * ODISP is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with ODISP.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.valabs.odisp.common;
 
 import java.util.Map;
 
 /**
- * Интерфейс ресурсного объекта ODISP ядра.
+ * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ ODISP О©╫О©╫О©╫О©╫.
  * 
- * @author (C) 2003, <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
+ * @author (C) 2003, <a href="mailto:valeks@novel-il.ru">О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫. О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫</a>
  * @version $Id: Resource.java,v 1.8 2005/07/22 13:06:56 dron Exp $
  */
 public interface Resource {
   /**
-   * Максимальное количество ссылок одновременно поддерживаемых объектом.
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    * 
-   * @return максимальное кол-во ссылок.
+   * @return О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫-О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫.
    */
   int getMaxReferenceCount();
 
   /**
-   * Вызывается при необходимости очистить ресурсы.
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    * 
-   * @param type признак выхода.
-   * @return код возврата.
+   * @param type О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @return О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    */
   int cleanUp(int type);
   
   /**
-   * Установить конфигурацию.
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    * 
-   * @param config конфигурация.
+   * @param config О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    */
   void setConfiguration(Map config);
 }

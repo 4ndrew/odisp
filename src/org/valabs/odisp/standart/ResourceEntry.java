@@ -1,27 +1,43 @@
+/* ODISP -- Message Oriented Middleware
+ * Copyright (C) 2003-2005 Valentin A. Alekseev
+ * Copyright (C) 2003-2005 Andrew A. Porohin 
+ * 
+ * ODISP is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, version 2.1 of the License.
+ * 
+ * ODISP is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with ODISP.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.valabs.odisp.standart;
 
 import org.valabs.odisp.common.Resource;
 
-/** Запись об однотипных ресурах в таблице ресурсов.
+/** О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
  * @author (C) 2003-2004 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @version $Id: ResourceEntry.java,v 1.17 2005/11/25 15:27:35 valeks Exp $
  */
 class ResourceEntry {
-  /** Уникальное обозначение разделяемого ресурса. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   public static final int MULT_SHARE = -1;
-  /** Имя класса ресурса. */
+  /** О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   private String className;
-  /** Хранилище ресурсных записей. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   private final ResourceItem[] resourceStorage;
-  /** Количество использованных экземпляров. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   private int usage = 0;
-  /** Максимальное количество доступных экземпляров. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   private int maxUsage = 0;
-  /** Счетчик захватов. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   private int acquireCount = 0;
 
-  /** Поиск первого неиспользуемого ресурса.
-   * @return запись о ресурсе
+  /** О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @return О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫
    */
   private ResourceItem lookupFirstUnused() {
     ResourceItem result = null;
@@ -34,8 +50,8 @@ class ResourceEntry {
     return result;
   }
 
-  /** Поиск ресурсной записи по ресурсному объекту.
-   * @return запись о ресурсе
+  /** О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @return О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫
    */
   private ResourceItem lookupResourceItemByResource(final Resource res) {
     ResourceItem result = null;
@@ -48,16 +64,16 @@ class ResourceEntry {
     return result;
   }
 
-  /** Проверка готовности ресурса.
-   * @return true в случае если ресурс доступен для захвата
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @return true О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫
    */
   public final boolean isAvailable() {
     return usage != 0 || maxUsage == MULT_SHARE;
   }
 
-  /** Запросить ресурс.
-   * @param usedBy описание того, кто пользуется ресурсом
-   * @return ссылка на ресурс
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @param usedBy О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫, О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+   * @return О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
    */
   public final Resource acquireResource(final String usedBy) {
     assert isAvailable();
@@ -75,8 +91,8 @@ class ResourceEntry {
     return rit.getResource();
   }
 
-  /** Разрешить повторное использование ресурса.
-   * @param newResource ссылка на ресурс
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @param newResource О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
    */
   public final void releaseResource(final Resource newResource) {
     if (maxUsage != MULT_SHARE) {
@@ -85,8 +101,8 @@ class ResourceEntry {
     }
   }
 
-  /** Добавить новый ресурс в хранилище.
-   * @param newResource ссылка на ресурс
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @param newResource О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
    */
   public final void addResource(final Resource newResource) {
     for (int i = 0; i < resourceStorage.length; i++) {
@@ -103,8 +119,8 @@ class ResourceEntry {
     }
   }
 
-  /** Конструктор класса.
-   * @param cn имя класса ресурса
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @param cn О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫
    */
   public ResourceEntry(final int mult, final String cn) {
     if (mult == MULT_SHARE) {
@@ -117,8 +133,8 @@ class ResourceEntry {
     className = cn;
   }
 
-  /** Подготовка статистики по записи.
-   * @return строковое представление
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @return О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
    */
   public String toString() {
     String result = "\nClass name: " + className + "\n";
@@ -137,18 +153,18 @@ class ResourceEntry {
     return result;
   }
 
-  /** Хранилище данных о конкретной ресурсе. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   private class ResourceItem {
-    /** Флаг использования. */
+    /** О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
     private boolean used = false;
-    /** Вернуть флаг использования.
-     * @return флаг использования
+    /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+     * @return О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
      */
     public boolean isUsed() {
       return used;
     }
-    /** Установить флаг использования.
-     * @param newUsed флаг использования
+    /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+     * @param newUsed О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
      */
     public final void setUsed(final boolean newUsed) {
       used = newUsed;
@@ -161,16 +177,16 @@ class ResourceEntry {
     public final void setUsedBy(String newUsedBy) {
       usedBy = newUsedBy;
     }
-    /** Ссылка на ресурс. */
+    /** О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫. */
     private Resource resource;
-    /** Установка ресурса.
-     * @param newResource ссылка на ресурс
+    /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+     * @param newResource О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
      */
     public final void setResource(final Resource newResource) {
       resource = newResource;
     }
-    /** Получение ссылки на ресурс.
-     * @return ссылка на ресурс
+    /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫.
+     * @return О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
      */
     public final Resource getResource() {
       return resource;

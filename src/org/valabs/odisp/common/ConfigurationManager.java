@@ -1,68 +1,84 @@
+/* ODISP -- Message Oriented Middleware
+ * Copyright (C) 2003-2005 Valentin A. Alekseev
+ * Copyright (C) 2003-2005 Andrew A. Porohin 
+ * 
+ * ODISP is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, version 2.1 of the License.
+ * 
+ * ODISP is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with ODISP.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.valabs.odisp.common;
 
 import java.util.List;
 import java.util.Map;
 
 
-/** Интерфейс менеджера конфигурации диспетчера ODISP.
- * @author (C) 2004 <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
+/** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ ODISP.
+ * @author (C) 2004 <a href="mailto:valeks@valabs.spb.ru">О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫.</a>
  * @version $Id: ConfigurationManager.java,v 1.4 2005/07/22 15:32:02 valeks Exp $
  */
 public interface ConfigurationManager {
-  /** Задание параметров коммандной строки.
-   * @param args список параметров
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @param args О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
    */
   public void setCommandLineArguments(List args);
-  /** Поддерживает ли менеджер конфигурации выдачу списка ресурсов и объектов для загрузки.
-   * @return поддерживает ли менеджер листинг компонент
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @return О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
    */
   public boolean supportComponentListing();
   
-  /** Получить список ресурсов для загрузки.
-   * @return Список состоит из классов типа ComponentConfiguration.  
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @return О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ ComponentConfiguration.  
    */
   public List getResourceList();
 
-  /** Получить список объектов для загрузки.
-   * @return Список состоит из классов типа ComponentConfiguration. 
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @return О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ ComponentConfiguration. 
    */
   public List getObjectList();
 
-  /** Поддерживает ли менеджер конфигурации чтение параметров.
-   * @return поддерживает ли менеджер чтение параметров конфигурации
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @return О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
    */
   public boolean supportParameterFetching();
   
-  /** Получение значения параметра с указанным именем.
-   * @param domain домен параметра
-   * @param paramName название параметра
-   * @return значение параметра
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @param domain О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+   * @param paramName О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+   * @return О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
    */
   public String getParameter(String domain, String paramName);
   
-  /** Запись о конфигурации отдельного компонента. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   class ComponentConfiguration {
-    /** Имя класса. */
+    /** О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫. */
     private final String className;
-    /** Конфигурация. */
+    /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
     private final Map configuration;
-    /** Инициализация новой записи.
-     * @param _className имя класса
-     * @param _configuration конфигурация
+    /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫.
+     * @param _className О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
+     * @param _configuration О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
      */
     public ComponentConfiguration(String _className, Map _configuration) {
       className = _className;
       configuration = _configuration;
     }
-    /** Вернуть сохранённое имя класса.
-     * @return название класса
+    /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫нёО©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫.
+     * @return О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
      */
     public String getClassName() {
       return className;
     }
     
-    /** Вернуть сохранённую конфигурацию. 
-     * @return карта параметров компонента
+    /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫нёО©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. 
+     * @return О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
      */
     public Map getConfiguration() {
       return configuration;

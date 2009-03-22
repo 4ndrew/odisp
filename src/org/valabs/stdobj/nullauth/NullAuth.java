@@ -1,3 +1,19 @@
+/* ODISP -- Message Oriented Middleware
+ * Copyright (C) 2003-2005 Valentin A. Alekseev
+ * Copyright (C) 2003-2005 Andrew A. Porohin 
+ * 
+ * ODISP is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, version 2.1 of the License.
+ * 
+ * ODISP is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with ODISP.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.valabs.stdobj.nullauth;
 
 import java.util.Map;
@@ -7,11 +23,11 @@ import org.valabs.odisp.common.SecurityManager;
 import org.valabs.odisp.common.StandartODObject;
 import org.valabs.stdmsg.ODObjectLoadedMessage;
 
-/** Менеджер безопасности по-умолчанию.
- * Настройка прав производится статически при помощи установки параметра модуля в
- * файле classes.cfg. Возможно лишь два варианта поведения -- default to deny или
+/** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫-О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+ * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫
+ * О©╫О©╫О©╫О©╫О©╫ classes.cfg. О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ -- default to deny О©╫О©╫О©╫
  * default to accept.
- * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
+ * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫. О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫</a>
  * @version $Id: NullAuth.java,v 1.11 2005/11/20 12:33:04 valeks Exp $
  */
 public class NullAuth extends StandartODObject implements SecurityManager {
@@ -67,6 +83,6 @@ public class NullAuth extends StandartODObject implements SecurityManager {
    * @see org.valabs.odisp.common.SecurityManager#audit(java.lang.String, java.lang.String, boolean, java.lang.String)
    */
   public void audit(String userName, String actionId, boolean successStatus, String ai) {
-    /* не реализовано. */
+    /* О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   }
 }

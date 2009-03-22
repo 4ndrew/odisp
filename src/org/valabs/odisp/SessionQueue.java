@@ -1,3 +1,19 @@
+/* ODISP -- Message Oriented Middleware
+ * Copyright (C) 2003-2005 Valentin A. Alekseev
+ * Copyright (C) 2003-2005 Andrew A. Porohin 
+ * 
+ * ODISP is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, version 2.1 of the License.
+ * 
+ * ODISP is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with ODISP.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.valabs.odisp;
 
 import java.security.InvalidParameterException;
@@ -13,11 +29,11 @@ import org.valabs.odisp.common.MessageHandler;
 
 
 /** 
- * Реализация последовательной очереди сообщений в рамках сессии. В данной
- * реализации каждое сообщение посылаются последовательно, после получения ответа
- * на предыдущее сообщение, сессия так же может быть прервана или её
- * последовательность может быть модифицирована в случае ошибки при получении
- * ответа.
+ * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫. О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
+ * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫, О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
+ * О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫, О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ её
+ * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+ * О©╫О©╫О©╫О©╫О©╫О©╫.
  * 
  * <code>
  * 
@@ -27,12 +43,12 @@ import org.valabs.odisp.common.MessageHandler;
  * TypicalMessage1.setup(m1, ....);
  * sq.addMessage(m1, new SessionManager.MessageHandlerEx() {
  *   public int messageReceived(Message msg, SessionQueue sq) {
- *      ... msg - ответное сообщение, sq - ссылка на сессию
- *      return 0; -- возращение значения (0 - статус хорошо, отличное - сессия должна прерватся)
+ *      ... msg - О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫, sq - О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
+ *      return 0; -- О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ (0 - О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫, О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ - О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫)
  *   }
  * });
  * 
- * -- добавление в сессию с временным ограничением. 
+ * -- О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. 
  * 
  * Message m2 = dispatcher.getNewMessage();
  * TypicalMessage2.setup(m2, ....);
@@ -63,15 +79,15 @@ import org.valabs.odisp.common.MessageHandler;
  *   }
  * });
  * 
- * -- не забываем запускать =)
- * -- запуск происходит в рамках того же потока что и запускает.
+ * -- О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ =)
+ * -- О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
  * sq.run();
  * </code>
  * 
  * @see org.valabs.odisp.SessionManager
  * 
- * @author <a href="dron@novel-il.ru">Андрей А. Порохин</a>
- * @author (C) 2005 НПП "Новел-ИЛ"
+ * @author <a href="dron@novel-il.ru">О©╫О©╫О©╫О©╫О©╫О©╫ О©╫. О©╫О©╫О©╫О©╫О©╫О©╫О©╫</a>
+ * @author (C) 2005 О©╫О©╫О©╫ "О©╫О©╫О©╫О©╫О©╫-О©╫О©╫"
  * @version $Id: SessionQueue.java,v 1.9 2006/04/13 14:22:44 dron Exp $
  */
 public class SessionQueue implements Runnable {
@@ -79,11 +95,11 @@ public class SessionQueue implements Runnable {
   public static int ERROR_ABORT = -1;
   public static int ERROR_PAUSE = -30000;
   
-  /** Список сообщений. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   private List messages = Collections.synchronizedList(new ArrayList());
-  /** Текущая стадия работы. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫. */
   private int counter = 0;
-  /** Ответная часть для SessionManager. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ SessionManager. */
   private SessionPacketReply spr;
   
   Logger logger = Logger.getLogger(SessionPacketReply.class.getName());
@@ -91,9 +107,9 @@ public class SessionQueue implements Runnable {
   Dispatcher dispatcher;
   
   /**
-   * Конструктор. 
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. 
    *
-   * @param _dispatcher Диспетчер.
+   * @param _dispatcher О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    */
   public SessionQueue(Dispatcher _dispatcher) {
     dispatcher = _dispatcher;
@@ -101,11 +117,11 @@ public class SessionQueue implements Runnable {
   }
   
   /**
-   * Добавить сообщение в пакет.
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫.
    * 
-   * @param msg Сообщение.
-   * @param mh_reply Ответная часть.
-   * @param timeOut Временное ограничение (в попугаях -- timeCycle ~ 2-3 сек)
+   * @param msg О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @param mh_reply О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫.
+   * @param timeOut О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ (О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ -- timeCycle ~ 2-3 О©╫О©╫О©╫)
    * @see SessionManager
    */
   public MessageData addMessage(Message msg, MessageHandlerEx mh_reply, int timeOut) {
@@ -122,21 +138,21 @@ public class SessionQueue implements Runnable {
   }
   
   /**
-   * Добавить сообщение в пакет без временного ограничения.
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    * 
-   * @param msg Сообщение.
-   * @param mh_reply Ответная часть.
+   * @param msg О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @param mh_reply О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫.
    */
   public MessageData addMessage(Message msg, MessageHandlerEx mh_reply) {
     return addMessage(msg, mh_reply, 0);
   }
   
   /**
-   * Добавить сообщение после текущего.
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    * 
-   * @param msg Сообщение.
-   * @param mh_reply Ответная часть.
-   * @param timeOut Временное ограничение (в попугаях -- timeCycle ~ 2-3 сек)
+   * @param msg О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @param mh_reply О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫.
+   * @param timeOut О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ (О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ -- timeCycle ~ 2-3 О©╫О©╫О©╫)
    */
   public MessageData addMessageAfterCurrent(Message msg, MessageHandlerEx mh_reply, int timeOut) {
     if (mh_reply == null) {
@@ -152,33 +168,33 @@ public class SessionQueue implements Runnable {
   }
   
   /**
-   * Добавить сообщение после текущего.
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    * 
-   * @param msg Сообщение.
-   * @param mh_reply Ответная часть.
+   * @param msg О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @param mh_reply О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫.
    */
   public MessageData addMessageAfterCurrent(Message msg, MessageHandlerEx mh_reply) {
     return addMessageAfterCurrent(msg, mh_reply, 0);
   }
   
   /**
-   * Добавить сообщение после указанного.
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    * 
-   * @param after После какого обработчика добавить.
-   * @param msg Cообщение.
-   * @param mh_reply Обработчик.
+   * @param after О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @param msg CО©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @param mh_reply О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    */
   public void addMessageAfter(MessageData after, Message msg, MessageHandlerEx mh_reply) {
     addMessageAfter(after, msg, mh_reply, 0);
   }
   
   /**
-   * Добавить сообщение после указанного.
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    * 
-   * @param after После какого обработчика добавить.
-   * @param msg Cообщение.
-   * @param mh_reply Обработчик.
-   * @param timeOut Время ожидания ответа.
+   * @param after О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @param msg CО©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @param mh_reply О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @param timeOut О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫.
    */
   public void addMessageAfter(MessageData after, Message msg, MessageHandlerEx mh_reply, int timeOut) {
     MessageData newPacket = new MessageData();
@@ -199,23 +215,23 @@ public class SessionQueue implements Runnable {
   }
   
   /**
-   * Получить текущее положение очереди.
-   * @return возращается значение соответствующее текущему положению.
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @return О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    */
   public int getCurrentState() {
     return counter;
   }
   
   /**
-   * Получить ссылку на следующее сообщение.
-   * @return Стркутура содержаще сообщение и вспомогательную информацию.s
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @return О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.s
    */
   public MessageData getNextMessage() {
     return (messages.size() > 0) ? (MessageData) messages.get(0) : null;
   }
   
   /**
-   * Запустить сессию. Запуск происходит в рамках того же потока.
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫. О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫.
    */
   public void run() {
     synchronized (messages) {
@@ -238,8 +254,8 @@ public class SessionQueue implements Runnable {
   }
   
   /**
-   * Отмена сессии. Удаление всех обработчиков, связанных с данной сессией, очистка
-   * данных сессии. Данный вызов не синхронизирован.
+   * О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫. О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫, О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫, О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+   * О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫. О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    */
   public void cancelSession() {
     for (Iterator it = messages.iterator(); it.hasNext(); ) {
@@ -251,15 +267,15 @@ public class SessionQueue implements Runnable {
   }
   
   /**
-   * Расширенный обработчик сообщений. Добавлен результат у метода и ссылка
-   * на {@link SessionQueue}.
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
+   * О©╫О©╫ {@link SessionQueue}.
    */
   public interface MessageHandlerEx {
     /**
      * @param msg
      * @param sq
-     * @return Может возращать коды ошибок. (ERROR_NOERROR - нет ошибки, ERROR_PAUSE - пропустить
-     * запуск следующего сообщения, используется для продолжения очереди сторонним методом).
+     * @return О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫. (ERROR_NOERROR - О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫, ERROR_PAUSE - О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+     * О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫, О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫).
      * @see SessionQueue#ERROR_ABORT
      * @see SessionQueue#ERROR_NOERROR
      * @see SessionQueue#ERROR_PAUSE
@@ -268,7 +284,7 @@ public class SessionQueue implements Runnable {
   }
   
   /**
-   * Контейнер для сообщения.
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    */
   public class MessageData {
     public Message msg;
@@ -281,7 +297,7 @@ public class SessionQueue implements Runnable {
   }
   
   /**
-   * Ответная часть для SessionManager'а.
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ SessionManager'О©╫.
    */
   class SessionPacketReply implements MessageHandler {
     public SessionQueue sp;

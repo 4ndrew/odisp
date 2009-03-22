@@ -1,3 +1,19 @@
+/* ODISP -- Message Oriented Middleware
+ * Copyright (C) 2003-2005 Valentin A. Alekseev
+ * Copyright (C) 2003-2005 Andrew A. Porohin 
+ * 
+ * ODISP is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, version 2.1 of the License.
+ * 
+ * ODISP is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with ODISP.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.valabs.stdobj.console;
 
 import java.io.IOException;
@@ -16,8 +32,8 @@ import org.valabs.stdobj.webcon.servlet.http.HttpServlet;
 import org.valabs.stdobj.webcon.servlet.http.HttpServletRequest;
 import org.valabs.stdobj.webcon.servlet.http.HttpServletResponse;
 
-/** Объект ODISP реализующий WebCon интерфейс доступа к менеджеру.
- * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
+/** О©╫О©╫О©╫О©╫О©╫О©╫ ODISP О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ WebCon О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+ * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫. О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫</a>
  * @version $Id: WCConsoleObject.java,v 1.21 2005/11/20 12:33:03 valeks Exp $
  */
 public class WCConsoleObject extends StandartODObject {
@@ -26,10 +42,10 @@ public class WCConsoleObject extends StandartODObject {
   public static final String VERSION = "0.1.0";
   public static final String COPYRIGHT = "(C) 2004 Valentin A. Alekseev";
   
-  /** Собственно сервлет-обработчик. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫-О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   private final WCConsoleServlet servlet = new WCConsoleServlet();
-  /** Обработчик входящих сообщений.
-   * @param msg сообщение
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @param msg О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
    */
   public final void handleMessage(final Message msg) {
     if (ODObjectLoadedMessage.equals(msg)) {
@@ -43,27 +59,27 @@ public class WCConsoleObject extends StandartODObject {
     }
     return;
   }
-  /** Выход.
-   * @param type признак выхода
-   * @return код возврата
+  /** О©╫О©╫О©╫О©╫О©╫.
+   * @param type О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
+   * @return О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
    */
   public final int cleanUp(final int type) {
     return 0;
   }
-  /** Конструктор объекта с заданным порядковым номером.
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    */
   public WCConsoleObject() {
     super(NAME, FULLNAME, VERSION, COPYRIGHT);
   }
-  /** Вернуть список сервисов.
-   * @return список сервисов
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @return О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
    */
   public final String[] getProviding() {
     final String[] res = {NAME};
     return res;
   }
-  /** Вернуть список зависимостей.
-   * @return список зависимостей
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @return О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
    */
   public final String[] getDepends() {
     final String[] res = {
@@ -75,7 +91,7 @@ public class WCConsoleObject extends StandartODObject {
 
   private class WCConsoleServlet extends HttpServlet {
     private final List messages = new ArrayList();
-    /** Информация о сервлете. 
+    /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. 
      * 
      * @see org.valabs.stdobj.webcon.servlet.Servlet#getServletInfo()
      */
@@ -83,7 +99,7 @@ public class WCConsoleObject extends StandartODObject {
       return "WCConsoleServlet: servlet that act as ODISP console. <a href=\"/wcconsole\">Start servlet</a>";
     }
 
-    /** Выполнение запроса. 
+    /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫. 
      * 
      * @see org.valabs.stdobj.webcon.servlet.http.HttpServlet#service(org.valabs.stdobj.webcon.servlet.http.HttpServletRequest, org.valabs.stdobj.webcon.servlet.http.HttpServletResponse)
      */
@@ -96,7 +112,7 @@ public class WCConsoleObject extends StandartODObject {
       page.println("\t<head>");
       page.println("\t\t<title>ODISP WebCon console</title>");
       if (req.getQueryString() == null) {
-        // необходимо вывести фреймовую страницу
+        // О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
         page.println("\t</head>");
         page.println("\t<frameset rows=\"80%, *\">");
         page.println("\t\t<frame src=\"/wcconsole?log\"/>");
@@ -119,7 +135,7 @@ public class WCConsoleObject extends StandartODObject {
           Iterator it = localMessages.iterator();
           while (it.hasNext()) {
             Message msg = (Message) it.next();
-            // пока просто выводить результат toString(true)
+            // О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ toString(true)
             page.println("\t\t\t<tr><td><pre>");
             page.println(msg.toString(true));
             page.println("\t\t\t</pre></td></tr>");
@@ -154,12 +170,12 @@ public class WCConsoleObject extends StandartODObject {
       page.println("</html>");
     }
 
-    /** Добавление сообщения в журнал. 
-     * @param msg новое сообщение
+    /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫. 
+     * @param msg О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
      */
     public synchronized void messageReceived(final Message msg) {
       if (messages.size() == 30) {
-        // удаление устаревших сообщений
+        // О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
         messages.remove(0);
       }
       messages.add(msg);

@@ -1,3 +1,19 @@
+/* ODISP -- Message Oriented Middleware
+ * Copyright (C) 2003-2005 Valentin A. Alekseev
+ * Copyright (C) 2003-2005 Andrew A. Porohin 
+ * 
+ * ODISP is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, version 2.1 of the License.
+ * 
+ * ODISP is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with ODISP.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.valabs.odisp.standart;
 
 import java.util.ArrayList;
@@ -19,58 +35,58 @@ import org.valabs.odisp.common.SecurityManager;
 import org.valabs.stdmsg.StandartMessage;
 
 /**
- * Стандартный диспетчер ODISP.
- * Предоставляет интерфейс для отсылки сообщений.
+ * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ ODISP.
+ * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
  * 
- * @author (C) 2003-2005 <a href="mailto:valeks@novel-il.ru">Валентин А. Алексеев</a>
- * @author (C) 2003-2005 <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
+ * @author (C) 2003-2005 <a href="mailto:valeks@novel-il.ru">О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫. О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫</a>
+ * @author (C) 2003-2005 <a href="mailto:dron@novel-il.ru">О©╫О©╫О©╫О©╫О©╫О©╫ О©╫. О©╫О©╫О©╫О©╫О©╫О©╫О©╫</a>
  * @version $Id: Dispatcher.java,v 1.66 2006/03/14 13:31:51 valeks Exp $
  */
 public class Dispatcher implements org.valabs.odisp.common.Dispatcher, ExceptionHandler {
-  /** Журнал. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫. */
   private static final Logger log = Logger.getLogger(Dispatcher.class.getName());
-  /** Менеджер ресурсов. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   private final ResourceManager rman = new org.valabs.odisp.standart.ResourceManager(this);
-  /** Менеджер объектов. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   private final ObjectManager oman = new org.valabs.odisp.standart.ObjectManager(this);
-  /** Список менеджеров конфигурации. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   private final ConfigurationManager cman = new org.valabs.odisp.standart.ConfigurationManager();
-  /** Менеджер безопасности. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   private SecurityManager sman;
-  /** Обработчик исключений. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   private ExceptionHandler ehandler;
 
   /**
-   * Доступ к менеджеру объектов.
+   * О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    *  
-   * @return ссылка на менеджер объектов.
+   * @return О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    */
   public final ObjectManager getObjectManager() {
     return oman;
   }
 
   /**
-   * Доступ к менеджеру ресурсов.
+   * О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    *  
-   * @return ссылка на менеджер ресурсов.
+   * @return О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    */
   public final ResourceManager getResourceManager() {
     return rman;
   }
 
   /**
-   * Интерфейс для объектов ядра для отсылки сообщений.
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    * 
-   * @param message сообщение для посылки.
+   * @param message О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    */
   public final void send(final Message message) {
     oman.send(message);
   }
 
   /**
-   * Интерфейс для объектов ядра для отсылки сообщений.
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    * 
-   * @param messageList список сообщений для посылки.
+   * @param messageList О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    */
   public final void send(final Message[] messageList) {
     if (messageList == null || messageList.length == 0) {
@@ -83,9 +99,9 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
   }
 
   /**
-   * Интерфейс для объектов ядра для отсылки сообщений.
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    * 
-   * @param messageList список сообщений для посылки.
+   * @param messageList О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    */
   public final void send(final List messageList) {
     if (messageList != null) {
@@ -97,14 +113,14 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
   }
 
   /**
-   * Интерфейс создания нового сообщения для сокрытия конкретной реализации
-   * сообщений.
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    * 
-   * @param action действие которое несет сообщение.
-   * @param destination адресат сообщения.
-   * @param origin отправитель сообщения.
-   * @param inReplyTo идентификатор сообщения на которое производится ответ.
-   * @return Message созданное сообщение.
+   * @param action О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @param destination О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @param origin О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @param inReplyTo О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫.
+   * @return Message О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    */
   public final Message getNewMessage(final String action,
 				     final String destination,
@@ -114,18 +130,18 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
   }
 
   /**
-   * Создать новое пустое сообщение.
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    * 
-   * @return ссылка на сообщение.
+   * @return О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    */
   public final Message getNewMessage() {
     return new StandartMessage();
   }
 
   /**
-   * Конструктор. 
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. 
    *
-   * @param args Аргументы.
+   * @param args О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    */
   public Dispatcher(List args) {
     log.info(toString() + " starting up...");
@@ -136,7 +152,7 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
           synchronized (this) {
             wait();
           }
-        } catch (InterruptedException e) { /* игнорируется. */ }
+        } catch (InterruptedException e) { /* О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */ }
       }
     };
     Map tmp = new HashMap();
@@ -167,14 +183,14 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
       aliveThread.start();
       try {
         aliveThread.join();
-      } catch (InterruptedException e) { /* игнорируется. */ }
+      } catch (InterruptedException e) { /* О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */ }
     } else {
       log.severe("Default configuration manager does not support component listing. Bailing out.");
     }
   }
   
   /**
-   * Выводит сообщение об ошибке в случае некорректных параметров.
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    */
   public static void usage() {
     log.severe("Usage: java org.valabs.odisp.standart.Dispatcher <config>*");
@@ -182,10 +198,10 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
   }
   
   /**
-   * Точка входа в StandartDispatcher.
+   * О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫ StandartDispatcher.
    * 
-   * @param args по 0 должно содержать имя файла с перечислением классов,
-   * которые необходимо загрузить.
+   * @param args О©╫О©╫ 0 О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫,
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    */
   public static void main(final String[] args) {
     log.setLevel(java.util.logging.Level.ALL);
@@ -240,7 +256,7 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
     System.err.println("========================================================");
   }
   
-  /** @deprecated нет необходимости в множественных менеджерах конфигурации */
+  /** @deprecated О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ */
   public void addConfigurationManager(final ConfigurationManager _cman) {
     ((MultiConfigurationManager) cman).addConfigurationManager(_cman);
   }
@@ -250,8 +266,8 @@ public class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exception
   }
   
   /**
-   * Мультиплексор менеджеров конфигурации.
-   * @deprecated нет необходимости в нескольких менеджерах конфигурации.
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @deprecated О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    */
   class MultiConfigurationManager implements ConfigurationManager {
     private final List cman = new ArrayList();

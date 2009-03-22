@@ -1,3 +1,19 @@
+/* ODISP -- Message Oriented Middleware
+ * Copyright (C) 2003-2005 Valentin A. Alekseev
+ * Copyright (C) 2003-2005 Andrew A. Porohin 
+ * 
+ * ODISP is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, version 2.1 of the License.
+ * 
+ * ODISP is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with ODISP.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.valabs.stdobj.translator;
 
 import java.io.BufferedReader;
@@ -14,19 +30,19 @@ import org.valabs.stdmsg.TranslatorGetTranslationMessage;
 import org.valabs.stdmsg.TranslatorGetTranslationReplyMessage;
 
 /**
- * @author <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
+ * @author <a href="mailto:valeks@valabs.spb.ru">О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫.</a>
  * @version $Id: TranslatorServer.java,v 1.11 2005/11/20 12:33:03 valeks Exp $
  */
 public class TranslatorServer extends StandartODObject
 		implements
 			MessageHandler {
-	/** Имя объекта. */
+	/** О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
 	public static String NAME = "translator-server";
-	/** Полное имя объекта. */
+	/** О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
 	private static String FULL_NAME = "Language Translation Server";
-	/** Версия объекта. */
+	/** О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
 	private static String VERSION = "0.1.0";
-	/** Авторство. */
+	/** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
 	private static String COPYRIGHT = "(C) Valentin A. Alekseev";
 
 	public TranslatorServer() {
@@ -53,7 +69,7 @@ public class TranslatorServer extends StandartODObject
 	          }
 	        }
 	      } while (inLine != null);
-	    } catch (IOException e) { /* игнорируется */ }
+	    } catch (IOException e) { /* О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ */ }
 			Message m = dispatcher.getNewMessage();
 			TranslatorGetTranslationReplyMessage.setup(m, msg.getOrigin(),
 					getObjectName(), msg.getId());

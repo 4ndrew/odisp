@@ -1,3 +1,19 @@
+/* ODISP -- Message Oriented Middleware
+ * Copyright (C) 2003-2005 Valentin A. Alekseev
+ * Copyright (C) 2003-2005 Andrew A. Porohin 
+ * 
+ * ODISP is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, version 2.1 of the License.
+ * 
+ * ODISP is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with ODISP.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package test.org.valabs.odisp;
 
 import junit.framework.TestCase;
@@ -9,17 +25,17 @@ import org.valabs.odisp.common.MessageHandler;
 import org.valabs.stdmsg.StandartMessage;
 
 
-/** Набор тестов для менеджера сессий.
- * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">Алексеев Валентин А.</a>
+/** О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫.
+ * @author (C) 2004 <a href="mailto:valeks@novel-il.ru">О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫.</a>
  * @version $Id: TestSessionManager.java,v 1.4 2005/07/22 16:05:53 valeks Exp $
  */
 public class TestSessionManager extends TestCase {
-  /** Тестирование простейшего случая -- обработчик на одиночное сообщение. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ -- О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   public void testSimpleHandler() {
     SessionManager sm = SessionManager.getSessionManager();
     MessageHandler mh = new MessageHandler() {
       public void messageReceived(final Message msg) {
-        /* не используется */
+        /* О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ */
       }
     };
     sm.addMessageListener(UUID.getNullUUID(), mh);
@@ -29,12 +45,12 @@ public class TestSessionManager extends TestCase {
     assertEquals(false, sm.processMessage(m));
   }
   
-  /** Тестирование возможности задания обработчика с ручным удалением. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   public void testMultiplyCalls() {
     SessionManager sm = SessionManager.getSessionManager();
     MessageHandler mh = new MessageHandler() {
       public void messageReceived(final Message msg) {
-        /* не используется */
+        /* О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ */
       }
     };
     sm.addMessageListener(UUID.getNullUUID(), mh, true);
@@ -45,15 +61,15 @@ public class TestSessionManager extends TestCase {
     assertEquals(false, sm.processMessage(m));
   }
   
-  /** Тестирование на возможность модификации данных о сессиях изнутри обработчика, вызванного
-   * SessionManager'ом (в память о существовавшей ошибке). */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫, О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+   * SessionManager'О©╫О©╫ (О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫). */
   public void testModifySMFromHandler() {
     SessionManager sm = SessionManager.getSessionManager();
     MessageHandler mh = new MessageHandler() {
       public void messageReceived(final Message msg) {
         SessionManager.getSessionManager().addMessageListener(UUID.getNullUUID(), new MessageHandler() {
           public void messageReceived(final Message _msg) {
-            /* не используется */
+            /* О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ */
           }
         });
       }

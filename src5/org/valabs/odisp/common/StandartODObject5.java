@@ -1,6 +1,18 @@
-/*
- * This is a part of odisp.
- * See LICENSE for licensing details.
+/* ODISP -- Message Oriented Middleware
+ * Copyright (C) 2003-2005 Valentin A. Alekseev
+ * Copyright (C) 2003-2005 Andrew A. Porohin 
+ * 
+ * ODISP is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, version 2.1 of the License.
+ * 
+ * ODISP is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with ODISP.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.valabs.odisp.common;
 
@@ -21,30 +33,30 @@ import org.valabs.stdmsg.ModuleAboutReplyMessage;
 import org.valabs.stdmsg.ModuleStatusMessage;
 import org.valabs.stdmsg.ModuleStatusReplyMessage;
 
-/** Базовый класс объектов ODISP с поддержкой Java 1.5.
- * @author (C) <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>, 2005
+/** О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ ODISP О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ Java 1.5.
+ * @author (C) <a href="mailto:valeks@valabs.spb.ru">О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫.</a>, 2005
  * @version $Id: StandartODObject5.java,v 1.4 2006/03/29 11:39:08 valeks Exp $
  */
 public abstract class StandartODObject5 implements ODObject {
 
-  /** Журнал. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫. */
   protected final Logger logger;
 
-  /** Диспетчер работающий с этим объектом. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   protected Dispatcher dispatcher;
 
-  /** Список сообщений к обработке. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   private final List<Message> messages = new LinkedList<Message>();
 
-  /** Таблица конфигурационных параметров. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   private Map configuration;
 
   /**
-   * Есть ли необходимость обрабатывать все сообщения.
+   * О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    */
   private boolean matchAll = false;
 
-  /** Внутреннее имя объекта в ядре ODISP. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫ ODISP. */
   private final String name;
   
   private final String version;
@@ -53,10 +65,10 @@ public abstract class StandartODObject5 implements ODObject {
   
   protected final ObjectStatus objectStatus = new ObjectStatus();
 
-  /** Карта обработчиков сообщений. */
+  /** О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   private final Map<String, Method> handlers = new HashMap<String, Method>();
 
-  /** Признак блокировки объекта. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   private boolean blockedState = false;
 
   private final String fullName;
@@ -81,19 +93,19 @@ public abstract class StandartODObject5 implements ODObject {
   }
 
   /**
-   * Обработка сообщения.
-   * Возможны три группы сообщений:
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫:
    * <ul>
-   * <li>сообщения объекту;
-   * <li>сообщение посланное другому объекту или сервису в случае если стоит matchAll;
-   * <li>сообщения добавляются в корзину в случае;
+   * <li>О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫;
+   * <li>О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ matchAll;
+   * <li>О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫;
    * </ul> 
    * 
-   * @param msg сообщение для обработки.
+   * @param msg О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    */
   public final void handleMessage0(final Message msg) {
     if (blockedState && !msg.isOOB()) {
-      // пропускать лишь OOB сообщения
+      // О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ OOB О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
       messages.add(msg);
       return;
     }
@@ -104,19 +116,19 @@ public abstract class StandartODObject5 implements ODObject {
   }
   
   /**
-   * Проверка является ли сообщения нашим (место назначение - объект или
-   * его сервисы).
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ (О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ - О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫
+   * О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫).
    * 
-   * @return true, если оно наше, false - в другом случае.
+   * @return true, О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫, false - О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫.
    */
   private boolean isOur(final Message msg) {
     return msg.getDestination().equals(name) || providing.contains(msg.getDestination()) || matchAll;
   }
   
   /**
-   * Обработка сообщения объектов.
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    * 
-   * @param msg Сообщение для обработки. 
+   * @param msg О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. 
    */
   private void handleMessageByObject(final Message msg) {
     if (isOur(msg) && SessionManager.getSessionManager().processMessage(msg)) {
@@ -142,7 +154,7 @@ public abstract class StandartODObject5 implements ODObject {
         }
         return;
       } else if (m.getAnnotation(ODISPMessageHandler.class).mapping().length > 0) {
-        // включено отображение полей сообщения в параметры метода
+        // О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
         String[] mappingNames = m.getAnnotation(ODISPMessageHandler.class).mapping();
         Object[] params = new Object[mappingNames.length + 1];
         params[0] = msg;
@@ -182,8 +194,8 @@ public abstract class StandartODObject5 implements ODObject {
   }
 
   /**
-   * Обработчик по-умолчанию.
-   * @param msg Cообщение.
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫-О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @param msg CО©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    */
   public void handleMessage(final Message msg) {
     logger.fine("There is no handler for message " + msg.getAction() + " in " + name);
@@ -210,9 +222,9 @@ public abstract class StandartODObject5 implements ODObject {
     return matchAll;
   }
   
-  /** Создание списка обработчиков на основе аннотированных методов.
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    * 
-   * @param fromClass класс
+   * @param fromClass О©╫О©╫О©╫О©╫О©╫
    */
   private void registerHandlers(Class fromClass) {
     for (Method meth : fromClass.getMethods()) {
@@ -220,7 +232,7 @@ public abstract class StandartODObject5 implements ODObject {
       if (omh != null) {
         if (!handlers.containsKey(omh.value())) {
           handlers.put(omh.value(), meth);
-        } else if (meth.getDeclaringClass().equals(fromClass)){ // если это override
+        } else if (meth.getDeclaringClass().equals(fromClass)){ // О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ override
           handlers.put(omh.value(), meth);
         }
       }
@@ -239,28 +251,28 @@ public abstract class StandartODObject5 implements ODObject {
   }
   
   /**
-   * Обрабатывать ли все сообщения.
-   * @param newMatch true -- принимать все сообщения, false -- 
-   * принимать только свои сообщения
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @param newMatch true -- О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫, false -- 
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
    */
   protected final void setMatchAll(final boolean newMatch) {
     matchAll = newMatch;
   }
   
   /**
-   * Доступ к диспетчеру.
+   * О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    * 
-   * @return ссылка на диспетчер.
+   * @return О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    */
   protected final Dispatcher getDispatcher() {
     return dispatcher;
   }
   
   /**
-   * Получить значение параметра конфигурации.
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    * 
-   * @param paramName имя параметра.
-   * @return значение параметра или null если он не указан
+   * @param paramName О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @return О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ null О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
    */
   protected final String getParameter(final String paramName) {
     if (configuration != null && configuration.containsKey(paramName)) {
@@ -270,22 +282,22 @@ public abstract class StandartODObject5 implements ODObject {
   }
   
   /**
-   * Получить значение параметра конфигурации с учетом значения по-умолчанию.
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫-О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    * 
-   * @param paramName Имя параметра.
-   * @param defValue Значение по умолчанию.
-   * @return значение параметра если он установлен или значение из defValue
+   * @param paramName О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @param defValue О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @return О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ defValue
    */
   protected final String getParameter(final String paramName, final String defValue) {
     return getParameter(paramName) == null ? defValue : getParameter(paramName);
   }
   
   /**
-   * Установить состояние блокировки. В этом состоянии все сообщения, которые были получены объектом (кроме
-   * сообщений с установленным isOOB), сохраняются для последующей обработки. При смене состояния на
-   * "неблокирующее" сохраненные сообщения передаются на обработку отдельному Sender-потоку.
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫, О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ (О©╫О©╫О©╫О©╫О©╫
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ isOOB), О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫
+   * "О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫" О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ Sender-О©╫О©╫О©╫О©╫О©╫О©╫.
    * 
-   * @param newState Новое состояние.
+   * @param newState О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    * @see Message#isOOB()
    * @see Message#setOOB(boolean)
    */

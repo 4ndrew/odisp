@@ -1,3 +1,19 @@
+/* ODISP -- Message Oriented Middleware
+ * Copyright (C) 2003-2005 Valentin A. Alekseev
+ * Copyright (C) 2003-2005 Andrew A. Porohin 
+ * 
+ * ODISP is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, version 2.1 of the License.
+ * 
+ * ODISP is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with ODISP.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.valabs.stdobj.translator;
 
 import java.io.BufferedReader;
@@ -9,43 +25,43 @@ import java.util.logging.Logger;
 
 import org.valabs.odisp.common.Resource;
 
-/** Класс-транслятор строк (i8n).
+/** О©╫О©╫О©╫О©╫О©╫-О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ (i8n).
  *
- * @author <a href="mailto:dron@novel-il.ru">Андрей А. Порохин</a>
- * @author (C) 2004 НПП "Новел-ИЛ"
+ * @author <a href="mailto:dron@novel-il.ru">О©╫О©╫О©╫О©╫О©╫О©╫ О©╫. О©╫О©╫О©╫О©╫О©╫О©╫О©╫</a>
+ * @author (C) 2004 О©╫О©╫О©╫ "О©╫О©╫О©╫О©╫О©╫-О©╫О©╫"
  * @version $Id: Translator.java,v 1.19 2005/07/22 15:32:03 valeks Exp $
  */
 public class Translator extends Properties implements Resource {
-  /** Путь к корневой папке транляций. */
+  /** О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   public static final String LanguageRootDir 	= "LanguageRootDir";
-  /** Идентификатор языка. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫. */
   public static final String LanguageId 			= "LanguageId";
-  /** Автозагрузка. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   public static final String AutoLoad  				= "Autoload";
-  /** Путь к корневой папке транляций по-умолчанию. */
+  /** О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫-О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   private final String DefaultLanguageDir = "/resources/language";
-  /** Идентификатор языка по-умолчанию. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫-О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   private final String DefaultLanguageId = "en";
-  /** Корневой каталог для трансляций. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   private String rootDir = null;
-  /** Идентификатор языка. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫. */
   private String langId = null;
   
-  /** Логгер. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫. */
   private static final Logger logger = Logger.getLogger(Translator.class.getName()); 
   
-  /** Конструктор транслятора.
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    */
   public Translator() {
     /* empty constructor */
   }
   
-  /** Перевод закодированной строки в нормальную. Переводятся коды UTF
-   * "\\uxxxx", перевод строки "\\n", табуляция "\\t", перевод каретки "\\r".
-   * Код позаимствован из Properties.java от Sun.
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ UTF
+   * "\\uxxxx", О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ "\\n", О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ "\\t", О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ "\\r".
+   * О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ Properties.java О©╫О©╫ Sun.
    *
-   * @param string Входная строка.
-   * @return Преобразованная строка.
+   * @param string О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @return О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫.
    */
   public final static String convertUTFString(String string) {
     char curr;
@@ -91,16 +107,16 @@ public class Translator extends Properties implements Resource {
      return resultBuff.toString();
   }
 
-  /** Получить значение строки для определённого ключа. Используется для
-   * интернализации строк в программе. Используется синхронизированный вызов -
-   * рекоммендовано использование в виде разделённого ресурса одновременного
-   * доступа.
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫лёО©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫. О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ -
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫лёО©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    *
-   * @param key Ключ хэш таблицы.
-   * @param defaultValue Значение по-умолчанию, если по заданному ключу нет
-   * соответсвий.
-   * @return Строка, соотвествующая заданному ключу, либо значение по
-   * умолчанию.
+   * @param key О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @param defaultValue О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫-О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫, О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @return О©╫О©╫О©╫О©╫О©╫О©╫, О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫, О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    */
   public synchronized String translate(String key, String defaultValue) {
     String tmp = defaultValue;
@@ -109,10 +125,10 @@ public class Translator extends Properties implements Resource {
     return tmp;
   }
   
-  /** Очистка ресурса.
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    *
-   * @param type Код выхода.
-   * @return код возврата
+   * @param type О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫.
+   * @return О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
    */
   public int cleanUp(int type) {
     return 0;
@@ -125,26 +141,26 @@ public class Translator extends Properties implements Resource {
     return 0;
   }
   
-  /** Получение текущего корневого каталога.
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    * 
-   * @return Путь к корневому каталогу трансляций. Возможен null, только
-   * если у dispatcher'а башню снесло.
+   * @return О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ null, О©╫О©╫О©╫О©╫О©╫О©╫
+   * О©╫О©╫О©╫О©╫ О©╫ dispatcher'О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫.
    */
   public String getRootDir() {
     return rootDir;
   }
   
-  /** Получение текущего идентификатора языка.
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫.
    * 
-   * @return 2 буковки для трансляции. 
+   * @return 2 О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. 
    */
   public String getLangId() {
     return langId;
   }
   
-  /** Установка конфигурации ресурса.
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    * 
-   * @param cfg конфигурация.
+   * @param cfg О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    */
   public void setConfiguration(final Map cfg) {
     rootDir = DefaultLanguageDir;

@@ -1,3 +1,19 @@
+/* ODISP -- Message Oriented Middleware
+ * Copyright (C) 2003-2005 Valentin A. Alekseev
+ * Copyright (C) 2003-2005 Andrew A. Porohin 
+ * 
+ * ODISP is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, version 2.1 of the License.
+ * 
+ * ODISP is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with ODISP.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.valabs.odisp.standart;
 
 import java.util.ArrayList;
@@ -21,41 +37,41 @@ import org.valabs.stdmsg.ODRemoveDepMessage;
 import org.valabs.stdmsg.ODShutdownMessage;
 
 /**
- * Обработчик сообщений диспетчера ODISP.
+ * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ ODISP.
  * 
  * @author (C) 2004-2005 <a href="mailto:valeks@novel-il.ru">Valentin A. Alekseev</a>
  * @version $Id: DispatcherHandler.java,v 1.46 2006/06/26 16:30:21 dron Exp $
  */
 
 class DispatcherHandler extends StandartODObject {
-    /** Нитка heart-beat диспетчера. */
+    /** О©╫О©╫О©╫О©╫О©╫ heart-beat О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
     private Thread runThread;
 
-    /** Журнал. */
+    /** О©╫О©╫О©╫О©╫О©╫О©╫. */
     private final static Logger log = Logger
             .getLogger("org.valabs.odisp.standart.DispatcherHandler");
 
-    /** Менеджер объектов. */
+    /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
     private ObjectManager oman;
 
-    /** Менеджер ресурсов. */
+    /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
     private ResourceManager rman;
 
-    /** Имя объекта. */
+    /** О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
     private static final String NAME = "stddispatcher";
     
     private static final String FULLNAME = "Standart ODISP Dispatcher Core";
 
-    /** Версия модуля. */
+    /** О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫. */
     private static final String VERSION = "0.1.1";
 
-    /** Дополнительная информация о модуле. */
+    /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫. */
     private static final String COPYRIGHT = "(C) 2003-2005 Valentin A. Alekseev, Andrew A. Porohin";
 
     /**
-     * Вернуть список сервисов.
+     * О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
      * 
-     * @return список сервисов
+     * @return О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
      */
     public final String[] getProviding() {
         final String[] res = { "dispatcher", NAME };
@@ -63,9 +79,9 @@ class DispatcherHandler extends StandartODObject {
     }
 
     /**
-     * Вернуть список зависимостей.
+     * О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
      * 
-     * @return список зависимостей
+     * @return О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
      */
     public final String[] getDepends() {
         final String[] res = {};
@@ -73,7 +89,7 @@ class DispatcherHandler extends StandartODObject {
     }
 
     /**
-     * Зарегистрировать обработчики сообщений.
+     * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
      */
     protected final void registerHandlers() {
         Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -90,7 +106,7 @@ class DispatcherHandler extends StandartODObject {
                 if (msg.getFieldsCount() == 1) {
                     exitCode = ((Integer) msg.getField("exitcode")).intValue();
                 }
-                // харакири
+                // О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
                 oman.unloadObject(getObjectName(), exitCode);
                 runThread.interrupt();
             }
@@ -127,7 +143,7 @@ class DispatcherHandler extends StandartODObject {
 //        });
         addHandler(ModuleStatusMessage.NAME, new MessageHandler() {
             public final void messageReceived(final Message msg) {
-                /** @todo. проблемы с руссификацией. */
+                /** @todo. О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
                 final Message m = dispatcher.getNewMessage();
                 ModuleStatusReplyMessage.setup(m, msg.getOrigin(),
                         getObjectName(), msg.getId());
@@ -173,14 +189,14 @@ class DispatcherHandler extends StandartODObject {
     }
 
     /**
-     * Обработка пришедшего сообщения.
-     * @param msg сообщение для обработки
+     * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+     * @param msg О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
      */
     public final void handleMessage(final Message msg) {
         if (oman == null || rman == null) {
-            /* XXX/HACK это небольшой хак который позволяет нам встать
-             * между конструктором (из которого выполняется registerHandlers) и
-             * обработчиком сообщений.
+            /* XXX/HACK О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
+             * О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ (О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ registerHandlers) О©╫
+             * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
              */
             oman = dispatcher.getObjectManager();
             rman = dispatcher.getResourceManager();
@@ -189,30 +205,30 @@ class DispatcherHandler extends StandartODObject {
     }
 
     /**
-     * Точка выхода из объекта.
+     * О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
      * 
-     * @param type признак выхода
-     * @return код возврата
+     * @param type О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
+     * @return О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
      */
     public final int cleanUp(final int type) {
         return type;
     }
 
     /**
-     * Конструктор объекта.
+     * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
      */
     public DispatcherHandler() {
         super(NAME, FULLNAME, VERSION, COPYRIGHT);
     }
 
     /**
-     * Специальная обработка конфигурации.
+     * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
      * 
-     * @param cfg конфигурация объекта
+     * @param cfg О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫
      */
     public void setConfiguration(final Map cfg) {
-        /* XXX/HACK и опять хак. 
-         * Необходимо "правильным" путём передать ссылку на runThread от диспетчера.
+        /* XXX/HACK О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫. 
+         * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ "О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫" О©╫О©╫тёО©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ runThread О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
          */
         runThread = (Thread) cfg.get("runthr");
         cfg.remove("runthr");

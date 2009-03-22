@@ -1,6 +1,18 @@
-/*
- * This is a part of odisp.
- * See LICENSE for licensing details.
+/* ODISP -- Message Oriented Middleware
+ * Copyright (C) 2003-2005 Valentin A. Alekseev
+ * Copyright (C) 2003-2005 Andrew A. Porohin 
+ * 
+ * ODISP is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, version 2.1 of the License.
+ * 
+ * ODISP is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with ODISP.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.valabs.odisp.standart5;
 
@@ -20,22 +32,22 @@ import org.valabs.odisp.common.ResourceManager;
 import org.valabs.odisp.common.SecurityManager;
 import org.valabs.stdmsg.StandartMessage;
 
-/** Диспетчер ODISP для Java 1.5.
- * @author (C) <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>, 2005
+/** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ ODISP О©╫О©╫О©╫ Java 1.5.
+ * @author (C) <a href="mailto:valeks@valabs.spb.ru">О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫.</a>, 2005
  * @version $Id: Dispatcher.java,v 1.5 2006/03/29 11:33:24 valeks Exp $
  */
 public final class Dispatcher implements org.valabs.odisp.common.Dispatcher, ExceptionHandler {
-  /** Журнал. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫. */
   private static final Logger log = Logger.getLogger(Dispatcher.class.getName());
-  /** Менеджер безопасности. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   private SecurityManager sman;
-  /** Обработчик исключений. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   private ExceptionHandler ehandler = this;
-  /** Менеджер ресурсов. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   private ResourceManager5 rman = new ResourceManager5(this);
-  /** Менеджер конфигураций. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   private ConfigurationManager5 cman = new ConfigurationManager5();
-  /** Менеджер объектов. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   private ObjectManager5 oman = new ObjectManager5(this);
 
   /**
@@ -133,7 +145,7 @@ public final class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exc
   }
 
   /**
-   * @deprecated нет необходимости во множестве менеджеров конфигурации
+   * @deprecated О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
    * @see org.valabs.odisp.common.Dispatcher#addConfigurationManager(org.valabs.odisp.common.ConfigurationManager)
    */
   public void addConfigurationManager(ConfigurationManager _cman) {
@@ -161,7 +173,7 @@ public final class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exc
           synchronized (this) {
             wait();
           }
-        } catch (InterruptedException e) { /* игнорируется. */ }
+        } catch (InterruptedException e) { /* О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */ }
       }
     };
     Map<String, Object> tmp = new HashMap<String, Object>();
@@ -192,7 +204,7 @@ public final class Dispatcher implements org.valabs.odisp.common.Dispatcher, Exc
       aliveThread.start();
       try {
         aliveThread.join();
-      } catch (InterruptedException e) { /* игнорируется. */ }
+      } catch (InterruptedException e) { /* О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */ }
     } else {
       log.severe("Default configuration manager does not support component listing. Bailing out.");
     } 

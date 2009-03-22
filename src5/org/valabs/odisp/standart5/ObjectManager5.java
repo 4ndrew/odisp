@@ -1,6 +1,18 @@
-/*
- * This is a part of odisp.
- * See LICENSE for licensing details.
+/* ODISP -- Message Oriented Middleware
+ * Copyright (C) 2003-2005 Valentin A. Alekseev
+ * Copyright (C) 2003-2005 Andrew A. Porohin 
+ * 
+ * ODISP is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, version 2.1 of the License.
+ * 
+ * ODISP is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with ODISP.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.valabs.odisp.standart5;
 
@@ -43,42 +55,42 @@ import org.valabs.stdmsg.ODShutdownMessage;
 import com.novel.tools.filter.Filter;
 import com.novel.tools.filter.FilteringIterator;
 
-/** Менеджер объект с поддержкой Java 1.5.
- * @author (C) <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
+/** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ Java 1.5.
+ * @author (C) <a href="mailto:valeks@valabs.spb.ru">О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫.</a>
  * @version $Id: ObjectManager5.java,v 1.5 2006/03/29 11:29:59 valeks Exp $
  */
 class ObjectManager5 implements ObjectManager {
-  /** Диспетчер объектов. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   private final Dispatcher dispatcher;
 
-  /** Снапшот системы. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   private final DispatcherSnapshot snapshot = new DispatcherSnapshot();
 
-  /** Хранилище отложенных сообщений. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   private final DefferedMessages messages = new DefferedMessages();
 
-  /** Список объектов. 
-   * В среднем ИСМУС сейчас использует порядка 20 объектов (и сервер и клиент) и этот 
-   * объем меняется редко (отсюда фактор 0.9). Фактически изменяется этот словарь только
-   * основным потоком, по этому стоит порядок конкурентности 1. 
+  /** О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. 
+   * О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ 20 О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ (О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫) О©╫ О©╫О©╫О©╫О©╫ 
+   * О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ (О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ 0.9). О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫, О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ 1. 
    */
   private final Map<String, ObjectEntry> objects = new ConcurrentHashMap<String, ObjectEntry>(20, (float) 0.9, 1);
 
-  /** Журнал. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫. */
   private final static Logger log = Logger.getLogger(ObjectManager.class.getName());
 
-  /** Список сервисов менеджера. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   private final Map<String, List<String> > provided = new HashMap<String, List<String>>();
 
-  /** Количество потоков-обработчиков. */
+  /** О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫-О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫. */
   public static final int SENDER_POOL_SIZE = 5;
   
   private static final long startupTime = Calendar.getInstance().getTimeInMillis();
 ;
   
-  /** Пул нитей отсылки.
-   * Изначально создаётся SENDER_POOL_SIZE нитей. В случае если все нити заняты автоматически создаются дополнительные,
-   * но в сумме не более 3 * SENDER_POOL_SIZE штук. Дополнительные нити в случае простоя уничтожаются через 50 секунд.
+  /** О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫cО©╫О©╫О©╫ SENDER_POOL_SIZE О©╫О©╫О©╫О©╫О©╫. О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫,
+   * О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ 3 * SENDER_POOL_SIZE О©╫О©╫О©╫О©╫. О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ 50 О©╫О©╫О©╫О©╫О©╫О©╫.
    */
   private final ExecutorService senderPool = new ThreadPoolExecutor(SENDER_POOL_SIZE,
       3 * SENDER_POOL_SIZE, 50L,
@@ -95,7 +107,7 @@ class ObjectManager5 implements ObjectManager {
     }
   });
 
-  /** Ранее загруженный файл hints. */
+  /** О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ hints. */
   private Hints hints = null;
 
   /**
@@ -124,10 +136,10 @@ class ObjectManager5 implements ObjectManager {
   }
 
   /**
-   * Динамическая загрузка объекта (с учётом зависимостей). Сохранение порядка в hints включено.
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ (О©╫ О©╫чёО©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫). О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ hints О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    * 
-   * @param cName имя загружаемого класса
-   * @param configuration список параметров загрузки
+   * @param cName О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
+   * @param configuration О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
    */
   public final void loadObject(final String cName, final Map configuration) {
     if (cName.equals(DispatcherHandler5.class.getName())) {
@@ -138,11 +150,11 @@ class ObjectManager5 implements ObjectManager {
   }
 
   /**
-   * Динамическая загрузка объекта (с учётом зависимостей).
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ (О©╫ О©╫чёО©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫).
    * 
-   * @param cName имя загружаемого класса
-   * @param configuration список параметров загрузки
-   * @param intoHints сохранять ли запись в файл hints
+   * @param cName О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
+   * @param configuration О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+   * @param intoHints О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫ hints
    */
   public final void loadObject(final String cName, final Map configuration, final boolean intoHints) {
     log.config("loading object " + cName);
@@ -167,7 +179,7 @@ class ObjectManager5 implements ObjectManager {
     final Map<String, ResourceEntry> resourceList = new HashMap<String, ResourceEntry>(((ResourceManager5) dispatcher.getResourceManager()).getResources());
     for (String objectName : resourceList.keySet()) {
       if (!hasProviders(objectName)) {
-        // ресурсы считаются провайдерами сервиса с собственным именем
+        // О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
         addProvider(objectName, objectName);
         log.finest("added resource provider " + objectName);
         hints.addNewHint(objectName);
@@ -189,7 +201,7 @@ class ObjectManager5 implements ObjectManager {
           continue;
         }
         log.finest("trying to load object " + objectName);
-        // все условия зависимости удовлетворены
+        // О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
         if (provided.keySet().containsAll(oe.getDepends())) {
           if (oe.getWeakDepends().size() > 0) {
             int haveCounter = 0;
@@ -203,36 +215,36 @@ class ObjectManager5 implements ObjectManager {
               }
             }
             if (haveCounter > doneCounter) {
-              // не все weak dependencies удовлетворены из имеющихся
+              // О©╫О©╫ О©╫О©╫О©╫ weak dependencies О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
               continue;
             }
           }
-          // занесение в качестве провайдера для указанных сервисов
+          // О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
           for (String providing: oe.getProvides()) {
             log.finest("added as provider of " + providing);
             addProvider(providing, objectName);
 
           }
 
-          // занесение в сервис RECIPIENT_ALL
+          // О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ RECIPIENT_ALL
           addProvider(Message.RECIPIENT_ALL, objectName);
-          // если объект хочет получать все сообщения, то занести его в RECIPIENT_CATCHALL
+          // О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫, О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫ RECIPIENT_CATCHALL
           if (oe.getObject().getMatchAll()) {
             addProvider(Message.RECIPIENT_CATCHALL, objectName);
           }
-          // пометка объекта как работающего
+          // О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
           oe.setLoaded(true);
           log.config(" ok. loaded = " + objectName);
-          // восстановление данных из слепка если он был
+          // О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫
           if (snapshot.hasSnapshot()) {
             log.config("Restoring state from snapshot for " + objectName);
             oe.getObject().importState(snapshot.getObjectSnapshot(objectName));
           }
-          // официальное уведомление объекта о загрузке
+          // О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
           final Message m = dispatcher.getNewMessage();
           ODObjectLoadedMessage.setup(m, objectName, UUID.getNullUUID());
           m.setDestination(objectName);
-          // список удовлетворённых weak dependencies.
+          // О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫рёО©╫О©╫О©╫О©╫ weak dependencies.
           if (oe.getWeakDepends().size() > 0) {
             List<String> doneWeakDeps = new LinkedList<String>();
             for (String element : oe.getWeakDepends()) {
@@ -243,9 +255,9 @@ class ObjectManager5 implements ObjectManager {
             ODObjectLoadedMessage.setWeakDependencies(m, doneWeakDeps);
           }
           oe.getObject().handleMessage0(m);
-          // сброс накопившихся сообщений
+          // О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
           flushDefferedMessages(objectName);
-          // запись в hints файл в случае необходимости
+          // О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ hints О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
           if (oe.isIntoHints()) {
             hints.addNewHint(oe.getObject().getClass().getName());
           }
@@ -300,20 +312,20 @@ class ObjectManager5 implements ObjectManager {
   }
   
   /**
-   * Проверка на существование провайдеров сервиса.
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    * 
-   * @param service название сервиса
-   * @return флаг присутствия сервиса
+   * @param service О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+   * @return О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫
    */
   private boolean hasProviders(final String service) {
     return provided.containsKey(service);
   }
 
   /**
-   * Получить список объектов-провайдеров сервиса.
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫-О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    * 
-   * @param service имя сервиса
-   * @return немодифицируемый thread-safe список объектов
+   * @param service О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+   * @return О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ thread-safe О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
    */
   private List<String> getProviders(final String service) {
     List<String> result = null;
@@ -325,17 +337,17 @@ class ObjectManager5 implements ObjectManager {
 
 
   /**
-   * Послать сообщение конкретному объекту.
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    * 
-   * @param objectName имя объекта
-   * @param message сообщение
+   * @param objectName О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+   * @param message О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
    */
   private void sendToObject(final String objectName, final Message message) {
     ObjectEntry oe = objects.get(objectName);
     if (oe == null) {
       return;
     }
-    // исключить модификацию дескриптора состояние объекта
+    // О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫
     synchronized (oe) {
       if (!oe.isLoaded()) {
         log.finest("deffered message " + message.getAction() + " for " + objectName);
@@ -361,21 +373,21 @@ class ObjectManager5 implements ObjectManager {
   }
 
   /**
-   * Посылка сообщения всем объектам менеджера.
+   * О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    * 
-   * @param message сообщение
+   * @param message О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
    */
   public final void send(final Message message) {
     if (message == null || message.getAction() == null || message.getAction().length() == 0 || !message.isCorrect()) {
       return;
     }
 
-    // рассылка реальным адресатам
+    // О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
     final Set<String> recipients = new HashSet<String>();
     if (getProviders(message.getDestination()) != null) {
       recipients.addAll(getProviders(message.getDestination()));
     }
-    // тем, кто установил CATCH_ALL
+    // О©╫О©╫О©╫, О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ CATCH_ALL
     if (getProviders(Message.RECIPIENT_CATCHALL) != null) {
       recipients.addAll(getProviders(Message.RECIPIENT_CATCHALL));
     }
@@ -399,9 +411,9 @@ class ObjectManager5 implements ObjectManager {
   }
 
   /**
-   * Сброс записанных сообщений при снятии блокировки с объекта.
+   * О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
    * 
-   * @param objectName имя объекта
+   * @param objectName О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫
    */
   private void flushDefferedMessages(final String objectName) {
     if (objects.containsKey(objectName)) {
@@ -420,8 +432,8 @@ class ObjectManager5 implements ObjectManager {
       final Set<String> provides = oe.getProvides();
       final Set<String> dependingObjs = new HashSet<String>();
 
-      // поиск зависимых объектов:
-      // среди всех объектов найти те, которые в списке зависимостей имеют данный объект
+      // О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫:
+      // О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫, О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
       for (ObjectEntry depoe : objects.values()) {
         final String depObjectName = depoe.getObject().getObjectName();
         final Set<String> depends = depoe.getDepends();
@@ -437,21 +449,21 @@ class ObjectManager5 implements ObjectManager {
         removeProvider(element, objectName);
       }
 
-      // выгрузка зависимых объектов
+      // О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
       for (String className : dependingObjs) {
         log.finest("removing " + objectName + "'s dependency " + className);
         unloadObject(className, code);
       }
 
-      // сигнализация завершения работы
+      // О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
       oe.getObject().cleanUp(code);
 
-      // сохранение слепка объекта, в случае если происходит перезапуск диспетчера
+      // О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫, О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
       if (code == ODShutdownMessage.SHUTDOWN_RESTART) {
         snapshot.addObjectSnapshot(objectName, oe.getObject().exportState());
       }
 
-      // удаление объекта
+      // О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫
       objects.remove(objectName);
       log.config("object " + objectName + " unloaded");
     }
@@ -501,11 +513,11 @@ class ObjectManager5 implements ObjectManager {
      * 
      */
     public final void storeHints() {
-      // вывести удачный порядок загрузки.
+      // О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫.
       StringBuffer msg = new StringBuffer("\n============================================\n");
       if (newHints.size() > 0) {
         msg.append("Result hints file:\n");
-        /** @todo. HACK файл hints пишется в текущий каталог, что не есть гут. */
+        /** @todo. HACK О©╫О©╫О©╫О©╫ hints О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫, О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫. */
         try {
           final File hintsFile = new File("hints");
           hintsFile.createNewFile();
