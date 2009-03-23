@@ -45,9 +45,9 @@ import org.valabs.odisp.common.ODObject;
 import org.valabs.odisp.common.WeakDependency;
 import org.valabs.stdmsg.ODObjectLoadedMessage;
 import org.valabs.stdmsg.ODShutdownMessage;
+import org.valabs.tools.filter.Filter;
+import org.valabs.tools.filter.FilteringIterator;
 
-import com.novel.tools.filter.Filter;
-import com.novel.tools.filter.FilteringIterator;
 import com.sun.corba.se.spi.legacy.connection.GetEndPointInfoAgainException;
 
 /**

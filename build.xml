@@ -184,7 +184,7 @@
 				<pathelement location="lib/commons-configuration-1.1.jar"/>
 				<pathelement location="lib/commons-lang-2.1.jar"/>
 				<pathelement location="tools/tplParser.jar"/>
-				<pathelement location="tools/novel-tools.jar"/>
+				<pathelement location="tools/tools.jar"/>
 			</classpath>
 		</javac>
 	</target>
@@ -205,7 +205,7 @@
 				<pathelement location="lib/commons-configuration-1.1.jar"/>
 				<pathelement location="lib/commons-lang-2.1.jar"/>
 				<pathelement location="tools/tplParser.jar" />
-				<pathelement location="tools/novel-tools.jar" />
+				<pathelement location="tools/tools.jar" />
 			</classpath>
 		</javac>
 	</target>

@@ -51,9 +51,9 @@ import org.valabs.odisp.common.ObjectManager;
 import org.valabs.odisp.common.WeakDependency;
 import org.valabs.stdmsg.ODObjectLoadedMessage;
 import org.valabs.stdmsg.ODShutdownMessage;
+import org.valabs.tools.filter.Filter;
+import org.valabs.tools.filter.FilteringIterator;
 
-import com.novel.tools.filter.Filter;
-import com.novel.tools.filter.FilteringIterator;
 
 /** Менеджер объект с поддержкой Java 1.5.
  * @author (C) <a href="mailto:valeks@valabs.spb.ru">Алексеев Валентин А.</a>
