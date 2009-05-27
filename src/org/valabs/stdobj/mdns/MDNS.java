@@ -79,7 +79,7 @@ public class MDNS extends StandartODObject implements MessageHandler, ServiceLis
       try {
         Logger log = Logger.getLogger(JmDNS.class.toString());
         log.setLevel(Level.FINE);
-        jmdns = new JmDNS();
+        jmdns = JmDNS.create();
       } catch (IOException e) {
         dispatcher.getExceptionHandler().signalException(e);
       }
@@ -103,15 +103,19 @@ public class MDNS extends StandartODObject implements MessageHandler, ServiceLis
       MDNSListServicesReplyMessage.setServices(m, siResult);
       dispatcher.send(m);
     } else if (MDNSAdvertiseServiceMessage.equals(msg)) {
-      logger.fine("MDNSAdvertiseServiceMessage received.");
       String name = MDNSAdvertiseServiceMessage.getName(msg);
       String type = MDNSAdvertiseServiceMessage.getType(msg);
       String text = MDNSAdvertiseServiceMessage.getText(msg);
+      if (logger.isLoggable(Level.FINE)) {
+        logger.fine("MDNSAdvertiseServiceMessage received (" + name + "," + type + "," + text + ")");
+      }
       Integer port = MDNSAdvertiseServiceMessage.getPort(msg);
       try {
-        ServiceInfo si = new ServiceInfo(type, name, port.intValue(), text);
+        ServiceInfo si = ServiceInfo.create(type, name, port.intValue(), text);
         jmdns.registerService(si);
-        logger.fine("ServiceInfo [" + si + "] registered.");
+        if (logger.isLoggable(Level.FINE)) {
+          logger.fine("ServiceInfo [" + si + "] registered.");
+        }
       } catch (IOException e) {
         dispatcher.getExceptionHandler().signalException(e);
       }
@@ -121,7 +125,7 @@ public class MDNS extends StandartODObject implements MessageHandler, ServiceLis
       jmdns.addServiceListener(type, this);
     } else if (CopyrightGetReplyMessage.equals(msg)) {
     	List result = new ArrayList();
-    	result.add("JmDNS Copyright 2003-2005 Arthur van Hoff, Rick Blair");
+    	result.add("JmDNS Copyright 2003-2009 Arthur van Hoff, Rick Blair");
     	Message m = dispatcher.getNewMessage();
     	CopyrightGetReplyMessage.setup(m, msg.getOrigin(), getObjectName(), msg.getId());
     	CopyrightGetReplyMessage.setCopyrights(m, result);
@@ -175,7 +179,7 @@ public class MDNS extends StandartODObject implements MessageHandler, ServiceLis
   }
   
   public int cleanUp(int code) {
-    logger.fine("Closing everything.");
+    logger.entering("MDNS", "cleanUp");
     if (jmdns != null) {
       jmdns.close();
     }
