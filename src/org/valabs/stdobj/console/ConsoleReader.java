@@ -104,7 +104,8 @@ public class ConsoleReader extends Thread {
    */
   public final synchronized void exit() {
     try {
-      inp.close();
+      // Just close system input
+      System.in.close();
       this.interrupt();
     } catch (IOException e) { /*NOP*/ }
     doExit = true;
