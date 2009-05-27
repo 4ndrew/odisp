@@ -21,13 +21,15 @@ package org.valabs.odisp.common;
  * @version $Id$
  */
 public final class WeakDependency {
+  private static final String WEAK_DEPENDENCY = "~";
+
   private WeakDependency() {}
   public static final String create(String objectName) {
-    return "~" + objectName;
+    return WEAK_DEPENDENCY + objectName;
   }
   
   public static final boolean isWeakDependency(String objectName) {
-    return objectName.startsWith("~");
+    return objectName.startsWith(WEAK_DEPENDENCY);
   }
   
   public static final String getWeakDependency(String objectName) {

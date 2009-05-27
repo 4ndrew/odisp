@@ -210,7 +210,7 @@
 		</javac>
 	</target>
 
-	<target name="odisp-jar" depends="release-dir-setup">
+	<target name="odisp-jar" depends="odisp,release-dir-setup">
 		<jar destfile="release/odisp.jar" basedir="build" includes="org/**/*class" excludes="org/valabs/odisp/Launcher*, org/valabs/odisp/standart5/**, org/valabs/odisp/common/ODISPMessageHandler*,org/valabs/odisp/common/StandartODObject5*,org/valabs/stdobj/echo/Echo5*">
 			<manifest>
 				<attribute name="Built-By" value="${user.name}" />
